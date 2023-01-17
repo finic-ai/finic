@@ -19,14 +19,17 @@ import {
   ModalFooter,
   useDisclosure
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+import parse from 'html-react-parser';
 
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [query, setQuery] = useState('')
   const [slackApiKey, setSlackApiKey] = useState('')
+  const [confluenceUsername, setConfluenceUsername] = useState('')
+  const [confluenceApiKey, setConfluenceApiKey] = useState('')
+  const [confluenceUrl, setConfluenceUrl] = useState('')
+  const [confluenceSpace, setConfluenceSpace] = useState('')
   const [syncLoading, setSyncLoading] = useState(false)
   const [queryLoading, setQueryLoading] = useState(false)
   const [results, setResults] = useState([])
@@ -42,7 +45,11 @@ function App() {
               'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-              slack_bot_token: slackApiKey
+              slack_bot_token: slackApiKey,
+              confluence_username: confluenceUsername,
+              confluence_api_key: confluenceApiKey,
+              confluence_url: confluenceUrl,
+              confluence_space: confluenceSpace
           })
       }
     )
@@ -76,11 +83,10 @@ function App() {
 
       setResults(matches)
       setQueryLoading(false)
-      
-
     }
-    
   }
+
+
 
   return (
     <ChakraProvider theme={theme}>
@@ -115,6 +121,22 @@ function App() {
                 <Input 
                   value={slackApiKey}
                   onChange={e => setSlackApiKey(e.target.value)} />
+                <Text fontWeight={'semibold'}>Confluence username</Text>
+                <Input 
+                  value={confluenceUsername}
+                  onChange={e => setConfluenceUsername(e.target.value)} /> 
+                <Text fontWeight={'semibold'}>Confluence api key</Text>
+                <Input 
+                  value={confluenceApiKey}
+                  onChange={e => setConfluenceApiKey(e.target.value)} /> 
+                <Text fontWeight={'semibold'}>Confluence Space</Text>
+                <Input 
+                  value={confluenceSpace}
+                  onChange={e => setConfluenceSpace(e.target.value)} /> 
+                <Text fontWeight={'semibold'}>Confluence URL</Text>
+                <Input 
+                  value={confluenceUrl}
+                  onChange={e => setConfluenceUrl(e.target.value)} /> 
               </ModalBody>
               <ModalFooter>
                 <Button colorScheme='teal' isLoading={syncLoading} onClick={sync} mr={3}>
@@ -134,11 +156,32 @@ function App() {
 function ResultItems({results}) {
   return (
     <>
-      {results.map((result) => (
-        <Container px={10} py={6} width="50%" border="1px solid #E2E8F0" textAlign={'start'} key={result.id}>
-          <Text>{result.metadata.text}</Text>
-        </Container>
-      ))}  
+      {results.map((result) => {
+        const appNameDisplay = result.metadata.app.charAt(0).toUpperCase() + result.metadata.app.slice(1)
+        const link = result.metadata.link
+        console.log(result)
+        return (
+          <Container 
+            px={10} 
+            py={6} 
+            width="50%" 
+            border="1px solid #E2E8F0" 
+            textAlign={'start'} 
+            key={result.id}
+            onClick={() => {
+              if (link) {
+                window.open(link)
+              }
+            }}>
+            <Heading size='sm'>{appNameDisplay}</Heading>
+            
+            {(result.metadata.app == 'confluence') &&
+              <Text fontSize={'md'}>{result.metadata.title}</Text>
+            }
+            {parse(result.metadata.text)}
+          </Container>
+        )
+      })}  
     </>
   )
 }

@@ -5,6 +5,7 @@ from datasets import load_dataset
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 import os
+from atlassian import Confluence
 
 @functions_framework.http
 def sync_data(request):
@@ -26,7 +27,11 @@ def sync_data(request):
     request_json = request.get_json(silent=True)
 
     if 'slack_bot_token' not in request_json:
-        return ({'error': 'Missing slack bot token'}, 200, headers)
+        return ({'error': 'Missing slack api token'}, 200, headers)
+
+    if ('confluence_username' not in request_json or 'confluence_api_key' not in request_json 
+        or 'confluence_space' not in request_json or 'confluence_url' not in request_json):
+        return ({'error': 'Missing confluence info'}, 200, headers)
 
     # Get Slack messages
 
@@ -36,6 +41,8 @@ def sync_data(request):
 
     channel_name = ''
 
+    # Sync slack messages 
+
     try:
         # Call the conversations.list method using the WebClient
         for result in slack_client.conversations_list():
@@ -44,9 +51,34 @@ def sync_data(request):
                 conversation_id = channel["id"]
                 result = slack_client.conversations_history(channel=conversation_id)
                 text = [message["text"] for message in result["messages"]]
-                messages += list(filter(lambda t: len(t) > 0, text))
+                filtered_text = filter(lambda t: len(t) > 0, text)
+                messages += [{'app': 'slack', 'text': t} for t in filtered_text]
     except SlackApiError as e:
         return ({'error': f"Error: {e}", 'channel': channel_name}, 200, headers) 
+
+    # Sync confluence docs
+
+    try:
+        confluence = Confluence(url=request_json['confluence_url'], username=request_json['confluence_username'], 
+            password=request_json['confluence_api_key']) 
+
+        pages = confluence.get_all_pages_from_space(request_json['confluence_space'], start=0, 
+            limit=100, status=None, expand=None) 
+
+        for page in pages:
+            page_content = confluence.get_page_by_id(page['id'], expand='body.storage')
+            text = page_content['body']['storage']['value']
+            if text:
+                messages.append({
+                    'app': 'confluence', 
+                    'text': text, 
+                    'title': page_content['title'],
+                    'link': '{0}wiki{1}'.format(request_json['confluence_url'], page_content['_links']['webui']) 
+                })
+            
+
+    except e:
+        return ({'error': f"Error: {e}", 'title': page_content['title']}, 200, headers) 
 
     openai.organization = os.environ.get('OPENAI_ORGANIZATION')
     openai.api_key = os.environ.get('OPENAI_API_KEY')
@@ -76,10 +108,11 @@ def sync_data(request):
         lines_batch = messages[i: i+batch_size]
         ids_batch = [str(n) for n in range(i, i_end)]
         # create embeddings
-        res = openai.Embedding.create(input=lines_batch, engine=MODEL)
+        lines_batch_text = [line['text'] for line in lines_batch]
+        res = openai.Embedding.create(input=lines_batch_text, engine=MODEL)
         embeds = [record['embedding'] for record in res['data']]
         # prep metadata and upsert batch
-        meta = [{'text': line} for line in lines_batch]
+        meta = lines_batch
         to_upsert = zip(ids_batch, embeds, meta)
         # upsert to Pinecone
         index.upsert(vectors=list(to_upsert))

@@ -3,3 +3,4 @@ datasets==2.8.0
 pinecone-client==2.1.0
 openai==0.26.0
 slack-sdk==3.19.5
+atlassian-python-api==3.32.2

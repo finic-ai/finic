@@ -10,9 +10,11 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
     "framer-motion": "^6.5.1",
+    "html-react-parser": "^3.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^3.11.0",
+    "react-markdown": "^8.0.4",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
