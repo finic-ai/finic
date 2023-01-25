@@ -1,26 +1,30 @@
-<p align="center">
- <img height="200" alt="Sleuth" src="https://github.com/getsleuth/Sleuth/blob/main/logo.png?raw=true" />
-</p>
+<h1 align="center">
+🦾 Buff
+</h1>
 <p align="center">
  
   <a href='https://join.slack.com/t/sleuthworld/shared_invite/zt-1n3iw8via-9y1mP3tJ3~Zy6GT5sZNwOg'><img alt="Join Slack Community" src="https://img.shields.io/badge/slack%20community-join-blue"/></a>
 
 </p>
 
-# Sleuth
+Buff is a simple bot that indexes support docs and answers questions in Discord.
 
-Sleuth is an open-core enterprise search tool that allows organizations to search text from various workspace apps such as Slack, Jira, Salesforce, and Confluence.
+[Recorded demo](https://www.youtube.com/shorts/JPKW9tX0K9Y)
 
 ## Features
-- Multi-source data ingestion, starting with Slack
-- Advanced search and query capabilities
-- Easy-to-use web interface
-- Real-time indexing (Coming Soon)
+- Index and search through a large number of documents with [Faiss](https://github.com/facebookresearch/faiss)
+- Monitors Discord channels for `!help` requests and responds to them, using [LangChain](https://github.com/hwchase17/langchain) to construct the prompt
+- Cites its sources, linking to the relevant source documents
 
-![Screenshot](https://github.com/getsleuth/Sleuth/blob/main/screenshot.png?raw=true)
+
+## Upcoming
+- Chunking sources to support larger documents
+- Integrations with Zendesk and other helpdesk software
+
+<img src="https://github.com/getsleuth/Sleuth/blob/main/screenshot.png?raw=true" width="500">
 
 ## Hosted version
-To get on the hosted version, contact us on [Slack](https://join.slack.com/t/sleuthworld/shared_invite/zt-1n3iw8via-9y1mP3tJ3~Zy6GT5sZNwOg) or sign up [here](https://www.getsleuth.xyz).
+To get on the hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getbuff.io/).
 
 ## Self-hosted
-To get started with Sleuth, you will need to have Pinecone and OpenAI API keys. These should be made available as runtime variables. You will also need to add a Slack bot to your workspace with channel read and channel history permissions. You can enter the Slack bot API token through the frontend in order to sync your Slack messages into Sleuth.
+To get started on the self-hosted version, [create a Discord bot](https://discordpy.readthedocs.io/en/stable/discord.html) and give it the necessary permissions to read message content and post messages. Swap out the placeholders in `server/discord/bot.py`  with your OpenAI API Key and your Discord Bot Token. Then just run `server/discord/bot.py`  from your server with `nohup` or `systemd` to keep the script running.
