@@ -3,7 +3,7 @@
 </h1>
 <p align="center">
  
-  <a href='https://join.slack.com/t/sleuthworld/shared_invite/zt-1n3iw8via-9y1mP3tJ3~Zy6GT5sZNwOg'><img alt="Join Slack Community" src="https://img.shields.io/badge/slack%20community-join-blue"/></a>
+  <a href='https://discord.gg/dYXkQrkDVt'><img src="https://img.shields.io/discord/603466164219281420.svg?logo=discord" alt="chat on Discord"></a>
 
 </p>
 
