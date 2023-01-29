@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <p align="center">The best way to build, deploy, and monitor LLM-based chatbots</p>
+  <p align="center">Build, deploy, and monitor LLM-based chatbots for customer support</p>
 </p>
 
 <h4 align="center">
