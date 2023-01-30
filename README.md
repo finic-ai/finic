@@ -23,7 +23,7 @@ Buff is backed by Y Combinator.
 Compared to traditional NLU-driven chatbots, Buff:
 - Can be set up in a few hours and performs well out of the box, since it does not need to be trained on prior examples of customer conversations
 - Does not require code migrations or change management, since it integrates with existing live chat software instead of replacing them
-- Can deflect a higher percentage of tickets, since it handles unexpected inputs without without having to define intents ahead of time
+- Can deflect a higher percentage of tickets, since it handles unexpected inputs without having to define intents ahead of time
 
 Since general-purpose LLMs tend to have high variability in outputs, Buff is better suited for use cases with a large number of low-stakes interactions such as ecommerce and troubleshooting.
 
