@@ -1,27 +1,38 @@
 <h1 align="center">
 🦾 Buff
 </h1>
+
 <p align="center">
+  <p align="center">Build, deploy, and monitor LLM-based chatbots for customer support</p>
+</p>
+
+<h4 align="center">
  
   <a href='https://discord.gg/dYXkQrkDVt'><img src="https://img.shields.io/discord/603466164219281420.svg?logo=discord" alt="chat on Discord"></a>
 
-</p>
+</h4>
 
-Buff is a simple bot that indexes support docs and answers questions in Discord.
+[Buff](https://www.getbuff.io/) is a conversation engine that indexes support articles with a vector database and answers customer questions with a LLM. Buff does not replace live chat software like Zendesk or Freshworks. Instead, it integrates with the chat interfaces companies already use and gives them language capabilities on par with ChatGPT. Buff excels at responding to customer inquiries about a product and can achieve high (60%+) deflection rates without compromising on CSAT.
 
-[Recorded demo](https://www.youtube.com/shorts/JPKW9tX0K9Y)
-
-## Features
-- Index and search through a large number of documents with [Faiss](https://github.com/facebookresearch/faiss)
-- Monitors Discord channels for `!help` requests and responds to them, using [LangChain](https://github.com/hwchase17/langchain) to construct the prompt
-- Cites its sources, linking to the relevant source documents
-
-
-## Upcoming
-- Chunking sources to support larger documents
-- Integrations with Zendesk and other helpdesk software
-
+Buff is backed by Y Combinator.
+<h4 align="center">
 <img src="https://github.com/getsleuth/Sleuth/blob/main/screenshot.png?raw=true" width="500">
+</h4>
+
+## 💎 Features
+Compared to traditional NLU-driven chatbots, Buff:
+- Can be set up in a few hours and performs well out of the box, since it does not need to be trained on prior examples of customer conversations
+- Does not require code migrations or change management, since it integrates with existing live chat software instead of replacing them
+- Can deflect a higher percentage of tickets, since it handles unexpected inputs without having to define intents ahead of time
+
+Since general-purpose LLMs tend to have high variability in outputs, Buff is better suited for use cases with a large number of low-stakes interactions such as ecommerce and troubleshooting.
+
+
+## 🔌 Integrations
+- Discord: 🦾 Done
+- Freshchat: 🚧 In Progress
+- Intercom: 🚧 Planned
+- Zendesk: 🚧 Planned
 
 ## Hosted version
 To get on the hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getbuff.io/).
