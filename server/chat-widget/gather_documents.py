@@ -3,18 +3,24 @@ from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Pinecone
+from langchain.text_splitter import CharacterTextSplitter
 import pinecone
 from bs4 import BeautifulSoup
 import requests
 import csv
 import sys
 import time
+import os
+import json
+from dotenv import load_dotenv
 
-openai = OpenAI(openai_api_key='<OPENAI_API_KEY>', temperature=0)
-openai_embeddings = OpenAIEmbeddings(openai_api_key='<OPENAI_API_KEY>')
 
-pinecone.init(api_key="<PINECONE_API_KEY>", environment="us-west1-gcp")
-index = pinecone.Index("freshworks-knowledgebase")
+load_dotenv()
+openai = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'), temperature=0)
+openai_embeddings = OpenAIEmbeddings(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+
+pinecone.init(api_key=os.environ.get('PINECONE_API_KEY'), environment="us-east1-gcp")
+index = pinecone.Index("knowledgebase")
 vectorstore = Pinecone(index, openai_embeddings.embed_query, "text")
 
 def gather_search_index_from_urls(urls):
@@ -55,7 +61,7 @@ def gather_search_index_from_csv(filename):
             ids.append(str(id))
             id += 1 
 
-            if len(documents) == 50:
+            if len(documents) == 20:
                 vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
                 documents = []
                 metadatas = []
@@ -65,5 +71,39 @@ def gather_search_index_from_csv(filename):
     
     vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
 
+def gather_search_index_from_json(filename):
+    documents = []
+    metadatas = []
+    ids = []
+    splitter = CharacterTextSplitter(separator=" ", chunk_size=1024, chunk_overlap=0)
+
+    with open(filename, newline='') as jsonfile:
+        jsonreader = json.load(jsonfile)
+
+        id = 0
+        for article in jsonreader:
+            print(id)
+            url = article['url']
+            title = article['title']
+            subtitle = article['subtitle']
+            body = article['body']
+            document = "{0} {1} {2}".format(title, subtitle, body)
+            for chunk in splitter.split_text(document):
+                documents.append(chunk)
+                metadatas.append({"source": url})
+                ids.append(str(id))
+                id += 1 
+
+                if len(documents) == 20:
+                    print(metadatas)
+                    vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
+                    documents = []
+                    metadatas = []
+                    ids = []
+
+            time.sleep(1)
+    
+    vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
+
 if __name__ == '__main__':
-    gather_search_index_from_csv(sys.argv[1])
+    gather_search_index_from_json(sys.argv[1])

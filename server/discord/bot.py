@@ -3,30 +3,20 @@ from langchain.llms import OpenAI
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores.faiss import FAISS
-from bs4 import BeautifulSoup
-import requests
+from langchain.vectorstores import Pinecone
+import os
+from dotenv import load_dotenv
+import pinecone
 
+load_dotenv()
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
-openai = OpenAI(openai_api_key='<OPENAI_API_KEY>', temperature=0)
-openai_embeddings = OpenAIEmbeddings(openai_api_key='<OPENAI_API_KEY>')
+openai = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'), temperature=0)
+openai_embeddings = OpenAIEmbeddings(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+pinecone.init(api_key=os.environ.get('PINECONE_API_KEY'), environment="us-east1-gcp")
+index = pinecone.Index("knowledgebase")
+vectorstore = Pinecone(index, openai_embeddings.embed_query, "text")
 
-def gather_search_index(urls):
-    documents = []
-
-    for url in urls:
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        text = soup.get_text()
-        documents.append(Document(
-            page_content=text,
-            metadata={"source": url},
-        ))
-    index = FAISS.from_documents(documents, openai_embeddings)
-    return index
-
-search_index = gather_search_index(["https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/core/logging"])
 chain = load_qa_with_sources_chain(openai)
 
 @client.event
@@ -43,7 +33,7 @@ async def on_message(message):
         question = message.content[5:]
         response = chain(
             {
-                "input_documents": search_index.similarity_search(question, k=4),
+                "input_documents": vectorstore.similarity_search(question, k=4),
                 "question": question,
             },
             return_only_outputs=True,
@@ -51,4 +41,4 @@ async def on_message(message):
         
         await message.channel.send(response)
 
-client.run('<DISCORD_BOT_TOKEN>')
+client.run(os.environ.get('DISCORD_BOT_TOKEN'))
