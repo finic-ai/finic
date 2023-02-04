@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <p align="center">Build, deploy, and monitor LLM-based chatbots for customer support</p>
+  <p align="center">Open source LLM-based chatbots for customer support</p>
 </p>
 
 <h4 align="center">
@@ -16,7 +16,7 @@
 
 Buff is backed by Y Combinator.
 <h4 align="center">
-<img src="https://github.com/getsleuth/Sleuth/blob/main/screenshot.png?raw=true" width="500">
+<img src="https://imgur.com/GqoeE2B.png">
 </h4>
 
 ## 💎 Features
@@ -30,7 +30,7 @@ Since general-purpose LLMs tend to have high variability in outputs, Buff is bet
 
 ## 🔌 Integrations
 - Discord: 🦾 Done
-- Freshchat: 🚧 In Progress
+- Freshchat: 🦾 Done
 - Intercom: 🚧 Planned
 - Zendesk: 🚧 Planned
 
