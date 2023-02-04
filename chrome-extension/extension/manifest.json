@@ -1,10 +1,10 @@
 {
-    "name": "React Chrome Extension",
+    "name": "Buff Support Chrome Extension",
     "version": "1.0.0",
     "manifest_version": 3,
     "content_scripts": [
       {
-        "matches": ["https://*.freshdesk.com/*", "https://www.google.com/"],
+        "matches": ["https://*.freshdesk.com/*", "https://*.super.com/*"],
         "js": ["content.js"]
       }
     ]
