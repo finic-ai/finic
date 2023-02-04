@@ -13,7 +13,7 @@ import time
 import os
 import json
 from dotenv import load_dotenv
-
+import webvtt
 
 load_dotenv()
 openai = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'), temperature=0)
@@ -66,8 +66,7 @@ def gather_search_index_from_csv(filename):
                 documents = []
                 metadatas = []
                 ids = []
-
-            time.sleep(1)
+                time.sleep(1)
     
     vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
 
@@ -100,10 +99,48 @@ def gather_search_index_from_json(filename):
                     documents = []
                     metadatas = []
                     ids = []
-
-            time.sleep(1)
+                    time.sleep(1)
     
     vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
 
+def gather_search_index_from_video_transcripts(folder_path):
+    documents = []
+    metadatas = []
+    ids = []
+
+    id = 0
+    for filename in os.listdir(folder_path):
+        if not filename.endswith('.vtt'):
+            continue
+        transcript = ""
+        for caption in webvtt.read(os.path.join(folder_path, filename)):
+            transcript += caption.text + " "
+
+            if len(transcript) >= 1024:
+                documents.append(transcript)
+                metadatas.append({"source": filename[:-4]})
+                ids.append(str(id))
+                transcript = ""
+                id += 1
+                if len(documents) == 20:
+                    print(metadatas)
+                    vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
+                    documents = []
+                    metadatas = []
+                    ids = []
+                    time.sleep(1)
+        if len(transcript) > 0:
+            documents.append(transcript)
+            metadatas.append({"source": filename[:-4]})
+            ids.append(str(id))
+            id += 1
+            if len(documents) == 20:
+                print(metadatas)
+                vectorstore.add_texts(texts=documents, metadatas=metadatas, ids=ids)
+                documents = []
+                metadatas = []
+                ids = []
+                time.sleep(1)
+    
 if __name__ == '__main__':
-    gather_search_index_from_json(sys.argv[1])
+    gather_search_index_from_video_transcripts(sys.argv[1])
