@@ -5,6 +5,7 @@ from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Pinecone
 import pinecone
+import os
 
 
 @functions_framework.http
@@ -24,11 +25,11 @@ def chatbot(request):
         'Access-Control-Allow-Origin': '*'
     }
 
-    openai = OpenAI(openai_api_key='<OPENAI_API_KEY>', temperature=0)
-    openai_embeddings = OpenAIEmbeddings(openai_api_key='<OPENAI_API_KEY>')
+    openai = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'), temperature=0)
+    openai_embeddings = OpenAIEmbeddings(openai_api_key=os.environ.get('OPENAI_API_KEY'))
 
-    pinecone.init(api_key="<PINECONE_API_KEY>", environment="us-west1-gcp")
-    index = pinecone.Index("freshworks-knowledgebase")
+    pinecone.init(api_key=os.environ.get('PINECONE_API_KEY'), environment=os.environ.get('PINECONE_ENVIRONMENT'))
+    index = pinecone.Index("knowledgebase")
     vectorstore = Pinecone(index, openai_embeddings.embed_query, "text")
 
     request_json = request.get_json(silent=True)
