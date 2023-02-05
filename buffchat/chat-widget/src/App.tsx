@@ -57,6 +57,8 @@ class ActionProvider {
  async reply(userMessage: string) {
   const url = process.env.REACT_APP_API_URL
 
+  console.log(url)
+
   const aiMessage = await fetch(url!, {
     method: 'POST',
     headers: {
@@ -70,6 +72,8 @@ class ActionProvider {
   })
   const aiJson = await aiMessage.json()
   var response = aiJson.response ?? "Sorry, I'm unable to answer questions right now. Please try again later."
+
+  console.log(response)
 
   const botMessage = this.createChatBotMessage(response)
   this.addMessageToState(botMessage)
