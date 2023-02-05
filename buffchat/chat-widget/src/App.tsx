@@ -55,13 +55,18 @@ class ActionProvider {
  }
 
  async reply(userMessage: string) {
-  const aiMessage = await fetch('https://freshbot-ezml2kwdva-uc.a.run.app', {
+  const url = process.env.REACT_APP_API_URL
+
+  const aiMessage = await fetch(url!, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ "last_message": userMessage, "conversation_transcript": "" })
+    body: JSON.stringify({
+      "last_message": userMessage,
+      "conversation_transcript": "" 
+    })
   })
   const aiJson = await aiMessage.json()
   var response = aiJson.response ?? "Sorry, I'm unable to answer questions right now. Please try again later."
@@ -76,7 +81,7 @@ class ActionProvider {
 
 }
 
-const config = {
+const chatbotConfig = {
   initialMessages: [createChatBotMessage(`Hello, how can I help you today?`, {})],
   botName: 'Buffbot'
 }
@@ -99,7 +104,7 @@ function App() {
           <DrawerContent>
             <DrawerBody padding={0}>
               <Chatbot 
-                config={config}
+                config={chatbotConfig}
                 messageParser={MessageParser}
                 actionProvider={ActionProvider}
               />
