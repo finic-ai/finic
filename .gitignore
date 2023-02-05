@@ -1,2 +1,4 @@
 .DS_Store
 **/.env
+prompts.py
+buffgpt_main.py
