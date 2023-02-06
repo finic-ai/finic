@@ -32,11 +32,9 @@ function App() {
 
   const saveMessages = (messages: any) => {
     setDialogue(messages)
-    console.log(messages)
   };
 
   function closeDrawer () {
-    console.log(dialogue)
     setChatOpen(false)
   }
 
