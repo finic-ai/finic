@@ -15,11 +15,14 @@ import {
 import { createChatBotMessage } from "react-chatbot-kit";
 import 'react-chatbot-kit/build/main.css';
 import { Chatbot, useChatbot} from "react-chatbot-kit";
+import { v4 as uuidv4 } from 'uuid';
+import { useLocalStorage } from './useLocalStorage';
 import "./styles.css";
 
 function App() {
   const [chatOpen, setChatOpen] = useState(false)
   const [dialogue, setDialogue] = useState(new Array<string>)
+  const [conversationId, setConversationId] = useLocalStorage('conversationId', uuidv4())
 
   const btnRef = React.useRef(null)
   const chatbotConfig = {
@@ -66,7 +69,9 @@ function App() {
         },
         body: JSON.stringify({
           "last_message": userMessage,
-          "conversation_transcript": dialogue
+          "conversation_transcript": dialogue,
+          "conversation_id": conversationId,
+          "site_id": process.env.REACT_APP_SITE_ID
         })
       })
       const aiJson = await aiMessage.json()
