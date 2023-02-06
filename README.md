@@ -1,5 +1,5 @@
 <h1 align="center">
-🦾 Buff
+🦾 <a href='https://www.getbuff.io/'>Buff</a>
 </h1>
 
 <p align="center">
@@ -12,7 +12,7 @@
 
 </h4>
 
-[Buff](https://www.getbuff.io/) is a conversation engine that indexes support articles with a vector database and answers customer questions with a LLM. Buff does not replace live chat software like Zendesk or Freshworks. Instead, it integrates with the chat interfaces companies already use and gives them language capabilities on par with ChatGPT. Buff excels at responding to customer inquiries about a product and can achieve high (60%+) deflection rates without compromising on CSAT.
+Buff is a conversation engine that indexes support articles with a vector database and answers customer questions with a LLM. Buff does not replace live chat software like Zendesk or Freshworks. Instead, it integrates with the chat interfaces companies already use and gives them language capabilities on par with ChatGPT. Buff excels at responding to customer inquiries about a product and can achieve high (60%+) deflection rates without compromising on CSAT.
 
 Buff is backed by Y Combinator.
 <h4 align="center">
