@@ -14,90 +14,89 @@ import {
 } from '@chakra-ui/react';
 import { createChatBotMessage } from "react-chatbot-kit";
 import 'react-chatbot-kit/build/main.css';
-import Chatbot from "react-chatbot-kit";
+import { Chatbot, useChatbot} from "react-chatbot-kit";
 import "./styles.css";
-
-class MessageParser {
-  actionProvider: any
-  state: any
-
-  constructor(actionProvider: any, state: any) {
-    this.actionProvider = actionProvider;
-    this.state = state;
-  }
-
-  parse(message: string) {
-    console.log(message)
-    this.actionProvider.reply(message)
-  }
-}
-
-class ActionProvider {
-  createChatBotMessage: any
-  setState: any
-  createClientMessage: any
-  stateRef: any
-  createCustomMessage: any
-
-  constructor(
-   createChatBotMessage: any,
-   setStateFunc: any,
-   createClientMessage: any,
-   stateRef: any,
-   createCustomMessage: any,
-   ...rest: any
- ) {
-   this.createChatBotMessage = createChatBotMessage;
-   this.setState = setStateFunc;
-   this.createClientMessage = createClientMessage;
-   this.stateRef = stateRef;
-   this.createCustomMessage = createCustomMessage;
- }
-
- async reply(userMessage: string) {
-  const url = process.env.REACT_APP_API_URL
-
-  console.log(url)
-
-  const aiMessage = await fetch(url!, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      "last_message": userMessage,
-      "conversation_transcript": "" 
-    })
-  })
-  const aiJson = await aiMessage.json()
-  var response = aiJson.response ?? "Sorry, I'm unable to answer questions right now. Please try again later."
-
-  console.log(response)
-
-  const botMessage = this.createChatBotMessage(response)
-  this.addMessageToState(botMessage)
- }
-
- addMessageToState(message: string) {
-  this.setState((prevState: any) => ({...prevState, messages: [...prevState.messages, message]}))
- }
-
-}
-
-const chatbotConfig = {
-  initialMessages: [createChatBotMessage(`Hello, how can I help you today?`, {})],
-  botName: 'Buffbot'
-}
 
 function App() {
   const [chatOpen, setChatOpen] = useState(false)
+  const [dialogue, setDialogue] = useState(new Array<string>)
 
   const btnRef = React.useRef(null)
+  const chatbotConfig = {
+    initialMessages: [createChatBotMessage(`Hello, how can I help you today?`, {})],
+    botName: 'Buffbot'
+  }
+
+  const saveMessages = (messages: any) => {
+    setDialogue(messages)
+    console.log(messages)
+  };
 
   function closeDrawer () {
-    console.log('blur')
+    console.log(dialogue)
     setChatOpen(false)
+  }
+
+  const MessageParser = ({children, actions}: {children: any, actions: any}) => {
+    const parse = (message: string) => {
+      actions.reply(message)
+    }
+
+    return (
+      <div>
+        {React.Children.map(children, (child) => {
+          return React.cloneElement(child, {
+            parse: parse,
+            actions: {},
+          });
+        })}
+      </div>
+    )
+  }
+
+  const ActionProvider = ({createChatBotMessage, setState, children}: {createChatBotMessage: any, setState: any, children: any}) => {
+    const reply = async (userMessage: string) => {
+      const url = process.env.REACT_APP_API_URL
+    
+      const aiMessage = await fetch(url!, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "last_message": userMessage,
+          "conversation_transcript": dialogue
+        })
+      })
+      const aiJson = await aiMessage.json()
+      var response = aiJson.response ?? "\nSorry, I'm unable to answer questions right now. Please try again later."
+
+      let newDialogue = []
+      newDialogue.push(`<|im_start|>user\n${userMessage}<|im_end|>`)
+      newDialogue.push(`<|im_start|>assistant${response}<|im_end|>`)
+
+      setDialogue([...dialogue, ...newDialogue])
+    
+      const botMessage = createChatBotMessage(response)
+      addMessageToState(botMessage)
+     }
+    
+     const addMessageToState = async (message: string) => {
+      setState((prevState: any) => ({...prevState, messages: [...prevState.messages, message]}))
+     }
+
+     return (
+      <div>
+        {React.Children.map(children, (child) => {
+          return React.cloneElement(child, {
+            actions: {
+              reply,
+            },
+          })
+        })}
+      </div>
+    )
   }
 
   return (
@@ -111,6 +110,7 @@ function App() {
                 config={chatbotConfig}
                 messageParser={MessageParser}
                 actionProvider={ActionProvider}
+                saveMessages={saveMessages}
               />
             </DrawerBody>
           </DrawerContent>

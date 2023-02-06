@@ -24,7 +24,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack",
+    "build": "react-scripts build",
+    "build extension": "webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
