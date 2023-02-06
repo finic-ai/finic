@@ -25,7 +25,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build extension": "webpack",
+    "build-extension": "webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
