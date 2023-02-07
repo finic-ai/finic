@@ -3,39 +3,35 @@
 </h1>
 
 <p align="center">
-  <p align="center">Open source LLM-based chatbots for customer support</p>
+  <p align="center">Turn any website into a knowledge base for LLMs</p>
 </p>
 
+Buff is a library that crawls and scrapes web content, transforms the content into a LLM readable format, and indexes the content in Pinecone, a vector database. This makes it possible to add a chat interface to any website in less than an hour.
+
 <h4 align="center">
- 
-  <a href='https://discord.gg/dYXkQrkDVt'><img src="https://img.shields.io/discord/603466164219281420.svg?logo=discord" alt="chat on Discord"></a>
+
+
 
 </h4>
 
-Buff is a conversation engine that indexes support articles with a vector database and answers customer questions with a LLM. Buff does not replace live chat software like Zendesk or Freshworks. Instead, it integrates with the chat interfaces companies already use and gives them language capabilities on par with ChatGPT. Buff excels at responding to customer inquiries about a product and can achieve high (60%+) deflection rates without compromising on CSAT.
-
-Buff is backed by Y Combinator.
 <h4 align="center">
-<img src="https://imgur.com/GqoeE2B.png">
+
+https://user-images.githubusercontent.com/14931371/217371952-f9e0a319-f97c-463d-a8c7-da12fc8b9bda.mp4
+
 </h4>
+
 
 ## 💎 Features
-Compared to traditional NLU-driven chatbots, Buff:
-- Can be set up in a few hours and performs well out of the box, since it does not need to be trained on prior examples of customer conversations
-- Does not require code migrations or change management, since it integrates with existing live chat software instead of replacing them
-- Can deflect a higher percentage of tickets, since it handles unexpected inputs without having to define intents ahead of time
-
-Since general-purpose LLMs tend to have high variability in outputs, Buff is better suited for use cases with a large number of low-stakes interactions such as ecommerce and troubleshooting.
+- Crawl and scrape most websites
 
 
-## 🔌 Integrations
-- Discord: 🦾 Done
-- Freshchat: 🦾 Done
-- Intercom: 🚧 Planned
-- Zendesk: 🚧 Planned
+## 🔌 Use Cases
+- *For ecommerce companies:* Index product descriptions and give customers instant answers to their questions without leaving the buy page
+- *For CX/CS teams:* Index help center articles to make it easy for customers and support agents to find information
+- *For sales teams:* Index websites and ask questions to qualify leads without a lengthy prospecting and outreach process
 
 ## Hosted version
-To get on the hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getbuff.io/).
+Coming soon
 
 ## Self-hosted
-To get started on the self-hosted version, [create a Discord bot](https://discordpy.readthedocs.io/en/stable/discord.html) and give it the necessary permissions to read message content and post messages. Swap out the placeholders in `server/discord/bot.py`  with your OpenAI API Key and your Discord Bot Token. Then just run `server/discord/bot.py`  from your server with `nohup` or `systemd` to keep the script running.
+To get started on the self-hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getbuff.io/).
