@@ -1,12 +1,6 @@
 import discord
-from langchain.llms import OpenAI
-from langchain.chains.qa_with_sources import load_qa_with_sources_chain
-from langchain.docstore.document import Document
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Pinecone
 import os
 from dotenv import load_dotenv
-import pinecone
 import requests
 
 load_dotenv()
@@ -31,12 +25,13 @@ async def on_message(message):
                 'conversation_transcript': '', 
                 'last_message': question,
                 'conversation_id': 'conversation_id',
-                'site_id': message.guild.id
+                'site_id': str(message.guild.id)
             }).json()['response']
 
             await message.channel.send(response)
 
-        except Exception as e:    
+        except Exception as e:
+            print(e)
             return
         
         
