@@ -7,17 +7,12 @@ from langchain.vectorstores import Pinecone
 import os
 from dotenv import load_dotenv
 import pinecone
+import requests
 
 load_dotenv()
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
-openai = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'), temperature=0)
-openai_embeddings = OpenAIEmbeddings(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-pinecone.init(api_key=os.environ.get('PINECONE_API_KEY'), environment="us-east1-gcp")
-index = pinecone.Index("knowledgebase")
-vectorstore = Pinecone(index, openai_embeddings.embed_query, "text")
-
-chain = load_qa_with_sources_chain(openai)
+API_URL=os.environ.get('API_URL')
 
 @client.event
 async def on_ready():
@@ -25,20 +20,25 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print(message.content)
     if message.author == client.user:
         return
 
     if message.content.startswith('!help'):
         question = message.content[5:]
-        response = chain(
-            {
-                "input_documents": vectorstore.similarity_search(question, k=4),
-                "question": question,
-            },
-            return_only_outputs=True,
-        )["output_text"]
+
+        try:
+            response = requests.post(API_URL, json={
+                'conversation_transcript': '', 
+                'last_message': question,
+                'conversation_id': 'conversation_id',
+                'site_id': message.guild.id
+            }).json()['response']
+
+            await message.channel.send(response)
+
+        except Exception as e:    
+            return
         
-        await message.channel.send(response)
+        
 
 client.run(os.environ.get('DISCORD_BOT_TOKEN'))
