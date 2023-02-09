@@ -2,3 +2,4 @@
 *.env
 buffgpt_main.py
 prompts.py
+**/config.json
