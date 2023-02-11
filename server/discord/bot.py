@@ -1,18 +1,13 @@
 import discord
-from langchain.llms import OpenAI
-from langchain.chains.qa_with_sources import load_qa_with_sources_chain
-from langchain.docstore.document import Document
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Pinecone
 import os
-from dotenv import load_dotenv
-import pinecone
 import requests
+import json
 
-load_dotenv()
+config_file = open("config.json", "r")
+config_data = json.loads(config_file.read())
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
-API_URL=os.environ.get('API_URL')
+API_URL=config_data['API_URL']
 
 @client.event
 async def on_ready():
@@ -23,22 +18,35 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('!help'):
-        question = message.content[5:]
+    if message.content.startswith('<@1065104657149603981>') or message.content.startswith('!help'):
+        question = ''
+        if message.content.startswith('<@1065104657149603981>'):
+            question = message.content[22:]
+        elif message.content.startswith('!help'):
+            question = message.content[5:]
+
+        site_id = str(message.guild.id)
+        site_config = config_data[site_id]
+
+        channel_id = str(message.channel.id)
+
+        if site_config['designated_channel'] is not None and site_config['designated_channel'] != channel_id:
+            return
 
         try:
             response = requests.post(API_URL, json={
                 'conversation_transcript': '', 
                 'last_message': question,
                 'conversation_id': 'conversation_id',
-                'site_id': message.guild.id
+                'site_id': str(site_id)
             }).json()['response']
 
-            await message.channel.send(response)
+            await message.reply(response)
 
-        except Exception as e:    
+        except Exception as e:
+            print(e)
             return
         
         
 
-client.run(os.environ.get('DISCORD_BOT_TOKEN'))
+client.run(config_data['DISCORD_BOT_TOKEN'])

@@ -10,13 +10,15 @@ Buff is a library that crawls and scrapes web content, transforms the content in
 
 <h4 align="center">
 
-
+https://user-images.githubusercontent.com/14931371/217652891-db535c73-8e67-4218-b7b4-6652d975633b.mov
 
 </h4>
 
 <h4 align="center">
 
-https://user-images.githubusercontent.com/14931371/217371952-f9e0a319-f97c-463d-a8c7-da12fc8b9bda.mp4
+
+
+
 
 </h4>
 
@@ -26,9 +28,10 @@ https://user-images.githubusercontent.com/14931371/217371952-f9e0a319-f97c-463d-
 
 
 ## 🔌 Use Cases
-- *For ecommerce companies:* Index product descriptions and give customers instant answers to their questions without leaving the buy page
-- *For CX/CS teams:* Index help center articles to make it easy for customers and support agents to find information
-- *For sales teams:* Index websites and ask questions to qualify leads without a lengthy prospecting and outreach process
+- **For ecommerce companies:** Index product descriptions and give customers instant answers to their questions without leaving the buy page
+- **For CX/CS teams:** Index help center articles to make it easy for customers and support agents to find information
+- **For sales teams:** Index websites and ask questions to qualify leads without a lengthy prospecting and outreach process
+- **For online courses:** Index course content and make it easy for students to find answers
 
 ## Hosted version
 Coming soon
