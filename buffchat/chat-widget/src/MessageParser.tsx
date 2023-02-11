@@ -8,6 +8,10 @@ class MessageParser {
   }
 
   parse(message: string) {
+    // Do nothing if user message is empty
+    if (message.length < 1) {
+      return
+    }
     this.actionProvider.reply(message, this.state.dialogue, this.state.conversationId, this.state.setDialogue)
   }
 }

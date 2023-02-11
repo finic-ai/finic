@@ -27,7 +27,6 @@ class ActionProvider {
         "metadata_filter": this.stateRef.topic
       })
     }
-    console.log(payload)
     const aiMessage = await fetch(url!, payload)
     
     const aiJson = await aiMessage.json()
