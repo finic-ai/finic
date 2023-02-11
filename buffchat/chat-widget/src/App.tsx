@@ -19,87 +19,36 @@ import { v4 as uuidv4 } from 'uuid';
 import { useLocalStorage } from './useLocalStorage';
 import "./styles.css";
 
+import TopicSelection from './TopicSelection';
+import ActionProvider from './ActionProvider';
+import MessageParser from './MessageParser';
+
 function App() {
   const [chatOpen, setChatOpen] = useState(false)
   const [dialogue, setDialogue] = useState(new Array<string>)
   const [conversationId, setConversationId] = useLocalStorage('conversationId', uuidv4())
+  const [chatTopic, setChatTopic] = useState('')
 
   const btnRef = React.useRef(null)
-  const chatbotConfig = {
-    initialMessages: [createChatBotMessage(`Hello, how can I help you today?`, {})],
-    botName: 'Buffbot'
-  }
-
-  const saveMessages = (messages: any) => {
-    setDialogue(messages)
-  };
+  const topics = process.env.REACT_APP_TOPICS?.split(',') ?? null
+  const initialMessage = topics ? 'Hi, what would you like to talk about?' : 'Hi, how can I help you today?'
 
   function closeDrawer () {
     setChatOpen(false)
   }
 
-  const MessageParser = ({children, actions}: {children: any, actions: any}) => {
-    const parse = (message: string) => {
-      actions.reply(message)
-    }
-
-    return (
-      <div>
-        {React.Children.map(children, (child) => {
-          return React.cloneElement(child, {
-            parse: parse,
-            actions: {},
-          });
-        })}
-      </div>
-    )
-  }
-
-  const ActionProvider = ({createChatBotMessage, setState, children}: {createChatBotMessage: any, setState: any, children: any}) => {
-    const reply = async (userMessage: string) => {
-      const url = process.env.REACT_APP_API_URL
-    
-      const aiMessage = await fetch(url!, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "last_message": userMessage,
-          "conversation_transcript": dialogue,
-          "conversation_id": conversationId,
-          "site_id": process.env.REACT_APP_SITE_ID
-        })
-      })
-      const aiJson = await aiMessage.json()
-      var response = aiJson.response ?? "\nSorry, I'm unable to answer questions right now. Please try again later."
-
-      let newDialogue = []
-      newDialogue.push(`<|im_start|>user\n${userMessage}<|im_end|>`)
-      newDialogue.push(`<|im_start|>assistant${response}<|im_end|>`)
-
-      setDialogue([...dialogue, ...newDialogue])
-    
-      const botMessage = createChatBotMessage(response)
-      addMessageToState(botMessage)
-     }
-    
-     const addMessageToState = async (message: string) => {
-      setState((prevState: any) => ({...prevState, messages: [...prevState.messages, message]}))
-     }
-
-     return (
-      <div>
-        {React.Children.map(children, (child) => {
-          return React.cloneElement(child, {
-            actions: {
-              reply,
-            },
-          })
-        })}
-      </div>
-    )
+  const chatbotConfig = {
+    initialMessages: [createChatBotMessage(initialMessage, {widget: 'TopicSelection'})],
+    botName: 'Buffbot',
+    state: {topic: chatTopic, dialogue: dialogue, conversationId: conversationId},
+    widgets: [
+      {
+        widgetName: 'TopicSelection',
+        widgetFunc: (props: any) => <TopicSelection {...props} />,
+        props: {topics},
+        mapStateToProps: ['topic'],
+      },
+    ]
   }
 
   return (
@@ -113,7 +62,6 @@ function App() {
                 config={chatbotConfig}
                 messageParser={MessageParser}
                 actionProvider={ActionProvider}
-                saveMessages={saveMessages}
               />
             </DrawerBody>
           </DrawerContent>
