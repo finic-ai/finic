@@ -4,7 +4,7 @@
     "manifest_version": 3,
     "content_scripts": [
       {
-        "matches": ["https://*.freshdesk.com/*", "https://*.super.com/*"],
+        "matches": ["https://*.brex.com/*"],
         "js": ["content.js"]
       }
     ]
