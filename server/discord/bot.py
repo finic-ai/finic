@@ -8,6 +8,15 @@ config_data = json.loads(config_file.read())
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 API_URL=config_data['API_URL']
+ERROR_MESSAGE="Sorry, I'm not available at the moment. Please try again later."
+
+async def reply_in_thread(thread, thread_is_preexisting, message, response):
+    if thread_is_preexisting:
+        await message.reply(response)
+    else:
+        formatted_response = "<@{0}> {1}".format(message.author.id, response)
+        await thread.send(formatted_response)
+    
 
 @client.event
 async def on_ready():
@@ -18,34 +27,43 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('<@1065104657149603981>') or message.content.startswith('!help'):
-        question = ''
-        if message.content.startswith('<@1065104657149603981>'):
-            question = message.content[22:]
-        elif message.content.startswith('!help'):
-            question = message.content[5:]
+    site_id = str(message.guild.id)
+    site_config = config_data[site_id]
+    command_string = site_config["command_string"]
 
-        site_id = str(message.guild.id)
-        site_config = config_data[site_id]
+    if command_string in message.content:
+        question = message.content.replace(command_string, "")
 
         channel_id = str(message.channel.id)
+        designated_channels = site_config['designated_channels']
 
-        if site_config['designated_channel'] is not None and site_config['designated_channel'] != channel_id:
+        is_thread = isinstance(message.channel, discord.Thread)
+
+        is_not_designated_channel = designated_channels is not None and channel_id not in designated_channels
+
+        if not is_thread and is_not_designated_channel:
             return
 
-        try:
-            response = requests.post(API_URL, json={
-                'conversation_transcript': '', 
-                'last_message': question,
-                'conversation_id': 'conversation_id',
-                'site_id': str(site_id)
-            }).json()['response']
+        if is_thread:
+            thread = message.channel
+        else:
+            thread = await message.create_thread(name=question)
 
-            await message.reply(response)
+        async with thread.typing():
+            try:
+                response = requests.post(API_URL, json={
+                    'conversation_transcript': '', 
+                    'last_message': question,
+                    'conversation_id': 'conversation_id',
+                    'site_id': str(site_id)
+                }).json()['response']
+                
+                await reply_in_thread(thread, is_thread, message, response)
+                
 
-        except Exception as e:
-            print(e)
-            return
+            except Exception as e:
+                print(e)
+                await reply_in_thread(thread, is_thread, message, ERROR_MESSAGE)
         
         
 
