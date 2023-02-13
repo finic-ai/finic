@@ -11,10 +11,11 @@ API_URL=config_data['API_URL']
 ERROR_MESSAGE="Sorry, I'm not available at the moment. Please try again later."
 
 async def reply_in_thread(thread, thread_is_preexisting, message, response):
+    filtered_response = response.replace("Learn more: N/A", "")
     if thread_is_preexisting:
-        await message.reply(response)
+        await message.reply(filtered_response)
     else:
-        formatted_response = "<@{0}> {1}".format(message.author.id, response)
+        formatted_response = "<@{0}> {1}".format(message.author.id, filtered_response)
         await thread.send(formatted_response)
     
 
@@ -28,8 +29,11 @@ async def on_message(message):
         return
 
     site_id = str(message.guild.id)
-    site_config = config_data[site_id]
-    command_string = site_config["command_string"]
+    site_config = config_data.get(site_id, {})
+    command_string = site_config.get("command_string")
+
+    if not command_string:
+        return
 
     if command_string in message.content:
         question = message.content.replace(command_string, "")
@@ -47,7 +51,7 @@ async def on_message(message):
         if is_thread:
             thread = message.channel
         else:
-            thread = await message.create_thread(name=question)
+            thread = await message.create_thread(name=question[:100])
 
         async with thread.typing():
             try:
