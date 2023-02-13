@@ -28,18 +28,40 @@ class ActionProvider {
       })
     }
     const aiMessage = await fetch(url!, payload)
+
+    console.log(
+      {
+        "last_message": userMessage,
+        "conversation_transcript": this.stateRef.dialogue,
+        "conversation_id": this.stateRef.conversationId,
+        "site_id": process.env.REACT_APP_SITE_ID,
+        "metadata_filter": this.stateRef.topic
+      }
+    )
     
     const aiJson = await aiMessage.json()
-    var response = aiJson.response ?? "\nSorry, I'm unable to answer questions right now. Please try again later."
+    let response = aiJson.response ?? "\nSorry, I'm unable to answer questions right now. Please try again later."
 
+    // Update state
     let newDialogue = new Array<String>()
     newDialogue.push(`<|im_start|>user\n${userMessage}<|im_end|>`)
     newDialogue.push(`<|im_start|>assistant${response}<|im_end|>`)
 
     this.setState((prevState: any) => ({...prevState, dialogue: [...prevState.dialogue, ...newDialogue]}))
 
-    const botMessage = this.createChatBotMessage(response)
-    this.addMessageToState(botMessage)
+    // Split the response into multiple messages if it's too long
+    let splitResponse = response.split('\n\n')
+
+    for (let chunk of splitResponse) {
+      if (chunk.length > 0) {
+        if (chunk.startsWith('Learn more') && chunk.includes('N/A')) {
+          continue
+        }
+        const botMessage = this.createChatBotMessage(chunk, {withAvatar: true})
+        this.addMessageToState(botMessage)
+        await new Promise(resolve => setTimeout(resolve, 1200))
+      }
+    }
   }
 
   async acknowledgeTopic(topic: string) {
