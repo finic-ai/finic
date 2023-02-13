@@ -10,8 +10,13 @@
 
 .react-chatbot-kit-chat-message-container {
     height: auto;
+    max-height: 90%;
 }
 
 .btn--tag, html {
     font-size: initial;
+}
+
+.react-chatbot-kit-chat-bot-message {
+    width: 233px;
 }
