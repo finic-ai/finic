@@ -33,8 +33,6 @@ https://user-images.githubusercontent.com/14931371/217652891-db535c73-8e67-4218-
 - **For sales teams:** Index websites and ask questions to qualify leads without a lengthy prospecting and outreach process
 - **For online courses:** Index course content and make it easy for students to find answers
 
-## Hosted version
-Coming soon
 
-## Self-hosted
-To get started on the self-hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getbuff.io/).
+## Get started
+To get started on the hosted or self-hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getbuff.io/).
