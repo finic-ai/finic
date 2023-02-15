@@ -4,17 +4,26 @@ import requests
 import json
 import asyncio 
 import aiohttp
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 config_file = open("config.json", "r")
 config_data = json.loads(config_file.read())
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
-API_URL=config_data['API_URL']
+API_URL=config_data.get('API_URL')
+SCHEDULED_MESSAGES_API_URL = config_data.get('SCHEDULED_MESSAGES_API_URL')
 ERROR_MESSAGE="Sorry, I'm not available at the moment. Please try again later."
+
 
 async def async_post_request(url, payload):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=payload) as resp:
+            return await resp.json()
+
+async def async_get_request(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
             return await resp.json()
 
 async def reply_in_thread(thread, thread_is_preexisting, message, response):
@@ -73,11 +82,23 @@ def should_reply(message, client, is_thread, command_string, designated_channels
     else:
         return False
     
-    
+async def send_scheduled_messages():
+    try:
+        response_json = await async_get_request(SCHEDULED_MESSAGES_API_URL)
+        for channel_id, message in response_json.items():
+            await client.get_channel(int(channel_id)).send(message)
+    except Exception as e:
+        print(e)
 
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
+
+    # scheduled messages
+    if SCHEDULED_MESSAGES_API_URL:
+        scheduler = AsyncIOScheduler()
+        scheduler.add_job(send_scheduled_messages, CronTrigger(hour="*")) 
+        scheduler.start()
 
 @client.event
 async def on_message(message):
