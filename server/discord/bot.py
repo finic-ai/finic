@@ -6,11 +6,14 @@ import asyncio
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from discord import app_commands
 
 config_file = open("config.json", "r")
 config_data = json.loads(config_file.read())
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
+# bot = commands.Bot(intents=intents, command_prefix='/', help_command=None)
+tree = app_commands.CommandTree(client)
 API_URL=config_data.get('API_URL')
 SCHEDULED_MESSAGES_API_URL = config_data.get('SCHEDULED_MESSAGES_API_URL')
 ERROR_MESSAGE="Sorry, I'm not available at the moment. Please try again later."
@@ -25,6 +28,11 @@ async def async_get_request(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             return await resp.json()
+
+async def async_get_file_request(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            return await resp.read()
 
 async def reply_in_thread(thread, thread_is_preexisting, message, response):
     filtered_response = response.replace("Learn more: N/A", "")
@@ -90,9 +98,36 @@ async def send_scheduled_messages():
     except Exception as e:
         print(e)
 
+async def register_custom_bot_commands():
+    for guild_id, guild_config in config_data["guilds"].items():
+        if "custom_command" in guild_config:
+            command_config = guild_config["custom_command"]
+            name = command_config["name"]
+            description = command_config["description"]
+            message = command_config["message"]
+            guild = discord.Object(id=int(guild_id))
+            gif_url = command_config["gif_url"]
+
+            @app_commands.command(name=name, description=description)
+            async def func(interaction: discord.Interaction):
+                await interaction.response.send_message(
+                    "{} {}".format(message, gif_url)
+                )
+
+            tree.add_command(
+                func, guild=guild, override=True
+            )
+
+            await tree.sync(guild=guild)
+
+
+
+
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
+
+    await register_custom_bot_commands()
 
     # scheduled messages
     if SCHEDULED_MESSAGES_API_URL:
@@ -100,11 +135,13 @@ async def on_ready():
         scheduler.add_job(send_scheduled_messages, CronTrigger(hour="*")) 
         scheduler.start()
 
+    
+
 @client.event
 async def on_message(message):
 
     site_id = str(message.guild.id)
-    site_config = config_data.get(site_id, {})
+    site_config = config_data["guilds"].get(site_id, {})
     command_string = site_config.get("command_string")
     designated_channels = site_config.get('designated_channels')
 
