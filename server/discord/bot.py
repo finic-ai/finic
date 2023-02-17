@@ -34,11 +34,12 @@ async def async_get_file_request(url):
         async with session.get(url) as resp:
             return await resp.read()
 
-async def reply_in_thread(thread, thread_is_preexisting, message, response):
+async def reply_in_thread(question, thread_is_preexisting, message, response):
     filtered_response = response.replace("Learn more: N/A", "")
     if thread_is_preexisting:
         await message.reply(filtered_response)
     else:
+        thread = await message.create_thread(name=question[:100])
         formatted_response = "<@{0}> {1}".format(message.author.id, filtered_response)
         await thread.send(formatted_response)
 
@@ -56,10 +57,10 @@ async def get_conversation_transcript(thread, is_thread, client):
         result.reverse() 
     return result
 
-async def async_send_response(thread, is_thread, message, question, site_id, client):
-    conversation_transcript = await get_conversation_transcript(thread, is_thread, client)
+async def async_send_response(channel, is_thread, message, question, site_id, client):
+    conversation_transcript = await get_conversation_transcript(channel, is_thread, client)
 
-    async with thread.typing():
+    async with channel.typing():
         try:
             response_json = await async_post_request(API_URL, {
                 'conversation_transcript': conversation_transcript,
@@ -67,13 +68,14 @@ async def async_send_response(thread, is_thread, message, question, site_id, cli
                 'conversation_id': 'conversation_id',
                 'site_id': str(site_id)
             })
+            if "error_code" in response_json and response_json["error_code"] == "killswitch":
+                return
             response = response_json['response']
-
-            await reply_in_thread(thread, is_thread, message, response)
+            await reply_in_thread(question, is_thread, message, response)
 
         except Exception as e:
             print(e)
-            await reply_in_thread(thread, is_thread, message, ERROR_MESSAGE)
+            await reply_in_thread(question, is_thread, message, ERROR_MESSAGE)
 
 def should_reply(message, client, is_thread, command_string, designated_channels):
     channel_id = str(message.channel.id)
@@ -153,10 +155,11 @@ async def on_message(message):
     if should_reply(message, client, is_thread, command_string, designated_channels):
         question = message.content.replace(command_string, "")
 
-        if is_thread:
-            thread = message.channel
-        else:
-            thread = await message.create_thread(name=question[:100])
-        await async_send_response(thread, is_thread, message, question, site_id, client) 
+        channel = message.channel 
+        # if is_thread:
+        #     thread = message.channel
+        # else:
+        #     thread = await message.create_thread(name=question[:100])
+        await async_send_response(channel, is_thread, message, question, site_id, client) 
 
 client.run(config_data['DISCORD_BOT_TOKEN'])

@@ -25,22 +25,35 @@ def scheduled_messages(request):
     DOCUMENT_ID = config_data['DOCUMENT_ID']
 
     db = firestore.Client()
-    doc_ref = db.collection(COLLECTION_ID).document(DOCUMENT_ID)
-    doc_data = doc_ref.get().to_dict()
+    collection_ref = db.collection(COLLECTION_ID)
+
+    docs = collection_ref.get()
 
     results = {}
 
-    for channel_id, scheduled_message in doc_data.items():
-        interval = scheduled_message['interval']
-        counter = scheduled_message['counter']
-        message = scheduled_message['message']
+    for doc in docs:
+        doc_data = doc.to_dict()
+        guild_id = doc.id
 
-        counter_key = "{}.counter".format(channel_id)
-        if counter >= interval:
-            doc_ref.update({counter_key: 1})
-            results[channel_id] = message
-        else:
-            doc_ref.update({counter_key: counter + 1})
+        # Check the killswitch firestore document
+        killswitch_doc = db.collection('killswitch').document(guild_id).get()
+        if killswitch_doc.exists:
+            killswitch = killswitch_doc.to_dict()
+            if not killswitch['botIsOn']:
+                continue
+
+        for channel_id, scheduled_message in doc_data.items():
+            interval = scheduled_message['interval']
+            counter = scheduled_message['counter']
+            message = scheduled_message['message']
+
+            counter_key = "{}.counter".format(channel_id)
+            doc_ref = collection_ref.document(guild_id)
+            if counter >= interval:
+                doc_ref.update({counter_key: 1})
+                results[channel_id] = message
+            else:
+                doc_ref.update({counter_key: counter + 1})
     
     return (results, 200, headers)
 
