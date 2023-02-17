@@ -30,7 +30,7 @@ function App() {
   const [chatTopic, setChatTopic] = useState('')
 
   const btnRef = React.useRef(null)
-  const topics = process.env.REACT_APP_TOPICS?.split(',') ?? null
+  const topics = process.env.REACT_APP_TOPICS?.split(',') ?? []
   const initialMessage = topics ? 'Hi, what would you like to talk about?' : 'Hi, how can I help you today?'
 
   function closeDrawer () {

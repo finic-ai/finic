@@ -9,8 +9,8 @@ import {
 
 function TopicSelection({actionProvider, topics, topic}: {actionProvider: any, topics: string[], topic: string}) {
   
-  return (
-    <Box>
+  return topics.length > 0 ?
+    (<Box>
       {topic.length < 1 && <ButtonGroup gap={2}>
         <Wrap>
         {topics.map((topic: string) => 
@@ -20,7 +20,7 @@ function TopicSelection({actionProvider, topics, topic}: {actionProvider: any, t
         </Wrap>
       </ButtonGroup>}
     </Box>
-  );
+  ) : null
 }
 
 export default TopicSelection;
