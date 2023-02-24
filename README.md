@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <p align="center">Turn any website into a knowledge base for LLMs</p>
+  <p align="center">Turn your documentation into a customer support bot with AI</p>
 </p>
 
 Buff is a library that crawls and scrapes web content, transforms the content into a LLM readable format, and indexes the content in Pinecone, a vector database. This makes it possible to add a chat interface to any website in less than an hour.
