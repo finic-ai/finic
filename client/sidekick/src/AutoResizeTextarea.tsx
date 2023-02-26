@@ -14,13 +14,14 @@ export const AutoResizeTextarea = forwardRef(<HTMLTextAreaElement, AutoResizeTex
     placeholders, 
     placeholderIndex, 
     setPlaceholderIndex, 
+    isWaiting,
     partialPlaceholder, 
     setPartialPlaceholder, 
     product, ...rest} = props
 
   useEffect(() => {
     async function updatePlaceholder() {
-      if (placeholders && interacted == false) {
+      if (placeholders && interacted == false && !isWaiting) {
         if (partialPlaceholder.length == placeholders[placeholderIndex].length) {
           // If the placeholder is full, add a delay, reset the 
           // placeholder to empty, and cycle to the next placeholder
@@ -42,7 +43,7 @@ export const AutoResizeTextarea = forwardRef(<HTMLTextAreaElement, AutoResizeTex
     } else {
       updatePlaceholder()
     }
-  }, [interacted, placeholders, partialPlaceholder, placeholderIndex])
+  }, [interacted, isWaiting, partialPlaceholder])
 
   return (
     <Textarea

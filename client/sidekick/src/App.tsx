@@ -46,7 +46,7 @@ export const App = () => {
   const [isWaiting, setIsWaiting] = React.useState(false)
 
   const messagesRef = useRef<HTMLDivElement>(null)
-  const textAreaRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (messagesRef.current) {
@@ -59,6 +59,7 @@ export const App = () => {
 
   const handleProductChange = (event: any) => {
     setInteracted(true)
+    setInput("")
     setPartialPlaceholder("")
     setProduct(event.target.value)
     setMessages(new Array<Message>)
@@ -94,6 +95,7 @@ export const App = () => {
     // const reply = (await response.json())
     setIsWaiting(true)
     const reply = await sidekick.getMockResponse("Q&A")
+    setInput("")
     setIsWaiting (false)
     setMessages([...messages, {message: event.target.value, fromBot: false}, {message: reply.response.message!, fromBot: true}])
   }
@@ -125,10 +127,10 @@ export const App = () => {
               <Flex direction="row"><Heading>Sidekick</Heading><ColorModeSwitcher justifySelf="flex-end" /></Flex>
               <Text>AMA for open source projects. Q&A, troubleshooting, how-to guides and more.</Text>
             </Flex>
-            <Flex ref={messagesRef} direction="column" p={10} justifyContent="center" minHeight="400px" overflowY="auto">
+            <Flex width="100%" ref={messagesRef} direction="column" p={4} justifyContent="center" minHeight="400px" overflowY="auto">
               {messages.map((message, index) => (
-                <Box key={index} p={4} m={2} bg={message.fromBot ? "gray.200" : "white"} borderRadius="lg">
-                  <Text>{message.message}</Text>
+                <Box key={index} p={4} bg={message.fromBot ? "gray.100" : "white"}>
+                  {message.fromBot ? <Text dangerouslySetInnerHTML={{ __html: message.message}} whiteSpace="pre-wrap"/> : <Text whiteSpace="pre-wrap">{message.message}</Text>}
                 </Box>
                 )
               )}
@@ -139,6 +141,7 @@ export const App = () => {
                 disabled={isWaiting}
                 interacted={interacted} 
                 placeholders={placeholders} 
+                isWaiting={isWaiting}
                 placeholderIndex={placeholderIndex} 
                 setPlaceholderIndex={setPlaceholderIndex}
                 partialPlaceholder={partialPlaceholder}
