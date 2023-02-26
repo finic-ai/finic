@@ -1,0 +1,31 @@
+{
+    "AppSmith": [
+        "Appsmith is crashing while querying snowflake, on K8 using Helm",
+        "How do I connect PostgreSQL as a datasource?"
+    ],
+    "PostHog": [
+        "Why are my feature flags returning false even though I have enabled them?",
+        "I'm getting a HTTP 503 error when POSTing to https://eu.posthog.com/e/?ip=1&_=1676532219035&v=2.2.0"
+    ],
+    "Airbyte": [
+        "JSON is not being copied on incremental sync",
+        "How do I stop airbyte from expanding nested arrays into new tables?"
+    ],
+    "Supabase": [
+        
+    ],
+    "Redis": [],
+    "Tensorflow": [],
+    "Apollo GraphQL": [],
+    "Electron": [],
+    "D3": [],
+    "ToolJet": [],
+    "BentoML": [],
+    "Snowplow": [],
+    "Qdrant": [],
+    "Ethyca": [],
+    "MindsDB": [],
+    "Forem": [],
+    "QuestDB": [],
+    "Prometheus": []
+}
