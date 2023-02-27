@@ -32,9 +32,10 @@ const utils = () => {
       },
       body: JSON.stringify({
         "last_message": data.message,
-        "conversation_transcript": data.dialogue,
+        "conversation_transcript": JSON.stringify(data.conversation),
         "site_id": process.env.REACT_APP_SITE_ID,
-        "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de"
+        "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de",
+        "metadata_filter": data.productId
       })
     }
     const response = await fetch(url!, payload)

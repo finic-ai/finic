@@ -1,0 +1,146 @@
+[    
+    {
+        "id": "airbyte",
+        "label": "Airbyte",
+        "placeholders": [
+            "JSON is not being copied on incremental sync",
+            "How do I stop airbyte from expanding nested arrays into new tables?"
+        ]
+    },
+    {
+        "id": "apollo-client",
+        "label": "Apollo GraphQL",
+        "placeholders": [
+            "How do I use Apollo GraphQL with a custom domain?",
+            "How do I use Apollo GraphQL with a custom domain?"
+        ]
+    },
+    {
+        "id": "appsmith",
+        "label": "AppSmith",
+        "placeholders": [
+            "Appsmith is crashing while querying snowflake, on K8 using Helm",
+            "How do I connect PostgreSQL as a datasource?"
+        ]
+    },
+    {
+        "id": "bentoml",
+        "label": "BentoML",
+        "placeholders": [
+            "How do I use BentoML with a custom domain?",
+            "How do I use BentoML with a custom domain?"
+        ]
+    },
+    {
+        "id": "d3-shape",
+        "label": "D3",
+        "placeholders": [
+            "How do I use D3 with a custom domain?",
+            "How do I use D3 with a custom domain?"
+        ]
+    },
+    {
+        "id": "electron",
+        "label": "Electron",
+        "placeholders": [
+            "How do I use Electron with a custom domain?",
+            "How do I use Electron with a custom domain?"
+        ]
+    },
+    {
+        "id": "ethyca",
+        "label": "Ethyca",
+        "placeholders": [
+            "How do I use Ethyca with a custom domain?",
+            "How do I use Ethyca with a custom domain?"
+        ]
+    },
+    {
+        "id": "forem",
+        "label": "Forem",
+        "placeholders": [
+            "How do I use Forem with a custom domain?",
+            "How do I use Forem with a custom domain?"
+        ]
+    },
+    {
+        "id": "mindsdb",
+        "label": "MindsDB",
+        "placeholders": [
+            "How do I use MindsDB with a custom domain?",
+            "How do I use MindsDB with a custom domain?"
+        ]
+    },
+    {
+        "id": "posthog",
+        "label": "PostHog",
+        "placeholders": [
+            "Why are my feature flags returning false even though I have enabled them?",
+            "I'm getting a HTTP 503 error when POSTing to https://eu.posthog.com/e/?ip=1&_=1676532219035&v=2.2.0"
+        ]
+    },
+    {
+        "id": "prometheus",
+        "label": "Prometheus",
+        "placeholders": [
+            "How do I use QuestDB with a custom domain?",
+            "How do I use QuestDB with a custom domain?"
+        ]
+    },
+    {
+        "id": "qdrant",
+        "label": "Qdrant",
+        "placeholders": [
+            "How do I use Qdrant with a custom domain?",
+            "How do I use Qdrant with a custom domain?"
+        ]
+    },
+    {
+        "id": "questdb",
+        "label": "QuestDB",
+        "placeholders": [
+            "How do I use QuestDB with a custom domain?",
+            "How do I use QuestDB with a custom domain?"
+        ]
+    },
+    {
+        "id": "redis",
+        "label": "Redis",
+        "placeholders": [
+            "How do I use Redis with a custom domain?",
+            "How do I use Redis with a custom domain?"
+        ]
+    },
+    {
+        "id": "snowplow",
+        "label": "Snowplow",
+        "placeholders": [
+            "How do I use Snowplow with a custom domain?",
+            "How do I use Snowplow with a custom domain?"
+        ]
+    },
+    {
+        "id": "supabase",
+        "label": "Supabase",
+        "placeholders": [
+            "How do I use supabase with a custom domain?",
+            "How do I use supabase with a custom domain?"
+        ]
+    },
+    {
+        "id": "tensorflow",
+        "label": "Tensorflow",
+        "placeholders": [
+            "How do I use Tensorflow with a custom domain?",
+            "How do I use Tensorflow with a custom domain?"
+        ]
+    },
+    {
+        "id": "tooljet",
+        "label": "ToolJet",
+        "placeholders": [
+            "How do I use ToolJet with a custom domain?",
+            "How do I use ToolJet with a custom domain?"
+        ]
+    }
+]

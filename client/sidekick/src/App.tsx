@@ -5,6 +5,8 @@ import {
   ChakraProvider,
   Box,
   Text,
+  Button,
+  Icon,
   Heading,
   useColorModeValue,
   Flex,
@@ -13,13 +15,13 @@ import {
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { AutoResizeTextarea } from "./AutoResizeTextarea"
 import { Sidebar } from "./Sidebar"
+import {DiGithubBadge} from "react-icons/di"
 
-import examples from "./examplePlaceholders.json"
+import Products from "./products.json"
 
 import utils from "./utils"
 
 const sidekick = utils()
-const Products = ["AppSmith", "PostHog", "Airbyte", "Supabase", "Redis", "Tensorflow", "Apollo GraphQL", "Electron", "D3", "ToolJet", "BentoML", "Snowplow", "Qdrant", "Ethyca", "MindsDB", "Forem", "QuestDB", "Prometheus"]
 
 interface Message {
   message: string,
@@ -34,8 +36,8 @@ interface Logs {
 
 export const App = () => {
   const [input, setInput] = React.useState("")
-  const [product, setProduct] = React.useState("")
-  const [placeholders, setPlaceholders] = React.useState(examples["AppSmith"])
+  const [product, setProduct] = React.useState(Products[0])
+  const [placeholders, setPlaceholders] = React.useState(Products[0].placeholders)
   const [placeholderIndex, setPlaceholderIndex] = React.useState(0)
   const [partialPlaceholder, setPartialPlaceholder] = React.useState("")
   const [messages, setMessages] = React.useState(new Array<Message>)
@@ -51,7 +53,7 @@ export const App = () => {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
     if (product) {
-      setPlaceholders(examples[product as keyof typeof examples])
+      setPlaceholders(product.placeholders)
     }
   }, [messages, product])
 
@@ -59,9 +61,9 @@ export const App = () => {
     setInteracted(true)
     setInput("")
     setPartialPlaceholder("")
-    setProduct(event.target.value)
+    setProduct(Products[event.target.selectedIndex])
     setMessages(new Array<Message>)
-    setPlaceholders(examples[product as keyof typeof examples])
+    setPlaceholders(product.placeholders)
     setPlaceholderIndex(0)
     setIsWaiting(false)
   }
@@ -88,18 +90,21 @@ export const App = () => {
     const userMessage = event.target.value
     setMessages([...messages, {message: userMessage, fromBot: false}])
     
-    // const response = await sidekick.sendMessage({
-    //   message: event.target.value,
-    //   dialogue: messages
-    // })
-    // const reply = (await response.json())
     setIsWaiting(true)
     setInput("Searching through documentation...")
-    const reply = await sidekick.getMockResponse("Q&A")
+
+    // const reply = await sidekick.getMockResponse("Q&A")
+    const response = await sidekick.sendMessage({
+      message: event.target.value,
+      conversation: messages,
+      productId: product.id
+    })
+    const reply = (await response.json())
+    
     setInput("")
     setIsWaiting (false)
     setLogs([...logs, reply.response])
-    setMessages([...messages, {message: userMessage, fromBot: false}, {message: reply.response.message!, fromBot: true}])
+    setMessages([...messages, {message: userMessage, fromBot: false}, {message: reply.response, fromBot: true}])
   }
 
   const handleOnKeyDown = (event: any) => {
@@ -127,7 +132,8 @@ export const App = () => {
         <Flex direction="column" height="100vh" width="inherit" overflow="auto" justifyContent="space-between" alignItems="center" backgroundColor={bgColor}>
           <Flex height="100px" padding="12px" direction="column" alignItems="center">
             <Flex direction="row"><Heading>Sidekick</Heading><ColorModeSwitcher justifySelf="flex-end" /></Flex>
-            <Text>AMA for open source projects. Q&A, troubleshooting, how-to guides and more.</Text>
+            <Text>AMA about open source projects. Q&A, troubleshooting, and more.</Text>
+            <Button onClick={() => window.open("https://github.com/getbuff/Buff", "_blank")} leftIcon={<Icon boxSize={6} as={DiGithubBadge}/>} position="fixed" p={2} right="12px" size="s" variant="ghost">View Source</Button>
           </Flex>
           <Flex width="100%" ref={messagesRef} direction="column" p={4} justifyContent="center" minHeight="400px" overflowY="auto">
             {messages.map((message, index) => (
