@@ -3,10 +3,10 @@
 </h1>
 
 <p align="center">
-  <p align="center">Turn any website into a knowledge base for LLMs</p>
+  <p align="center">Turn your documentation into a AI powered virtual agent</p>
 </p>
 
-Buff is a library that crawls and scrapes web content, transforms the content into a LLM readable format, and indexes the content in Pinecone, a vector database. This makes it possible to add a chat interface to any website in less than an hour.
+Buff is a library that crawls web content, transforms and tags the content, then stores it in a vector database. It does all this in a way that is scalable and extensible. Buff also includes libraries for chaining prompts and parsing GPT responses, making it possible to add a ChatGPT-like experience to any product in hours.
 
 <h4 align="center">
 
