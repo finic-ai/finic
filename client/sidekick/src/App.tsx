@@ -6,18 +6,8 @@ import {
   Box,
   Text,
   Heading,
-  Image,
-  Button,
-  ButtonGroup,
-  Textarea,
-  Link,
-  FormControl,
-  Select,
-  Input,
+  useColorModeValue,
   Flex,
-  Code,
-  Grid,
-  GridItem,
   theme,
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
@@ -120,47 +110,51 @@ export const App = () => {
       handleSubmit(event)
     }
   }
+
+  // Dark mode styling
+  const bgColor = useColorModeValue("blue.100", "blue.800")
+  const textAreaBgColor = useColorModeValue("whiteAlpha.800", "grayAlpha.800")
+  const botMessageBgColor = useColorModeValue("gray.100", "gray.700")
+  const userMessageBgColor = useColorModeValue("white", "black")
   
   return (
-    <ChakraProvider theme={theme}>
-      <Flex fontSize="l">
-        <Flex direction="row" width="100%" height="90vh" justifyContent="space-between">
-          <Sidebar product={product} products={Products} handleProductChange={handleProductChange} logs={logs}/>
-          <Flex direction="column" height="100vh" width="inherit" overflow="auto" justifyContent="space-between" alignItems="center" backgroundColor="blue.100">
-            <Flex height="100px" padding="12px" direction="column" alignItems="center">
-              <Flex direction="row"><Heading>Sidekick</Heading><ColorModeSwitcher justifySelf="flex-end" /></Flex>
-              <Text>AMA for open source projects. Q&A, troubleshooting, how-to guides and more.</Text>
-            </Flex>
-            <Flex width="100%" ref={messagesRef} direction="column" p={4} justifyContent="center" minHeight="400px" overflowY="auto">
-              {messages.map((message, index) => (
-                <Box key={index} p={4} bg={message.fromBot ? "gray.100" : "white"}>
-                  {message.fromBot ? <Text dangerouslySetInnerHTML={{ __html: message.message}} whiteSpace="pre-wrap"/> : <Text whiteSpace="pre-wrap">{message.message}</Text>}
-                </Box>
-                )
-              )}
-            </Flex>
-            <Box width="-webkit-fill-available" padding="2px" paddingBottom="24px" justifySelf="center" backgroundColor="whiteAlpha.800">
-              <AutoResizeTextarea 
-                ref={textAreaRef}
-                disabled={isWaiting}
-                interacted={interacted} 
-                placeholders={placeholders} 
-                isWaiting={isWaiting}
-                placeholderIndex={placeholderIndex} 
-                setPlaceholderIndex={setPlaceholderIndex}
-                partialPlaceholder={partialPlaceholder}
-                setPartialPlaceholder={setPartialPlaceholder}
-                product={product} 
-                maxRows={16} 
-                value={input} 
-                onKeyDown={handleOnKeyDown} 
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onChange={handleInputChange} 
-                size="lg"/>
-            </Box>
+    <Flex fontSize="l">
+      <Flex direction="row" width="100%" height="90vh" justifyContent="space-between">
+        <Sidebar product={product} products={Products} handleProductChange={handleProductChange} logs={logs}/>
+        <Flex direction="column" height="100vh" width="inherit" overflow="auto" justifyContent="space-between" alignItems="center" backgroundColor={bgColor}>
+          <Flex height="100px" padding="12px" direction="column" alignItems="center">
+            <Flex direction="row"><Heading>Sidekick</Heading><ColorModeSwitcher justifySelf="flex-end" /></Flex>
+            <Text>AMA for open source projects. Q&A, troubleshooting, how-to guides and more.</Text>
           </Flex>
+          <Flex width="100%" ref={messagesRef} direction="column" p={4} justifyContent="center" minHeight="400px" overflowY="auto">
+            {messages.map((message, index) => (
+              <Box key={index} p={4} bg={message.fromBot ? botMessageBgColor : userMessageBgColor}>
+                {message.fromBot ? <Text dangerouslySetInnerHTML={{ __html: message.message}} whiteSpace="pre-wrap"/> : <Text whiteSpace="pre-wrap">{message.message}</Text>}
+              </Box>
+              )
+            )}
+          </Flex>
+          <Box width="-webkit-fill-available" padding="2px" paddingBottom="24px" justifySelf="center" backgroundColor={textAreaBgColor}>
+            <AutoResizeTextarea 
+              ref={textAreaRef}
+              disabled={isWaiting}
+              interacted={interacted} 
+              placeholders={placeholders} 
+              isWaiting={isWaiting}
+              placeholderIndex={placeholderIndex} 
+              setPlaceholderIndex={setPlaceholderIndex}
+              partialPlaceholder={partialPlaceholder}
+              setPartialPlaceholder={setPartialPlaceholder}
+              product={product} 
+              maxRows={16} 
+              value={input} 
+              onKeyDown={handleOnKeyDown} 
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={handleInputChange} 
+              size="lg"/>
+          </Box>
         </Flex>
       </Flex>
-    </ChakraProvider>
+    </Flex>
 )}
