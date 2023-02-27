@@ -3,10 +3,10 @@
 </h1>
 
 <p align="center">
-  <p align="center">Turn your documentation into a AI powered virtual agent</p>
+  <p align="center">AI virtual asssitant that scales with documentation</p>
 </p>
 
-Buff is a library that crawls web content, transforms and tags the content, then stores it in a vector database. It does all this in a way that is scalable and extensible. Buff also includes libraries for chaining prompts and parsing GPT responses, making it possible to add a ChatGPT-like experience to any product in hours.
+Buff is an open source library that makes it easy to add a ChatGPT-style experience to any product by providing high-level wrappers over common data ingestion, semantic search, and LLM prompting techniques. As a result, Buff makes it possible to get up and running in matter of hours. Using Buff is safer and more useful than calling LLM APIs directly, because it includes features to detect hallucinations and pulls data from up-to-date sources.
 
 <h4 align="center">
 
@@ -24,14 +24,19 @@ https://user-images.githubusercontent.com/14931371/217652891-db535c73-8e67-4218-
 
 
 ## 💎 Features
-- Crawl and scrape most websites
+- Ingest, tag and index documentation
+- Run semantic searches over documentation to augment prompts with custom data
+- Customize prompts and prompt sequencing
+- Client side code to handle user input (Discord, Slack, Web)
+- Prevent hallucinations through chain-of-thought prompting
+- Parse LLM outputs and connect to APIs
 
 
 ## 🔌 Use Cases
+- **For dev tools:** Provide instant, 24/7 support for your community
 - **For ecommerce companies:** Index product descriptions and give customers instant answers to their questions without leaving the buy page
-- **For CX/CS teams:** Index help center articles to make it easy for customers and support agents to find information
-- **For sales teams:** Index websites and ask questions to qualify leads without a lengthy prospecting and outreach process
-- **For online courses:** Index course content and make it easy for students to find answers
+- **For CX/CS teams:** Provide instant, 24/7 support for customers. Leverage the support articles, SOPs and macros you already have.
+- **For financial service companies:** Build your own [BoA Erica](https://www.insiderintelligence.com/content/bank-of-america-adds-human-touch-erica)
 
 
 ## Get started
