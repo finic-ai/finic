@@ -6,7 +6,7 @@
   <p align="center">AI virtual asssitant that scales with documentation</p>
 </p>
 
-Buff is an open source library that makes it easy to add a ChatGPT-style experience to any product by providing high-level wrappers over common data ingestion, semantic search, and LLM prompting techniques. As a result, Buff makes it possible to get up and running in matter of hours. Using Buff is safer and more useful than calling LLM APIs directly, because it includes features to detect hallucinations and pulls data from up-to-date sources.
+Buff is an open source library that makes it easy to add a ChatGPT-style experience to any product by providing high-level wrappers over advanced data ingestion, semantic search, and LLM prompting techniques. As a result, Buff makes it possible to get up and running in matter of hours. Using Buff is safer and more useful than calling LLM APIs directly because it includes features to detect hallucinations, it has access to fresh data, and it cites its sources as well as its confidence.
 
 <h4 align="center">
 
