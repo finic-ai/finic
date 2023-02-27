@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { AutoResizeTextarea } from "./AutoResizeTextarea"
+import { Sidebar } from "./Sidebar"
 
 import examples from "./examplePlaceholders.json"
 
@@ -35,6 +36,12 @@ interface Message {
   fromBot: boolean
 }
 
+interface Logs {
+  message: string,
+  intent: string,
+  confidence: number
+}
+
 export const App = () => {
   const [input, setInput] = React.useState("")
   const [product, setProduct] = React.useState("")
@@ -44,6 +51,7 @@ export const App = () => {
   const [messages, setMessages] = React.useState(new Array<Message>)
   const [interacted, setInteracted] = React.useState(false)
   const [isWaiting, setIsWaiting] = React.useState(false)
+  const [logs, setLogs] = React.useState(new Array<Logs>)
 
   const messagesRef = useRef<HTMLDivElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
@@ -97,6 +105,7 @@ export const App = () => {
     const reply = await sidekick.getMockResponse("Q&A")
     setInput("")
     setIsWaiting (false)
+    setLogs([...logs, reply.response])
     setMessages([...messages, {message: event.target.value, fromBot: false}, {message: reply.response.message!, fromBot: true}])
   }
 
@@ -116,12 +125,7 @@ export const App = () => {
     <ChakraProvider theme={theme}>
       <Flex fontSize="l">
         <Flex direction="row" width="100%" height="90vh" justifyContent="space-between">
-          <Box p="12px" left="0px" minWidth="200px" height="100%" display="flex" flexDirection="column" justifyContent="flex-start">
-            <Select placeholder="Select product" value={product} onChange={handleProductChange}>
-              {Products.map((product, index) => <option key={product} value={product}>{product}</option>)}
-            </Select>
-            <Text position="fixed" bottom="36px" as="b">{"Ask here --->"}</Text>
-          </Box>
+          <Sidebar product={product} products={Products} handleProductChange={handleProductChange} logs={logs}/>
           <Flex direction="column" height="100vh" width="inherit" overflow="auto" justifyContent="space-between" alignItems="center" backgroundColor="blue.100">
             <Flex height="100px" padding="12px" direction="column" alignItems="center">
               <Flex direction="row"><Heading>Sidekick</Heading><ColorModeSwitcher justifySelf="flex-end" /></Flex>
