@@ -85,18 +85,21 @@ export const App = () => {
     if (isWaiting) {
       return
     }
-    setMessages([...messages, {message: event.target.value, fromBot: false}])
+    const userMessage = event.target.value
+    setMessages([...messages, {message: userMessage, fromBot: false}])
+    
     // const response = await sidekick.sendMessage({
     //   message: event.target.value,
     //   dialogue: messages
     // })
     // const reply = (await response.json())
     setIsWaiting(true)
+    setInput("Searching through documentation...")
     const reply = await sidekick.getMockResponse("Q&A")
     setInput("")
     setIsWaiting (false)
     setLogs([...logs, reply.response])
-    setMessages([...messages, {message: event.target.value, fromBot: false}, {message: reply.response.message!, fromBot: true}])
+    setMessages([...messages, {message: userMessage, fromBot: false}, {message: reply.response.message!, fromBot: true}])
   }
 
   const handleOnKeyDown = (event: any) => {
