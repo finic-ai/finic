@@ -1,4 +1,4 @@
-import { ColorModeScript, ChakraProvider, theme } from "@chakra-ui/react"
+import { ColorModeScript, ChakraProvider, theme, extendTheme } from "@chakra-ui/react"
 import * as React from "react"
 import * as ReactDOM from "react-dom/client"
 import { App } from "./App"
@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(container)
 root.render(
   <React.StrictMode>
     <ColorModeScript />
-    <ChakraProvider theme={theme}><App /></ChakraProvider>
+    <ChakraProvider theme={extendTheme({initialColorMode: 'dark', useSystemColorMode: false})}><App /></ChakraProvider>
   </React.StrictMode>,
 )
 

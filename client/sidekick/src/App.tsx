@@ -115,7 +115,7 @@ export const App = () => {
   }
 
   // Dark mode styling
-  const bgColor = useColorModeValue("blue.100", "blue.800")
+  const bgColor = useColorModeValue("blue.50", "blue.800")
   const textAreaBgColor = useColorModeValue("whiteAlpha.800", "grayAlpha.800")
   const botMessageBgColor = useColorModeValue("gray.100", "gray.700")
   const userMessageBgColor = useColorModeValue("white", "black")
