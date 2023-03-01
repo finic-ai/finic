@@ -51,6 +51,13 @@ export const App = () => {
 
   const toast = useToast()
 
+  // Light/Dark mode styling
+  const bgColor = useColorModeValue("blue.50", "blue.800")
+  const textAreaBgColor = useColorModeValue("whiteAlpha.800", "grayAlpha.800")
+  const botMessageBgColor = useColorModeValue("gray.100", "gray.700")
+  const userMessageBgColor = useColorModeValue("white", "black")
+  const linkColor = useColorModeValue("blue", "#BEE3F8")
+
   useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
@@ -100,7 +107,8 @@ export const App = () => {
     const response = await sidekick.sendMessage({
       message: event.target.value,
       conversation: messages,
-      productId: product.id
+      productId: product.id,
+      linkColor: linkColor,
     })
 
     if (response.error || !response.intent) {
@@ -133,12 +141,6 @@ export const App = () => {
       handleSubmit(event)
     }
   }
-
-  // Dark mode styling
-  const bgColor = useColorModeValue("blue.50", "blue.800")
-  const textAreaBgColor = useColorModeValue("whiteAlpha.800", "grayAlpha.800")
-  const botMessageBgColor = useColorModeValue("gray.100", "gray.700")
-  const userMessageBgColor = useColorModeValue("white", "black")
   
   return (
     <Flex fontSize="l">

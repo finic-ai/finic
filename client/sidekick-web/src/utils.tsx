@@ -26,7 +26,6 @@ const utils = () => {
   
   const sendMessage = async (data: any) => {
     const url = process.env.REACT_APP_API_URL
-    console.log(data)
     const payload = {
       method: 'POST',
       headers: {
@@ -36,7 +35,7 @@ const utils = () => {
       body: JSON.stringify({
         "last_message": data.message,
         "conversation_transcript": JSON.stringify(data.conversation.map((message: any) => message.fromBot ? "bot: " + message.message : "user: " + message.message)),
-        "site_id": process.env.REACT_APP_SITE_ID,
+        "site_id": process.env.REACT_APP_API_KEY,
         "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de",
         "metadata_filter": data.productId
       })
@@ -51,8 +50,10 @@ const utils = () => {
     
     let sources = ""
     for (const source of response.sources) {
-      sources += `\n- ${source}`
+      sources += `\n- <a href="${source}" target="_blank" style="color: ${data.linkColor}; text-decoration: underline;">${source}</a>`
     }
+
+    console.log(sources)
 
     // If the response does not contain an answer, return a canned response with sources
     if (!response.contains_answer) {
