@@ -18,4 +18,6 @@ Sidekick is a web demo for our [product](https://github.com/getbuff/Buff) that h
 
 
 ## Get started
-To get started on the hosted or self-hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or email us at founders@getsidekick.ai.
+`npm run start` will start the web client. However it won't be able to make any requests until the environment variables are set up properly in `.env`. 
+
+To get the API url and an API key, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or email us at founders@getsidekick.ai.
