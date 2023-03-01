@@ -11,6 +11,7 @@ import {
   useColorModeValue,
   Flex,
   useToast,
+  useBreakpointValue,
   theme,
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
@@ -57,6 +58,9 @@ export const App = () => {
   const botMessageBgColor = useColorModeValue("gray.100", "gray.700")
   const userMessageBgColor = useColorModeValue("white", "black")
   const linkColor = useColorModeValue("blue", "#BEE3F8")
+
+  // Mobile styling
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
   useEffect(() => {
     if (messagesRef.current) {
@@ -144,15 +148,17 @@ export const App = () => {
   
   return (
     <Flex fontSize="l">
-      <Flex direction="row" width="100%" height="90vh" justifyContent="space-between">
-        <Sidebar product={product} products={Products} handleProductChange={handleProductChange} logs={logs}/>
-        <Flex direction="column" height="100vh" width="inherit" overflow="auto" justifyContent="space-between" alignItems="center" backgroundColor={bgColor}>
-          <Flex height="100px" padding="12px" direction="column" alignItems="center">
+      <Flex direction={isMobile ? "column" : "row"} width="100%" height={isMobile ? "100vh" : "90vh"} justifyContent="space-between">
+        {isMobile ? null : <Sidebar product={product} products={Products} handleProductChange={handleProductChange} logs={logs}/>}
+        <Flex direction="column" height={isMobile ? "inherit" : "100vh"} width="inherit" overflow="auto" justifyContent="space-between" alignItems="center" backgroundColor={bgColor}>
+          <Flex height="auto" padding="12px" direction="column" alignItems="center">
             <Flex direction="row"><Heading>Sidekick</Heading><ColorModeSwitcher justifySelf="flex-end" /></Flex>
-            <Text>AMA about open source projects. Q&A, troubleshooting, and more.</Text>
-            <Button onClick={() => window.open("https://github.com/getbuff/Buff", "_blank")} leftIcon={<Icon boxSize={6} as={DiGithubBadge}/>} position="fixed" p={2} right="12px" size="s" variant="ghost">View Source</Button>
+            <Text>Read the fucking manual with ChatGPT 📖🤖</Text>
+            {isMobile ? null : <Text as="b" position="fixed" left="312px" top="18px">{"<---Choose your product"}</Text>}
+            <Button onClick={() => window.open("https://github.com/ai-sidekick/sidekick/tree/main/client/sidekick-web", "_blank")} leftIcon={<Icon boxSize={6} as={DiGithubBadge}/>} position="fixed" p={2} right="12px" size="s" variant="ghost">{isMobile ? null : "View Source"}</Button>
+            {isMobile ? <Sidebar product={product} products={Products} handleProductChange={handleProductChange} logs={logs}/> : null}
           </Flex>
-          <Flex width="100%" ref={messagesRef} direction="column" p={4} justifyContent="center" minHeight="400px" overflowY="auto">
+          <Flex width="100%" ref={messagesRef} direction="column" p={4} justifyContent="center" minHeight={isMobile ? "200px" : "400px"} overflowY="auto">
             {messages.map((message, index) => (
               <Box key={index} p={4} bg={message.fromBot ? botMessageBgColor : userMessageBgColor}>
                 {message.fromBot ? <Text dangerouslySetInnerHTML={{ __html: message.message!}} whiteSpace="pre-wrap"/> : <Text whiteSpace="pre-wrap">{message.message}</Text>}
