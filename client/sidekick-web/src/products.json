@@ -11,8 +11,8 @@
         "id": "apollo-client",
         "label": "Apollo GraphQL",
         "placeholders": [
-            "How do I use Apollo GraphQL with a custom domain?",
-            "How do I use Apollo GraphQL with a custom domain?"
+            "How do I implement authentication and authorization in Apollo GraphQL?",
+            "Apollo cache propagates between two different queries"
         ]
     },
     {
@@ -27,48 +27,48 @@
         "id": "bentoml",
         "label": "BentoML",
         "placeholders": [
-            "How do I use BentoML with a custom domain?",
-            "How do I use BentoML with a custom domain?"
+            "How do I configure BentoML to work with Kubernetes?",
+            "Can I use BentoML to serve models trained on streaming data? What kind of latency should I expect in that scenario?"
         ]
     },
     {
         "id": "d3-shape",
         "label": "D3",
         "placeholders": [
-            "How do I use D3 with a custom domain?",
-            "How do I use D3 with a custom domain?"
+            "Markers not reachable using keyboard [Accessibility issue]",
+            "How can I hide bars with null values in C3?"
         ]
     },
     {
         "id": "electron",
         "label": "Electron",
         "placeholders": [
-            "How do I use Electron with a custom domain?",
-            "How do I use Electron with a custom domain?"
+            "Best tips porting an existing web-app with a complicated Webpack setup to electron-forge?",
+            "Can't install iohook module on macOS & node 16 & electron 15"
         ]
     },
     {
         "id": "ethyca",
         "label": "Ethyca",
         "placeholders": [
-            "How do I use Ethyca with a custom domain?",
-            "How do I use Ethyca with a custom domain?"
+            "How do I add privacy and consent features to my React app?",
+            "How do I connect Ethyca to Segment?"
         ]
     },
     {
         "id": "forem",
         "label": "Forem",
         "placeholders": [
-            "How do I use Forem with a custom domain?",
-            "How do I use Forem with a custom domain?"
+            "How do I add GitHub authentication to Forem?",
+            "Can I use third party libraries to track events in Forem?"
         ]
     },
     {
         "id": "mindsdb",
         "label": "MindsDB",
         "placeholders": [
-            "How do I use MindsDB with a custom domain?",
-            "How do I use MindsDB with a custom domain?"
+            "How does MindsDB compare with other ML database tools?",
+            "How do I connect Big Query via MindsDB cloud"
         ]
     },
     {
@@ -83,8 +83,8 @@
         "id": "prometheus",
         "label": "Prometheus",
         "placeholders": [
-            "How do I use QuestDB with a custom domain?",
-            "How do I use QuestDB with a custom domain?"
+            "How stable are Prometheus features, storage formats, and APIs?",
+            "Can I change the timezone? Why is everything in UTC?"
         ]
     },
     {

@@ -10,6 +10,7 @@ import {
   Heading,
   useColorModeValue,
   Flex,
+  useToast,
   theme,
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
@@ -24,14 +25,14 @@ import utils from "./utils"
 const sidekick = utils()
 
 interface Message {
-  message: string,
+  message: string | undefined,
   fromBot: boolean
 }
 
 interface Logs {
-  message: string,
-  intent: string,
-  confidence: number
+  message: string | undefined,
+  intent: string | undefined,
+  sources: string[]
 }
 
 export const App = () => {
@@ -48,6 +49,8 @@ export const App = () => {
   const messagesRef = useRef<HTMLDivElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
+  const toast = useToast()
+
   useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
@@ -61,7 +64,7 @@ export const App = () => {
     setInteracted(true)
     setInput("")
     setPartialPlaceholder("")
-    setProduct(Products[event.target.selectedIndex])
+    setProduct(Products[event.target.selectedIndex - 1])
     setMessages(new Array<Message>)
     setPlaceholders(product.placeholders)
     setPlaceholderIndex(0)
@@ -99,12 +102,24 @@ export const App = () => {
       conversation: messages,
       productId: product.id
     })
-    const reply = (await response.json())
+
+    if (response.error || !response.intent) {
+      setInput("")
+      setIsWaiting (false)
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later, or email us at founders@getsidekick.ai",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      })
+      return
+    }
     
     setInput("")
     setIsWaiting (false)
-    setLogs([...logs, reply.response])
-    setMessages([...messages, {message: userMessage, fromBot: false}, {message: reply.response, fromBot: true}])
+    setLogs([{message: response.answer, intent: response.intent, sources: response.sources}, ...logs])
+    setMessages([...messages, {message: userMessage, fromBot: false}, {message: response.answer, fromBot: true}])
   }
 
   const handleOnKeyDown = (event: any) => {
@@ -138,7 +153,7 @@ export const App = () => {
           <Flex width="100%" ref={messagesRef} direction="column" p={4} justifyContent="center" minHeight="400px" overflowY="auto">
             {messages.map((message, index) => (
               <Box key={index} p={4} bg={message.fromBot ? botMessageBgColor : userMessageBgColor}>
-                {message.fromBot ? <Text dangerouslySetInnerHTML={{ __html: message.message}} whiteSpace="pre-wrap"/> : <Text whiteSpace="pre-wrap">{message.message}</Text>}
+                {message.fromBot ? <Text dangerouslySetInnerHTML={{ __html: message.message!}} whiteSpace="pre-wrap"/> : <Text whiteSpace="pre-wrap">{message.message}</Text>}
               </Box>
               )
             )}
