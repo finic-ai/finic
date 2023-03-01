@@ -24,4 +24,4 @@ Sidekick is also open source. [Try it out here.](https://sidekick-web.vercel.app
 `npm run start` will start the web client. However you won't be able to make any requests until the API url and API key are set up in `.env`. We are trying to make the product more self-serve, but in the meantime please contact us on [Discord](https://discord.gg/dYXkQrkDVt) or reach out to founders@getsidekick.ai to get the API url and an API key.
 
 ## Contributing
-To add more documentation for existing products or to add new products, make a PR to add a new `.json` file with the content you'd like to index. Follow the structure of the files in the `documentation-sources` directory.
+To add more documentation for existing products or to add new products, submit a PR to add a new `.json` file with the content you'd like to index. Follow the structure of the files in the `documentation-sources` directory.
