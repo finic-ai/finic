@@ -1,12 +1,12 @@
 <h1 align="center">
-🦾 <a href='https://www.getbuff.io/'>Buff</a>
+🦾 <a href='https://www.getbuff.io/'>Sidekick</a>
 </h1>
 
 <p align="center">
   <p align="center">AI virtual asssitant that scales with documentation</p>
 </p>
 
-Buff is an open source library that makes it easy to add a ChatGPT-style experience to any product by providing high-level wrappers over advanced data ingestion, semantic search, and LLM prompting techniques. As a result, Buff makes it possible to get up and running in matter of hours. Using Buff is safer and more useful than calling LLM APIs directly because it includes features to detect hallucinations, it has access to fresh data, and it cites its sources as well as its confidence.
+Sidekick is an open source library that makes it easy to add a ChatGPT-style experience to any product by providing high-level wrappers over advanced data ingestion, semantic search, and LLM prompting techniques. As a result, Sidekick makes it possible to get up and running in matter of hours. Using Sidekick is safer and more useful than calling LLM APIs directly because it includes features to detect hallucinations, it has access to fresh data, and it cites its sources as well as its confidence.
 
 <h4 align="center">
 
@@ -40,4 +40,4 @@ https://user-images.githubusercontent.com/14931371/217652891-db535c73-8e67-4218-
 
 
 ## Get started
-To get started on the hosted or self-hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getbuff.io/).
+To get started on the hosted or self-hosted version, contact us on [Discord](https://discord.gg/dYXkQrkDVt) or sign up [here](https://www.getsidekick.ai/).
