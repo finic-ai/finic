@@ -70,7 +70,22 @@ async def async_send_response(channel, is_thread, message, question, site_id, cl
             })
             if "error_code" in response_json and response_json["error_code"] == "killswitch":
                 return
-            response = response_json['response']
+            contains_answer = response_json['contains_answer']
+            sources = response_json['sources']
+
+            no_op_faq = """
+Sorry, I couldn't find the answer to your question, but here are some sources that may be relevant: {}
+"""
+
+            response = ""
+            if not contains_answer:
+                response = no_op_faq.format(', '.join(sources[:2]))
+            else:
+                response = response_json['answer']
+                if len(sources) > 0:
+                    response += """
+You can learn more at {}        
+""".format(', '.join(sources))
             await reply_in_thread(question, is_thread, message, response)
 
         except Exception as e:
