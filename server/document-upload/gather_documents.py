@@ -17,6 +17,10 @@ from dotenv import load_dotenv
 import webvtt
 import argparse
 import ast
+from gloo_client import GlooClient
+from gloo_client.model import EmbeddingType
+from pathlib import Path
+import tqdm
 
 load_dotenv()
 openai = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'), temperature=0)
@@ -206,10 +210,61 @@ def gather_search_index_from_video_transcripts(folder_path):
                 metadatas = []
                 ids = []
                 time.sleep(1)
-    
+
+def gloo_upload(foldername):
+    gloo = GlooClient("https://api.gloo.chat", app_secret=os.environ.get('GLOO_API_KEY'))
+    document_client = gloo.document(os.environ.get('GLOO_APP_ID'))
+
+    updates = []
+    for i, p in enumerate(Path(foldername).glob("**/*.json")):
+        filename = str(p)
+        print(filename)
+
+        base_urls_to_update = [
+            'https://github.com/redis/redis-doc/',
+            'https://github.com/tensorflow/docs/',
+            'https://github.com/snowplow/documentation/',
+            'https://github.com/forem/forem-docs/',
+        ]
+        
+
+        with open(filename, newline='') as jsonfile:
+            jsonreader = json.load(jsonfile)
+            print("Uploading {} documents".format(len(jsonreader)))
+            for article in jsonreader:
+                title = article['title']
+                source = article['source']
+                content = article['content']
+                tag = article['tag']
+
+                # should_upload = False
+                # for base_url in base_urls_to_update:
+                #     if base_url in source:
+                #         should_upload = True
+                #         break
+                # if not should_upload:
+                #     continue
+                    
+                updates.append({
+                    'name': title,
+                    'source': title + source,
+                    'content': content,
+                    'tags': [tag]
+                })
+
+    with tqdm.tqdm(total=len(updates)) as pbar:
+        for update in updates:
+            try:
+                document_client.create(
+                    **update
+                )
+            except Exception as e:
+                print(update['tags'], update['name'], e)
+            pbar.update()
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--type', help='type of data to index', required=True)
+    parser.add_argument('--type', help='type of data uploader to use', required=True)
     parser.add_argument('data', help='data to index')
     parser.add_argument('--baseurl', help='base url', required=False)
     parser.add_argument('--siteid', help='site id to be added to vector metadata', required=False)
@@ -230,6 +285,8 @@ if __name__ == '__main__':
         gather_search_index_from_video_transcripts(data)
     elif data_type == 'urls':
         gather_search_index_from_urls(data, site_id=site_id)
+    elif data_type == 'gloo':
+        gloo_upload(data)
     else:
         print("data type not supported")
         
