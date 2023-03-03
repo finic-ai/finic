@@ -69,7 +69,12 @@ export const App = () => {
     if (product) {
       setPlaceholders(product.placeholders)
     }
-  }, [messages, product])
+    const searchParams = new URLSearchParams(window.location.search)
+    const productId = searchParams.get('product')
+    if (productId && productId != product.id) {
+      handleProductChange({target: {selectedIndex: Products.findIndex((product) => product.id == productId) + 1}})
+    }
+  })
 
   const handleProductChange = (event: any) => {
     setInteracted(true)
