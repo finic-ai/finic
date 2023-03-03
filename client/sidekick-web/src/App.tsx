@@ -153,7 +153,7 @@ export const App = () => {
         <Flex direction="column" height={isMobile ? "inherit" : "100vh"} width="inherit" overflow="auto" justifyContent="space-between" alignItems="center" backgroundColor={bgColor}>
           <Flex height="auto" padding="12px" direction="column" alignItems="center">
             <Flex direction="row"><Heading>Sidekick</Heading><ColorModeSwitcher justifySelf="flex-end" /></Flex>
-            <Text>RTFM with ChatGPT 📖🤖</Text>
+            <Text>Search the docs with ChatGPT 📖🤖</Text>
             {isMobile ? null : <Text as="b" position="fixed" left="312px" top="18px">{"<---Choose your product"}</Text>}
             <Button onClick={() => window.open("https://github.com/ai-sidekick/sidekick/tree/main/client/sidekick-web", "_blank")} leftIcon={<Icon boxSize={6} as={DiGithubBadge}/>} position="fixed" p={2} right="12px" size="s" variant="ghost">{isMobile ? null : "View Source"}</Button>
             {isMobile ? <Sidebar product={product} products={Products} handleProductChange={handleProductChange} logs={logs}/> : null}
