@@ -71,8 +71,10 @@ export const App = () => {
     }
     const searchParams = new URLSearchParams(window.location.search)
     const productId = searchParams.get('product')
-    if (productId && productId != product.id) {
-      handleProductChange({target: {selectedIndex: Products.findIndex((product) => product.id == productId) + 1}})
+    const productIndex = Products.findIndex((product) => product.id == productId)
+    if (productIndex > -1 && productId != product.id) {
+      console.log(productIndex)
+      handleProductChange({target: {selectedIndex: productIndex + 1}})
     }
   })
 
