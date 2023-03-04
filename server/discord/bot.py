@@ -73,19 +73,29 @@ async def async_send_response(channel, is_thread, message, question, site_id, cl
             contains_answer = response_json['contains_answer']
             sources = response_json['sources']
 
+            print(sources)
+
+            source_links = [source['url'] for source in sources]
+
             no_op_faq = """
 Sorry, I couldn't find the answer to your question, but here are some sources that may be relevant: {}
 """
 
             response = ""
             if not contains_answer:
-                response = no_op_faq.format(', '.join(sources[:2]))
+                response = no_op_faq.format(', '.join(source_links[:2]))
             else:
                 response = response_json['answer']
-                if len(sources) > 0:
+                for source in sources:
+                    print(source)
+                    if source['name'] in response:
+                        response = response.replace(source['name'], source['url'])
+                        source_links.remove(source['url'])
+                if len(source_links) > 0:
                     response += """
 You can learn more at {}        
-""".format(', '.join(sources))
+""".format(', '.join(source_links))
+            
             await reply_in_thread(question, is_thread, message, response)
 
         except Exception as e:
