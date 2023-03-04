@@ -50,10 +50,8 @@ const utils = () => {
     
     let sources = ""
     for (const source of response.sources) {
-      sources += `\n- <a href="${source}" target="_blank" style="color: ${data.linkColor}; text-decoration: underline;">${source}</a>`
+      sources += `\n- <a href="${source.url}" target="_blank" style="color: ${data.linkColor}; text-decoration: underline;">${source.title}</a>`
     }
-
-    console.log(sources)
 
     // If the response does not contain an answer, return a canned response with sources
     if (!response.contains_answer) {
