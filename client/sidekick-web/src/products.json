@@ -32,6 +32,14 @@
         ]
     },
     {
+        "id": "brex",
+        "label": "Brex",
+        "placeholders": [
+            "How do I initiate a chargeback?",
+            "What happens when I close my Brex account?"
+        ]
+    },
+    {
         "id": "d3-shape",
         "label": "D3",
         "placeholders": [

@@ -35,8 +35,9 @@ const utils = () => {
       body: JSON.stringify({
         "last_message": data.message,
         "conversation_transcript": JSON.stringify(data.conversation.map((message: any) => message.fromBot ? "<|im_start|>assistant " + message.message + "<|im_end|>" : "<|im_start|>user " + message.message + "<|im_end|>")),
-        "site_id": process.env.REACT_APP_API_KEY,
-        "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de"
+        "site_id": data.productId == "brex" ? "brex" : process.env.REACT_APP_API_KEY,
+        "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de",
+        "metadata_filter": data.productId == "brex" ? null : data.productId
       })
     }
     const response = await (await fetch(url!, payload)).json()
