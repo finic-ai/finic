@@ -34,10 +34,9 @@ const utils = () => {
       },
       body: JSON.stringify({
         "last_message": data.message,
-        "conversation_transcript": JSON.stringify(data.conversation.map((message: any) => message.fromBot ? "bot: " + message.message : "user: " + message.message)),
+        "conversation_transcript": JSON.stringify(data.conversation.map((message: any) => message.fromBot ? "<|im_start|>assistant " + message.message + "<|im_end|>" : "<|im_start|>user " + message.message + "<|im_end|>")),
         "site_id": process.env.REACT_APP_API_KEY,
-        "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de",
-        "metadata_filter": data.productId
+        "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de"
       })
     }
     const response = await (await fetch(url!, payload)).json()
@@ -62,7 +61,7 @@ const utils = () => {
     }
     
     // If the response contains an answer, return the answer
-    return {answer: finalAnswer, intent: response.intent, sources: response.sources}
+    return {answer: finalAnswer, intent: response.intent, sources: response.sources, justification: response.justification, confidence: response.confidence}
   }
   
   return {
