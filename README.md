@@ -6,9 +6,9 @@
   <p align="center">Use GPT to answer questions over documentation</p>
 </p>
 
-[Sidekick](https://github.com/getbuff/Buff) helps open source communities troubleshoot technical questions with AI. It scales very well with documentation, tutorials, and historical troubleshooting threads. This is the web demo for Sidekick.
+[Sidekick](https://github.com/getbuff/Buff) helps open source communities troubleshoot questions with AI. It scales very well with documentation.
 
-Sidekick is also open source. [Try it out here.](https://sidekick-web.vercel.app/)
+Sidekick is also open source. [Try out the demo on web here.](https://sidekick-web.vercel.app/)
 
 
 ## 💎 Features
