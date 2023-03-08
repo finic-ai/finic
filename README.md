@@ -6,7 +6,7 @@
   <p align="center">Use GPT to answer questions over documentation</p>
 </p>
 
-[Sidekick](https://github.com/getbuff/Buff) helps open source communities troubleshoot questions with AI. It scales very well with documentation.
+[Sidekick](https://getsidekick.ai/) is a Slack and Discord bot that provides developer support, using the GPT API. It scales very well with documentation.
 
 Sidekick is also open source. [Try out the demo on web here.](https://sidekick-web.vercel.app/)
 
