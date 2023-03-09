@@ -85,9 +85,14 @@ Sorry, I couldn't find the answer to your question, but here are some sources th
 
 If you still need help, you can create a support ticket at https://support.opensea.io/hc/en-us/requests/new
 """
+            no_op_existing_ticket = """
+It sounds like you're referring to an existing support ticket. Let me tag the community managers tag the community managers <@421932971507974145>, <@972292004644007947>, and <@950535324449247344> so they can help!          
+"""
 
             response = ""
-            if not contains_answer:
+            if user_intent == "Ticket Update" or user_intent == 'ticket update':
+                response = no_op_existing_ticket
+            elif not contains_answer:
                 response = no_op_faq.format(', '.join(source_links[:2]))
             else:
                 response = response_json['answer']
@@ -102,7 +107,7 @@ You can learn more at {}
             
             thread = await reply_in_thread(question, is_thread, message, response)
 
-            if (user_intent == 'Trust&Safety' or user_intent == 'trust&safety') and not is_thread:
+            if (user_intent == 'Trust & Safety' or user_intent == 'trust & safety') and not is_thread:
                 await message.reply("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjZiM2NmYTUxN2EyM2ZmNTBlNjU4NzRmYjgwZGE1YTVlNGFkZmM0NSZjdD1n/CZR9Qs0zFGQTuCPgA6/giphy.gif")
 
 
