@@ -34,10 +34,10 @@ const utils = () => {
       },
       body: JSON.stringify({
         "last_message": data.message,
-        "conversation_transcript": JSON.stringify(data.conversation.map((message: any) => message.fromBot ? "bot: " + message.message : "user: " + message.message)),
-        "site_id": process.env.REACT_APP_API_KEY,
+        "conversation_transcript": JSON.stringify(data.conversation.map((message: any) => message.fromBot ? "<|im_start|>assistant " + message.message + "<|im_end|>" : "<|im_start|>user " + message.message + "<|im_end|>")),
+        "site_id": data.productId == "brex" ? "brex" : process.env.REACT_APP_API_KEY,
         "conversation_id": "82d81783-ac29-4f8c-947f-534ef695e1de",
-        "metadata_filter": data.productId
+        "metadata_filter": data.productId == "brex" ? null : data.productId
       })
     }
     const response = await (await fetch(url!, payload)).json()
@@ -59,10 +59,14 @@ const utils = () => {
       finalAnswer += sources
     } else {
       finalAnswer = `${response.answer}\n\nYou can learn more from these resources:` + sources
+      // Replace Content1, Content2, etc. with the actual link
+      for (let i = 0; i < response.sources.length; i++) {
+        finalAnswer = finalAnswer.replace(`Content${i + 1}`, `<a href="${response.sources[i].url}" target="_blank" style="color: ${data.linkColor}; text-decoration: underline;">${response.sources[i].title}</a>`)
+      }
     }
     
     // If the response contains an answer, return the answer
-    return {answer: finalAnswer, intent: response.intent, sources: response.sources}
+    return {answer: finalAnswer, intent: response.intent, sources: response.sources, justification: response.justification, confidence: response.confidence}
   }
   
   return {

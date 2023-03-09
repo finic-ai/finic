@@ -33,7 +33,8 @@ interface Message {
 interface Logs {
   message: string | undefined,
   intent: string | undefined,
-  sources: string[]
+  sources: string[],
+  justification: string,
 }
 
 export const App = () => {
@@ -137,7 +138,7 @@ export const App = () => {
     
     setInput("")
     setIsWaiting (false)
-    setLogs([{message: response.answer, intent: response.intent, sources: response.sources}, ...logs])
+    setLogs([{message: response.answer, intent: response.intent, sources: response.sources, justification: response.justification}, ...logs])
     setMessages([...messages, {message: userMessage, fromBot: false}, {message: response.answer, fromBot: true}])
   }
 
