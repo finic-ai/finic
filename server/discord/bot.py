@@ -34,14 +34,19 @@ async def async_get_file_request(url):
         async with session.get(url) as resp:
             return await resp.read()
 
-async def reply_in_thread(question, thread_is_preexisting, message, response):
+async def reply_in_thread(question, thread_is_preexisting, message, response, thread_override=None):
     filtered_response = response.replace("Learn more: N/A", "")
     if thread_is_preexisting:
         await message.reply(filtered_response)
+        return None
     else:
-        thread = await message.create_thread(name=question[:100])
+        if thread_override is not None:
+            thread = thread_override
+        else:
+            thread = await message.create_thread(name=question[:100])
         formatted_response = "<@{0}> {1}".format(message.author.id, filtered_response)
         await thread.send(formatted_response)
+        return thread
 
 async def get_conversation_transcript(thread, is_thread, client):
     result = []
@@ -71,14 +76,14 @@ async def async_send_response(channel, is_thread, message, question, site_id, cl
             if "error_code" in response_json and response_json["error_code"] == "killswitch":
                 return
             contains_answer = response_json['contains_answer']
+            user_intent = response_json.get("intent")
             sources = response_json['sources']
-
-            print(sources)
-
             source_links = [source['url'] for source in sources]
 
             no_op_faq = """
 Sorry, I couldn't find the answer to your question, but here are some sources that may be relevant: {}
+
+If you still need help, you can create a support ticket at https://support.opensea.io/hc/en-us/requests/new
 """
 
             response = ""
@@ -87,7 +92,6 @@ Sorry, I couldn't find the answer to your question, but here are some sources th
             else:
                 response = response_json['answer']
                 for source in sources:
-                    print(source)
                     if source['name'] in response:
                         response = response.replace(source['name'], source['url'])
                         source_links.remove(source['url'])
@@ -96,7 +100,11 @@ Sorry, I couldn't find the answer to your question, but here are some sources th
 You can learn more at {}        
 """.format(', '.join(source_links))
             
-            await reply_in_thread(question, is_thread, message, response)
+            thread = await reply_in_thread(question, is_thread, message, response)
+
+            if (user_intent == 'Trust&Safety' or user_intent == 'trust&safety') and not is_thread:
+                await message.reply("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjZiM2NmYTUxN2EyM2ZmNTBlNjU4NzRmYjgwZGE1YTVlNGFkZmM0NSZjdD1n/CZR9Qs0zFGQTuCPgA6/giphy.gif")
+
 
         except Exception as e:
             print(e)
