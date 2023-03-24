@@ -9,7 +9,7 @@ from apscheduler.triggers.cron import CronTrigger
 from discord import app_commands
 import difflib
 from discord import ActionRow, Button, ButtonStyle
-
+import posthog
 
 
 config_file = open("config.json", "r")
@@ -18,6 +18,8 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 # bot = commands.Bot(intents=intents, command_prefix='/', help_command=None)
 tree = app_commands.CommandTree(client)
+posthog.project_api_key = config_data.get('POSTHOG_API_KEY')
+posthog.host = config_data.get('POSTHOG_HOST')
 API_URL=config_data.get('API_URL')
 SCHEDULED_MESSAGES_API_URL = config_data.get('SCHEDULED_MESSAGES_API_URL')
 ERROR_MESSAGE="Sorry, I'm not available at the moment. Please try again later."
@@ -50,18 +52,24 @@ async def async_get_file_request(url):
             return await resp.read()
 
 class RatingButtons(discord.ui.View):
-    def __init__(self, inv: str):
+    def __init__(self, site_id: str):
         super().__init__()
-        self.inv = inv
+        self.site_id = site_id
 
     @discord.ui.button(label="", emoji="👍")
     async def thumbs_up_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.message.edit(view=GoodRating())
+        posthog.capture(self.site_id, event="thumbs_up", properties={
+            "message": interaction.message.content,
+        })
         await interaction.response.defer()
 
     @discord.ui.button(label="", emoji="👎")
     async def thumbs_down_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.message.edit(view=BadRating())
+        posthog.capture(self.site_id, event="thumbs_down", properties={
+            "message": interaction.message.content,
+        })
         await interaction.response.defer()
 
 class GoodRating(discord.ui.View):
@@ -75,10 +83,10 @@ class BadRating(discord.ui.View):
         self.add_item(discord.ui.Button(label="", emoji="👎", disabled=True, style=ButtonStyle.red))
 
 
-async def reply_in_thread(question, thread_is_preexisting, message, response, thread_override=None):
+async def reply_in_thread(site_id, question, thread_is_preexisting, message, response, thread_override=None):
     filtered_response = response.replace("Learn more: N/A", "")
     if thread_is_preexisting:
-        await message.reply(filtered_response, view=RatingButtons("test"))
+        await message.reply(filtered_response, view=RatingButtons(site_id))
         return None
     else:
         if thread_override is not None:
@@ -90,7 +98,7 @@ async def reply_in_thread(question, thread_is_preexisting, message, response, th
                 thread_name = filtered_response[:99]
             thread = await message.create_thread(name=thread_name)
         formatted_response = "<@{0}> <@&{1}> {2}".format(message.author.id, "864216964956160011", filtered_response)
-        await thread.send(formatted_response, view=RatingButtons("test"))
+        await thread.send(formatted_response, view=RatingButtons(site_id))
         return thread
 
 async def get_conversation_transcript(thread, is_thread, client):
@@ -143,7 +151,7 @@ async def async_send_response(channel, is_thread, message, question, site_id, cl
 You can learn more at {}        
 """.format(', '.join(source_links))
             
-            thread = await reply_in_thread(question, is_thread, message, response)
+            thread = await reply_in_thread(site_id, question, is_thread, message, response)
 
             if (user_intent == 'Scam Check' or user_intent == 'scam check') and not is_thread:
                 await message.reply("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjZiM2NmYTUxN2EyM2ZmNTBlNjU4NzRmYjgwZGE1YTVlNGFkZmM0NSZjdD1n/CZR9Qs0zFGQTuCPgA6/giphy.gif")
@@ -151,7 +159,7 @@ You can learn more at {}
 
         except Exception as e:
             print(e)
-            await reply_in_thread(question, is_thread, message, ERROR_MESSAGE)
+            await reply_in_thread(site_id, question, is_thread, message, ERROR_MESSAGE)
 
 async def should_reply(message, client, is_thread, command_string, designated_channels):
     channel_id = str(message.channel.id)
