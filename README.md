@@ -15,14 +15,15 @@ You can also test it out on some pre-ingested developer docs by tagging the Side
 
 
 ## 💎 Features
-- Bots for Slack, Discord, Web, and Discourse
-- Ingestion of JSON formatted docs, chunking and storing as vector embeddings
-- Guardrails to prevent hallucinated answers
-- Cites sources
-- Short term memory for conversations
+* Scrape HTML pages and chunk them
+* Load Markdown files from a Github repo and chunk them
+* Connect to Weaviate vector store and load chunks
+* FastAPI endpoints to query vector store directly, or perform Q&A with OpenAI models
+* Slackbot interface to perform Q&A with OpenAI models
 
 ## Upcoming
-* `DataLoader` and `DataChunker` models to support 
+* `DataLoader` and `DataChunker` models to support custom loaders and chunkers
+* Connect to Pinecone, Milvus, and Qdrant vector stores
 
 ## Getting Started - 15 min
 To run Sidekick locally:
