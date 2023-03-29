@@ -59,6 +59,10 @@ const utils = () => {
       finalAnswer += sources
     } else {
       finalAnswer = `${response.answer}\n\nYou can learn more from these resources:` + sources
+      // Replace Content1, Content2, etc. with the actual link
+      for (let i = 0; i < response.sources.length; i++) {
+        finalAnswer = finalAnswer.replace(`Content${i + 1}`, `<a href="${response.sources[i].url}" target="_blank" style="color: ${data.linkColor}; text-decoration: underline;">${response.sources[i].title}</a>`)
+      }
     }
     
     // If the response contains an answer, return the answer

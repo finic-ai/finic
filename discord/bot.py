@@ -7,6 +7,10 @@ import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from discord import app_commands
+import difflib
+from discord import ActionRow, Button, ButtonStyle
+import posthog
+
 
 config_file = open("config.json", "r")
 config_data = json.loads(config_file.read())
@@ -14,10 +18,23 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 # bot = commands.Bot(intents=intents, command_prefix='/', help_command=None)
 tree = app_commands.CommandTree(client)
+posthog.project_api_key = config_data.get('POSTHOG_API_KEY')
+posthog.host = config_data.get('POSTHOG_HOST')
 API_URL=config_data.get('API_URL')
 SCHEDULED_MESSAGES_API_URL = config_data.get('SCHEDULED_MESSAGES_API_URL')
 ERROR_MESSAGE="Sorry, I'm not available at the moment. Please try again later."
 
+no_op_faq = """
+Sorry, I couldn't find the answer to your question, but here are some sources that may be relevant: {}
+
+If you still need help, you can create a support ticket at https://support.opensea.io/hc/en-us/requests/new
+"""
+
+no_op_existing_ticket = """
+It sounds like you're referring to an existing support ticket. Let me tag the community managers <@972292004644007947>, and <@950535324449247344> so they can help! 
+
+If you're looking to create a new ticket, you can do so at https://support.opensea.io/hc/en-us/requests/new       
+"""
 
 async def async_post_request(url, payload):
     async with aiohttp.ClientSession() as session:
@@ -34,14 +51,55 @@ async def async_get_file_request(url):
         async with session.get(url) as resp:
             return await resp.read()
 
-async def reply_in_thread(question, thread_is_preexisting, message, response):
+class RatingButtons(discord.ui.View):
+    def __init__(self, site_id: str):
+        super().__init__()
+        self.site_id = site_id
+
+    @discord.ui.button(label="", emoji="👍")
+    async def thumbs_up_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.message.edit(view=GoodRating())
+        posthog.capture(self.site_id, event="thumbs_up", properties={
+            "message": interaction.message.content,
+        })
+        await interaction.response.defer()
+
+    @discord.ui.button(label="", emoji="👎")
+    async def thumbs_down_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.message.edit(view=BadRating())
+        posthog.capture(self.site_id, event="thumbs_down", properties={
+            "message": interaction.message.content,
+        })
+        await interaction.response.defer()
+
+class GoodRating(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(discord.ui.Button(label="", emoji="👍", disabled=True, style=ButtonStyle.green))
+
+class BadRating(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(discord.ui.Button(label="", emoji="👎", disabled=True, style=ButtonStyle.red))
+
+
+async def reply_in_thread(site_id, question, thread_is_preexisting, message, response, thread_override=None):
     filtered_response = response.replace("Learn more: N/A", "")
     if thread_is_preexisting:
-        await message.reply(filtered_response)
+        await message.reply(filtered_response, view=RatingButtons(site_id))
+        return None
     else:
-        thread = await message.create_thread(name=question[:100])
-        formatted_response = "<@{0}> {1}".format(message.author.id, filtered_response)
-        await thread.send(formatted_response)
+        if thread_override is not None:
+            thread = thread_override
+        else:
+            if len(question) > 0:
+                thread_name = question[:99]
+            else:
+                thread_name = filtered_response[:99]
+            thread = await message.create_thread(name=thread_name)
+        formatted_response = "<@{0}> <@&{1}> {2}".format(message.author.id, "864216964956160011", filtered_response)
+        await thread.send(formatted_response, view=RatingButtons(site_id))
+        return thread
 
 async def get_conversation_transcript(thread, is_thread, client):
     result = []
@@ -71,38 +129,39 @@ async def async_send_response(channel, is_thread, message, question, site_id, cl
             if "error_code" in response_json and response_json["error_code"] == "killswitch":
                 return
             contains_answer = response_json['contains_answer']
+            user_intent = response_json.get("intent")
             sources = response_json['sources']
-
-            print(sources)
-
+            all_sources = response_json.get('all_sources', [])
             source_links = [source['url'] for source in sources]
 
-            no_op_faq = """
-Sorry, I couldn't find the answer to your question, but here are some sources that may be relevant: {}
-"""
-
             response = ""
-            if not contains_answer:
+            if user_intent == "Ticket Update" or user_intent == 'ticket update':
+                response = no_op_existing_ticket
+            elif not contains_answer:
                 response = no_op_faq.format(', '.join(source_links[:2]))
             else:
                 response = response_json['answer']
-                for source in sources:
-                    print(source)
+                for source in all_sources:
                     if source['name'] in response:
                         response = response.replace(source['name'], source['url'])
-                        source_links.remove(source['url'])
+                        if source['url'] in source_links:
+                            source_links.remove(source['url'])
                 if len(source_links) > 0:
                     response += """
 You can learn more at {}        
 """.format(', '.join(source_links))
             
-            await reply_in_thread(question, is_thread, message, response)
+            thread = await reply_in_thread(site_id, question, is_thread, message, response)
+
+            if (user_intent == 'Scam Check' or user_intent == 'scam check') and not is_thread:
+                await message.reply("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjZiM2NmYTUxN2EyM2ZmNTBlNjU4NzRmYjgwZGE1YTVlNGFkZmM0NSZjdD1n/CZR9Qs0zFGQTuCPgA6/giphy.gif")
+
 
         except Exception as e:
             print(e)
-            await reply_in_thread(question, is_thread, message, ERROR_MESSAGE)
+            await reply_in_thread(site_id, question, is_thread, message, ERROR_MESSAGE)
 
-def should_reply(message, client, is_thread, command_string, designated_channels):
+async def should_reply(message, client, is_thread, command_string, designated_channels):
     channel_id = str(message.channel.id)
 
     # the message is from the bot
@@ -110,7 +169,20 @@ def should_reply(message, client, is_thread, command_string, designated_channels
         return False
     # the message is in a thread created by the bot
     elif is_thread and message.channel.owner == client.user:
-        return True
+        # Loop through thread and check if someone other than the original user or bot has responded
+        original_message = message.channel.starter_message
+        if original_message is None:
+            return False 
+        if message.author != original_message.author:
+            return False
+        async for msg in message.channel.history(limit=100):
+            print(msg.author)
+            print(msg.content[:10])
+            if msg.author not in [client.user, original_message.author]:
+                return False
+            if "It sounds like you're referring to an existing support ticket. Let me tag the community managers" in msg.content:
+                return False
+        return True 
     # the message is in a designated channel and contains the command string
     elif channel_id in designated_channels and command_string in message.content:
         return True
@@ -162,10 +234,38 @@ async def on_ready():
         scheduler.add_job(send_scheduled_messages, CronTrigger(hour="*")) 
         scheduler.start()
 
+@client.event
+async def on_raw_reaction_add(payload):
+    site_id = str(payload.guild_id)
+    site_config = config_data["guilds"].get(site_id, {})
+    admin_ids = site_config.get("admin_ids")
+    designated_channels = site_config.get('designated_channels')
+
+    if not admin_ids:
+        return
+    if str(payload.user_id) not in admin_ids:
+        return
     
+    # Retrieve the channel the reaction was added in
+    channel = await client.fetch_channel(payload.channel_id)
+
+    if str(channel.id) not in designated_channels:
+        return
+
+    # Retrieve the message that was reacted to
+    message = await channel.fetch_message(payload.message_id)
+
+    if str(payload.emoji) == "🦾":
+        is_thread = isinstance(message.channel, discord.Thread)
+        question = message.content
+        await async_send_response(channel, is_thread, message, question, site_id, client) 
+
 
 @client.event
 async def on_message(message):
+
+    if message.guild is None:
+        return
 
     site_id = str(message.guild.id)
     site_config = config_data["guilds"].get(site_id, {})
@@ -176,8 +276,8 @@ async def on_message(message):
         return
 
     is_thread = isinstance(message.channel, discord.Thread)
-
-    if should_reply(message, client, is_thread, command_string, designated_channels):
+    bot_should_reply = await should_reply(message, client, is_thread, command_string, designated_channels)
+    if bot_should_reply:
         question = message.content.replace(command_string, "")
 
         channel = message.channel 
