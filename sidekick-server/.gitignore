@@ -5,6 +5,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Cached html files
+pages_cache*/
+
 # Distribution / packaging
 .Python
 build/
