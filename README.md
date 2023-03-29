@@ -38,7 +38,7 @@ To run Sidekick locally:
 
 1. Install Python 3.10, if not already installed.
 2. Clone the repository: `git clone https://github.com/ai-sidekick/sidekick.git`
-3. Navigate to the cloned repository directory: `cd /path/to/sidekick`
+3. Navigate to the `sidekick-server` directory: `cd /path/to/sidekick/sidekick-server`
 4. Install poetry: `pip install poetry`
 5. Create a new virtual environment with Python 3.10: `poetry env use python3.10`
 6. Activate the virtual environment: `poetry shell`
@@ -54,7 +54,7 @@ To run Sidekick locally:
    export WEAVIATE_INDEX=<Your chosen Weaviate class/collection name to store your chunks> // e.g. MarkdownChunk
    ```
    Note that we currently only support weaviate as the data store.
-9. Create a file `app_config.py`. This should contain an object `app_config` which maps from each bearer token to a `product_id`
+9. Create a file `app_config.py` in the `sidekick-server` directory. This should contain an object `app_config` which maps from each bearer token to a `product_id`
 
    ```
    app_config = {
