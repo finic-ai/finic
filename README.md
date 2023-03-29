@@ -41,20 +41,21 @@ To run Sidekick locally:
 3. Navigate to the `sidekick-server` directory: `cd /path/to/sidekick/sidekick-server`
 4. Install poetry: `pip install poetry`
 5. Create a new virtual environment with Python 3.10: `poetry env use python3.10`
-6. Activate the virtual environment: `poetry shell`
-7. Install app dependencies: `poetry install`
-8. Set the required environment variables:
+6. Install `poetry-dotenv`: `poetry self add poetry-dotenv`
+7. Activate the virtual environment: `poetry shell`
+8. Install app dependencies: `poetry install`
+9. Set the required environment variables in a `.env` file in `sidekick-server`:
 
    ```
-   export DATASTORE=weaviate
-   export BEARER_TOKEN=<your_bearer_token> // Can be any string when running locally. e.g. 22c443d6-0653-43de-9490-450cd4a9836f
-   export OPENAI_API_KEY=<your_openai_api_key>
-   export WEAVIATE_HOST=<Your Weaviate instance host address> // Optional, defaults to http://127.0.0.1
-   export WEAVIATE_PORT=<Your Weaviate port number> // Optional, defaults to 8080
-   export WEAVIATE_INDEX=<Your chosen Weaviate class/collection name to store your chunks> // e.g. MarkdownChunk
+   DATASTORE=weaviate
+   BEARER_TOKEN=<your_bearer_token> // Can be any string when running locally. e.g. 22c443d6-0653-43de-9490-450cd4a9836f
+   OPENAI_API_KEY=<your_openai_api_key>
+   WEAVIATE_HOST=<Your Weaviate instance host address> // Optional, defaults to http://127.0.0.1
+   WEAVIATE_PORT=<Your Weaviate port number> // Optional, defaults to 8080
+   WEAVIATE_INDEX=<Your chosen Weaviate class/collection name to store your chunks> // e.g. MarkdownChunk
    ```
    Note that we currently only support weaviate as the data store. You can [run Weaviate locally with Docker](https://weaviate.io/developers/weaviate/quickstart/installation#running-weaviate-with-docker) or [set up a sandbox cluster](https://weaviate.io/developers/weaviate/quickstart/installation#create-a-weaviate-cluster) to get a Weaviate host address.
-9. Create a file `app_config.py` in the `sidekick-server` directory. This should contain an object `app_config` which maps from each bearer token to a `product_id`
+10. Create a file `app_config.py` in the `sidekick-server` directory. This should contain an object `app_config` which maps from each bearer token to a `product_id`
 
    ```
    app_config = {
