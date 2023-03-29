@@ -5,11 +5,19 @@
 <p align="center">
   <p align="center">Connect your SaaS tools to a vector database and keep your data synced</p>
 </p>
+<p align="center">
+<a href="https://sidekick-public.slack.com/" target="_blank">
+    <img src="https://img.shields.io/badge/slack-join-white.svg?logo=slack" alt="Slack">
+</a>
+<a href="https://github.com/ai-sidekick/sidekick/blob/main/LICENSE" target="_blank">
+    <img src="https://img.shields.io/static/v1?label=license&message=GPL-3.0&color=white" alt="License">
+</a>
+</p>
 
 [Sidekick](https://getsidekick.ai/) is a framework for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector store. You can also use the integrations and chunkers from built by the community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataLoader` and `DataChunker` specs.
 
 ## Demo
-Get an API key to test out a hosted version by [joining our Slack community.](https://join.slack.com/t/sidekick-public/shared_invite/zt-1ra86qug3-~UWNCISLWpNj55Im6C6OaQ). Post in the #api-keys channel to request a new key.
+Get an API key to test out a hosted version by [joining our Slack community.](https://sidekick-public.slack.com/). Post in the #api-keys channel to request a new key.
 
 You can also test it out on some pre-ingested developer docs by tagging the Sidekick bot in the #sidekick-demo channel.
 
