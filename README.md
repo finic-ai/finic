@@ -51,7 +51,7 @@ To run Sidekick locally:
    BEARER_TOKEN=<your_bearer_token> // Can be any string when running locally. e.g. 22c443d6-0653-43de-9490-450cd4a9836f
    OPENAI_API_KEY=<your_openai_api_key>
    WEAVIATE_HOST=<Your Weaviate instance host address> // Optional, defaults to http://127.0.0.1
-   WEAVIATE_PORT=<Your Weaviate port number> // Optional, defaults to 8080
+   WEAVIATE_PORT=<Your Weaviate port number> // Optional, defaults to 8080. Should be set to 443 for Weaviate Cloud
    WEAVIATE_INDEX=<Your chosen Weaviate class/collection name to store your chunks> // e.g. MarkdownChunk
    ```
    Note that we currently only support weaviate as the data store. You can [run Weaviate locally with Docker](https://weaviate.io/developers/weaviate/quickstart/installation#running-weaviate-with-docker) or [set up a sandbox cluster](https://weaviate.io/developers/weaviate/quickstart/installation#create-a-weaviate-cluster) to get a Weaviate host address.
