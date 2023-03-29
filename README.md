@@ -53,7 +53,7 @@ To run Sidekick locally:
    export WEAVIATE_PORT=<Your Weaviate port number> // Optional, defaults to 8080
    export WEAVIATE_INDEX=<Your chosen Weaviate class/collection name to store your chunks> // e.g. MarkdownChunk
    ```
-   Note that we currently only support weaviate as the data store.
+   Note that we currently only support weaviate as the data store. You can [run Weaviate locally with Docker](https://weaviate.io/developers/weaviate/quickstart/installation#running-weaviate-with-docker) or [set up a sandbox cluster](https://weaviate.io/developers/weaviate/quickstart/installation#create-a-weaviate-cluster) to get a Weavaite host address.
 9. Create a file `app_config.py` in the `sidekick-server` directory. This should contain an object `app_config` which maps from each bearer token to a `product_id`
 
    ```
