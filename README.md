@@ -30,7 +30,7 @@ You can also test it out on some pre-ingested developer docs by tagging the Side
 * Slackbot interface to perform Q&A with OpenAI models
 
 ## Upcoming
-* `DataLoader` and `DataChunker` models to support custom loaders and chunkers
+* `DataLoader` and `DataChunker` abstractions to make it easier to contribute new loaders/chunkers
 * Connect to Pinecone, Milvus, and Qdrant vector stores
 
 ## Getting Started - 15 min
