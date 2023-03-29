@@ -1,0 +1,1584 @@
+<!DOCTYPE html><html class="" lang="en"><head><!-- Google Tag Manager -->
+<script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=UA-112879361-4&amp;l=dataLayer&amp;cx=c"></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=UA-17997319-1&amp;l=dataLayer&amp;cx=c"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-NLGDMK5"></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NLGDMK5');</script>
+<!-- End Google Tag Manager -->
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/">
+<meta property="og:title" content="Using Runners">
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://docs.bentoml.org/concepts/runner.html">
+<meta property="og:site_name" content="BentoML Documentation">
+<meta property="og:description" content="time expected: 15 minutes This page articulates on the concept of Runners and demonstrates its role within the BentoML architecture. What is Runner?: In BentoML, Runner represents a unit of computa...">
+<meta property="og:image" content="https://docs.bentoml.org/en/latest/_images/bentoml-banner.png">
+<meta property="og:image:alt" content="BentoML Documentation">
+<meta name="description" content="time expected: 15 minutes This page articulates on the concept of Runners and demonstrates its role within the BentoML architecture. What is Runner?: In BentoML, Runner represents a unit of computa...">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Deploying Bento" href="deploy.html"><link rel="prev" title="Building Bentos" href="bento.html">
+        <link rel="canonical" href="https://docs.bentoml.org/en/latest/concepts/runner.html">
+
+    <link rel="shortcut icon" href="../_static/favicon-96x96.ico"><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
+<script>
+window.Papercups = {
+    config: {
+        // Pass in your Papercups account token here after signing up
+        accountId: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        token: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        inbox: 'ac3ebd50-fc10-4299-9a1c-496841b49a6f',
+        title: 'Welcome to BentoML!',
+        subtitle: 'Ask us anything in the chat window below 😊',
+        // newMessagePlaceholder: 'Start typing...',
+        primaryColor: '#47AFD1',
+        // Optionally pass in a default greeting
+        greeting: "Hi there! How can I help you? If we couldn't get back to you in " +
+                "time, feel free to join our community on slack and post your " +
+                "question in the #support channel: https://l.linklyhq.com/l/ktOX",
+        // Optionally pass in metadata to identify the customer
+        // customer: {
+        //   name: 'Test User',
+        //   email: 'test@test.com',
+        //   external_id: '123',
+        //   metadata: {version: 1, plan: 'premium'}, // Custom fields go here
+        // },
+        // Optionally specify the base URL
+        baseUrl: 'https://yatai-community-papercups.herokuapp.com',
+        // Add this if you want to require the customer to enter
+        // their email before being able to send you a message
+        requireEmailUpfront: true,
+        // Add this if you want to indicate when you/your agents
+        // are online or offline to your customers
+        showAgentAvailability: true,
+    },
+};
+</script>
+<script type="text/javascript" async="" defer="" src="https://app.papercups.io/widget.js"></script>
+
+        <title>Using Runners - BentoML</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css">
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53">
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css">
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css">
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css">
+    <link rel="stylesheet" type="text/css" href="/_/static/css/badge_only.css">
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e">
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css">
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #3f3f3f;
+  --color-code-foreground: #dcdccc;
+  --color-brand-primary: #44a4c6 ;
+  --color-brand-content: #44a4c6 ;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+      }
+    }
+  }
+</style>
+<!-- RTD Extra Head -->
+
+<link rel="stylesheet" href="/_/static/css/readthedocs-doc-embed.css" type="text/css">
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": true, "api_host": "https://readthedocs.org", "build_date": "2023-03-27T14:27:36Z", "builder": "sphinx", "canonical_url": null, "commit": "6b4da8fe", "docroot": "/docs/source/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "concepts/runner", "programming_language": "py", "project": "bentoml", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {"yatai": "https://docs.bentoml.org/projects/yatai/en/latest/"}, "theme": "furo", "user_analytics_code": "UA-112879361-4", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="/_/static/javascript/readthedocs-analytics.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+<script src="https://www.googletagmanager.com/gtag/js?id=UA-17997319-1" type="text/javascript" async=""></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style><style data-emotion="css"></style></head>
+  <body data-theme="auto">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLGDMK5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M13 12h5"></path>
+      <path d="M13 15h4"></path>
+      <path d="M13 18h1"></path>
+      <path d="M13 9h4"></path>
+      <path d="M13 6h1"></path>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">BentoML</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/logo.svg" alt="Logo">
+  </div>
+  
+  <span class="sidebar-brand-text">BentoML</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial: Intro to BentoML</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Main Concepts</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model.html">Preparing Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="service.html">Service and APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bento.html">Building Bentos</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Using Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html">Deploying Bento</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../frameworks/index.html">Framework Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/keras.html">Keras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/picklable.html">Picklable Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/pytorch_lightning.html">PyTorch Lightning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/xgboost.html">XGBoost</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Advanced Guides</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guides/batching.html">Adaptive Batching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/containerization.html">Advanced Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/client.html">Bento Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/server.html">Bento Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/envmanager.html">Environment Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/graph.html">Inference Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/monitoring.html">Inference Data Collection &amp; Model Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/performance.html">Performance Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/grpc.html">Serving with gRPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/gpu.html">Serving with GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/security.html">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/tracing.html">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/migration.html">1.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../integrations/index.html">Integrations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/airflow.html">Airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/arize.html">Arize AI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/flink.html">Flink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/kubeflow.html">Kubeflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/mlflow.html">MLflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/spark.html">Spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/triton.html">Triton Inference Server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/core.html">Core Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stores.html">Bento Store APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/api_io_descriptors.html">API IO Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/metrics.html">Metrics API</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/frameworks/index.html">Framework APIs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/flax.html">Flax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/torchscript.html">TorchScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/xgboost.html">XGBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/picklable_model.html">Picklable Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/mlflow.html">MLflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/keras.html">Keras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/ray.html">Ray</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html">BentoML CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/batch.html">Batch Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/exceptions.html">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/container.html">Container APIs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples" target="_blank">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://l.linklyhq.com/l/ktOX" target="_blank">Community</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML" target="_blank">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://modelserving.com" target="_blank">Blog</a></li>
+</ul>
+
+</div>
+
+<div id="furo-sidebar-ad-placement" class="flat" data-ea-publisher="readthedocs" data-ea-type="readthedocs-sidebar" data-ea-manual="true"></div>
+</div>
+
+<div id="furo-readthedocs-versions" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" tabindex="0">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book">&nbsp;</span>
+    v: latest
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Versions</dt>
+      
+        <dd><a href="/en/latest/">latest</a></dd>
+      
+        <dd><a href="/en/0.13-lts/">0.13-lts</a></dd>
+      
+    </dl>
+    <dl>
+      <dt>Downloads</dt>
+      
+    </dl>
+    <dl>
+      
+      <dt>On Read the Docs</dt>
+        <dd>
+          <a href="//readthedocs.org/projects/bentoml/?fromdocs=bentoml">Project Home</a>
+        </dd>
+        <dd>
+          <a href="//readthedocs.org/builds/bentoml/?fromdocs=bentoml">Builds</a>
+        </dd>
+    </dl>
+  </div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/bentoml/bentoml/edit/main/docs/source/concepts/runner.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="using-runners">
+<h1>Using Runners<a class="headerlink" href="#using-runners" title="Permalink to this heading">#</a></h1>
+<p><em>time expected: 15 minutes</em></p>
+<p>This page articulates on the concept of Runners and demonstrates its role within the
+BentoML architecture.</p>
+<section id="what-is-runner">
+<h2>What is Runner?<a class="headerlink" href="#what-is-runner" title="Permalink to this heading">#</a></h2>
+<p>In BentoML, Runner represents a unit of computation that can be executed on a remote
+Python worker and scales independently.</p>
+<p>Runner allows <a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="../reference/core.html#bentoml-service"><span class="std std-ref">bentoml.Service</span></a> to parallelize
+multiple instances of a <a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="../reference/core.html#bentoml-runnable"><span class="std std-ref">bentoml.Runnable</span></a> class,
+each on its own Python worker. When a BentoServer is launched, a group of runner worker
+processes will be created, and <code class="code docutils literal notranslate"><span class="pre">run</span></code> method calls made from the
+<code class="code docutils literal notranslate"><span class="pre">bentoml.Service</span></code> code will be scheduled among those runner workers.</p>
+<p>Runner also supports <a class="reference internal" href="../guides/batching.html"><span class="doc">Adaptive Batching</span></a>. For a
+<a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="../reference/core.html#bentoml-runnable"><span class="std std-ref">bentoml.Runnable</span></a> configured with batching,
+multiple <code class="code docutils literal notranslate"><span class="pre">run</span></code> method invocations made from other processes can be dynamically
+grouped into one batch execution in real-time. This is especially beneficial for compute
+intensive workloads such as model inference, helps to bring better performance through
+vectorization or multi-threading.</p>
+</section>
+<section id="pre-built-model-runners">
+<h2>Pre-built Model Runners<a class="headerlink" href="#pre-built-model-runners" title="Permalink to this heading">#</a></h2>
+<p>BentoML provides pre-built Runners implemented for each ML framework supported. These
+pre-built runners are carefully configured to work well with each specific ML framework.
+They handle working with GPU when GPU is available, set the number of threads and number
+of workers automatically, and convert the model signatures to corresponding Runnable
+methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre id="codecell0"><span></span><span class="n">trained_model</span> <span class="o">=</span> <span class="n">train</span><span class="p">()</span>
+
+<span class="n">bentoml</span><span class="o">.</span><span class="n">pytorch</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span>
+    <span class="s2">"demo_mnist"</span><span class="p">,</span>  <span class="c1"># model name in the local model store</span>
+    <span class="n">trained_model</span><span class="p">,</span>  <span class="c1"># model instance being saved</span>
+    <span class="n">signatures</span><span class="o">=</span><span class="p">{</span>   <span class="c1"># model signatures for runner inference</span>
+        <span class="s2">"predict"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"batchable"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"batch_dim"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">pytorch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"demo_mnist:latest"</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">init_local</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">predict</span><span class="o">.</span><span class="n">run</span><span class="p">(</span> <span class="n">MODEL_INPUT</span> <span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</section>
+<section id="custom-runner">
+<span id="id1"></span><h2>Custom Runner<a class="headerlink" href="#custom-runner" title="Permalink to this heading">#</a></h2>
+<p>For more advanced use cases, BentoML also allows users to define their own Runner
+classes. This is useful when the pre-built Runners do not meet the requirements, or
+when the user wants to implement a Runner for a new ML framework.</p>
+<section id="creating-a-runnable">
+<h3>Creating a Runnable<a class="headerlink" href="#creating-a-runnable" title="Permalink to this heading">#</a></h3>
+<p>Runner can be created from a <a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="../reference/core.html#bentoml-runnable"><span class="std std-ref">bentoml.Runnable</span></a>
+class. By implementing a <code class="code docutils literal notranslate"><span class="pre">Runnable</span></code> class, users can create Runner instances that
+runs custom logic. Here’s an example (excerpted from <a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples/custom_runner/nltk_pretrained_model" target="_blank">one of our example projects</a>)
+creating an NLTK runner that does sentiment analysis with a pre-trained model:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text"><cite>service.py</cite></span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre id="codecell1"><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">t</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span> <span class="nn">statistics</span> <span class="kn">import</span> <span class="n">mean</span>
+
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="kn">from</span> <span class="nn">nltk.sentiment</span> <span class="kn">import</span> <span class="n">SentimentIntensityAnalyzer</span>
+
+<span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="kn">from</span> <span class="nn">bentoml.io</span> <span class="kn">import</span> <span class="n">JSON</span>
+<span class="kn">from</span> <span class="nn">bentoml.io</span> <span class="kn">import</span> <span class="n">Text</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">bentoml._internal.runner.runner</span> <span class="kn">import</span> <span class="n">RunnerMethod</span>
+
+    <span class="k">class</span> <span class="nc">RunnerImpl</span><span class="p">(</span><span class="n">bentoml</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
+        <span class="n">is_positive</span><span class="p">:</span> <span class="n">RunnerMethod</span>
+
+
+<span class="n">inference_duration</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Histogram</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"inference_duration"</span><span class="p">,</span>
+    <span class="n">documentation</span><span class="o">=</span><span class="s2">"Duration of inference"</span><span class="p">,</span>
+    <span class="n">labelnames</span><span class="o">=</span><span class="p">[</span><span class="s2">"nltk_version"</span><span class="p">,</span> <span class="s2">"sentiment_cls"</span><span class="p">],</span>
+    <span class="n">buckets</span><span class="o">=</span><span class="p">(</span>
+        <span class="mf">0.005</span><span class="p">,</span>
+        <span class="mf">0.01</span><span class="p">,</span>
+        <span class="mf">0.025</span><span class="p">,</span>
+        <span class="mf">0.05</span><span class="p">,</span>
+        <span class="mf">0.075</span><span class="p">,</span>
+        <span class="mf">0.1</span><span class="p">,</span>
+        <span class="mf">0.25</span><span class="p">,</span>
+        <span class="mf">0.5</span><span class="p">,</span>
+        <span class="mf">0.75</span><span class="p">,</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="mf">2.5</span><span class="p">,</span>
+        <span class="mf">5.0</span><span class="p">,</span>
+        <span class="mf">7.5</span><span class="p">,</span>
+        <span class="mf">10.0</span><span class="p">,</span>
+        <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">polarity_counter</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"polarity_total"</span><span class="p">,</span>
+    <span class="n">documentation</span><span class="o">=</span><span class="s2">"Count total number of analysis by polarity scores"</span><span class="p">,</span>
+    <span class="n">labelnames</span><span class="o">=</span><span class="p">[</span><span class="s2">"polarity"</span><span class="p">],</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">NLTKSentimentAnalysisRunnable</span><span class="p">(</span><span class="n">bentoml</span><span class="o">.</span><span class="n">Runnable</span><span class="p">):</span>
+    <span class="n">SUPPORTED_RESOURCES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"cpu"</span><span class="p">,)</span>
+    <span class="n">SUPPORTS_CPU_MULTI_THREADING</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sia</span> <span class="o">=</span> <span class="n">SentimentIntensityAnalyzer</span><span class="p">()</span>
+
+    <span class="nd">@bentoml</span><span class="o">.</span><span class="n">Runnable</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="n">batchable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sia</span><span class="o">.</span><span class="n">polarity_scores</span><span class="p">(</span><span class="n">sentence</span><span class="p">)[</span><span class="s2">"compound"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">sent_tokenize</span><span class="p">(</span><span class="n">input_text</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">inference_duration</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">nltk_version</span><span class="o">=</span><span class="n">nltk</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="n">sentiment_cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sia</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+
+<span class="n">nltk_runner</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span>
+    <span class="s2">"RunnerImpl"</span><span class="p">,</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span><span class="n">NLTKSentimentAnalysisRunnable</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"nltk_sentiment"</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">svc</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s2">"sentiment_analyzer"</span><span class="p">,</span> <span class="n">runners</span><span class="o">=</span><span class="p">[</span><span class="n">nltk_runner</span><span class="p">])</span>
+
+
+<span class="nd">@svc</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">Text</span><span class="p">(),</span> <span class="n">output</span><span class="o">=</span><span class="n">JSON</span><span class="p">())</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">analysis</span><span class="p">(</span><span class="n">input_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="n">is_positive</span> <span class="o">=</span> <span class="k">await</span> <span class="n">nltk_runner</span><span class="o">.</span><span class="n">is_positive</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span><span class="n">input_text</span><span class="p">)</span>
+    <span class="n">polarity_counter</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">polarity</span><span class="o">=</span><span class="n">is_positive</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"is_positive"</span><span class="p">:</span> <span class="n">is_positive</span><span class="p">}</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Full code example can be found <a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples/custom_runner/nltk_pretrained_model" target="_blank">here</a>.</p>
+</div>
+<p>The constant attribute <code class="docutils literal notranslate"><span class="pre">SUPPORTED_RESOURCES</span></code> indicates which resources this Runnable class
+implementation supports. The only currently pre-defined resources are <code class="docutils literal notranslate"><span class="pre">"cpu"</span></code> and
+<code class="docutils literal notranslate"><span class="pre">"nvidia.com/gpu"</span></code>.</p>
+<p>The constant attribute <code class="docutils literal notranslate"><span class="pre">SUPPORTS_CPU_MULTI_THREADING</span></code> indicates whether or not the runner supports
+CPU multi-threading.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Neither constant can be set inside of the runner’s <code class="docutils literal notranslate"><span class="pre">__init__</span></code> or <code class="docutils literal notranslate"><span class="pre">__new__</span></code> methods, as they are class-level attributes. The reason being BentoML’s scheduling policy is not invoked in runners’ initialization code, as instantiating runners can be quite expensive.</p>
+</div>
+<p>Since NLTK library doesn’t support utilizing GPU or multiple CPU cores natively, supported resources
+is specified as <code class="code docutils literal notranslate"><span class="pre">("cpu",)</span></code>, and <code class="docutils literal notranslate"><span class="pre">SUPPORTS_CPU_MULTI_THREADING</span></code> is set to False. This is the default configuration.
+This information is then used by the BentoServer scheduler to determine the worker pool size for this runner.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">bentoml.Runnable.method</span></code> decorator is used for creating
+<code class="code docutils literal notranslate"><span class="pre">RunnableMethod</span></code> - the decorated method will be exposed as the runner interface
+for accessing remotely. <code class="code docutils literal notranslate"><span class="pre">RunnableMethod</span></code> can be configured with a signature,
+which is defined same as the <a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="model.html#model-signatures"><span class="std std-ref">Model Signatures</span></a>.</p>
+<p>More examples about custom runners implementing their own <code class="code docutils literal notranslate"><span class="pre">Runnable</span></code> class can be found at:
+<a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples/custom_runner" target="_blank">examples/custom_runner</a>.</p>
+</section>
+<section id="reusable-runnable">
+<h3>Reusable Runnable<a class="headerlink" href="#reusable-runnable" title="Permalink to this heading">#</a></h3>
+<p>Runnable class can also take <code class="code docutils literal notranslate"><span class="pre">__init__</span></code> parameters to customize its behavior for
+different scenarios. The same Runnable class can also be used to create multiple runners
+and used in the same service. For example:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text"><cite>service.py</cite></span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre id="codecell2"><span></span> <span class="kn">import</span> <span class="nn">bentoml</span>
+ <span class="kn">import</span> <span class="nn">torch</span>
+
+ <span class="k">class</span> <span class="nc">MyModelRunnable</span><span class="p">(</span><span class="n">bentoml</span><span class="o">.</span><span class="n">Runnable</span><span class="p">):</span>
+     <span class="n">SUPPORTED_RESOURCES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"nvidia.com/gpu"</span><span class="p">,)</span>
+     <span class="n">SUPPORTS_CPU_MULTI_THREADING</span> <span class="o">=</span> <span class="kc">True</span>
+
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_file</span><span class="p">):</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span>
+
+     <span class="nd">@bentoml</span><span class="o">.</span><span class="n">Runnable</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="n">batchable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_tensor</span><span class="p">):</span>
+         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">)</span>
+
+ <span class="n">my_runner_1</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span>
+     <span class="n">MyModelRunnable</span><span class="p">,</span>
+     <span class="n">name</span><span class="o">=</span><span class="s2">"my_runner_1"</span><span class="p">,</span>
+     <span class="n">runnable_init_params</span><span class="o">=</span><span class="p">{</span>
+         <span class="s2">"model_file"</span><span class="p">:</span> <span class="s2">"./saved_model_1.pt"</span><span class="p">,</span>
+     <span class="p">}</span>
+ <span class="p">)</span>
+ <span class="n">my_runner_2</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span>
+     <span class="n">MyModelRunnable</span><span class="p">,</span>
+     <span class="n">name</span><span class="o">=</span><span class="s2">"my_runner_2"</span><span class="p">,</span>
+     <span class="n">runnable_init_params</span><span class="o">=</span><span class="p">{</span>
+         <span class="s2">"model_file"</span><span class="p">:</span> <span class="s2">"./saved_model_2.pt"</span><span class="p">,</span>
+     <span class="p">}</span>
+ <span class="p">)</span>
+
+ <span class="n">svc</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">runners</span><span class="o">=</span><span class="p">[</span><span class="n">my_runner_1</span><span class="p">,</span> <span class="n">my_runner_2</span><span class="p">])</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+<blockquote class="epigraph">
+<div><p>All runners presented in one <code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> object must have unique names.</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default Runner name is the Runnable class name. When using the same Runnable
+class to create multiple runners and use them in the same service, user must rename
+runners by specifying the <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter when creating the runners. Runner
+name are a key to configuring individual runner at deploy time and to runner related
+logging and tracing features.</p>
+</div>
+</section>
+<section id="custom-model-runner">
+<h3>Custom Model Runner<a class="headerlink" href="#custom-model-runner" title="Permalink to this heading">#</a></h3>
+<p>Custom Runnable built with Model from BentoML’s model store:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre id="codecell3"><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="kn">from</span> <span class="nn">bentoml.io</span> <span class="kn">import</span> <span class="n">JSON</span>
+<span class="kn">from</span> <span class="nn">bentoml.io</span> <span class="kn">import</span> <span class="n">NumpyNdarray</span>
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+
+<span class="n">bento_model</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">pytorch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"spam_detection:latest"</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">SpamDetectionRunnable</span><span class="p">(</span><span class="n">bentoml</span><span class="o">.</span><span class="n">Runnable</span><span class="p">):</span>
+    <span class="n">SUPPORTED_RESOURCES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"cpu"</span><span class="p">,)</span>
+    <span class="n">SUPPORTS_CPU_MULTI_THREADING</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># load the model instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">bento_model</span><span class="p">)</span>
+
+    <span class="nd">@bentoml</span><span class="o">.</span><span class="n">Runnable</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="n">batchable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">is_spam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+
+<span class="n">spam_detection_runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span><span class="n">SpamDetectionRunnable</span><span class="p">,</span> <span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">bento_model</span><span class="p">])</span>
+<span class="n">svc</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s2">"spam_detector"</span><span class="p">,</span> <span class="n">runners</span><span class="o">=</span><span class="p">[</span><span class="n">spam_detection_runner</span><span class="p">])</span>
+
+<span class="nd">@svc</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">NumpyNdarray</span><span class="p">(),</span> <span class="n">output</span><span class="o">=</span><span class="n">JSON</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">analysis</span><span class="p">(</span><span class="n">input_text</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"res"</span><span class="p">:</span> <span class="n">spam_detection_runner</span><span class="o">.</span><span class="n">is_spam</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">input_text</span><span class="p">)}</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell3">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+<p>Custom Runnable can be also built by extending the Runnable class generated by Model
+from BentoML’s model store. A full example with custom metrics to monitor the model’s
+performance can be found at <a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples/custom_model_runner" target="_blank">examples/custom_model_runner</a>.</p>
+</section>
+</section>
+<section id="serving-multiple-models-via-runner">
+<h2>Serving Multiple Models via Runner<a class="headerlink" href="#serving-multiple-models-via-runner" title="Permalink to this heading">#</a></h2>
+<p>Serving multiple models in the same workflow is also a common pattern in BentoML’s prediction framework. This pattern can be achieved by simply instantiating multiple runners up front and passing them to the service that’s being created. Each runner/model will be configured with its’ own resources and run autonomously. If no configuration is passed, BentoML will then determine the optimal resources to allocate to each runner.</p>
+<section id="sequential-runs">
+<h3>Sequential Runs<a class="headerlink" href="#sequential-runs" title="Permalink to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre id="codecell4"><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="kn">import</span> <span class="nn">PIL.Image</span>
+
+<span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="kn">from</span> <span class="nn">bentoml.io</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Text</span>
+
+<span class="n">transformers_runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">transformers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sentiment_model:latest"</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+<span class="n">ocr_runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">easyocr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ocr_model:latest"</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+
+<span class="n">svc</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s2">"sentiment_analysis"</span><span class="p">,</span> <span class="n">runners</span><span class="o">=</span><span class="p">[</span><span class="n">transformers_runner</span><span class="p">,</span> <span class="n">ocr_runner</span><span class="p">])</span>
+
+<span class="nd">@svc</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">Image</span><span class="p">(),</span><span class="n">output</span><span class="o">=</span><span class="n">Text</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">ocr_text</span> <span class="o">=</span> <span class="n">ocr_runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">transformers_runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ocr_text</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+<p>It’s as simple as creating two runners and invoking them synchronously in your prediction endpoint. Note that an async endpoint is often preferred in these use cases as the primary event loop is yielded while waiting for other IO-expensive tasks.</p>
+<p>For example, the same API above can be achieved as an <code class="docutils literal notranslate"><span class="pre">async</span></code> endpoint:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre id="codecell5"><span></span><span class="nd">@svc</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">Image</span><span class="p">(),</span><span class="n">output</span><span class="o">=</span><span class="n">Text</span><span class="p">())</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">classify_async</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">ocr_text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">ocr_runner</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">transformers_runner</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span><span class="n">ocr_text</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell5">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</section>
+<section id="concurrent-runs">
+<h3>Concurrent Runs<a class="headerlink" href="#concurrent-runs" title="Permalink to this heading">#</a></h3>
+<p>In cases where certain steps can be executed concurrently, <code class="code docutils literal notranslate"><span class="pre">asyncio.gather</span></code> can be used to aggregate results from multiple concurrent runs. For instance, if you are running two models simultaneously, you could invoke <code class="docutils literal notranslate"><span class="pre">asyncio.gather</span></code> as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre id="codecell6"><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">PIL.Image</span>
+
+<span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="kn">from</span> <span class="nn">bentoml.io</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Text</span>
+
+<span class="n">preprocess_runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span><span class="n">MyPreprocessRunnable</span><span class="p">)</span>
+<span class="n">model_a_runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">xgboost</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'model_a:latest'</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+<span class="n">model_b_runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">pytorch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'model_b:latest'</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+
+<span class="n">svc</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">'inference_graph_demo'</span><span class="p">,</span> <span class="n">runners</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">preprocess_runner</span><span class="p">,</span>
+    <span class="n">model_a_runner</span><span class="p">,</span>
+    <span class="n">model_b_runner</span>
+<span class="p">])</span>
+
+<span class="nd">@svc</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">Image</span><span class="p">(),</span> <span class="n">output</span><span class="o">=</span><span class="n">Text</span><span class="p">())</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">input_image</span><span class="p">:</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">model_input</span> <span class="o">=</span> <span class="k">await</span> <span class="n">preprocess_runner</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span><span class="n">input_image</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="n">model_a_runner</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span><span class="n">model_input</span><span class="p">),</span>
+        <span class="n">model_b_runner</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span><span class="n">model_input</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">post_process</span><span class="p">(</span>
+        <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># model a result</span>
+        <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="c1"># model b result</span>
+    <span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+<p>Once each model completes, the results can be compared and logged as a post processing
+step.</p>
+<p>Another example generating text using three different language models concurrently and
+then classify each generated paragraph with an classification model can be found at:
+<a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples/inference_graph" target="_blank">examples/inference_graph</a>.</p>
+</section>
+</section>
+<section id="runner-definition">
+<h2>Runner Definition<a class="headerlink" href="#runner-definition" title="Permalink to this heading">#</a></h2>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Document detailed list of Runner options</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre id="codecell7"><span></span><span class="n">my_runner</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Runner</span><span class="p">(</span>
+    <span class="n">MyRunnable</span><span class="p">,</span>
+    <span class="n">runnable_init_params</span><span class="o">=</span><span class="p">{</span><span class="s2">"foo"</span><span class="p">:</span> <span class="n">foo</span><span class="p">,</span> <span class="s2">"bar"</span><span class="p">:</span> <span class="n">bar</span><span class="p">},</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"custom_runner_name"</span><span class="p">,</span>
+    <span class="n">strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># default strategy will be selected depending on the SUPPORTED_RESOURCES and SUPPORTS_CPU_MULTI_THREADING flag on runnable</span>
+    <span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="o">..</span><span class="p">],</span>
+
+    <span class="c1"># below are also configurable via config file:</span>
+
+    <span class="c1"># default configs:</span>
+    <span class="n">max_batch_size</span><span class="o">=..</span>  <span class="c1"># default max batch size will be applied to all run methods, unless override in the runnable_method_configs</span>
+    <span class="n">max_latency_ms</span><span class="o">=..</span> <span class="c1"># default max latency will be applied to all run methods, unless override in the runnable_method_configs</span>
+
+    <span class="n">runnable_method_configs</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="n">method_name</span><span class="o">=</span><span class="s2">"predict"</span><span class="p">,</span>
+            <span class="n">max_batch_size</span><span class="o">=..</span><span class="p">,</span>
+            <span class="n">max_latency_ms</span><span class="o">=..</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell7">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</section>
+<section id="runner-configuration">
+<h2>Runner Configuration<a class="headerlink" href="#runner-configuration" title="Permalink to this heading">#</a></h2>
+<p>Runner behaviors and resource allocation can be specified via BentoML <a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="../guides/configuration.html#configuration"><span class="std std-ref">configuration</span></a>.</p>
+<p>Runners can be both configured individually or in aggregate under the <code class="docutils literal notranslate"><span class="pre">runners</span></code> configuration key. To configure a specific runner, specify its name
+under the <code class="docutils literal notranslate"><span class="pre">runners</span></code> configuration key. Otherwise, the configuration will be applied to all runners. The examples below demonstrate both
+the configuration for all runners in aggregate and for an individual runner (<code class="docutils literal notranslate"><span class="pre">iris_clf</span></code>).</p>
+<section id="adaptive-batching">
+<h3>Adaptive Batching<a class="headerlink" href="#adaptive-batching" title="Permalink to this heading">#</a></h3>
+<p>If a model or custom runner supports batching, the <a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="../guides/batching.html#adaptive-batching"><span class="std std-ref">adaptive batching</span></a> mechanism is enabled by default.
+To explicitly disable or control adaptive batching behaviors at runtime, configuration can be specified under the <code class="docutils literal notranslate"><span class="pre">batching</span></code> key.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" data-sync-id="all_runners" for="sd-tab-item-0">
+All Runners</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell8"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">batching</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">max_latency_ms</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" data-sync-id="individual_runner" for="sd-tab-item-1">
+Individual Runner</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell9"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">iris_clf</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">batching</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">max_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">      </span><span class="nt">max_latency_ms</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell9">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="resource-allocation">
+<h3>Resource Allocation<a class="headerlink" href="#resource-allocation" title="Permalink to this heading">#</a></h3>
+<p>By default, a runner will attempt to utilize all available resources in the container. Runner’s resource allocation can also be customized
+through configuration, with a <cite>float</cite> value for <code class="docutils literal notranslate"><span class="pre">cpu</span></code> and an <cite>int</cite> value for <code class="docutils literal notranslate"><span class="pre">nvidia.com/gpu</span></code>. Fractional GPU is currently not supported.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" data-sync-id="all_runners" for="sd-tab-item-2">
+All Runners</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell10"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<span class="w">    </span><span class="nt">nvidia.com/gpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell10">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" data-sync-id="individual_runner" for="sd-tab-item-3">
+Individual Runner</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id9" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell11"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">iris_clf</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<span class="w">      </span><span class="nt">nvidia.com/gpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell11">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+</div>
+<p>Alternatively, a runner can be mapped to a specific set of GPUs. To specify GPU mapping, instead of defining an <cite>integer</cite> value, a list of device IDs
+can be specified for the <code class="docutils literal notranslate"><span class="pre">nvidia.com/gpu</span></code> key. For example, the following configuration maps the configured runners to GPU device 2 and 4.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" data-sync-id="all_runners" for="sd-tab-item-4">
+All Runners</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id10" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell12"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nvidia.com/gpu</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">]</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell12">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" data-sync-id="individual_runner" for="sd-tab-item-5">
+Individual Runner</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id11" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell13"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">iris_clf</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">nvidia.com/gpu</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">]</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell13">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="timeout">
+<h3>Timeout<a class="headerlink" href="#timeout" title="Permalink to this heading">#</a></h3>
+<p>Runner timeout defines the amount of time in seconds to wait before calls a runner is timed out on the API server.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-6" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" data-sync-id="all_runners" for="sd-tab-item-6">
+All Runners</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id12" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell14"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell14">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" data-sync-id="individual_runner" for="sd-tab-item-7">
+Individual Runner</label><div class="sd-tab-content docutils">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">⚙️ <cite>configuration.yml</cite></span><a class="headerlink" href="#id13" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell15"><span></span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">iris_clf</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell15">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="access-logging">
+<h3>Access Logging<a class="headerlink" href="#access-logging" title="Permalink to this heading">#</a></h3>
+<p>See <a class="hxr-hoverxref hxr-tooltip reference internal tooltipstered" href="../guides/logging.html#logging-configuration"><span class="std std-ref">Logging Configuration</span></a> for access log customization.</p>
+</section>
+</section>
+<section id="distributed-runner-with-yatai">
+<h2>Distributed Runner with Yatai<a class="headerlink" href="#distributed-runner-with-yatai" title="Permalink to this heading">#</a></h2>
+<p><a class="reference external" href="https://github.com/bentoml/Yatai" target="_blank">🦄️ Yatai</a> provides a more advanced Runner
+architecture specifically designed for running large scale inference workloads on a
+Kubernetes cluster.</p>
+<p>While the standalone <code class="code docutils literal notranslate"><span class="pre">BentoServer</span></code> schedules Runner workers on their own Python
+processes, the <code class="code docutils literal notranslate"><span class="pre">BentoDeployment</span></code> created by Yatai, scales Runner workers in their
+own group of <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/pods/" target="_blank">Pods</a> and made it
+possible to set a different resource requirement for each Runner, and auto-scaling each
+Runner separately based on their workloads.</p>
+<p>Sample <code class="code docutils literal notranslate"><span class="pre">BentoDeployment</span></code> definition file for deploying in Kubernetes:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre id="codecell16"><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yatai.bentoml.org/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BentoDeployment</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="nt">bento_tag</span><span class="p">:</span><span class="w"> </span><span class="s">'fraud_detector:dpijemevl6nlhlg6'</span>
+<span class="nt">autoscaling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500m</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200m</span>
+<span class="nt">runners</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">model_runner_a</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">autoscaling</span><span class="p p-Indicator">:</span>
+<span class="w">        </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">  </span><span class="w w-Error">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">nvidia.com/gpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000m</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell16">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>Copy to clipboard</title>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+</svg>
+    </button></div>
+</div>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>add graph explaining Yatai Runner architecture</p>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="deploy.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Deploying Bento</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="bento.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Building Bentos</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright © 2022-2023, bentoml.com
+            </div>
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/bentoml/bentoml" aria-label="GitHub"> 🍱 </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Using Runners</a><ul>
+<li><a class="reference internal" href="#what-is-runner">What is Runner?</a></li>
+<li><a class="reference internal" href="#pre-built-model-runners">Pre-built Model Runners</a></li>
+<li><a class="reference internal" href="#custom-runner">Custom Runner</a><ul>
+<li><a class="reference internal" href="#creating-a-runnable">Creating a Runnable</a></li>
+<li><a class="reference internal" href="#reusable-runnable">Reusable Runnable</a></li>
+<li><a class="reference internal" href="#custom-model-runner">Custom Model Runner</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#serving-multiple-models-via-runner">Serving Multiple Models via Runner</a><ul>
+<li><a class="reference internal" href="#sequential-runs">Sequential Runs</a></li>
+<li><a class="reference internal" href="#concurrent-runs">Concurrent Runs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#runner-definition">Runner Definition</a></li>
+<li><a class="reference internal" href="#runner-configuration">Runner Configuration</a><ul>
+<li><a class="reference internal" href="#adaptive-batching">Adaptive Batching</a></li>
+<li><a class="reference internal" href="#resource-allocation">Resource Allocation</a></li>
+<li><a class="reference internal" href="#timeout">Timeout</a></li>
+<li><a class="reference internal" href="#access-logging">Access Logging</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#distributed-runner-with-yatai">Distributed Runner with Yatai</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <div id="PapercupsChatWidget"><iframe title="Papercups Chat Widget Container" class="Papercups-chatWindowContainer css-um7ixe" sandbox="allow-scripts allow-popups allow-same-origin allow-forms" src="https://chat-widget.papercups.io?accountId=25ad5fd9-293b-4e0f-9601-5b0cd7846b48&amp;baseUrl=https%3A%2F%2Fyatai-community-papercups.herokuapp.com&amp;closeable=1&amp;debug=0&amp;disableAnalyticsTracking=0&amp;greeting=Hi%20there%21%20How%20can%20I%20help%20you%3F%20If%20we%20couldn%27t%20get%20back%20to%20you%20in%20time%2C%20feel%20free%20to%20join%20our%20community%20on%20slack%20and%20post%20your%20question%20in%20the%20%23support%20channel%3A%20https%3A%2F%2Fl.linklyhq.com%2Fl%2FktOX&amp;inbox=ac3ebd50-fc10-4299-9a1c-496841b49a6f&amp;metadata=%7B%22os%22%3A%22Mac%20OS%20X%22%2C%22browser%22%3A%22Chrome%22%2C%22time_zone%22%3A%22America%2FLos_Angeles%22%2C%22current_url%22%3A%22https%3A%2F%2Fdocs.bentoml.org%2Fen%2Flatest%2Fconcepts%2Frunner.html%22%2C%22host%22%3A%22docs.bentoml.org%22%2C%22pathname%22%3A%22%2Fen%2Flatest%2Fconcepts%2Frunner.html%22%2C%22browser_version%22%3A%22111%22%2C%22screen_height%22%3A720%2C%22screen_width%22%3A1280%2C%22lib%22%3A%22web%22%2C%22insert_id%22%3A%22i3eje7k40kzg7wsj%22%2C%22time%22%3A1679951744.527%7D&amp;primaryColor=%2347AFD1&amp;requireEmailUpfront=1&amp;showAgentAvailability=1&amp;subtitle=Ask%20us%20anything%20in%20the%20chat%20window%20below%20%F0%9F%98%8A&amp;title=Welcome%20to%20BentoML%21&amp;token=25ad5fd9-293b-4e0f-9601-5b0cd7846b48&amp;ts=1679951743925&amp;version=1.2.0" style="pointer-events: none; height: 0px; min-height: 0px; opacity: 0; transform: translateY(4px) translateZ(0px);">Loading...</iframe></div><script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/tabs.js"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/design-tabs.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="/_/static/javascript/readthedocs-doc-embed.js"></script>
+    <script src="../_static/js/custom.js"></script>
+    
+<div style="display: none; visibility: hidden;"><script src="https://t.jitsu.com/s/lib.js" data-key="js.jqho3vy91pn32tceppam.y74ysav0xrdi5kv13hdpfc" data-init-only="false" defer="defer"></script></div>
+  <div class="modal micromodal-slide rst-content" id="micromodal" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close="">
+      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="micromodal-title">
+        <header class="modal__header">
+          <h1 class="modal__title" id="micromodal-title"></h1>
+          <button class="modal__close" aria-label="Close modal" data-micromodal-close=""></button>
+        </header>
+        <hr>
+        <main class="modal__content" id="micromodal-content"></main>
+        <footer class="modal__footer">
+          <button class="modal__btn" data-micromodal-close="" aria-label="Close this dialog window">Close</button>
+        </footer>
+      </div>
+    </div>
+  </div>
+</body></html>

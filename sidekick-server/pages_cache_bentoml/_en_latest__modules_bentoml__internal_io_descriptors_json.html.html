@@ -1,0 +1,910 @@
+<!DOCTYPE html><html class="no-js" lang="en"><head><!-- Google Tag Manager -->
+<script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-NLGDMK5"></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NLGDMK5');</script>
+<!-- End Google Tag Manager -->
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
+        <link rel="canonical" href="https://docs.bentoml.org/en/latest/_modules/bentoml/_internal/io_descriptors/json.html">
+
+    <link rel="shortcut icon" href="../../../../_static/favicon-96x96.ico"><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
+<script>
+window.Papercups = {
+    config: {
+        // Pass in your Papercups account token here after signing up
+        accountId: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        token: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        inbox: 'ac3ebd50-fc10-4299-9a1c-496841b49a6f',
+        title: 'Welcome to BentoML!',
+        subtitle: 'Ask us anything in the chat window below 😊',
+        // newMessagePlaceholder: 'Start typing...',
+        primaryColor: '#47AFD1',
+        // Optionally pass in a default greeting
+        greeting: "Hi there! How can I help you? If we couldn't get back to you in " +
+                "time, feel free to join our community on slack and post your " +
+                "question in the #support channel: https://l.linklyhq.com/l/ktOX",
+        // Optionally pass in metadata to identify the customer
+        // customer: {
+        //   name: 'Test User',
+        //   email: 'test@test.com',
+        //   external_id: '123',
+        //   metadata: {version: 1, plan: 'premium'}, // Custom fields go here
+        // },
+        // Optionally specify the base URL
+        baseUrl: 'https://yatai-community-papercups.herokuapp.com',
+        // Add this if you want to require the customer to enter
+        // their email before being able to send you a message
+        requireEmailUpfront: true,
+        // Add this if you want to indicate when you/your agents
+        // are online or offline to your customers
+        showAgentAvailability: true,
+    },
+};
+</script>
+<script type="text/javascript" async="" defer="" src="https://app.papercups.io/widget.js"></script>
+
+        <title>bentoml._internal.io_descriptors.json - BentoML</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.custom.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.bundle.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-shadow.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-punk.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-noir.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-light.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-borderless.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/micromodal.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css">
+    <link rel="stylesheet" type="text/css" href="/_/static/css/badge_only.css">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e">
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css">
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #3f3f3f;
+  --color-code-foreground: #dcdccc;
+  --color-brand-primary: #44a4c6 ;
+  --color-brand-content: #44a4c6 ;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+      }
+    }
+  }
+</style>
+<!-- RTD Extra Head -->
+
+<link rel="stylesheet" href="/_/static/css/readthedocs-doc-embed.css" type="text/css">
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": true, "api_host": "https://readthedocs.org", "build_date": "2023-03-27T14:27:48Z", "builder": "sphinx", "canonical_url": null, "commit": "6b4da8fe", "docroot": "/docs/source/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "_modules/bentoml/_internal/io_descriptors/json", "programming_language": "py", "project": "bentoml", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {"yatai": "https://docs.bentoml.org/projects/yatai/en/latest/"}, "theme": "furo", "user_analytics_code": "UA-112879361-4", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="/_/static/javascript/readthedocs-analytics.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+  <body data-theme="auto">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLGDMK5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M13 12h5"></path>
+      <path d="M13 15h4"></path>
+      <path d="M13 18h1"></path>
+      <path d="M13 9h4"></path>
+      <path d="M13 6h1"></path>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">BentoML</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/logo.svg" alt="Logo">
+  </div>
+  
+  <span class="sidebar-brand-text">BentoML</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial: Intro to BentoML</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../concepts/index.html">Main Concepts</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../concepts/model.html">Preparing Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../concepts/service.html">Service and APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../concepts/bento.html">Building Bentos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../concepts/runner.html">Using Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../concepts/deploy.html">Deploying Bento</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../frameworks/index.html">Framework Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/keras.html">Keras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/picklable.html">Picklable Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/pytorch_lightning.html">PyTorch Lightning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../frameworks/xgboost.html">XGBoost</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../guides/index.html">Advanced Guides</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/batching.html">Adaptive Batching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/containerization.html">Advanced Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/client.html">Bento Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/server.html">Bento Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/envmanager.html">Environment Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/graph.html">Inference Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/monitoring.html">Inference Data Collection &amp; Model Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/performance.html">Performance Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/grpc.html">Serving with gRPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/gpu.html">Serving with GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/security.html">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/tracing.html">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../guides/migration.html">1.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../integrations/index.html">Integrations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../integrations/airflow.html">Airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../integrations/arize.html">Arize AI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../integrations/flink.html">Flink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../integrations/kubeflow.html">Kubeflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../integrations/mlflow.html">MLflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../integrations/spark.html">Spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../integrations/triton.html">Triton Inference Server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/core.html">Core Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/stores.html">Bento Store APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/api_io_descriptors.html">API IO Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/metrics.html">Metrics API</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../reference/frameworks/index.html">Framework APIs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/flax.html">Flax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/torchscript.html">TorchScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/xgboost.html">XGBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/picklable_model.html">Picklable Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/mlflow.html">MLflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/keras.html">Keras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/frameworks/ray.html">Ray</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/cli.html">BentoML CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/batch.html">Batch Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/exceptions.html">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/container.html">Container APIs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://l.linklyhq.com/l/ktOX">Community</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://modelserving.com">Blog</a></li>
+</ul>
+
+</div>
+
+<div id="furo-sidebar-ad-placement" class="flat" data-ea-publisher="readthedocs" data-ea-type="readthedocs-sidebar" data-ea-manual="true"></div>
+</div>
+
+<div id="furo-readthedocs-versions" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" tabindex="0">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book">&nbsp;</span>
+    v: latest
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Versions</dt>
+      
+        <dd><a href="/en/latest/">latest</a></dd>
+      
+        <dd><a href="/en/0.13-lts/">0.13-lts</a></dd>
+      
+    </dl>
+    <dl>
+      <dt>Downloads</dt>
+      
+    </dl>
+    <dl>
+      
+      <dt>On Read the Docs</dt>
+        <dd>
+          <a href="//readthedocs.org/projects/bentoml/?fromdocs=bentoml">Project Home</a>
+        </dd>
+        <dd>
+          <a href="//readthedocs.org/builds/bentoml/?fromdocs=bentoml">Builds</a>
+        </dd>
+    </dl>
+  </div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for bentoml._internal.io_descriptors.json</h1><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">t</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">dataclasses</span>
+
+<span class="kn">import</span> <span class="nn">attr</span>
+<span class="kn">from</span> <span class="nn">starlette.requests</span> <span class="kn">import</span> <span class="n">Request</span>
+<span class="kn">from</span> <span class="nn">starlette.responses</span> <span class="kn">import</span> <span class="n">Response</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">IODescriptor</span>
+<span class="kn">from</span> <span class="nn">..types</span> <span class="kn">import</span> <span class="n">LazyType</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">LazyLoader</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">bentoml_cattr</span>
+<span class="kn">from</span> <span class="nn">..utils.pkg</span> <span class="kn">import</span> <span class="n">pkg_version_info</span>
+<span class="kn">from</span> <span class="nn">..utils.http</span> <span class="kn">import</span> <span class="n">set_cookies</span>
+<span class="kn">from</span> <span class="nn">...exceptions</span> <span class="kn">import</span> <span class="n">BadInput</span>
+<span class="kn">from</span> <span class="nn">...exceptions</span> <span class="kn">import</span> <span class="n">InvalidArgument</span>
+<span class="kn">from</span> <span class="nn">..service.openapi</span> <span class="kn">import</span> <span class="n">REF_PREFIX</span>
+<span class="kn">from</span> <span class="nn">..service.openapi</span> <span class="kn">import</span> <span class="n">SUCCESS_DESCRIPTION</span>
+<span class="kn">from</span> <span class="nn">..service.openapi.specification</span> <span class="kn">import</span> <span class="n">Schema</span>
+<span class="kn">from</span> <span class="nn">..service.openapi.specification</span> <span class="kn">import</span> <span class="n">MediaType</span>
+
+<span class="n">EXC_MSG</span> <span class="o">=</span> <span class="s2">"'pydantic' must be installed to use 'pydantic_model'. Install with 'pip install bentoml[io-json]'."</span>
+
+<span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">UnionType</span>
+
+    <span class="kn">import</span> <span class="nn">pydantic</span>
+    <span class="kn">import</span> <span class="nn">pydantic.schema</span> <span class="k">as</span> <span class="nn">schema</span>
+    <span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">message</span> <span class="k">as</span> <span class="n">_message</span>
+    <span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">struct_pb2</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
+
+    <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">OpenAPIResponse</span>
+    <span class="kn">from</span> <span class="nn">..context</span> <span class="kn">import</span> <span class="n">InferenceApiContext</span> <span class="k">as</span> <span class="n">Context</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">pydantic</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">"pydantic"</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s2">"pydantic"</span><span class="p">,</span> <span class="n">exc_msg</span><span class="o">=</span><span class="n">EXC_MSG</span><span class="p">)</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">"schema"</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s2">"pydantic.schema"</span><span class="p">,</span> <span class="n">exc_msg</span><span class="o">=</span><span class="n">EXC_MSG</span><span class="p">)</span>
+    <span class="c1"># lazy load our proto generated.</span>
+    <span class="n">struct_pb2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">"struct_pb2"</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s2">"google.protobuf.struct_pb2"</span><span class="p">)</span>
+    <span class="c1"># lazy load numpy for processing ndarray.</span>
+    <span class="n">np</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">"np"</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s2">"numpy"</span><span class="p">)</span>
+
+
+<span class="n">JSONType</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="s2">"pydantic.BaseModel"</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">DefaultJsonEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">is_dataclass</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"ext.NpNDArray"</span><span class="p">](</span><span class="s2">"numpy.ndarray"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"ext.NpGeneric"</span><span class="p">](</span><span class="s2">"numpy.generic"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"ext.PdDataFrame"</span><span class="p">](</span><span class="s2">"pandas.DataFrame"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"ext.PdSeries"</span><span class="p">](</span><span class="s2">"pandas.Series"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"pydantic.BaseModel"</span><span class="p">](</span><span class="s2">"pydantic.BaseModel"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="n">obj_dict</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">"__root__"</span> <span class="ow">in</span> <span class="n">obj_dict</span><span class="p">:</span>
+                <span class="n">obj_dict</span> <span class="o">=</span> <span class="n">obj_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"__root__"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">obj_dict</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">has</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">bentoml_cattr</span><span class="o">.</span><span class="n">unstructure</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="JSON"><a class="viewcode-back" href="../../../../reference/api_io_descriptors.html#bentoml.io.JSON">[docs]</a><span class="k">class</span> <span class="nc">JSON</span><span class="p">(</span>
+    <span class="n">IODescriptor</span><span class="p">[</span><span class="n">JSONType</span><span class="p">],</span> <span class="n">descriptor_id</span><span class="o">=</span><span class="s2">"bentoml.io.JSON"</span><span class="p">,</span> <span class="n">proto_fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"json"</span><span class="p">,)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    :obj:`JSON` defines API specification for the inputs/outputs of a Service, where either</span>
+<span class="sd">    inputs will be converted to or outputs will be converted from a JSON representation</span>
+<span class="sd">    as specified in your API function signature.</span>
+
+<span class="sd">    A sample service implementation:</span>
+
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">       :caption: `service.py`</span>
+
+<span class="sd">       from __future__ import annotations</span>
+
+<span class="sd">       import typing</span>
+<span class="sd">       from typing import TYPE_CHECKING</span>
+<span class="sd">       from typing import Any</span>
+<span class="sd">       from typing import Optional</span>
+
+<span class="sd">       import bentoml</span>
+<span class="sd">       from bentoml.io import NumpyNdarray</span>
+<span class="sd">       from bentoml.io import JSON</span>
+
+<span class="sd">       import numpy as np</span>
+<span class="sd">       import pandas as pd</span>
+<span class="sd">       from pydantic import BaseModel</span>
+
+<span class="sd">       iris_clf_runner = bentoml.sklearn.get("iris_clf_with_feature_names:latest").to_runner()</span>
+
+<span class="sd">       svc = bentoml.Service("iris_classifier_pydantic", runners=[iris_clf_runner])</span>
+
+<span class="sd">       class IrisFeatures(BaseModel):</span>
+<span class="sd">           sepal_len: float</span>
+<span class="sd">           sepal_width: float</span>
+<span class="sd">           petal_len: float</span>
+<span class="sd">           petal_width: float</span>
+
+<span class="sd">           # Optional field</span>
+<span class="sd">           request_id: Optional[int]</span>
+
+<span class="sd">           # Use custom Pydantic config for additional validation options</span>
+<span class="sd">           class Config:</span>
+<span class="sd">               extra = 'forbid'</span>
+
+
+<span class="sd">       input_spec = JSON(pydantic_model=IrisFeatures)</span>
+
+<span class="sd">       @svc.api(input=input_spec, output=NumpyNdarray())</span>
+<span class="sd">       def classify(input_data: IrisFeatures) -&gt; NDArray[Any]:</span>
+<span class="sd">           if input_data.request_id is not None:</span>
+<span class="sd">               print("Received request ID: ", input_data.request_id)</span>
+
+<span class="sd">           input_df = pd.DataFrame([input_data.dict(exclude={"request_id"})])</span>
+<span class="sd">           return iris_clf_runner.run(input_df)</span>
+
+<span class="sd">    Users then can then serve this service with :code:`bentoml serve`:</span>
+
+<span class="sd">    .. code-block:: bash</span>
+
+<span class="sd">        % bentoml serve ./service.py:svc --reload</span>
+
+<span class="sd">    Users can then send requests to the newly started services with any client:</span>
+
+<span class="sd">    .. tab-set::</span>
+
+<span class="sd">        .. tab-item:: Bash</span>
+
+<span class="sd">            .. code-block:: bash</span>
+
+<span class="sd">               % curl -X POST -H "content-type: application/json" \\</span>
+<span class="sd">                   --data '{"sepal_len": 6.2, "sepal_width": 3.2, "petal_len": 5.2, "petal_width": 2.2}' \\</span>
+<span class="sd">                   http://127.0.0.1:3000/classify</span>
+
+<span class="sd">               # [2]%</span>
+
+<span class="sd">        .. tab-item:: Python</span>
+
+<span class="sd">            .. code-block:: python</span>
+<span class="sd">               :caption: `request.py`</span>
+
+<span class="sd">                import requests</span>
+
+<span class="sd">                requests.post(</span>
+<span class="sd">                    "http://0.0.0.0:3000/predict",</span>
+<span class="sd">                    headers={"content-type": "application/json"},</span>
+<span class="sd">                    data='{"sepal_len": 6.2, "sepal_width": 3.2, "petal_len": 5.2, "petal_width": 2.2}'</span>
+<span class="sd">                ).text</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pydantic_model: Pydantic model schema. When used, inference API callback</span>
+<span class="sd">                        will receive an instance of the specified ``pydantic_model`` class.</span>
+<span class="sd">        json_encoder: JSON encoder class. By default BentoML implements a custom JSON encoder that</span>
+<span class="sd">                      provides additional serialization supports for numpy arrays, pandas dataframes,</span>
+<span class="sd">                      dataclass-like (`attrs &lt;https://www.attrs.org/en/stable/&gt;`_, dataclass, etc.).</span>
+<span class="sd">                      If you wish to use a custom encoder, make sure to support the aforementioned object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`JSON`: IO Descriptor that represents JSON format.</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># default mime type is application/json</span>
+    <span class="n">_mime_type</span> <span class="o">=</span> <span class="s2">"application/json"</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">pydantic_model</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">validate_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">json_encoder</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">]</span> <span class="o">=</span> <span class="n">DefaultJsonEncoder</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">pydantic_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pkg_version_info</span><span class="p">(</span><span class="s2">"pydantic"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span>
+                    <span class="s2">"pydantic 2.x is not yet supported. Add upper bound to 'pydantic': 'pip install </span><span class="se">\"</span><span class="s2">pydantic&lt;2</span><span class="se">\"</span><span class="s2">'"</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+            <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span>
+                <span class="n">pydantic_model</span><span class="p">,</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span>
+            <span class="p">),</span> <span class="s2">"'pydantic_model' must be a subclass of 'pydantic.BaseModel'."</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span> <span class="o">=</span> <span class="n">pydantic_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_json_encoder</span> <span class="o">=</span> <span class="n">json_encoder</span>
+
+        <span class="c1"># Remove validate_json in version 1.0.2</span>
+        <span class="k">if</span> <span class="n">validate_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"'validate_json' option from 'bentoml.io.JSON' has been deprecated. Use a Pydantic model to specify validation options instead."</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_from_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="n">JSONType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create a :class:`~bentoml._internal.io_descriptors.json.JSON` IO Descriptor from given inputs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sample: A JSON-like datatype, which can be either dict, str, list.</span>
+<span class="sd">                    ``sample`` will also accepting a Pydantic model.</span>
+
+<span class="sd">                    .. code-block:: python</span>
+
+<span class="sd">                        from pydantic import BaseModel</span>
+
+<span class="sd">                        class IrisFeatures(BaseModel):</span>
+<span class="sd">                            sepal_len: float</span>
+<span class="sd">                            sepal_width: float</span>
+<span class="sd">                            petal_len: float</span>
+<span class="sd">                            petal_width: float</span>
+
+<span class="sd">                        input_spec = JSON.from_sample(</span>
+<span class="sd">                            IrisFeatures(sepal_len=1.0, sepal_width=2.0, petal_len=3.0, petal_width=4.0)</span>
+<span class="sd">                        )</span>
+
+<span class="sd">                        @svc.api(input=input_spec, output=NumpyNdarray())</span>
+<span class="sd">                        async def predict(input: NDArray[np.int16]) -&gt; NDArray[Any]:</span>
+<span class="sd">                            return await runner.async_run(input)</span>
+<span class="sd">            json_encoder: Optional JSON encoder.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`~bentoml._internal.io_descriptors.json.JSON`: IODescriptor from given users inputs.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">           :caption: `service.py`</span>
+
+<span class="sd">           from __future__ import annotations</span>
+
+<span class="sd">           import bentoml</span>
+<span class="sd">           from typing import Any</span>
+<span class="sd">           from bentoml.io import JSON</span>
+
+<span class="sd">           input_spec = JSON.from_sample({"Hello": "World", "foo": "bar"})</span>
+<span class="sd">           @svc.api(input=input_spec, output=JSON())</span>
+<span class="sd">           async def predict(input: dict[str, Any]) -&gt; dict[str, Any]:</span>
+<span class="sd">               return await runner.async_run(input)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`BadInput`: Given sample is not a valid JSON string, bytes, or supported nest types.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"pydantic.BaseModel"</span><span class="p">](</span><span class="s2">"pydantic.BaseModel"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sample</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Unable to parse JSON string. Please make sure the input is a valid JSON string: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sample</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Unable to parse JSON bytes. Please make sure the input is a valid JSON bytes: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Unable to infer JSON type from sample: </span><span class="si">{</span><span class="n">sample</span><span class="si">}</span><span class="s2">. Please make sure the input is a valid JSON object."</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">sample</span>
+
+    <span class="k">def</span> <span class="nf">to_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">descriptor_id</span><span class="p">,</span>
+            <span class="s2">"args"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"has_pydantic_model"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"has_json_encoder"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_encoder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_spec</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"args"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidArgument</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Missing args key in JSON spec: </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"has_pydantic_model"</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"args"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"args"</span><span class="p">][</span><span class="s2">"has_pydantic_model"</span><span class="p">]:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"BentoML does not support loading pydantic models from URLs; output will be a normal dictionary."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"has_json_encoder"</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"args"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"args"</span><span class="p">][</span><span class="s2">"has_json_encoder"</span><span class="p">]:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"BentoML does not support loading JSON encoders from URLs; output will be a normal dictionary."</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnionType</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JSONType</span>
+
+    <span class="k">def</span> <span class="nf">openapi_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"object"</span><span class="p">)</span>
+
+        <span class="c1"># returns schemas from pydantic_model.</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">schema</span><span class="o">.</span><span class="n">model_process_schema</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">,</span>
+                <span class="n">model_name_map</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">get_model_name_map</span><span class="p">(</span>
+                    <span class="n">schema</span><span class="o">.</span><span class="n">get_flat_models_from_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">)</span>
+                <span class="p">),</span>
+                <span class="n">ref_prefix</span><span class="o">=</span><span class="n">REF_PREFIX</span><span class="p">,</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">openapi_components</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="kn">from</span> <span class="nn">..service.openapi.utils</span> <span class="kn">import</span> <span class="n">pydantic_components_schema</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"schemas"</span><span class="p">:</span> <span class="n">pydantic_components_schema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">openapi_example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"pydantic.BaseModel"</span><span class="p">](</span><span class="s2">"pydantic.BaseModel"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sample</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+                    <span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_json_encoder</span><span class="p">,</span>
+                    <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">allow_nan</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">indent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">":"</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span>
+
+    <span class="k">def</span> <span class="nf">openapi_request_body</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mime_type</span><span class="p">:</span> <span class="n">MediaType</span><span class="p">(</span>
+                    <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">openapi_schema</span><span class="p">(),</span> <span class="n">example</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">openapi_example</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">},</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"x-bentoml-io-descriptor"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_spec</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">openapi_responses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OpenAPIResponse</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"description"</span><span class="p">:</span> <span class="n">SUCCESS_DESCRIPTION</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mime_type</span><span class="p">:</span> <span class="n">MediaType</span><span class="p">(</span>
+                    <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">openapi_schema</span><span class="p">(),</span> <span class="n">example</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">openapi_example</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">},</span>
+            <span class="s2">"x-bentoml-io-descriptor"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_spec</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="JSON.from_http_request"><a class="viewcode-back" href="../../../../reference/api_io_descriptors.html#bentoml.io.JSON.from_http_request">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">from_http_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONType</span><span class="p">:</span>
+        <span class="n">json_str</span> <span class="o">=</span> <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json_obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid JSON input received: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pydantic_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">json_obj</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">pydantic_model</span>
+            <span class="k">except</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid JSON input received: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">json_obj</span></div>
+
+<div class="viewcode-block" id="JSON.to_http_response"><a class="viewcode-back" href="../../../../reference/api_io_descriptors.html#bentoml.io.JSON.to_http_response">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">to_http_response</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">JSONType</span> <span class="o">|</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="c1"># This is to prevent cases where custom JSON encoder is used.</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"pydantic.BaseModel"</span><span class="p">](</span><span class="s2">"pydantic.BaseModel"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+
+        <span class="n">json_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                <span class="n">obj</span><span class="p">,</span>
+                <span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_json_encoder</span><span class="p">,</span>
+                <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">allow_nan</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">indent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">":"</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span>
+                <span class="n">json_str</span><span class="p">,</span>
+                <span class="n">media_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mime_type</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>  <span class="c1"># type: ignore (bad starlette types)</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">set_cookies</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">ctx</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">cookies</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json_str</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mime_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JSON.from_proto"><a class="viewcode-back" href="../../../../reference/api_io_descriptors.html#bentoml.io.JSON.from_proto">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">from_proto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">struct_pb2</span><span class="o">.</span><span class="n">Value</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONType</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">google.protobuf.json_format</span> <span class="kn">import</span> <span class="n">MessageToDict</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">field</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="o">.</span><span class="n">parse_raw</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid JSON input received: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parsed</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid JSON input received: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">struct_pb2</span><span class="o">.</span><span class="n">Value</span><span class="p">)</span>
+            <span class="n">parsed</span> <span class="o">=</span> <span class="n">MessageToDict</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">preserving_proto_field_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pydantic_model</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">BadInput</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid JSON input received: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">parsed</span></div>
+
+<div class="viewcode-block" id="JSON.to_proto"><a class="viewcode-back" href="../../../../reference/api_io_descriptors.html#bentoml.io.JSON.to_proto">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">to_proto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">JSONType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struct_pb2</span><span class="o">.</span><span class="n">Value</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">LazyType</span><span class="p">[</span><span class="s2">"pydantic.BaseModel"</span><span class="p">](</span><span class="s2">"pydantic.BaseModel"</span><span class="p">)</span><span class="o">.</span><span class="n">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">struct_pb2</span><span class="o">.</span><span class="n">Value</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">parse_dict_to_proto</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">json_encoder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_json_encoder</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">parse_dict_to_proto</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">JSONType</span><span class="p">,</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="n">_message</span><span class="o">.</span><span class="n">Message</span><span class="p">,</span>
+    <span class="n">json_encoder</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">]</span> <span class="o">=</span> <span class="n">DefaultJsonEncoder</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># this function is an identity op for the msg if obj is None.</span>
+        <span class="k">return</span> <span class="n">msg</span>
+
+    <span class="kn">from</span> <span class="nn">google.protobuf.json_format</span> <span class="kn">import</span> <span class="n">ParseDict</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
+        <span class="c1"># ParseDict handles google.protobuf.Struct type</span>
+        <span class="c1"># directly if given object has a supported type</span>
+        <span class="n">ParseDict</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># If given object doesn't have a supported type, we will</span>
+        <span class="c1"># use given JSON encoder to convert it to dictionary</span>
+        <span class="c1"># and then parse it to google.protobuf.Struct.</span>
+        <span class="c1"># Note that if a custom JSON encoder is used, it mustn't</span>
+        <span class="c1"># take any arguments.</span>
+        <span class="n">ParseDict</span><span class="p">(</span><span class="n">json_encoder</span><span class="p">()</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright © 2022-2023, bentoml.com
+            </div>
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/bentoml/bentoml" aria-label="GitHub"> 🍱 </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/scripts/furo.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script src="../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="/_/static/javascript/readthedocs-doc-embed.js"></script>
+    <script src="../../../../_static/js/custom.js"></script>
+    
+</body></html>

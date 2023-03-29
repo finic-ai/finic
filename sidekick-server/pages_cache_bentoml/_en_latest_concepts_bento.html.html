@@ -1,0 +1,1956 @@
+<!DOCTYPE html><html class="no-js" lang="en"><head><!-- Google Tag Manager -->
+<script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-NLGDMK5"></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NLGDMK5');</script>
+<!-- End Google Tag Manager -->
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/">
+<meta property="og:title" content="Building Bentos">
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://docs.bentoml.org/concepts/bento.html">
+<meta property="og:site_name" content="BentoML Documentation">
+<meta property="og:description" content="What is a Bento?: Bento 🍱 is a file archive with all the source code, models, data files and dependency configurations required for running a user-defined bentoml.Service, packaged into a standardi...">
+<meta property="og:image" content="http://docs.bentoml.org/_images/yatai-bento-repos.png">
+<meta property="og:image:alt" content="Yatai Bento Repo UI">
+<meta name="description" content="What is a Bento?: Bento 🍱 is a file archive with all the source code, models, data files and dependency configurations required for running a user-defined bentoml.Service, packaged into a standardi...">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Using Runners" href="runner.html"><link rel="prev" title="Service and APIs" href="service.html">
+        <link rel="canonical" href="https://docs.bentoml.org/en/latest/concepts/bento.html">
+
+    <link rel="shortcut icon" href="../_static/favicon-96x96.ico"><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
+<script>
+window.Papercups = {
+    config: {
+        // Pass in your Papercups account token here after signing up
+        accountId: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        token: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        inbox: 'ac3ebd50-fc10-4299-9a1c-496841b49a6f',
+        title: 'Welcome to BentoML!',
+        subtitle: 'Ask us anything in the chat window below 😊',
+        // newMessagePlaceholder: 'Start typing...',
+        primaryColor: '#47AFD1',
+        // Optionally pass in a default greeting
+        greeting: "Hi there! How can I help you? If we couldn't get back to you in " +
+                "time, feel free to join our community on slack and post your " +
+                "question in the #support channel: https://l.linklyhq.com/l/ktOX",
+        // Optionally pass in metadata to identify the customer
+        // customer: {
+        //   name: 'Test User',
+        //   email: 'test@test.com',
+        //   external_id: '123',
+        //   metadata: {version: 1, plan: 'premium'}, // Custom fields go here
+        // },
+        // Optionally specify the base URL
+        baseUrl: 'https://yatai-community-papercups.herokuapp.com',
+        // Add this if you want to require the customer to enter
+        // their email before being able to send you a message
+        requireEmailUpfront: true,
+        // Add this if you want to indicate when you/your agents
+        // are online or offline to your customers
+        showAgentAvailability: true,
+    },
+};
+</script>
+<script type="text/javascript" async="" defer="" src="https://app.papercups.io/widget.js"></script>
+
+        <title>Building Bentos - BentoML</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css">
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53">
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css">
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css">
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css">
+    <link rel="stylesheet" type="text/css" href="/_/static/css/badge_only.css">
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e">
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css">
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #3f3f3f;
+  --color-code-foreground: #dcdccc;
+  --color-brand-primary: #44a4c6 ;
+  --color-brand-content: #44a4c6 ;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+      }
+    }
+  }
+</style>
+<!-- RTD Extra Head -->
+
+<link rel="stylesheet" href="/_/static/css/readthedocs-doc-embed.css" type="text/css">
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": true, "api_host": "https://readthedocs.org", "build_date": "2023-03-27T14:27:35Z", "builder": "sphinx", "canonical_url": null, "commit": "6b4da8fe", "docroot": "/docs/source/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "concepts/bento", "programming_language": "py", "project": "bentoml", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {"yatai": "https://docs.bentoml.org/projects/yatai/en/latest/"}, "theme": "furo", "user_analytics_code": "UA-112879361-4", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="/_/static/javascript/readthedocs-analytics.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+<style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+  <body data-theme="auto">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLGDMK5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M13 12h5"></path>
+      <path d="M13 15h4"></path>
+      <path d="M13 18h1"></path>
+      <path d="M13 9h4"></path>
+      <path d="M13 6h1"></path>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">BentoML</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/logo.svg" alt="Logo">
+  </div>
+  
+  <span class="sidebar-brand-text">BentoML</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial: Intro to BentoML</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Main Concepts</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model.html">Preparing Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="service.html">Service and APIs</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Building Bentos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="runner.html">Using Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html">Deploying Bento</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../frameworks/index.html">Framework Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/keras.html">Keras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/picklable.html">Picklable Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/pytorch_lightning.html">PyTorch Lightning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/xgboost.html">XGBoost</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Advanced Guides</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guides/batching.html">Adaptive Batching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/containerization.html">Advanced Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/client.html">Bento Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/server.html">Bento Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/envmanager.html">Environment Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/graph.html">Inference Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/monitoring.html">Inference Data Collection &amp; Model Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/performance.html">Performance Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/grpc.html">Serving with gRPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/gpu.html">Serving with GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/security.html">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/tracing.html">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/migration.html">1.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../integrations/index.html">Integrations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/airflow.html">Airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/arize.html">Arize AI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/flink.html">Flink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/kubeflow.html">Kubeflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/mlflow.html">MLflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/spark.html">Spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/triton.html">Triton Inference Server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/core.html">Core Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stores.html">Bento Store APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/api_io_descriptors.html">API IO Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/metrics.html">Metrics API</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/frameworks/index.html">Framework APIs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/flax.html">Flax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/torchscript.html">TorchScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/xgboost.html">XGBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/picklable_model.html">Picklable Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/mlflow.html">MLflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/keras.html">Keras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/ray.html">Ray</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html">BentoML CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/batch.html">Batch Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/exceptions.html">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/container.html">Container APIs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://l.linklyhq.com/l/ktOX">Community</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://modelserving.com">Blog</a></li>
+</ul>
+
+</div>
+
+<div id="furo-sidebar-ad-placement" class="flat" data-ea-publisher="readthedocs" data-ea-type="readthedocs-sidebar" data-ea-manual="true"></div>
+</div>
+
+<div id="furo-readthedocs-versions" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" tabindex="0">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book">&nbsp;</span>
+    v: latest
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Versions</dt>
+      
+        <dd><a href="/en/latest/">latest</a></dd>
+      
+        <dd><a href="/en/0.13-lts/">0.13-lts</a></dd>
+      
+    </dl>
+    <dl>
+      <dt>Downloads</dt>
+      
+    </dl>
+    <dl>
+      
+      <dt>On Read the Docs</dt>
+        <dd>
+          <a href="//readthedocs.org/projects/bentoml/?fromdocs=bentoml">Project Home</a>
+        </dd>
+        <dd>
+          <a href="//readthedocs.org/builds/bentoml/?fromdocs=bentoml">Builds</a>
+        </dd>
+    </dl>
+  </div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/bentoml/bentoml/edit/main/docs/source/concepts/bento.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="building-bentos">
+<h1>Building Bentos<a class="headerlink" href="#building-bentos" title="Permalink to this heading">#</a></h1>
+<section id="what-is-a-bento">
+<h2>What is a Bento?<a class="headerlink" href="#what-is-a-bento" title="Permalink to this heading">#</a></h2>
+<p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/core.html#bentoml-bento"><span class="std std-ref">Bento 🍱</span></a> is a file archive with all the source
+code, models, data files and dependency configurations required for running a
+user-defined <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/core.html#bentoml-service"><span class="std std-ref">bentoml.Service</span></a>, packaged into a standardized format.</p>
+<p>While <code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> standardizes the inference API definition, including the
+serving logic, runners initialization and API input, output types.
+<code class="docutils literal notranslate"><span class="pre">Bento</span></code> standardizes how to reproduce the required environment for running a
+<code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> in production.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>“Bento Build” is essentially the build process in traditional software development,
+where source code files were converted into standalone artifacts that are ready to
+deploy. BentoML reimagined this process for Machine Learning model delivery, and
+optimized the workflow both for interactive model development and for working with
+automated training pipelines.</p>
+</div>
+</section>
+<section id="the-build-command">
+<h2>The Build Command<a class="headerlink" href="#the-build-command" title="Permalink to this heading">#</a></h2>
+<p>A Bento can be created with the <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/cli.html#bentoml-build"><span class="std std-ref">bentoml build</span></a> CLI command
+with a <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code> build file. Here’s an example from the
+<a class="reference internal" href="../tutorial.html"><span class="doc">tutorial</span></a>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="s">"service:svc"</span><span class="w">  </span><span class="c1"># Same as the argument passed to `bentoml serve`</span>
+<span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bentoml-team</span>
+<span class="w">    </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="nt">include</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"*.py"</span><span class="w">  </span><span class="c1"># A pattern for matching which files to include in the bento</span>
+<span class="nt">python</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">packages</span><span class="p">:</span><span class="w">  </span><span class="c1"># Additional pip packages required by the service</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scikit-learn</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pandas</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>build
+
+Building<span class="w"> </span>BentoML<span class="w"> </span>service<span class="w"> </span><span class="s2">"iris_classifier:dpijemevl6nlhlg6"</span><span class="w"> </span>from<span class="w"> </span>build<span class="w"> </span>context<span class="w"> </span><span class="s2">"/home/user/gallery/quickstart"</span>
+Packing<span class="w"> </span>model<span class="w"> </span><span class="s2">"iris_clf:zy3dfgxzqkjrlgxi"</span>
+Locking<span class="w"> </span>PyPI<span class="w"> </span>package<span class="w"> </span>versions..
+
+██████╗░███████╗███╗░░██╗████████╗░█████╗░███╗░░░███╗██╗░░░░░
+██╔══██╗██╔════╝████╗░██║╚══██╔══╝██╔══██╗████╗░████║██║░░░░░
+██████╦╝█████╗░░██╔██╗██║░░░██║░░░██║░░██║██╔████╔██║██║░░░░░
+██╔══██╗██╔══╝░░██║╚████║░░░██║░░░██║░░██║██║╚██╔╝██║██║░░░░░
+██████╦╝███████╗██║░╚███║░░░██║░░░╚█████╔╝██║░╚═╝░██║███████╗
+╚═════╝░╚══════╝╚═╝░░╚══╝░░░╚═╝░░░░╚════╝░╚═╝░░░░░╚═╝╚══════╝
+
+Successfully<span class="w"> </span>built<span class="w"> </span>Bento<span class="o">(</span><span class="nv">tag</span><span class="o">=</span><span class="s2">"iris_classifier:dpijemevl6nlhlg6"</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>Similar to <a class="reference internal" href="model.html"><span class="doc">saving a model</span></a>, a unique version tag will be
+automatically generated for the newly created Bento.</p>
+<p>It is also possible to customize the Bento version string by specifying it in the
+<code class="code docutils literal notranslate"><span class="pre">--version</span></code> CLI argument. However this is generally not recommended. Only use it
+if your team has a very specific naming convention for deployable artifacts, e.g.:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>build<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.1
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Bento build process requires importing the <code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> object
+defined. This means, the build environment must have all its dependencies installed.
+Support for building from a docker environment is on the roadmap, see <a class="reference external" href="https://github.com/bentoml/bentoml/issues/2495">#2495</a>.</p>
+</div>
+<section id="advanced-project-structure">
+<h3>Advanced Project Structure<a class="headerlink" href="#advanced-project-structure" title="Permalink to this heading">#</a></h3>
+<p>For projects that are part of a larger codebase and interacts with other local python
+modules; Or for projects containing multiple Bentos/Services, it may not be possible to
+put all service definition code and <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code> under the project’s root
+directory.</p>
+<p>BentoML allows placing the service definition file and bentofile anywhere in the project
+directory. In this case, the user needs to provide the <code class="docutils literal notranslate"><span class="pre">build_ctx</span></code> and
+<code class="docutils literal notranslate"><span class="pre">bentofile</span></code> argument to the <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">build</span></code> CLI command.</p>
+<dl class="simple">
+<dt>build_ctx</dt><dd><p>Build context is your Python project’s working directory. This is from where you
+start the Python interpreter during development so that your local python modules
+can be imported properly. Default to current directory where the
+<code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">build</span></code> takes place.</p>
+</dd>
+<dt>bentofile</dt><dd><p><code class="docutils literal notranslate"><span class="pre">bentofile</span></code> is a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file that specifies the
+<a class="hxr-hoverxref hxr-tooltip reference internal" href="#bento-build-options"><span class="std std-ref">Bento Build Options</span></a>. Default to the <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>
+file under the build context.</p>
+</dd>
+</dl>
+<p>They can also be customized via the CLI command, e.g.:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>./src/my_project_a/bento_fraud_detect.yaml<span class="w"> </span>./src/
+</pre></div>
+</div>
+</section>
+</section>
+<section id="managing-bentos">
+<h2>Managing Bentos<a class="headerlink" href="#managing-bentos" title="Permalink to this heading">#</a></h2>
+<p>Bentos are the unit of deployment in BentoML, one of the most important artifact to keep
+track of for your model deployment workflow.</p>
+<section id="local-bento-store">
+<h3>Local Bento Store<a class="headerlink" href="#local-bento-store" title="Permalink to this heading">#</a></h3>
+<p>Similar to Models, Bentos built locally can be managed via the
+<a class="reference internal" href="../reference/cli.html"><span class="doc">bentoml CLI commands</span></a>:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+List</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>list
+
+Tag<span class="w">                               </span>Size<span class="w">        </span>Creation<span class="w"> </span>Time<span class="w">        </span>Path
+iris_classifier:nvjtj7wwfgsafuqj<span class="w">  </span><span class="m">16</span>.99<span class="w"> </span>KiB<span class="w">   </span><span class="m">2022</span>-05-17<span class="w"> </span><span class="m">21</span>:36:36<span class="w">  </span>~/bentoml/bentos/iris_classifier/nvjtj7wwfgsafuqj
+iris_classifier:jxcnbhfv6w6kvuqj<span class="w">  </span><span class="m">19</span>.68<span class="w"> </span>KiB<span class="w">   </span><span class="m">2022</span>-04-06<span class="w"> </span><span class="m">22</span>:02:52<span class="w">  </span>~/bentoml/bentos/iris_classifier/jxcnbhfv6w6kvuqj
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Get</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>get<span class="w"> </span>iris_classifier:latest
+
+service:<span class="w"> </span>service:svc
+name:<span class="w"> </span>iris_classifier
+version:<span class="w"> </span>nvjtj7wwfgsafuqj
+bentoml_version:<span class="w"> </span><span class="m">1</span>.0.0
+creation_time:<span class="w"> </span><span class="s1">'2022-05-17T21:36:36.436878+00:00'</span>
+labels:
+<span class="w">  </span>owner:<span class="w"> </span>bentoml-team
+<span class="w">  </span>project:<span class="w"> </span>gallery
+models:
+-<span class="w"> </span>tag:<span class="w"> </span>iris_clf:nb5vrfgwfgtjruqj
+<span class="w">  </span>module:<span class="w"> </span>bentoml.sklearn
+<span class="w">  </span>creation_time:<span class="w"> </span><span class="s1">'2022-05-17T21:36:27.656424+00:00'</span>
+runners:
+-<span class="w"> </span>name:<span class="w"> </span>iris_clf
+<span class="w">  </span>runnable_type:<span class="w"> </span>SklearnRunnable
+<span class="w">  </span>models:
+<span class="w">  </span>-<span class="w"> </span>iris_clf:nb5vrfgwfgtjruqj
+<span class="w">  </span>resource_config:
+<span class="w">    </span>cpu:<span class="w"> </span><span class="m">4</span>.0
+<span class="w">    </span>nvidia_gpu:<span class="w"> </span><span class="m">0</span>.0
+apis:
+-<span class="w"> </span>name:<span class="w"> </span>classify
+<span class="w">  </span>input_type:<span class="w"> </span>NumpyNdarray
+<span class="w">  </span>output_type:<span class="w"> </span>NumpyNdarray
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Delete</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>delete<span class="w"> </span>iris_classifier:latest<span class="w"> </span>-y
+
+Bento<span class="o">(</span><span class="nv">tag</span><span class="o">=</span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span><span class="o">)</span><span class="w"> </span>deleted
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="import-and-export">
+<h3>Import and Export<a class="headerlink" href="#import-and-export" title="Permalink to this heading">#</a></h3>
+<p>Bentos can be exported to a standalone archive file outside of the store, for sharing
+Bentos between teams or moving between different deployment stages. For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>bentoml<span class="w"> </span><span class="nb">export</span><span class="w"> </span>iris_classifier:latest<span class="w"> </span>.
+
+INFO<span class="w"> </span><span class="o">[</span>cli<span class="o">]</span><span class="w"> </span>Bento<span class="o">(</span><span class="nv">tag</span><span class="o">=</span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span><span class="o">)</span><span class="w"> </span>exported<span class="w"> </span>to<span class="w"> </span>./iris_classifier-nvjtj7wwfgsafuqj.bento
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>bentoml<span class="w"> </span>import<span class="w"> </span>./iris_classifier-nvjtj7wwfgsafuqj.bento
+
+INFO<span class="w"> </span><span class="o">[</span>cli<span class="o">]</span><span class="w"> </span>Bento<span class="o">(</span><span class="nv">tag</span><span class="o">=</span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span><span class="o">)</span><span class="w"> </span>imported
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Bentos can be exported to or import from AWS S3, GCS, FTP, Dropbox, etc. For
+example with S3:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>fs-s3fs<span class="w">  </span><span class="c1"># Additional dependency required for working with s3</span>
+bentoml<span class="w"> </span>import<span class="w"> </span>s3://bentoml.com/quickstart/iris_classifier.bento
+bentoml<span class="w"> </span><span class="nb">export</span><span class="w"> </span>iris_classifier:latest<span class="w"> </span>s3://my_bucket/my_prefix/
+</pre></div>
+</div>
+<p>To see a list of plugins usable for upload, see
+<a class="reference external" href="https://www.pyfilesystem.org/page/index-of-filesystems/">the list</a> provided by the
+pyfilesystem library.</p>
+</div>
+</section>
+<section id="push-and-pull">
+<h3>Push and Pull<a class="headerlink" href="#push-and-pull" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://github.com/bentoml/Yatai">Yatai</a> provides a centralized Bento repository
+that comes with flexible APIs and Web UI for managing all Bentos created by your team.
+It can be configured to store Bento files on cloud blob storage such as AWS S3, MinIO
+or GCS, and automatically build docker images when a new Bento was pushed.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>push<span class="w"> </span>iris_classifier:latest
+
+Successfully<span class="w"> </span>pushed<span class="w"> </span>Bento<span class="w"> </span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>pull<span class="w"> </span>iris_classifier:nvjtj7wwfgsafuqj
+
+Successfully<span class="w"> </span>pulled<span class="w"> </span>Bento<span class="w"> </span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span>
+</pre></div>
+</div>
+<img alt="Yatai Bento Repo UI" src="../_images/yatai-bento-repos.png">
+</section>
+<section id="bento-management-api">
+<h3>Bento Management API<a class="headerlink" href="#bento-management-api" title="Permalink to this heading">#</a></h3>
+<p>Similar to <a class="hxr-hoverxref hxr-tooltip reference internal" href="model.html#managing-models"><span class="std std-ref">Managing Models</span></a>, equivalent Python APIs are also
+provided for managing Bentos:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Get</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="n">bento</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"iris_classifier:latest"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">bento</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bento</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bento</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+List</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="n">bentos</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Import / Export</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bentoml</span>
+<span class="n">bentoml</span><span class="o">.</span><span class="n">export_bento</span><span class="p">(</span><span class="s1">'my_bento:latest'</span><span class="p">,</span> <span class="s1">'/path/to/folder/my_bento.bento'</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bentoml.import_bento<span class="o">(</span><span class="s1">'/path/to/folder/my_bento.bento'</span><span class="o">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Bentos can be exported to or import from AWS S3, GCS, FTP, Dropbox, etc. For
+example: <code class="code docutils literal notranslate"><span class="pre">bentoml.export_bento('my_bento:latest',</span> <span class="pre">'s3://my_bucket/folder')</span></code></p>
+</div>
+</div>
+<input id="sd-tab-item-6" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-6">
+Push / Pull</label><div class="sd-tab-content docutils">
+<p>If your team has <a class="reference external" href="https://github.com/bentoml/Yatai">Yatai</a> setup, you can also
+push local Bentos to Yatai, it provides APIs and Web UI for managing all Bentos
+created by your team, stores Bento files on cloud blob storage such as AWS S3, MinIO
+or GCS, and automatically builds docker images when a new Bento was pushed.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>import<span class="w"> </span>bentoml
+bentoml.push<span class="o">(</span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span><span class="o">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bentoml.pull<span class="o">(</span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-7">
+Delete</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>import<span class="w"> </span>bentoml
+bentoml.delete<span class="o">(</span><span class="s2">"iris_classifier:nvjtj7wwfgsafuqj"</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="what-s-inside-a-bento">
+<h3>What’s inside a Bento<a class="headerlink" href="#what-s-inside-a-bento" title="Permalink to this heading">#</a></h3>
+<p>It is possible to view the generated files in a specific Bento. Simply use the
+<code class="code docutils literal notranslate"><span class="pre">-o/--output</span></code> option of the <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">get</span></code> command to find the file path to
+the Bento archive directory.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="k">$(</span>bentoml<span class="w"> </span>get<span class="w"> </span>iris_classifier:latest<span class="w"> </span>-o<span class="w"> </span>path<span class="k">)</span>
+»<span class="w"> </span>tree
+.
+├──<span class="w"> </span>README.md
+├──<span class="w"> </span>apis
+│<span class="w">   </span>└──<span class="w"> </span>openapi.yaml
+├──<span class="w"> </span>bento.yaml
+├──<span class="w"> </span>env
+│<span class="w">   </span>├──<span class="w"> </span>docker
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>Dockerfile
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>entrypoint.sh
+│<span class="w">   </span>└──<span class="w"> </span>python
+│<span class="w">       </span>├──<span class="w"> </span>requirements.lock.txt
+│<span class="w">       </span>├──<span class="w"> </span>requirements.txt
+│<span class="w">       </span>└──<span class="w"> </span>version.txt
+├──<span class="w"> </span>models
+│<span class="w">    </span>└──<span class="w"> </span>iris_clf
+│<span class="w">       </span>├──<span class="w"> </span>latest
+│<span class="w">       </span>└──<span class="w"> </span>nb5vrfgwfgtjruqj
+│<span class="w">           </span>├──<span class="w"> </span>model.yaml
+│<span class="w">           </span>└──<span class="w"> </span>saved_model.pkl
+└──<span class="w"> </span>src
+<span class="w">    </span>├──<span class="w"> </span>locustfile.py
+<span class="w">    </span>├──<span class="w"> </span>service.py
+<span class="w">    </span>└──<span class="w"> </span>train.py
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code> directory contains files specified under the <a class="hxr-hoverxref hxr-tooltip reference internal" href="#files-to-include"><span class="std std-ref">include</span></a> field in the <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>. These
+files are relative to user Python code’s CWD (current working directory), which makes
+importing relative modules and file path inside user code possible.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">models</span></code> directory contains all models required by the Service. This is automatically determined from the <code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> object’s runners list.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apis</span></code> directory contains all API definitions. This directory contains API specs
+that are generated from the <code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> object’s API definitions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">env</span></code> directory contains all environment-related files which will help boostrap the Bento 🍱. This directory contains files that are generated
+from <a class="hxr-hoverxref hxr-tooltip reference internal" href="#bento-build-options"><span class="std std-ref">Bento Build Options</span></a> that is specified under <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><span class="sd-sphinx-override sd-badge sd-bg-warning sd-bg-text-warning">Warning:</span> users <strong>should never</strong> change files in the generated Bento
+archive, unless it’s for debugging purpose.</p>
+</div>
+</section>
+</section>
+<section id="bento-build-options">
+<h2>Bento Build Options<a class="headerlink" href="#bento-build-options" title="Permalink to this heading">#</a></h2>
+<p>Build options are specified in a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> file, which customizes the final Bento
+produced.</p>
+<p>By convention, this file is named <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>.</p>
+<p>In this section, we will go over all the build options, including defining
+dependencies, configuring files to include, and customize docker image settings.</p>
+<section id="service">
+<h3>Service<a class="headerlink" href="#service" title="Permalink to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">service</span></code> is a <strong>required</strong> field which specifies where the
+<code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> object is defined.</p>
+<p>In the <a class="reference internal" href="../tutorial.html"><span class="doc">tutorial</span></a>, we defined <code class="docutils literal notranslate"><span class="pre">service:</span> <span class="pre">"service:svc"</span></code>, which can be
+interpreted as:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">service</span></code> refers to the Python module (the <code class="docutils literal notranslate"><span class="pre">service.py</span></code> file)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">svc</span></code> refers to the <code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> object created in <code class="docutils literal notranslate"><span class="pre">service.py</span></code>, with <code class="docutils literal notranslate"><span class="pre">svc</span> <span class="pre">=</span> <span class="pre">bentoml.Service(...)</span></code></p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This is synonymous to how the <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/cli.html#bentoml-serve"><span class="std std-ref">bentoml serve</span></a> command specifies a <code class="docutils literal notranslate"><span class="pre">bentoml.Service</span></code> target.</p>
+<div class="highlight-zsh notranslate"><div class="highlight"><pre><span></span><span class="w">                     </span>┌──────────────┐
+<span class="w">    </span>┌────────────────┤bentofile.yaml│
+<span class="w">    </span>│<span class="w">                </span>└───────────┬──┘
+<span class="w">    </span>│<span class="w">                            </span>│
+<span class="w">    </span>│<span class="w">  </span>service:<span class="w"> </span><span class="s2">"service:svc"</span><span class="w">    </span>│
+<span class="w">    </span>│<span class="w">                </span>─┬─<span class="w">         </span>│
+<span class="w">    </span>│<span class="w">                 </span>│<span class="w">          </span>│
+<span class="w">    </span>└─────────────────┼──────────┘
+<span class="w">                      </span>│
+<span class="w">                      </span>│
+<span class="w">                      </span>│<span class="w">    </span>┌────┐
+┌─────────────────────┼────┤bash│
+│<span class="w">                     </span>│<span class="w">    </span>└──┬─┘
+│<span class="w">                     </span>▼<span class="w">       </span>│
+│<span class="w"> </span>»<span class="w"> </span>bentoml<span class="w"> </span>serve<span class="w"> </span>service:svc<span class="w"> </span>│
+│<span class="w">                             </span>│
+│<span class="w">                             </span>│
+└─────────────────────────────┘
+</pre></div>
+</div>
+</div>
+</section>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">description</span></code> field allows user to customize documentation for any given Bento.</p>
+<p>The description contents must be plain text, optionally in <a class="reference external" href="https://daringfireball.net/projects/markdown/syntax">Markdown</a> format. Description
+can be specified either inline in the <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>, or via a file path to an
+existing text file:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-8" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-8">
+Inline</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="s">"service.py:svc"</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">## Description For My Bento 🍱</span>
+
+<span class="w">    </span><span class="no">Use **any markdown syntax** here!</span>
+
+<span class="w">    </span><span class="no">&gt; BentoML is awesome!</span>
+<span class="nt">include</span><span class="p">:</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-9" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-9">
+File path</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="s">"service.py:svc"</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"file:</span><span class="nv"> </span><span class="s">./README.md"</span>
+<span class="nt">include</span><span class="p">:</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When pointing to a description file, it can be either an absolute path or a relative
+path. The file must exist on the given path upon <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">build</span></code> command run,
+and for relative file path, the current path is set to the <code class="docutils literal notranslate"><span class="pre">build_ctx</span></code>, which
+default to the directory where <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">build</span></code> was executed from.</p>
+</div>
+</section>
+<section id="labels">
+<h3>Labels<a class="headerlink" href="#labels" title="Permalink to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">labels</span></code> are key-value pairs that are attached to an object.</p>
+<p>In BentoML, both <code class="docutils literal notranslate"><span class="pre">Bento</span></code> and <code class="docutils literal notranslate"><span class="pre">Model</span></code> can have labels attached to them. Labels are intended to
+be used to specify identifying attributes of Bentos/Models that are meaningful and
+relevant to users, but do not directly imply semantics to the rest of the system.</p>
+<p>Labels can be used to organize models and Bentos in <a class="reference external" href="https://github.com/bentoml/Yatai">Yatai</a>,
+which also allow users to add or modify labels at any time.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bentoml-team</span>
+<span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-ready</span>
+</pre></div>
+</div>
+</section>
+<section id="files-to-include">
+<h3>Files to include<a class="headerlink" href="#files-to-include" title="Permalink to this heading">#</a></h3>
+<p>In the example <a class="hxr-hoverxref hxr-tooltip reference internal" href="#the-build-command"><span class="std std-ref">above</span></a>, the <code class="code docutils literal notranslate"><span class="pre">*.py</span></code> includes every Python files under <code class="docutils literal notranslate"><span class="pre">build_ctx</span></code>.
+You can also include other wildcard and directory pattern matching.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">...</span>
+<span class="nt">include</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"data/"</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"**/*.py"</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"config/*.json"</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"path/to/a/file.csv"</span>
+</pre></div>
+</div>
+<p>If the include field is not specified, BentoML will include all files under the <code class="docutils literal notranslate"><span class="pre">build_ctx</span></code> directory, besides the ones explicitly set to be excluded, as will be demonstrated in <a class="hxr-hoverxref hxr-tooltip reference internal" href="#files-to-exclude"><span class="std std-ref">Files to exclude</span></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">include</span></code> and <code class="docutils literal notranslate"><span class="pre">exclude</span></code> fields support <a class="reference external" href="https://git-scm.com/docs/gitignore#_pattern_format">gitignore style pattern
+matching.</a>.</p>
+</div>
+</section>
+<section id="files-to-exclude">
+<h3>Files to exclude<a class="headerlink" href="#files-to-exclude" title="Permalink to this heading">#</a></h3>
+<p>If there are a lot of files under the working directory, another approach is to
+only specify which files to be ignored.</p>
+<p><code class="docutils literal notranslate"><span class="pre">exclude</span></code> field specifies the pathspecs (similar to <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> files) of files to be excluded in the final Bento build. The pathspecs are relative to
+the <code class="docutils literal notranslate"><span class="pre">build_ctx</span></code> directory.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">...</span>
+<span class="nt">include</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"data/"</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"**/*.py"</span>
+<span class="nt">exclude</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"tests/"</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"secrets.key"</span>
+</pre></div>
+</div>
+<p>Users can also opt to place a <code class="docutils literal notranslate"><span class="pre">.bentoignore</span></code> file in the <code class="docutils literal notranslate"><span class="pre">build_ctx</span></code>
+directory. This is what a <code class="docutils literal notranslate"><span class="pre">.bentoignore</span></code> file would look like:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">.bentoignore</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>__pycache__/
+*.py<span class="o">[</span>cod<span class="o">]</span>
+*<span class="nv">$py</span>.class
+.ipynb_checkpoints/
+training_data/
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">exclude</span></code> is always applied after <code class="docutils literal notranslate"><span class="pre">include</span></code>.</p>
+</div>
+</section>
+<section id="python-packages">
+<h3>Python Packages<a class="headerlink" href="#python-packages" title="Permalink to this heading">#</a></h3>
+<p>Required Python packages for a given Bento can be specified under the <code class="docutils literal notranslate"><span class="pre">python.packages</span></code> field.</p>
+<p>When a package name is left without a version, BentoML will lock the package to the
+version available under the current environment when running <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">build</span></code>. User can also specify the
+desired version, install from a custom PyPI source, or install from a GitHub repo:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"numpy"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"matplotlib==3.5.1"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"package&gt;=0.2,&lt;0.3"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"torchvision==0.9.2</span><span class="nv"> </span><span class="s">--extra-index-url</span><span class="nv"> </span><span class="s">https://download.pytorch.org/whl/lts/1.8/cpu"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"git+https://github.com/username/mylib.git@main"</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There’s no need to specify <code class="code docutils literal notranslate"><span class="pre">bentoml</span></code> as a dependency here since BentoML will
+addd the current version of BentoML to the Bento’s dependency list by default. User
+can override this by specifying a different BentoML version.</p>
+</div>
+<p>To use a variant of BentoML with additional features such as gRPC, tracing exporters, pydantic
+validation, specify the desired variant in the under <code class="docutils literal notranslate"><span class="pre">python.packages</span></code> field:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-10" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-10">
+gRPC</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[grpc]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-11" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-11">
+AWS</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[aws]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-12" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-12">
+JSON IO</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[io-json]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-13" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-13">
+Image IO</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[io-image]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-14" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-14">
+Pandas IO</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[io-pandas]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-15" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-15">
+JSON IO</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[io-json]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-16" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-16">
+Jaeger</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[tracing-jaeger]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-17" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-17">
+Zipkin</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[tracing-zipkin]"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-18" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-18">
+OTLP</label><div class="sd-tab-content docutils">
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"bentoml[tracing-otlp]"</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you already have a
+<a class="reference external" href="https://pip.pypa.io/en/stable/reference/requirements-file-format/">requirements.txt</a>
+file that defines python packages for your project, you may also supply a path to the
+<code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file directly:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requirements_txt</span><span class="p">:</span><span class="w"> </span><span class="s">"./project-a/ml-requirements.txt"</span>
+</pre></div>
+</div>
+<section id="pip-install-options">
+<h4>Pip Install Options<a class="headerlink" href="#pip-install-options" title="Permalink to this heading">#</a></h4>
+<p>Additional <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> arguments can also be provided.</p>
+<p>Note that these arguments will be applied to all packages defined in <code class="docutils literal notranslate"><span class="pre">python.packages</span></code>, as
+well as the <code class="docutils literal notranslate"><span class="pre">requirements_txt</span></code> file, if provided.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requirements_txt</span><span class="p">:</span><span class="w"> </span><span class="s">"./requirements.txt"</span>
+<span class="w">    </span><span class="nt">index_url</span><span class="p">:</span><span class="w"> </span><span class="s">"https://my.mirror.com/simple"</span>
+<span class="w">    </span><span class="nt">no_index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">    </span><span class="nt">trusted_host</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"pypi.python.org"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"my.mirror.com"</span>
+<span class="w">    </span><span class="nt">find_links</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"https://download.pytorch.org/whl/cu80/stable.html"</span>
+<span class="w">    </span><span class="nt">extra_index_url</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"https://&lt;other</span><span class="nv"> </span><span class="s">api</span><span class="nv"> </span><span class="s">token&gt;:@my.mirror.com/pypi/simple"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"https://pypi.python.org/simple"</span>
+<span class="w">    </span><span class="nt">pip_args</span><span class="p">:</span><span class="w"> </span><span class="s">"--pre</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">--force-reinstall"</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>BentoML by default will cache pip artifacts across all local image builds to speed
+up the build process</strong>.</p>
+<p>If you want to force a re-download instead of using the cache, you can specify the <code class="code docutils literal notranslate"><span class="pre">pip_args:</span> <span class="pre">"--no-cache-dir"</span></code> option in your
+<code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>, or use the <code class="code docutils literal notranslate"><span class="pre">--no-cache</span></code> option in <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">containerize</span></code> command, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>» bentoml containerize my_bento:latest --no-cache
+</pre></div>
+</div>
+</div>
+</section>
+<section id="pypi-package-locking">
+<h4>PyPI Package Locking<a class="headerlink" href="#pypi-package-locking" title="Permalink to this heading">#</a></h4>
+<p>By default, BentoML automatically locks all package versions, as well as all packages in
+their dependency graph, to the version found in the current build environment, and
+generates a <code class="code docutils literal notranslate"><span class="pre">requirements.lock.txt</span></code> file. This process uses
+<a class="reference external" href="https://github.com/jazzband/pip-tools">pip-compile</a> under the hood.</p>
+<p>If you have already specified a version for all packages, you can optionally disable
+this behavior by setting the <code class="docutils literal notranslate"><span class="pre">lock_packages</span></code> field to False:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requirements_txt</span><span class="p">:</span><span class="w"> </span><span class="s">"requirements.txt"</span>
+<span class="w">    </span><span class="nt">lock_packages</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</section>
+<section id="python-wheels">
+<h4>Python Wheels<a class="headerlink" href="#python-wheels" title="Permalink to this heading">#</a></h4>
+<p>Python <code class="docutils literal notranslate"><span class="pre">.whl</span></code> files are also supported as a type of dependency to include in a
+Bento. Simply provide a path to your <code class="docutils literal notranslate"><span class="pre">.whl</span></code> files under the <code class="docutils literal notranslate"><span class="pre">wheels`</span></code> field.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">python</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">wheels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./lib/my_package.whl</span>
+</pre></div>
+</div>
+<p>If the wheel is hosted on a local network without TLS, you can indicate
+that the domain is safe to pip with the <code class="docutils literal notranslate"><span class="pre">trusted_host</span></code> field.</p>
+</section>
+<section id="python-options-table">
+<h4>Python Options Table<a class="headerlink" href="#python-options-table" title="Permalink to this heading">#</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>requirements_txt</p></td>
+<td><p>The path to a custom requirements.txt file</p></td>
+</tr>
+<tr class="row-odd"><td><p>packages</p></td>
+<td><p>Packages to include in this bento</p></td>
+</tr>
+<tr class="row-even"><td><p>lock_packages</p></td>
+<td><p>Whether to lock the packages or not</p></td>
+</tr>
+<tr class="row-odd"><td><p>index_url</p></td>
+<td><p>Inputs for the <code class="docutils literal notranslate"><span class="pre">--index-url</span></code> pip argument</p></td>
+</tr>
+<tr class="row-even"><td><p>no_index</p></td>
+<td><p>Whether to include the <code class="docutils literal notranslate"><span class="pre">--no-index</span></code> pip argument</p></td>
+</tr>
+<tr class="row-odd"><td><p>trusted_host</p></td>
+<td><p>List of trusted hosts used as inputs using the <code class="docutils literal notranslate"><span class="pre">--trusted-host</span></code> pip argument</p></td>
+</tr>
+<tr class="row-even"><td><p>find_links</p></td>
+<td><p>List of links to find as inputs using the <code class="docutils literal notranslate"><span class="pre">--find-links</span></code> pip argument</p></td>
+</tr>
+<tr class="row-odd"><td><p>extra_index_url</p></td>
+<td><p>List of extra index urls as inputs using the <code class="docutils literal notranslate"><span class="pre">≈</span></code> pip argument</p></td>
+</tr>
+<tr class="row-even"><td><p>pip_args</p></td>
+<td><p>Any additional pip arguments that you would like to add when installing a package</p></td>
+</tr>
+<tr class="row-odd"><td><p>wheels</p></td>
+<td><p>List of paths to wheels to include in the bento</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="conda-options">
+<h3>Conda Options<a class="headerlink" href="#conda-options" title="Permalink to this heading">#</a></h3>
+<p>Conda dependencies can be specified under <code class="docutils literal notranslate"><span class="pre">conda</span></code> field. For example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">conda</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">channels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">dependencies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">h2o</span>
+<span class="w">    </span><span class="nt">pip</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"scikit-learn==1.2.0"</span>
+</pre></div>
+</div>
+<p>When <code class="docutils literal notranslate"><span class="pre">channels</span></code> filed is left unspecified, BentoML will use the community
+maintained <code class="docutils literal notranslate"><span class="pre">conda-forge</span></code> channel as the default.</p>
+<p>Optionally, you can export all dependencies from a preexisting conda environment to
+an <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code> file, and provide this file in your <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>
+config:</p>
+<p>Export conda environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>conda<span class="w"> </span>env<span class="w"> </span><span class="nb">export</span><span class="w"> </span>&gt;<span class="w"> </span>environment.yml
+</pre></div>
+</div>
+<p>In your <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">conda</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment_yml</span><span class="p">:</span><span class="w"> </span><span class="s">"./environment.yml"</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unlike Python packages, BentoML does not support locking conda packages versions
+automatically. It is recommended for users to specify a version in the config file.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">conda</span></code> options are provided, BentoML will select a docker base image
+that comes with Miniconda pre-installed in the generated Dockerfile. Note that only
+the <code class="docutils literal notranslate"><span class="pre">debian</span></code> and <code class="docutils literal notranslate"><span class="pre">alpine</span></code> distro support <code class="docutils literal notranslate"><span class="pre">conda</span></code>. Learn more at
+the <a class="hxr-hoverxref hxr-tooltip reference internal" href="#docker-options"><span class="std std-ref">Docker Options</span></a> section below.</p>
+</div>
+<section id="conda-options-table">
+<h4>Conda Options Table<a class="headerlink" href="#conda-options-table" title="Permalink to this heading">#</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>environment_yml</p></td>
+<td><p>Path to a conda environment file to copy into the bento. If specified, this file will overwrite any additional option specified</p></td>
+</tr>
+<tr class="row-odd"><td><p>channels</p></td>
+<td><p>Custom conda channels to use. If not specified will use <code class="docutils literal notranslate"><span class="pre">conda-forge</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>dependencies</p></td>
+<td><p>Custom conda dependencies to include in the environment</p></td>
+</tr>
+<tr class="row-odd"><td><p>pip</p></td>
+<td><p>The specific <code class="docutils literal notranslate"><span class="pre">pip</span></code> conda dependencies to include</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="docker-options">
+<h3>Docker Options<a class="headerlink" href="#docker-options" title="Permalink to this heading">#</a></h3>
+<p>BentoML makes it easy to deploy a Bento to a Docker container. This section discuss the
+available options for customizing the docker image generated from a Bento.</p>
+<p>Here’s a basic Docker options configuration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">docker</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">distro</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">debian</span>
+<span class="w">    </span><span class="nt">python_version</span><span class="p">:</span><span class="w"> </span><span class="s">"3.8.12"</span>
+<span class="w">    </span><span class="nt">cuda_version</span><span class="p">:</span><span class="w"> </span><span class="s">"11.6.2"</span>
+<span class="w">    </span><span class="nt">system_packages</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">libblas-dev</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">liblapack-dev</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gfortran</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FOO=value1</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BAR=value2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>BentoML leverage <a class="reference external" href="https://github.com/moby/buildkit">BuildKit</a>, a cache-efficient builder toolkit,
+to containerize Bentos 🍱.</p>
+<p>BuildKit comes with <a class="reference external" href="https://docs.docker.com/develop/develop-images/build_enhancements/">Docker 18.09</a>. This means
+if you are using Docker via Docker Desktop, BuildKit will be available by default.</p>
+<p>However, if you are using a standalone version of Docker, you can install
+BuildKit by following the instructions <a class="reference external" href="https://github.com/docker/buildx#installing">here</a>.</p>
+</div>
+<section id="os-distros">
+<h4>OS Distros<a class="headerlink" href="#os-distros" title="Permalink to this heading">#</a></h4>
+<p>The following OS distros are currently supported in BentoML:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">debian</span></code>: <strong>default</strong>, similar to Ubuntu</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alpine</span></code>: A minimal Docker image based on Alpine Linux</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ubi8</span></code>: Red Hat Universal Base Image</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amazonlinux</span></code>: Amazon Linux 2</p></li>
+</ul>
+<p>Some of the distros may not support using conda or specifying CUDA for GPU. Here is the
+support matrix for all distros:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Distro</p></th>
+<th class="head"><p>Available Python Versions</p></th>
+<th class="head"><p>Conda Support</p></th>
+<th class="head"><p>CUDA Support (GPU)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>debian</p></td>
+<td><p>3.7, 3.8, 3.9, 3.10</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>alpine</p></td>
+<td><p>3.7, 3.8, 3.9, 3.10</p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>ubi8</p></td>
+<td><p>3.8, 3.9</p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>amazonlinux</p></td>
+<td><p>3.7, 3.8</p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Document image supported architectures</p>
+</div>
+</section>
+<section id="gpu-support">
+<h4>GPU support<a class="headerlink" href="#gpu-support" title="Permalink to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">cuda_version</span></code> field specifies the target CUDA version to install on the
+the generated docker image. Currently, the following CUDA version are supported:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">"11.6.2"</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">"11.4.3"</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">"11.2.2"</span></code></p></li>
+</ul>
+<p>BentoML will also install additional packages required for given target CUDA version.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">docker</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cuda_version</span><span class="p">:</span><span class="w"> </span><span class="s">"11.6.2"</span>
+</pre></div>
+</div>
+<p>If you need a different cuda version that is not currently supported in BentoML, it is
+possible to install it by specifying it in the <code class="docutils literal notranslate"><span class="pre">system_packages</span></code> or via the
+<code class="docutils literal notranslate"><span class="pre">setup_script</span></code>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-icon"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-code" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M4.72 3.22a.75.75 0 011.06 1.06L2.06 8l3.72 3.72a.75.75 0 11-1.06 1.06L.47 8.53a.75.75 0 010-1.06l4.25-4.25zm6.56 0a.75.75 0 10-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 101.06 1.06l4.25-4.25a.75.75 0 000-1.06l-4.25-4.25z"></path></svg></span>Installing custom CUDA version with conda<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">We will demonstrate how you can install custom cuda version via conda.</p>
+<p class="sd-card-text">Add the following to your <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">conda</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">channels</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conda-forge</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nvidia</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">defaults</span>
+<span class="w">  </span><span class="nt">dependencies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cudatoolkit-dev=10.1</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cudnn=7.6.4</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cxx-compiler=1.0</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mpi4py=3.0</span><span class="w"> </span><span class="c1"># installs cuda-aware openmpi</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">matplotlib=3.2</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networkx=2.4</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">numba=0.48</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pandas=1.0</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Then proceed with <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">build</span></code> and <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">containerize</span></code> respectively:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>»<span class="w"> </span>bentoml<span class="w"> </span>build
+
+»<span class="w"> </span>bentoml<span class="w"> </span>containerize<span class="w"> </span>&lt;bento&gt;:&lt;tag&gt;
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="setup-script">
+<h4>Setup Script<a class="headerlink" href="#setup-script" title="Permalink to this heading">#</a></h4>
+<p>For advanced Docker customization, you can also use a <code class="docutils literal notranslate"><span class="pre">setup_script</span></code> to inject
+arbitrary user provided script during the image build process. For example, with NLP
+projects you can pre-download NLTK data in the image with:</p>
+<p>In your <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">...</span>
+<span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nltk</span>
+<span class="nt">docker</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">setup_script</span><span class="p">:</span><span class="w"> </span><span class="s">"./setup.sh"</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">setup.sh</span></code> file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-euxo<span class="w"> </span>pipefail
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"Downloading NLTK data.."</span>
+python<span class="w"> </span>-m<span class="w"> </span>nltk.downloader<span class="w"> </span>all
+</pre></div>
+</div>
+<p>Now build a new bento and then run <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">containerize</span> <span class="pre">MY_BENTO</span> <span class="pre">--progress</span> <span class="pre">plain</span></code> to
+view the docker image build progress. The newly built docker image will contain
+pre-downloaded NLTK dataset.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When working with bash scripts, it is recommended to add <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">-euxo</span> <span class="pre">pipefail</span></code>
+to the beginning. Especially when <cite>set -e</cite> is missing, the script will fail silently
+without raising an exception during <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">containerize</span></code>. Learn more about
+<a class="reference external" href="https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html">Bash Set builtin</a>.</p>
+</div>
+<p>It is also possible to provide a Python script for initializing the docker image. Here’s
+an example:</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">bentofile.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">...</span>
+<span class="nt">python</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">packages</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nltk</span>
+<span class="nt">docker</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">setup_script</span><span class="p">:</span><span class="w"> </span><span class="s">"./setup.py"</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">nltk</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Downloading NLTK data.."</span><span class="p">)</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'treebank'</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Pay attention to <code class="docutils literal notranslate"><span class="pre">#!/bin/bash</span></code> and <code class="docutils literal notranslate"><span class="pre">#!/usr/bin/env</span> <span class="pre">python</span></code> in the
+first line of the example scripts above. They are known as <a class="reference external" href="https://en.wikipedia.org/wiki/Shebang_(Unix)">Shebang</a>
+and they are required in a setup script provided to BentoML.</p>
+</div>
+<p>Setup script is always executed after the specified Python packages, conda dependencies,
+and system packages are installed. Thus user can import and utilize those libraries in
+their setup script for the initialization process.</p>
+</section>
+<section id="enable-features-for-your-bento">
+<h4>Enable features for your Bento<a class="headerlink" href="#enable-features-for-your-bento" title="Permalink to this heading">#</a></h4>
+<p>Users can optionally pass in the <code class="docutils literal notranslate"><span class="pre">--enable-features</span></code> flag to <code class="docutils literal notranslate"><span class="pre">bentoml</span> <span class="pre">containerize</span></code> to
+enable additional features for the generated Bento container image.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">--enable-features</span></code></p></th>
+<th class="head"><p>Feature</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=aws</span></code></p></td>
+<td><p>adding AWS interop (currently file upload to S3)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=grpc</span></code></p></td>
+<td><p>enable gRPC functionalities in BentoML</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=grpc-channelz</span></code></p></td>
+<td><p>enable <a class="reference external" href="https://grpc.io/blog/a-short-introduction-to-channelz/">gRPC Channelz</a> for debugging purposes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=grpc-reflection</span></code></p></td>
+<td><p>enable <a class="reference external" href="https://github.com/grpc/grpc/blob/master/doc/server-reflection.md">gRPC Reflection</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=io-image</span></code></p></td>
+<td><p>adding Pillow dependencies to <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/api_io_descriptors.html#images"><span class="std std-ref">Image IO descriptor</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=io-json</span></code></p></td>
+<td><p>adding Pydantic validation to <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/api_io_descriptors.html#structured-data-with-json"><span class="std std-ref">JSON IO descriptor</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=io-pandas</span></code></p></td>
+<td><p>adding Pandas dependencies to <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/api_io_descriptors.html#tabular-data-with-pandas"><span class="std std-ref">PandasDataFrame descriptor</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=tracing-jaeger</span></code></p></td>
+<td><p>enable <a class="hxr-hoverxref hxr-tooltip reference internal" href="../guides/tracing.html#tracing"><span class="std std-ref">Jaeger Exporter</span></a> for distributed tracing</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=tracing-otlp</span></code></p></td>
+<td><p>enable <a class="hxr-hoverxref hxr-tooltip reference internal" href="../guides/tracing.html#tracing"><span class="std std-ref">OTLP Exporter</span></a>   for distributed tracing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--enable-features=tracing-zipkin</span></code></p></td>
+<td><p>enable <a class="hxr-hoverxref hxr-tooltip reference internal" href="../guides/tracing.html#tracing"><span class="std std-ref">Zipkin Exporter</span></a>  for distributed tracing</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="advanced-options">
+<h4>Advanced Options<a class="headerlink" href="#advanced-options" title="Permalink to this heading">#</a></h4>
+<p>For advanced customization for generating docker images, see <a class="reference internal" href="../guides/containerization.html"><span class="doc">Advanced Containerization</span></a>:</p>
+<ol class="arabic simple">
+<li><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../guides/containerization.html#custom-base-image"><span class="std std-ref">Using base image</span></a></p></li>
+<li><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../guides/containerization.html#dockerfile-template"><span class="std std-ref">Using dockerfile template</span></a></p></li>
+</ol>
+</section>
+<section id="docker-options-table">
+<h4>Docker Options Table<a class="headerlink" href="#docker-options-table" title="Permalink to this heading">#</a></h4>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>distro</p></td>
+<td><p>The OS distribution on the Docker image, Default to <code class="docutils literal notranslate"><span class="pre">debian</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>python_version</p></td>
+<td><p>Specify which python to include on the Docker image [<cite>3.7</cite>, <cite>3.8</cite>, <cite>3.9</cite>, <cite>3.10</cite>]. Default to the Python version in build environment.</p></td>
+</tr>
+<tr class="row-even"><td><p>cuda_version</p></td>
+<td><p>Specify the cuda version to install on the Docker image [<code class="code docutils literal notranslate"><span class="pre">11.6.2</span></code>].</p></td>
+</tr>
+<tr class="row-odd"><td><p>system_packages</p></td>
+<td><p>Declare system packages to be installed in the container.</p></td>
+</tr>
+<tr class="row-even"><td><p>env</p></td>
+<td><p>Declare environment variables in the generated Dockerfile.</p></td>
+</tr>
+<tr class="row-odd"><td><p>setup_script</p></td>
+<td><p>A python or shell script that executes during docker build time.</p></td>
+</tr>
+<tr class="row-even"><td><p>base_image</p></td>
+<td><p>A user-provided docker base image. This will override all other custom attributes of the image.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dockerfile_template</p></td>
+<td><p>Customize the generated dockerfile by providing a Jinja2 template that extends the default dockerfile.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="runner.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Using Runners</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="service.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Service and APIs</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright © 2022-2023, bentoml.com
+            </div>
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/bentoml/bentoml" aria-label="GitHub"> 🍱 </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Building Bentos</a><ul>
+<li><a class="reference internal" href="#what-is-a-bento">What is a Bento?</a></li>
+<li><a class="reference internal" href="#the-build-command">The Build Command</a><ul>
+<li><a class="reference internal" href="#advanced-project-structure">Advanced Project Structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#managing-bentos">Managing Bentos</a><ul>
+<li><a class="reference internal" href="#local-bento-store">Local Bento Store</a></li>
+<li><a class="reference internal" href="#import-and-export">Import and Export</a></li>
+<li><a class="reference internal" href="#push-and-pull">Push and Pull</a></li>
+<li><a class="reference internal" href="#bento-management-api">Bento Management API</a></li>
+<li><a class="reference internal" href="#what-s-inside-a-bento">What’s inside a Bento</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bento-build-options">Bento Build Options</a><ul>
+<li><a class="reference internal" href="#service">Service</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#labels">Labels</a></li>
+<li><a class="reference internal" href="#files-to-include">Files to include</a></li>
+<li><a class="reference internal" href="#files-to-exclude">Files to exclude</a></li>
+<li><a class="reference internal" href="#python-packages">Python Packages</a><ul>
+<li><a class="reference internal" href="#pip-install-options">Pip Install Options</a></li>
+<li><a class="reference internal" href="#pypi-package-locking">PyPI Package Locking</a></li>
+<li><a class="reference internal" href="#python-wheels">Python Wheels</a></li>
+<li><a class="reference internal" href="#python-options-table">Python Options Table</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#conda-options">Conda Options</a><ul>
+<li><a class="reference internal" href="#conda-options-table">Conda Options Table</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#docker-options">Docker Options</a><ul>
+<li><a class="reference internal" href="#os-distros">OS Distros</a></li>
+<li><a class="reference internal" href="#gpu-support">GPU support</a></li>
+<li><a class="reference internal" href="#setup-script">Setup Script</a></li>
+<li><a class="reference internal" href="#enable-features-for-your-bento">Enable features for your Bento</a></li>
+<li><a class="reference internal" href="#advanced-options">Advanced Options</a></li>
+<li><a class="reference internal" href="#docker-options-table">Docker Options Table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/tabs.js"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/design-tabs.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="/_/static/javascript/readthedocs-doc-embed.js"></script>
+    <script src="../_static/js/custom.js"></script>
+    
+<div id="PapercupsChatWidget"></div></body></html>

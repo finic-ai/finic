@@ -1,0 +1,615 @@
+<!DOCTYPE html><html class="no-js" lang="en"><head><!-- Google Tag Manager -->
+<script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-NLGDMK5"></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NLGDMK5');</script>
+<!-- End Google Tag Manager -->
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/">
+<meta property="og:title" content="Inference Graph">
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://docs.bentoml.org/guides/graph.html">
+<meta property="og:site_name" content="BentoML Documentation">
+<meta property="og:description" content="Many ML problems require an ensemble of models to work together to solve. BentoML architecture can support any model inference graph natively in its Service APIs definition. Users can define parall...">
+<meta property="og:image" content="http://docs.bentoml.org/_images/inference-graph-diagram.png">
+<meta property="og:image:alt" content="BentoML Documentation">
+<meta name="description" content="Many ML problems require an ensemble of models to work together to solve. BentoML architecture can support any model inference graph natively in its Service APIs definition. Users can define parall...">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Inference Data Collection &amp; Model Monitoring" href="monitoring.html"><link rel="prev" title="Environment Manager" href="envmanager.html">
+        <link rel="canonical" href="https://docs.bentoml.org/en/latest/guides/graph.html">
+
+    <link rel="shortcut icon" href="../_static/favicon-96x96.ico"><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
+<script>
+window.Papercups = {
+    config: {
+        // Pass in your Papercups account token here after signing up
+        accountId: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        token: '25ad5fd9-293b-4e0f-9601-5b0cd7846b48',
+        inbox: 'ac3ebd50-fc10-4299-9a1c-496841b49a6f',
+        title: 'Welcome to BentoML!',
+        subtitle: 'Ask us anything in the chat window below 😊',
+        // newMessagePlaceholder: 'Start typing...',
+        primaryColor: '#47AFD1',
+        // Optionally pass in a default greeting
+        greeting: "Hi there! How can I help you? If we couldn't get back to you in " +
+                "time, feel free to join our community on slack and post your " +
+                "question in the #support channel: https://l.linklyhq.com/l/ktOX",
+        // Optionally pass in metadata to identify the customer
+        // customer: {
+        //   name: 'Test User',
+        //   email: 'test@test.com',
+        //   external_id: '123',
+        //   metadata: {version: 1, plan: 'premium'}, // Custom fields go here
+        // },
+        // Optionally specify the base URL
+        baseUrl: 'https://yatai-community-papercups.herokuapp.com',
+        // Add this if you want to require the customer to enter
+        // their email before being able to send you a message
+        requireEmailUpfront: true,
+        // Add this if you want to indicate when you/your agents
+        // are online or offline to your customers
+        showAgentAvailability: true,
+    },
+};
+</script>
+<script type="text/javascript" async="" defer="" src="https://app.papercups.io/widget.js"></script>
+
+        <title>Inference Graph - BentoML</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css">
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53">
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css">
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css">
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css">
+    <link rel="stylesheet" type="text/css" href="/_/static/css/badge_only.css">
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e">
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css">
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #3f3f3f;
+  --color-code-foreground: #dcdccc;
+  --color-brand-primary: #44a4c6 ;
+  --color-brand-content: #44a4c6 ;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #c9378a ;
+  --color-brand-content: #c9378a ;
+  
+      }
+    }
+  }
+</style>
+<!-- RTD Extra Head -->
+
+<link rel="stylesheet" href="/_/static/css/readthedocs-doc-embed.css" type="text/css">
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": true, "api_host": "https://readthedocs.org", "build_date": "2023-03-27T14:27:38Z", "builder": "sphinx", "canonical_url": null, "commit": "6b4da8fe", "docroot": "/docs/source/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "guides/graph", "programming_language": "py", "project": "bentoml", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {"yatai": "https://docs.bentoml.org/projects/yatai/en/latest/"}, "theme": "furo", "user_analytics_code": "UA-112879361-4", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="/_/static/javascript/readthedocs-analytics.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+  <body data-theme="auto">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLGDMK5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M13 12h5"></path>
+      <path d="M13 15h4"></path>
+      <path d="M13 18h1"></path>
+      <path d="M13 9h4"></path>
+      <path d="M13 6h1"></path>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">BentoML</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/logo.svg" alt="Logo">
+  </div>
+  
+  <span class="sidebar-brand-text">BentoML</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial: Intro to BentoML</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../concepts/index.html">Main Concepts</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../concepts/model.html">Preparing Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts/service.html">Service and APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts/bento.html">Building Bentos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts/runner.html">Using Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concepts/deploy.html">Deploying Bento</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../frameworks/index.html">Framework Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/keras.html">Keras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/picklable.html">Picklable Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/pytorch_lightning.html">PyTorch Lightning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frameworks/xgboost.html">XGBoost</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Advanced Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="batching.html">Adaptive Batching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containerization.html">Advanced Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Bento Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">Bento Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="envmanager.html">Environment Manager</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Inference Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitoring.html">Inference Data Collection &amp; Model Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance.html">Performance Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grpc.html">Serving with gRPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpu.html">Serving with GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracing.html">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration.html">1.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../integrations/index.html">Integrations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/airflow.html">Airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/arize.html">Arize AI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/flink.html">Flink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/kubeflow.html">Kubeflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/mlflow.html">MLflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/spark.html">Spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../integrations/triton.html">Triton Inference Server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/core.html">Core Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stores.html">Bento Store APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/api_io_descriptors.html">API IO Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/metrics.html">Metrics API</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/frameworks/index.html">Framework APIs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/onnx.html">ONNX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/sklearn.html">Scikit-Learn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/transformers.html">Transformers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/flax.html">Flax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/tensorflow.html">TensorFlow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/torchscript.html">TorchScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/xgboost.html">XGBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/picklable_model.html">Picklable Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/pytorch.html">PyTorch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/lightgbm.html">LightGBM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/mlflow.html">MLflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/catboost.html">CatBoost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/fastai.html">fast.ai</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/keras.html">Keras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/frameworks/ray.html">Ray</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html">BentoML CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/batch.html">Batch Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/exceptions.html">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/container.html">Container APIs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://l.linklyhq.com/l/ktOX">Community</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/bentoml/BentoML">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://modelserving.com">Blog</a></li>
+</ul>
+
+</div>
+
+<div id="furo-sidebar-ad-placement" class="flat" data-ea-publisher="readthedocs" data-ea-type="readthedocs-sidebar" data-ea-manual="true"></div>
+</div>
+
+<div id="furo-readthedocs-versions" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" tabindex="0">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book">&nbsp;</span>
+    v: latest
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Versions</dt>
+      
+        <dd><a href="/en/latest/">latest</a></dd>
+      
+        <dd><a href="/en/0.13-lts/">0.13-lts</a></dd>
+      
+    </dl>
+    <dl>
+      <dt>Downloads</dt>
+      
+    </dl>
+    <dl>
+      
+      <dt>On Read the Docs</dt>
+        <dd>
+          <a href="//readthedocs.org/projects/bentoml/?fromdocs=bentoml">Project Home</a>
+        </dd>
+        <dd>
+          <a href="//readthedocs.org/builds/bentoml/?fromdocs=bentoml">Builds</a>
+        </dd>
+    </dl>
+  </div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/bentoml/bentoml/edit/main/docs/source/guides/graph.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="inference-graph">
+<h1>Inference Graph<a class="headerlink" href="#inference-graph" title="Permalink to this heading">#</a></h1>
+<p>Many ML problems require an ensemble of models to work together to solve. BentoML architecture can support any model inference graph natively in its
+<a class="hxr-hoverxref hxr-tooltip reference internal" href="../concepts/service.html#service-and-apis"><span class="std std-ref">Service APIs</span></a> definition. Users can define parallel and sequential inference graphs with any control flows
+by writing simple Python code. In this guide, we will build a text generation and classification service using model inference graph. The project
+source code can be found in the BentoML <a class="reference external" href="https://github.com/bentoml/BentoML/tree/main/examples/inference_graph">inference graph</a> example.</p>
+<img alt="../_images/inference-graph-diagram.png" src="../_images/inference-graph-diagram.png">
+<p>As illustrated in the diagram above, the service performs the following tasks.</p>
+<ol class="arabic simple">
+<li><p>Accepts a text input.</p></li>
+<li><p>Passes the input to three text generation models in parallel and receives a list of three generated texts.</p></li>
+<li><p>Passes the list of generated texts to a text classification model iteratively and receives a list of three classification results.</p></li>
+<li><p>Returns the list of generated texts and classification results in a JSON output.</p></li>
+</ol>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Sample JSON Output</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"generated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"I have an idea! Please share with, like and subscribe and leave a comment below!\n\nIf you like this post, please consider becoming a patron of Reddit or becoming a patron of the author."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5149753093719482</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"generated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"I have an idea! One that won't break your heart but will leave you gasping in awe. A book about the history of magic. And because what's better than magic? Some. It's a celebration of our ancient, universal gift of awe.\"\n\nThe result was the \"Vox Populi: A Memoir of the Ancient World\" by E.V. Okello (Ace Books), published in 1999.\n\nIn the past 20 years, Okello, professor of history at Ohio State University and author of such titles as \"The American Imagination\" and \"Walking With Elephants"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.502700924873352</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"generated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"I have an idea! I've been wondering what the name of this thing is. What's the point?\" - The Simpsons\n\n\n\"It's bigger, bigger than she needs!\" - SpongeBob SquarePants\n\n\n\"That's a funny thing. It's like my brain is the most gigantic living thing. I just like thinking big.\" - Simpsons\n\n\n\"Ooookay! Here comes Barty-Icarus himself! (pause)\" - A Christmas Tale\n\n\nBackground information Edit\n\nFormal name: Homer's Brain.\n\nHomer's Brain. Special name: Brain.\n\nAppearances Edit"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.536346971988678</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<section id="declare-runners">
+<h2>Declare Runners<a class="headerlink" href="#declare-runners" title="Permalink to this heading">#</a></h2>
+<p>Create <a class="hxr-hoverxref hxr-tooltip reference internal" href="../concepts/runner.html#using-runners"><span class="std std-ref">Runners</span></a> for the three text generation models and the one text classification model using the <code class="docutils literal notranslate"><span class="pre">to_runner</span></code> function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gpt2_generator</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">transformers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"gpt2-generation:latest"</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+<span class="n">distilgpt2_generator</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">transformers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"distilgpt2-generation:latest"</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+<span class="n">distilbegpt2_medium_generator</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">transformers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"gpt2-medium-generation:latest"</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+<span class="n">bert_base_uncased_classifier</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">transformers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bert-base-uncased-classification:latest"</span><span class="p">)</span><span class="o">.</span><span class="n">to_runner</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="create-service">
+<h2>Create Service<a class="headerlink" href="#create-service" title="Permalink to this heading">#</a></h2>
+<p>Create a <a class="reference internal" href="../concepts/service.html"><span class="doc">Service</span></a> named <code class="docutils literal notranslate"><span class="pre">inference_graph</span></code> and specify the runners created earlier in the <code class="docutils literal notranslate"><span class="pre">runners</span></code> argument.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">svc</span> <span class="o">=</span> <span class="n">bentoml</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span>
+    <span class="s2">"inference_graph"</span><span class="p">,</span>
+    <span class="n">runners</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">gpt2_generator</span><span class="p">,</span>
+        <span class="n">distilgpt2_generator</span><span class="p">,</span>
+        <span class="n">distilbegpt2_medium_generator</span><span class="p">,</span>
+        <span class="n">bert_base_uncased_classifier</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="define-api">
+<h2>Define API<a class="headerlink" href="#define-api" title="Permalink to this heading">#</a></h2>
+<p>First, define an async <a class="hxr-hoverxref hxr-tooltip reference internal" href="../concepts/service.html#service-and-apis"><span class="std std-ref">API</span></a> named <code class="docutils literal notranslate"><span class="pre">classify_generated_texts</span></code> that accepts a <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/api_io_descriptors.html#texts"><span class="std std-ref">Text</span></a>
+input and returns <a class="hxr-hoverxref hxr-tooltip reference internal" href="../reference/api_io_descriptors.html#structured-data-with-json"><span class="std std-ref">JSON</span></a> output. Second, pass the input simultaneously to all three text generation
+runners through <code class="docutils literal notranslate"><span class="pre">asyncio.gather</span></code> and receive a list of three generated texts. Using <code class="docutils literal notranslate"><span class="pre">asyncio.gather</span></code> and Runner’s <code class="docutils literal notranslate"><span class="pre">async_run</span></code> allows the inferences to happen
+in parallel. Third, pass the list of generated texts to the text classification runner iteratively using a loop to get the classification score of each generated text.
+Finally, return the list of generated texts and classification results in a dictionary.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Using asynchronous Service and Runner APIs achives better performance and throughput for IO-intensive workloads.
+See <a class="hxr-hoverxref hxr-tooltip reference internal" href="../concepts/service.html#sync-vs-async-apis"><span class="std std-ref">Sync vs Async APIs</span></a> for more details.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@svc</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">Text</span><span class="p">(),</span> <span class="n">output</span><span class="o">=</span><span class="n">JSON</span><span class="p">())</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">classify_generated_texts</span><span class="p">(</span><span class="n">original_sentence</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">generated_sentences</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"generated_text"</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+            <span class="n">gpt2_generator</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span>
+                <span class="n">original_sentence</span><span class="p">,</span>
+                <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span>
+                <span class="n">num_return_sequences</span><span class="o">=</span><span class="n">NUM_RETURN_SEQUENCE</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">distilgpt2_generator</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span>
+                <span class="n">original_sentence</span><span class="p">,</span>
+                <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span>
+                <span class="n">num_return_sequences</span><span class="o">=</span><span class="n">NUM_RETURN_SEQUENCE</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">distilbegpt2_medium_generator</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span>
+                <span class="n">original_sentence</span><span class="p">,</span>
+                <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span>
+                <span class="n">num_return_sequences</span><span class="o">=</span><span class="n">NUM_RETURN_SEQUENCE</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">generated_sentences</span><span class="p">:</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">bert_base_uncased_classifier</span><span class="o">.</span><span class="n">async_run</span><span class="p">(</span><span class="n">sentence</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"score"</span><span class="p">]</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">"generated"</span><span class="p">:</span> <span class="n">sentence</span><span class="p">,</span>
+                <span class="s2">"score"</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="inference-graph-trace">
+<h2>Inference Graph Trace<a class="headerlink" href="#inference-graph-trace" title="Permalink to this heading">#</a></h2>
+<p>The following tracing waterfall graphs demonstrates the execution flow of the inference graph. Note that the three calls to the text generation
+runners happen in parallel without blocking each other and the calls to the text classification runner happen sequentially.</p>
+<img alt="../_images/inference-graph-trace.png" src="../_images/inference-graph-trace.png">
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="monitoring.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Inference Data Collection &amp; Model Monitoring</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="envmanager.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Environment Manager</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright © 2022-2023, bentoml.com
+            </div>
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/bentoml/bentoml" aria-label="GitHub"> 🍱 </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Inference Graph</a><ul>
+<li><a class="reference internal" href="#declare-runners">Declare Runners</a></li>
+<li><a class="reference internal" href="#create-service">Create Service</a></li>
+<li><a class="reference internal" href="#define-api">Define API</a></li>
+<li><a class="reference internal" href="#inference-graph-trace">Inference Graph Trace</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script><div id="PapercupsChatWidget"></div>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/tabs.js"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/design-tabs.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="/_/static/javascript/readthedocs-doc-embed.js"></script>
+    <script src="../_static/js/custom.js"></script>
+    
+<div style="display: none; visibility: hidden;"><script src="https://t.jitsu.com/s/lib.js" data-key="js.jqho3vy91pn32tceppam.y74ysav0xrdi5kv13hdpfc" data-init-only="false" defer="defer"></script></div></body></html>
