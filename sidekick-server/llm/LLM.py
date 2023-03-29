@@ -70,7 +70,7 @@ class LLM:
         for intent in possible_intents:
             formatted_intents += f"- {intent.name}: {intent.description}\n"
         
-        system_prompt = f"You found the following content by searching through OpenSea's documentation. Use only this content to construct your response. {content_refs}"
+        system_prompt = f"Use only this content to construct your response. {content_refs}"
 
         user_instructions = """User inquiry: {message}
 Instructions: First, determine the user's intent: 
@@ -79,7 +79,7 @@ Second, respond with a JSON in the format:
 {{
 "user_intent": string, // The user's intent
 "content_contains_answer": boolean, // true or false. Whether the information in the content is sufficient to resolve the issue.
-"justification": string // Why you believe the content you found is or is not sufficient to resolve the issue.
+"justification": string // Why the content you found is or is not sufficient to resolve the issue.
 }}""".format(message=query, formatted_intents=formatted_intents)
 
         response = openai.ChatCompletion.create(
