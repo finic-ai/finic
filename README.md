@@ -14,7 +14,7 @@
 </a>
 </p>
 
-[Sidekick](https://getsidekick.ai/) is a framework for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector store. You can also use the integrations and chunkers from built by the community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataLoader` and `DataChunker` specs.
+[Sidekick](https://getsidekick.ai/) is a framework for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector store. You can also use the integrations and chunkers from built by the community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
 
 ## Demo
 Get an API key to test out a hosted version by [joining our Slack community.](https://sidekick-public.slack.com/). Post in the #api-keys channel to request a new key.
@@ -30,7 +30,7 @@ You can also test it out on some pre-ingested developer docs by tagging the Side
 * Slackbot interface to perform Q&A with OpenAI models
 
 ## Upcoming
-* `DataLoader` and `DataChunker` abstractions to make it easier to contribute new loaders/chunkers
+* `DataConnector` and `DataChunker` abstractions to make it easier to contribute new connectors/chunkers
 * Connect to Pinecone, Milvus, and Qdrant vector stores
 
 ## Getting Started - 15 min
@@ -84,7 +84,7 @@ These are the available API endpoints:
 ## Contributing
 Sidekick is open for contribution! To add a new data connector, follow the outlined steps:
 
-1. Create a new folder under `dataloaders` named `<data-source>-loader` where `<data-source>` is the name of the source you are connecting to.
+1. Create a new folder under `connectors` named `<data-source>-connector` where `<data-source>` is the name of the source you are connecting to.
 2. This folder should contain a file `load.py` with a function `load_data` that returns `List[DocumentChunk]`
 3. Create a new endpoint in `/server/main.py` that calls `load_data`
 4. Add the new source type in `models/models.py`
