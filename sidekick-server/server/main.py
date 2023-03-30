@@ -15,7 +15,7 @@ from models.api import (
 
 from llm.LLM import LLM
 
-from dataloaders.webloader.load import load_data
+from connectors.web_connector.load import load_data
 
 
 from app_config import app_config

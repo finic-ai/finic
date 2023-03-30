@@ -4,7 +4,7 @@ This folder contains the server implementation of Sidekick. Sidekick server has 
 
 ## Introduction
 
-The core data loading functionality can be found in `dataloaders` and `chunkers`. The `llm` folder contains a question answering and chat module that consumes data from the datastore. The interface for the server (`datastore`, `.well-known`, `models`) is repurposed from [ChatGPT Retrieval Plugin](https://github.com/openai/chatgpt-retrieval-plugin) The repository is organized into several directories:
+The core data loading functionality can be found in `connectors` and `chunkers`. The `llm` folder contains a question answering and chat module that consumes data from the datastore. The interface for the server (`datastore`, `.well-known`, `models`) is repurposed from [ChatGPT Retrieval Plugin](https://github.com/openai/chatgpt-retrieval-plugin) The repository is organized into several directories:
 
 | Directory                     | Description                                                                                                      |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -12,7 +12,7 @@ The core data loading functionality can be found in `dataloaders` and `chunkers`
 | [`models`](/models)           | All data models used by the server -- for the API interface, data loading, and LLM completions.                  |
 | [`server`](/server)           | Houses the main FastAPI server implementation.                                                                   |
 | [`.well-known`](/.well-known) | OpenAI Plugin interface                                                                                          |
-| [`dataloaders`](/dataloaders) | ETL pipelines for loading data from various sources (web, github, forums, etc.) into the vector store            |
+| [`connectors`](/connectors) | ETL pipelines for loading data from various sources (web, github, forums, etc.) into the vector store            |
 | [`chunkers`](/chunkers)       | Abstractions around breaking down text inputs into smaller chunks, optimized for different document types.       |
 | [`llm`](/llm)                 | Use an LLM to answer questions based on the stored data, analyze intent, and check for hallucinations.           |
 
