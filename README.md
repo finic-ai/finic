@@ -12,6 +12,9 @@
 <a href="https://github.com/ai-sidekick/sidekick/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/static/v1?label=license&message=GPL-3.0&color=white" alt="License">
 </a>
+  <a href="https://twitter.com/getsidekickai" target="_blank">
+    <img src="https://img.shields.io/twitter/follow/getsidekickai?style=social" alt="License">
+</a>
 </p>
 
 [Sidekick](https://getsidekick.ai/) is a framework for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector store. You can also use the integrations and chunkers from built by the community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
