@@ -17,9 +17,9 @@
 [Sidekick](https://getsidekick.ai/) is a framework for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector store. You can also use the integrations and chunkers from built by the community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
 
 ## Demo
-Get an API key to test out a hosted version by [joining our Slack community.](https://sidekick-public.slack.com/). Post in the #api-keys channel to request a new key.
+Get an API key to test out a hosted version by [joining our Slack community.](https://sidekick-public.slack.com/). Post in the #api-keys channel to request a new key. You can test it out on some pre-ingested developer docs by tagging the Sidekick bot in the #sidekick-demo channel.
 
-You can also test it out on some pre-ingested developer docs by tagging the Sidekick bot in the #sidekick-demo channel.
+[Demo Video](https://www.youtube.com/watch?v=I2V3Cu8L6wk)
 
 
 ## 💎 Features
