@@ -7,10 +7,13 @@
 </p>
 <p align="center">
 <a href="https://sidekick-public.slack.com/" target="_blank">
-    <img src="https://img.shields.io/badge/slack-join-white.svg?logo=slack" alt="Slack">
+    <img src="https://img.shields.io/badge/slack-join-blue.svg?logo=slack" alt="Slack">
 </a>
 <a href="https://github.com/ai-sidekick/sidekick/blob/main/LICENSE" target="_blank">
-    <img src="https://img.shields.io/static/v1?label=license&message=GPL-3.0&color=white" alt="License">
+    <img src="https://img.shields.io/static/v1?label=license&message=GPL-3.0&color=blue" alt="License">
+</a>
+<a href="https://github.com/ai-sidekick/sidekick/issues?q=is%3Aissue+is%3Aclosed" target="_blank">
+    <img src="https://img.shields.io/github/issues-closed/ai-sidekick/sidekick?color=blue" alt="License">
 </a>
   <a href="https://twitter.com/getsidekickai" target="_blank">
     <img src="https://img.shields.io/twitter/follow/getsidekickai?style=social" alt="License">
