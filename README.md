@@ -7,10 +7,13 @@
 </p>
 <p align="center">
 <a href="https://sidekick-public.slack.com/" target="_blank">
-    <img src="https://img.shields.io/badge/slack-join-white.svg?logo=slack" alt="Slack">
+    <img src="https://img.shields.io/badge/slack-join-blue.svg?logo=slack" alt="Slack">
 </a>
 <a href="https://github.com/ai-sidekick/sidekick/blob/main/LICENSE" target="_blank">
-    <img src="https://img.shields.io/static/v1?label=license&message=GPL-3.0&color=white" alt="License">
+    <img src="https://img.shields.io/static/v1?label=license&message=GPL-3.0&color=blue" alt="License">
+</a>
+<a href="https://github.com/ai-sidekick/sidekick/issues?q=is%3Aissue+is%3Aclosed" target="_blank">
+    <img src="https://img.shields.io/github/issues-closed/ai-sidekick/sidekick?color=blue" alt="License">
 </a>
   <a href="https://twitter.com/getsidekickai" target="_blank">
     <img src="https://img.shields.io/twitter/follow/getsidekickai?style=social" alt="License">
@@ -58,17 +61,8 @@ To run Sidekick locally:
    WEAVIATE_INDEX=<Your chosen Weaviate class/collection name to store your chunks> // e.g. MarkdownChunk
    ```
    Note that we currently only support weaviate as the data store. You can [run Weaviate locally with Docker](https://weaviate.io/developers/weaviate/quickstart/installation#running-weaviate-with-docker) or [set up a sandbox cluster](https://weaviate.io/developers/weaviate/quickstart/installation#create-a-weaviate-cluster) to get a Weaviate host address.
-10. Create a file `app_config.py` in the `sidekick-server` directory. This should contain an object `app_config` which maps from each bearer token to a `product_id`
-    ```
-    app_config = {
-      "22c443d6-0653-43de-9490-450cd4a9836f": {
-        "product_id": "salesforce"
-      }
-    }
-    ```
-    The `product_id` should be a unique identifier for the source of your data.
-11. Run the API locally: `poetry run start`
-12. Access the API documentation at `http://0.0.0.0:8000/docs` and test the API endpoints (make sure to add your bearer token).
+10. Run the API locally: `poetry run start`
+11. Access the API documentation at `http://0.0.0.0:8000/docs` and test the API endpoints (make sure to add your bearer token).
 
 For support and questions, [join our Slack community.](https://join.slack.com/t/sidekick-public/shared_invite/zt-1ra86qug3-~UWNCISLWpNj55Im6C6OaQ)
 
