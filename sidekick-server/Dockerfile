@@ -1,5 +1,5 @@
 
-FROM mcr.microsoft.com/playwright:v1.32.0-jammy as requirements-stage
+FROM mcr.microsoft.com/playwright:v1.31.1-jammy as requirements-stage
 
 # RUN apt update
 # RUN apt install -y software-properties-common
