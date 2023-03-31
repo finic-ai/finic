@@ -17,7 +17,7 @@ from llm.LLM import LLM
 
 from dataloaders.webloader.load import load_data
 
-
+from appstatestore.statestore import StateStore
 from app_config import app_config
 from models.models import (
     AppConfig,
@@ -45,10 +45,10 @@ assert BEARER_TOKEN is not None
 
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
-    keys = list(app_config.keys())
-    if credentials.scheme != "Bearer" or credentials.credentials not in keys:
+    app_config = StateStore().get_config(credentials.credentials)
+    if credentials.scheme != "Bearer" or app_config is None:
         raise HTTPException(status_code=401, detail="Invalid or missing token")
-    return AppConfig.parse_obj(app_config[credentials.credentials])
+    return app_config
 
 
 @app.post(
