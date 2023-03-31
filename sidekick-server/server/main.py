@@ -18,7 +18,6 @@ from llm.LLM import LLM
 from connectors.web_connector.load import load_data
 
 from appstatestore.statestore import StateStore
-from app_config import app_config
 from models.models import (
     AppConfig,
     DocumentChunk
