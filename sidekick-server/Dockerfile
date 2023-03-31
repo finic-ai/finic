@@ -21,7 +21,7 @@ RUN apt install python3-pip -y
 RUN python3.10 -m pip --version
 # RUN python3.10 -m pip install --upgrade --user setuptools==65.4.1
 # RUN python3.10 -m pip uninstall -y distro-info
-RUN apt install gcc -y
+RUN apt install python-is-python3
 
 # RUN apt install -y python3-pip
 
