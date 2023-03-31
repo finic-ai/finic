@@ -11,6 +11,10 @@ def evaluate_url(parent_url: str, url: str, root_scheme: str, root_host: str, ro
     parsed = urlparse(url)
     hostname = parsed.hostname or root_host
 
+    # if this is not a valid url, ignore it
+    if not parsed.scheme and not parsed.hostname:
+        return None
+
     # if this url is relative to the scheme or root host, reconstruct the full url
     if url.startswith("//"):
         parsed = urlparse(root_scheme + ":" + url)

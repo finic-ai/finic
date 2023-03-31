@@ -3,6 +3,7 @@ import uvicorn
 from fastapi import FastAPI, File, HTTPException, Depends, Body, UploadFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
+from urllib.parse import urlparse
 
 from models.api import (
     QueryRequest,
@@ -59,6 +60,10 @@ async def upsert_web_data(
     config: AppConfig = Depends(validate_token),
 ):
     url = request.url
+    parsed_url = urlparse(url)
+    if parsed_url.scheme not in ["http", "https"]:
+        print("Error:", "Invalid URL")
+        raise HTTPException(status_code=400, detail="Invalid URL")
     chunks = await load_data(url, config=config)  
 
     try:
