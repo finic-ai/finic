@@ -11,6 +11,11 @@ ENV POETRY_HOME="/opt/poetry" \
     PYSETUP_PATH="/app" \
     PATH="$POETRY_HOME/bin:$PATH"
 
+# Install curl and other necessary dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
