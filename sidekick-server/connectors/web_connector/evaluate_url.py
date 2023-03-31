@@ -10,15 +10,11 @@ def evaluate_url(parent_url: str, url: str, root_scheme: str, root_host: str, ro
     url = url.rstrip('/')
     parsed = urlparse(url)
     hostname = parsed.hostname or root_host
-
-    # if this is not a valid url, ignore it
-    if not parsed.scheme and not parsed.hostname:
-        return None
-
+    
     # if this url is relative to the scheme or root host, reconstruct the full url
     if url.startswith("//"):
         parsed = urlparse(root_scheme + ":" + url)
-    if url.startswith("/"):
+    elif url.startswith("/"):
         parsed = urlparse(root_scheme + "://" + root_host + url)
     
     # if this url is relative to a page, convert it to the full url based on the url of the page that contained this link
@@ -36,6 +32,11 @@ def evaluate_url(parent_url: str, url: str, root_scheme: str, root_host: str, ro
                 new_path = new_path / part
         final_url = get_full_doc_url(root_scheme, root_host, str(new_path))
         parsed = urlparse(final_url)
+
+    # if this is not a valid url, ignore it
+    if not parsed.scheme and not parsed.hostname:
+        print(parsed.scheme, parsed.hostname, url)
+        return None
 
     # if we ended up with a url that's not on the same domain, ignore it
     if hostname != root_host:
