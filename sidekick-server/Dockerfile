@@ -1,38 +1,30 @@
-# Use the official Python image as the base image
-FROM python:3.10-slim
 
-# Set working directory
-WORKDIR /app
+FROM mcr.microsoft.com/playwright:v1.30.0-focal as requirements-stage
 
-# Set environment variables for Poetry
-ENV POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    POETRY_NO_INTERACTION=1 \
-    PYSETUP_PATH="/app" \
-    PATH="$POETRY_HOME/bin:$PATH"
-
-# Install curl and other necessary dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y python3.10 python3-pip
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
+WORKDIR /tmp
 
-# Copy the 'pyproject.toml' and 'poetry.lock' files into the container
-COPY pyproject.toml poetry.lock /app/
+RUN pip3 install poetry
 
-# Install dependencies using Poetry
-RUN poetry install --no-dev
+COPY ./pyproject.toml ./poetry.lock* /tmp/
 
-# Copy the rest of the application code
-COPY . /app
 
-# Install Playwright and its dependencies
-RUN python -m playwright install
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-# Expose the port Uvicorn will run on
-EXPOSE 8080
+FROM mcr.microsoft.com/playwright:v1.30.0-focal
 
-# Run the FastAPI server with Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+RUN apt-get update && \
+    apt-get install -y python3.10 python3-pip
+
+WORKDIR /code
+
+COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
+
+RUN pip3 install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY . /code/
+
+# Heroku uses PORT, Azure App Services uses WEBSITES_PORT, Fly.io uses 8080 by default
+CMD ["sh", "-c", "uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-${WEBSITES_PORT:-8080}}"]
