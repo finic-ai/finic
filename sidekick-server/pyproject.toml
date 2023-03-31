@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "chatgpt-retrieval-plugin"
+name = "sidekick-server"
 version = "0.1.0"
 description = ""
-authors = ["isafulf <isabella@openai.com>"]
+authors = ["ayan <ayan@getsidekick.ai>"]
 readme = "README.md"
 packages = [{include = "server"}]
 

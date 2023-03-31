@@ -9,7 +9,7 @@ import uuid
 
 from weaviate.util import generate_uuid5
 
-from dataloaders.webloader.load import load_data
+from connectors.web_connector.load import load_data
 
 from datastore.datastore import DataStore
 from models.models import (

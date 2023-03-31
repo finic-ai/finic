@@ -12,7 +12,7 @@ from chunkers.html_chunker.html_chunker import chunk_html_content
 from models.models import AppConfig, DocumentChunk
 from typing import List, Optional
 
-from dataloaders.webloader.evaluate_url import evaluate_url
+from connectors.web_connector.evaluate_url import evaluate_url
 
 def get_full_doc_url(root_scheme: str, root_host: str, docs_path: str, path: str):
     if docs_path in path:

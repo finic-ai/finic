@@ -4,7 +4,7 @@ This folder contains the server implementation of Sidekick. Sidekick server has 
 
 ## Introduction
 
-The core data loading functionality can be found in `dataloaders` and `chunkers`. The `llm` folder contains a question answering and chat module that consumes data from the datastore. The interface for the server (`datastore`, `.well-known`, `models`) is repurposed from [ChatGPT Retrieval Plugin](https://github.com/openai/chatgpt-retrieval-plugin) The repository is organized into several directories:
+The core data loading functionality can be found in `connectors` and `chunkers`. The `llm` folder contains a question answering and chat module that consumes data from the datastore. The interface for the server (`datastore`, `.well-known`, `models`) is repurposed from [ChatGPT Retrieval Plugin](https://github.com/openai/chatgpt-retrieval-plugin) The repository is organized into several directories:
 
 | Directory                     | Description                                                                                                      |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -12,7 +12,7 @@ The core data loading functionality can be found in `dataloaders` and `chunkers`
 | [`models`](/models)           | All data models used by the server -- for the API interface, data loading, and LLM completions.                  |
 | [`server`](/server)           | Houses the main FastAPI server implementation.                                                                   |
 | [`.well-known`](/.well-known) | OpenAI Plugin interface                                                                                          |
-| [`dataloaders`](/dataloaders) | ETL pipelines for loading data from various sources (web, github, forums, etc.) into the vector store            |
+| [`connectors`](/connectors) | ETL pipelines for loading data from various sources (web, github, forums, etc.) into the vector store            |
 | [`chunkers`](/chunkers)       | Abstractions around breaking down text inputs into smaller chunks, optimized for different document types.       |
 | [`llm`](/llm)                 | Use an LLM to answer questions based on the stored data, analyze intent, and check for hallucinations.           |
 
@@ -53,49 +53,6 @@ These are the available API endpoints:
 10. Run the API locally: `poetry run start`
 11. Access the API documentation at `http://0.0.0.0:8000/docs` and test the API endpoints (make sure to add your bearer token).
 
-For more detailed information on setting up, developing, and deploying the ChatGPT Retrieval Plugin, refer to the full Development section below.
-
-## Development
-
-### Setup
-
-This app uses Python 3.10, and [poetry](https://python-poetry.org/) for dependency management.
-
-Install Python 3.10 on your machine if it isn't already installed. It can be downloaded from the official [Python website](https://www.python.org/downloads/) or with a package manager like `brew` or `apt`, depending on your system.
-
-Clone the repository from GitHub:
-
-```
-git clone https://github.com/openai/chatgpt-retrieval-plugin.git
-```
-
-Navigate to the cloned repository directory:
-
-```
-cd /path/to/chatgpt-retrieval-plugin
-```
-
-Install poetry:
-
-```
-pip install poetry
-```
-
-Create a new virtual environment that uses Python 3.10:
-
-```
-poetry env use python3.10
-poetry shell
-```
-
-Install app dependencies using poetry:
-
-```
-poetry install
-```
-
-**Note:** If adding dependencies in the `pyproject.toml`, make sure to run `poetry lock` and `poetry install`.
-
 #### Environment variables
 
 **General Environment Variables**
@@ -117,17 +74,6 @@ poetry install
 > For **WCS instances**, set `WEAVIATE_PORT` to 443 and `WEAVIATE_HOST` to `https://(wcs-instance-name).weaviate.network`. For example: `https://my-project.weaviate.network/`.
 
 > For **self-hosted instances**, if your instance is not at 127.0.0.1:8080, set `WEAVIATE_HOST` and `WEAVIATE_PORT` accordingly. For example: `WEAVIATE_HOST=http://localhost/` and `WEAVIATE_PORT=4040`.
-
-
-### Running the API locally
-
-Start the API with:
-
-```
-poetry run start
-```
-
-Append `docs` to the URL shown in the terminal and open it in a browser to access the API documentation and try out the endpoints (i.e. http://0.0.0.0:8000/docs). Make sure to enter your bearer token and test the API endpoints.
 
 **Note:** If you add new dependencies to the pyproject.toml file, you need to run `poetry lock` and `poetry install` to update the lock file and install the new dependencies.
 
