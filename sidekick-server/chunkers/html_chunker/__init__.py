@@ -1,1 +1,1 @@
-__all__ = ["chunk_html_content"]
+from .html_chunker import HTMLChunker
