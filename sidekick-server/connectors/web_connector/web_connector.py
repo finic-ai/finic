@@ -1,6 +1,7 @@
 from __future__ import annotations
 from markdownify import MarkdownConverter
 import time
+import uuid
 from urllib.parse import urlparse
 from pathlib import Path
 from bs4 import BeautifulSoup, PageElement, Tag
@@ -8,8 +9,7 @@ from bs4 import BeautifulSoup, PageElement, Tag
 from playwright.async_api import async_playwright, Browser
 from tqdm import tqdm
 
-from chunkers.html_chunker.html_chunker import chunk_html_content
-from models.models import AppConfig, DocumentChunk
+from models.models import Source, AppConfig, Document, DocumentMetadata, DocumentChunk, DataConnector
 from typing import List, Optional
 
 from connectors.web_connector.evaluate_url import evaluate_url
@@ -49,13 +49,13 @@ async def get_page_content(b: Browser, url: str, cache_path: str):
         return None
     return content
 
-async def load_data(url: str, config: AppConfig) -> List[DocumentChunk]:
-    """Load data from a URL and return a list of DocumentChunks"""
-    app_id = config.app_id
-    product_id = config.product_id
-
+async def load_data_from_url(source_id: str, url: str, config: AppConfig, source_type: Source) -> List[Document]:
+    """
+    Recursively crawl a domain, cache all web pages, and return a list of Documents with the raw HTML content of each page.
+    """
+    tenant_id = config.tenant_id
     # Create a directory to store the pages
-    cache_path = Path(f"./pages_cache_{product_id}")
+    cache_path = Path(f"./pages_cache_{source_id}")
     cache_path.mkdir(exist_ok=True)
 
     # Find all the links on the page and navigate to each one
@@ -70,19 +70,27 @@ async def load_data(url: str, config: AppConfig) -> List[DocumentChunk]:
     visited = set()
     observed = set(links)
     t = tqdm(total=len(links), unit='pages')
-    chunks = []
+    documents: List[Document] = []
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         while links:
             link = links.pop(0)
-            # t.write(f'Getting content: {link}')
             visited.add(link)
             content = await get_page_content(browser, link, cache_path)
             if content:
                 soup = BeautifulSoup(content, 'html.parser')
-                page_chunks = chunk_html_content(soup, link, product_id)
-                if page_chunks and len(page_chunks) > 0:
-                    chunks.extend(page_chunks)
+                document = Document(
+                    id=str(uuid.uuid4()),
+                    text=content,
+                    metadata=DocumentMetadata(
+                        source_type=source_type,
+                        source_id=source_id,
+                        tenant_id=tenant_id,
+                        url=link,
+                        created_at=time.time()
+                    )
+                )
+                documents.append(document)
                 # Find all the links on the page
                 for new_link in soup.find_all("a", recursive=True):
                     new_href = evaluate_url(link, new_link.get("href", ''), root_scheme, root_host, root_path)
@@ -93,6 +101,15 @@ async def load_data(url: str, config: AppConfig) -> List[DocumentChunk]:
                         t.update(0)
             t.update(1)
         t.close()
+        return documents
 
-        return chunks
+class WebConnector(DataConnector):
+    source_type: Source = Source.web
+    config: AppConfig
+    url: str
 
+    def __init__(self, config: AppConfig, url: str):
+        super().__init__(config=config, url=url)
+
+    async def load(self, source_id: str) -> List[Document]:
+        return await load_data_from_url(source_id, self.url, self.config, self.source_type)

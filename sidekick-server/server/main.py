@@ -1,5 +1,7 @@
 import os
 import uvicorn
+import uuid
+import pdb
 from fastapi import FastAPI, File, HTTPException, Depends, Body, UploadFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
@@ -16,10 +18,12 @@ from models.api import (
 
 from llm.LLM import LLM
 
-from connectors.web_connector.load import load_data
+from connectors.web_connector import WebConnector
+from chunkers.html_chunker import HTMLChunker
 
 from appstatestore.statestore import StateStore
 from models.models import (
+    Source,
     AppConfig,
     DocumentChunk
 )
@@ -64,10 +68,17 @@ async def upsert_web_data(
     if parsed_url.scheme not in ["http", "https"]:
         print("Error:", "Invalid URL")
         raise HTTPException(status_code=400, detail="Invalid URL")
-    chunks = await load_data(url, config=config)  
-
     try:
-        ids = await datastore.upsert(chunks, product=config.product_id)
+        web_connector = WebConnector(config, url)
+        html_chunker = HTMLChunker()
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, url))
+        documents = await web_connector.load(source_id=source_id)
+        chunks = []
+        
+        for doc in documents:
+            chunks.extend(html_chunker.chunk(source_id, doc, 500))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
         return UpsertResponse(ids=ids)
     except Exception as e:
         print("Error:", e)
@@ -84,7 +95,7 @@ async def ask_llm(
     try:
         query_results = await datastore.query(
             request.queries,
-            product=config.product_id,
+            tenant_id=config.tenant_id,
         )
         print(query_results)
         results = await LLM().ask_llm(query_results, request.possible_intents)
@@ -106,7 +117,7 @@ async def query_main(
     try:
         results = await datastore.query(
             request.queries,
-            product=config.product_id,
+            tenant_id=config.tenant_id,
         )
         return QueryResponse(results=results)
     except Exception as e:
@@ -127,7 +138,7 @@ async def query(
     try:
         results = await datastore.query(
             request.queries,
-            product=config.product_id,
+            tenant_id=config.tenant_id,
         )
         return QueryResponse(results=results)
     except Exception as e:

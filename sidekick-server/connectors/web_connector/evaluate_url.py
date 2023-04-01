@@ -35,7 +35,6 @@ def evaluate_url(parent_url: str, url: str, root_scheme: str, root_host: str, ro
 
     # if this is not a valid url, ignore it
     if not parsed.scheme and not parsed.hostname:
-        print(parsed.scheme, parsed.hostname, url)
         return None
 
     # if we ended up with a url that's not on the same domain, ignore it

@@ -16,7 +16,7 @@ class DataStore(ABC):
     async def upsert(
         self, 
         chunks: List[DocumentChunk],
-        product: str
+        tenant_id: str
     ) -> List[str]:
         """
         Takes in a list of documents and inserts them into the database.
@@ -28,7 +28,7 @@ class DataStore(ABC):
             *[
                 self.delete(
                     filter=DocumentMetadataFilter(
-                        product=product,
+                        tenant_id=tenant_id,
                     ),
                     delete_all=False,
                 )
@@ -46,7 +46,7 @@ class DataStore(ABC):
 
         raise NotImplementedError
 
-    async def query(self, queries: List[Query], product: str) -> List[QueryResult]:
+    async def query(self, queries: List[Query], tenant_id: str) -> List[QueryResult]:
         """
         Takes in a list of queries and filters and returns a list of query results with matching document chunks and scores.
         """
@@ -58,10 +58,10 @@ class DataStore(ABC):
             QueryWithEmbedding(**query.dict(), embedding=embedding)
             for query, embedding in zip(queries, query_embeddings)
         ]
-        return await self._query(queries_with_embeddings, product)
+        return await self._query(queries_with_embeddings, tenant_id)
 
     @abstractmethod
-    async def _query(self, queries: List[QueryWithEmbedding], product: str) -> List[QueryResult]:
+    async def _query(self, queries: List[QueryWithEmbedding], tenant_id: str) -> List[QueryResult]:
         """
         Takes in a list of queries with embeddings and filters and returns a list of query results with matching document chunks and scores.
         """

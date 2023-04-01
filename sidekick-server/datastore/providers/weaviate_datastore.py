@@ -9,8 +9,6 @@ import uuid
 
 from weaviate.util import generate_uuid5
 
-from connectors.web_connector.load import load_data
-
 from datastore.datastore import DataStore
 from models.models import (
     DocumentChunk,
@@ -29,7 +27,7 @@ WEAVIATE_PORT = os.environ.get("WEAVIATE_PORT", "8080")
 WEAVIATE_USERNAME = os.environ.get("WEAVIATE_USERNAME", None)
 WEAVIATE_PASSWORD = os.environ.get("WEAVIATE_PASSWORD", None)
 WEAVIATE_SCOPES = os.environ.get("WEAVIATE_SCOPE", None)
-WEAVIATE_INDEX = os.environ.get("WEAVIATE_INDEX", "OpenAIDocument")
+WEAVIATE_INDEX = os.environ.get("WEAVIATE_INDEX", "SidekickDocumentChunk")
 
 WEAVIATE_BATCH_SIZE = int(os.environ.get("WEAVIATE_BATCH_SIZE", 20))
 WEAVIATE_BATCH_DYNAMIC = os.environ.get("WEAVIATE_BATCH_DYNAMIC", False)
@@ -68,8 +66,28 @@ SCHEMA = {
             }
         },
         {
-            "name": "product",
-            "description": "The name of the product.",
+            "name": "source_id",
+            "description": "The unique ID of the data source this chunk is from.",
+            "dataType": ["string"],
+            "moduleConfig": {
+                "text2vec-openai": {
+                "vectorizePropertyName": False
+                }
+            }
+        },
+        {
+            "name": "document_id",
+            "description": "The unique ID of the document this chunk is from.",
+            "dataType": ["string"],
+            "moduleConfig": {
+                "text2vec-openai": {
+                "vectorizePropertyName": False
+                }
+            }
+        },
+        {
+            "name": "tenant_id",
+            "description": "The unique ID of the client who this chunk belongs to.",
             "dataType": ["string"],
             "moduleConfig": {
                 "text2vec-openai": {
@@ -183,14 +201,16 @@ class WeaviateDataStore(DataStore):
 
                 properties = {
                     "title": chunk.title,
-                    "url": chunk.url,
-                    "product": chunk.product,
+                    "url": chunk.metadata.url,
+                    "source_id": chunk.metadata.source_id,
+                    "document_id": chunk.metadata.document_id,
+                    "tenant_id": chunk.metadata.tenant_id,
                     "h2": chunk.h2,
                     "h3": chunk.h3,
                     "h4": chunk.h4,
                     "content": chunk.content,
                     "raw_markdown": chunk.raw_markdown,
-                    "source_type": chunk.source_type
+                    "source_type": chunk.metadata.source_type
                 }
                 batch.add_data_object(properties, WEAVIATE_INDEX, chunk.id)
                 doc_ids.append(chunk.id)
@@ -199,14 +219,14 @@ class WeaviateDataStore(DataStore):
     async def _query(
         self,
         queries: List[QueryWithEmbedding],
-        product: str
+        tenant_id: str
     ) -> List[QueryResult]:
         """
         Takes in a list of queries with embeddings and filters and returns a list of query results with matching document chunks and scores.
         """
         print(queries)
         async def _single_query(query: QueryWithEmbedding) -> QueryResult:
-            query_filter = DocumentMetadataFilter(product=product)
+            query_filter = DocumentMetadataFilter(tenant_id=tenant_id)
 
             if query.filter and query.filter.source_type:
                 query_filter.source_type = query.filter.source_type
@@ -229,15 +249,20 @@ class WeaviateDataStore(DataStore):
 
             for resp in response:
                 result = DocumentChunkWithScore(
+                    id=resp["id"],
                     content=resp["content"],
                     raw_markdown=resp["raw_markdown"],
                     title=resp["title"],
                     h2=resp["h2"],
                     h3=resp["h3"],
                     h4=resp["h4"],
-                    product=resp["product"],
-                    source_type=Source(resp["source_type"]) if resp["source_type"] else None,
-                    url=resp["url"],
+                    metadata=DocumentChunkMetadata(
+                        document_id=resp["tenant_id"], 
+                        source_type=Source(resp["source_type"]) if resp["source_type"] else None,
+                        source_id=resp["source_id"], 
+                        tenant_id=resp["tenant_id"], 
+                        url=resp["url"]
+                    ),
                     embedding=resp["_additional"]["vector"],
                     score=resp["_additional"]["score"]
                 )

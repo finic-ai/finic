@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from abc import ABC, abstractmethod
 from typing import List, Optional
 from enum import Enum
 
@@ -15,15 +16,17 @@ class Source(str, Enum):
     string="string"
 
 class DocumentMetadata(BaseModel):
-    source: Optional[Source] = None
-    source_id: Optional[str] = None
+    source_type: Source
+    source_id: str
+    tenant_id: str
     url: Optional[str] = None
+    source_description: Optional[str] = None
     created_at: Optional[str] = None
     author: Optional[str] = None
 
 
 class DocumentChunkMetadata(DocumentMetadata):
-    document_id: Optional[str] = None
+    document_id: str
 
 class DocumentChunk(BaseModel):
     id: Optional[str] = None
@@ -33,9 +36,7 @@ class DocumentChunk(BaseModel):
     h2: Optional[str] = None
     h3: Optional[str] = None
     h4: Optional[str] = None
-    product: str
-    source_type: Source
-    url: Optional[str] = None
+    metadata: DocumentChunkMetadata
 
 class DocumentChunkWithScore(DocumentChunk):
     score: float
@@ -53,7 +54,21 @@ class DocumentWithChunks(Document):
 
 class DocumentMetadataFilter(BaseModel):
     source_type: Optional[Source] = None
-    product: Optional[str] = None
+    tenant_id: Optional[str] = None
+
+class DataConnector(BaseModel, ABC):
+    source_type: Source
+
+    @abstractmethod
+    def load(self, *args, **kwargs) -> List[Document]:
+        pass
+
+class DataChunker(BaseModel, ABC):
+    supported_sources: List[Source]
+
+    @abstractmethod
+    def chunk(self, document: Document, *args, **kwargs) -> List[DocumentWithChunks]:
+        pass
 
 class Query(BaseModel):
     query: str
@@ -83,4 +98,4 @@ class EvaluationResult(BaseModel):
 
 class AppConfig(BaseModel):
     app_id: str
-    product_id: str
+    tenant_id: str
