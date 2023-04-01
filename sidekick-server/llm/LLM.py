@@ -105,7 +105,7 @@ Second, respond with a JSON in the format:
         """
 
         system_prompt = f"Use only the information in the following pieces of content to construct your response. {content_refs}"
-        user_instructions = f"Respond to this question, preserving all markdown except tables: {query}"
+        user_instructions = f"Respond to this question, preserving any markdown format: {query}"
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
