@@ -181,7 +181,7 @@ class WeaviateDataStore(DataStore):
     def _build_auth_credentials():
         if WEAVIATE_USERNAME and WEAVIATE_PASSWORD:
             return weaviate.auth.AuthClientPassword(
-                WEAVIATE_USERNAME, WEAVIATE_PASSWORD, WEAVIATE_SCOPES
+                WEAVIATE_USERNAME, WEAVIATE_PASSWORD
             )
         else:
             return None
