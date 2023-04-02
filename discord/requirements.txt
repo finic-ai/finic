@@ -1,5 +1,0 @@
-functions-framework==3.*
-openai==0.26.0
-langchain==0.0.74
-pinecone-client==2.1.0
-python-dotenv==0.21.1
