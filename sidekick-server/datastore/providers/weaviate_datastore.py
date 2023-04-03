@@ -200,7 +200,7 @@ class WeaviateDataStore(DataStore):
             if query.filter and query.filter.source_type:
                 query_filter.source_type = query.filter.source_type
 
-            filters_ = self.build_filters(query.filter)
+            filters_ = self.build_filters(query_filter)
 
             # Remove problematic characters from weaviate query
             formatted_query = html.escape(query.query.replace("\n", " "))
