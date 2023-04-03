@@ -6,6 +6,7 @@ from weaviate import Client
 import weaviate
 import os
 import uuid
+import html
 
 from weaviate.util import generate_uuid5
 
@@ -201,12 +202,15 @@ class WeaviateDataStore(DataStore):
 
             filters_ = self.build_filters(query.filter)
 
+            # Remove problematic characters from weaviate query
+            formatted_query = html.escape(query.query.replace("\n", " "))
+
             result = (
                 self.client.query.get(
                     WEAVIATE_INDEX,
                     list(extract_schema_properties(SCHEMA)),
                 )
-                .with_hybrid(query=query.query, alpha=0.75)
+                .with_hybrid(query=formatted_query, alpha=0.75)
                 .with_where(filters_)
                 .with_limit(query.top_k)  # type: ignore
                 .with_additional(["score", "vector"])
