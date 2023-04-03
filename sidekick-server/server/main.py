@@ -14,19 +14,24 @@ from models.api import (
     UpsertWebDataRequest,
     LLMResponse,
     AskLLMRequest,
+    UpsertRequest
 )
 
 from llm.LLM import LLM
 
 from connectors.web_connector import WebConnector
 from chunkers.html_chunker import HTMLChunker
+from chunkers.default_chunker import DefaultChunker
 
 from appstatestore.statestore import StateStore
 from models.models import (
     Source,
     AppConfig,
-    DocumentChunk
+    DocumentChunk,
+    DocumentChunkMetadata,
+    DocumentMetadata
 )
+import uuid
 
 from datastore.factory import get_datastore
 
@@ -83,6 +88,34 @@ async def upsert_web_data(
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
+
+@app.post(
+    "/upsert-documents",
+    response_model=UpsertResponse,
+)
+async def upsert_documents(
+    request: UpsertRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    documents = request.documents
+    try:
+        chunker = DefaultChunker()
+        chunks = []
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, documents[0].url))
+        for doc in documents:
+            doc.metadata = DocumentMetadata(
+                document_id=str(uuid.uuid4()),
+                tenant_id=config.tenant_id,
+                source_id=source_id,
+            )
+            chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        return UpsertResponse(ids=ids)
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
 
 @app.post(
     "/ask-llm",

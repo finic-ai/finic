@@ -16,35 +16,29 @@ class Source(str, Enum):
     string="string"
 
 class DocumentMetadata(BaseModel):
-    source_type: Source
-    source_id: str
+    document_id: str
     tenant_id: str
-    url: Optional[str] = None
-    source_description: Optional[str] = None
-    created_at: Optional[str] = None
-    author: Optional[str] = None
-
+    source_id: Optional[str] = None
+    
 
 class DocumentChunkMetadata(DocumentMetadata):
-    document_id: str
+    chunk_id: str
 
 class DocumentChunk(BaseModel):
-    id: Optional[str] = None
-    content: str
-    raw_markdown: Optional[str] = None
-    title: Optional[str] = None
-    h2: Optional[str] = None
-    h3: Optional[str] = None
-    h4: Optional[str] = None
-    metadata: DocumentChunkMetadata
+    title: str
+    text: str
+    url: str
+    source_type: Source
+    metadata: Optional[DocumentChunkMetadata]
 
 class DocumentChunkWithScore(DocumentChunk):
     score: float
 
-
 class Document(BaseModel):
-    id: Optional[str] = None
+    title: str
     text: str
+    url: str
+    source_type: Source
     metadata: Optional[DocumentMetadata] = None
 
 

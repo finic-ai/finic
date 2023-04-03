@@ -45,13 +45,7 @@ class LLM:
             chunk_content = ""
             if chunk.title:
                 chunk_content += f"# {chunk.title} "
-            if chunk.h2:
-                chunk_content += f"## {chunk.h2} "
-            if chunk.h3:
-                chunk_content += f"### {chunk.h2} "
-            if chunk.h4:
-                chunk_content += f"#### {chunk.h4} "
-            chunk_content += f"{chunk.raw_markdown}"
+            chunk_content += f"{chunk.text}"
 
             content_refs += f"<Content{i}>{chunk_content}</Content{i}>"
             i += 1

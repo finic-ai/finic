@@ -80,14 +80,14 @@ async def load_data_from_url(source_id: str, url: str, config: AppConfig, source
             if content:
                 soup = BeautifulSoup(content, 'html.parser')
                 document = Document(
-                    id=str(uuid.uuid4()),
+                    title="",
                     text=content,
+                    url=link,
+                    source_type=source_type,
                     metadata=DocumentMetadata(
-                        source_type=source_type,
+                        document_id=str(uuid.uuid4()),
                         source_id=source_id,
                         tenant_id=tenant_id,
-                        url=link,
-                        created_at=time.time()
                     )
                 )
                 documents.append(document)

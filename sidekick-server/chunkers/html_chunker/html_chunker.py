@@ -55,18 +55,14 @@ def create_chunks(
             return None
         
         chunk = DocumentChunk(
-            id=str(uuid.uuid4()),
-            content=content,
-            raw_markdown=raw_markdown,
             title=headers.get("h1"),
-            h2=headers.get("h2"),
-            h3=headers.get("h3"), 
-            h4=headers.get("h4"),
+            text=content,
+            url=url,
+            source_type=Source.web,
             metadata=DocumentChunkMetadata(
                 document_id=document_id, 
                 source_id=source_id, 
-                url=url,
-                source_type=Source.web,
+                chunk_id=str(uuid.uuid4()),
                 tenant_id=tenant_id
             )
         )
@@ -123,5 +119,5 @@ class HTMLChunker(DataChunker):
 
     def chunk(self, source_id: str, document: Document, token_limit: int = 1000):
         soup = BeautifulSoup(document.text, "html.parser")
-        chunks = chunk_html_content(document.metadata.tenant_id, source_id, document.id, soup, document.metadata.url, token_limit)
+        chunks = chunk_html_content(document.metadata.tenant_id, source_id, document.metadata.document_id, soup, document.url, token_limit)
         return chunks
