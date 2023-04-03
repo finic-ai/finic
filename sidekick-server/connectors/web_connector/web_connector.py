@@ -10,7 +10,7 @@ from playwright.async_api import async_playwright, Browser
 from tqdm import tqdm
 
 from models.models import Source, AppConfig, Document, DocumentMetadata, DocumentChunk, DataConnector
-from typing import List, Optional
+from typing import List
 
 from connectors.web_connector.evaluate_url import evaluate_url
 

@@ -84,6 +84,35 @@ async def upsert_web_data(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
 
+from connectors.confluence_connector import ConfluenceAppConfig
+@app.post(
+    "/upsert-confluence_data",
+    response_model=UpsertResponse,
+)
+async def upsert_confluence_data(
+    request: UpsertWebDataRequest = Body(...),
+    config: ConfluenceAppConfig = Depends(validate_token),
+):
+    space_key = request.space_key
+    if not space_key:
+        print("Error:", "Invalid key for Confluence space")
+        raise HTTPException(status_code=400, detail="Invalid Space Key for Confluence")
+    try:
+        web_connector = WebConnector(config, url)
+        html_chunker = HTMLChunker()
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, url))
+        documents = await web_connector.load(source_id=source_id)
+        chunks = []
+        
+        for doc in documents:
+            chunks.extend(html_chunker.chunk(source_id, doc, 500))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        return UpsertResponse(ids=ids)
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
 @app.post(
     "/ask-llm",
     response_model=LLMResponse,

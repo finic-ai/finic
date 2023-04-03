@@ -5,6 +5,7 @@ from enum import Enum
 
 
 class Source(str, Enum):
+    string="string"
     email = "email"
     file = "file"
     chat = "chat"
@@ -13,7 +14,7 @@ class Source(str, Enum):
     github_issues="github-issues"
     github_markdown="github-markdown"
     discourse="discourse"
-    string="string"
+    confluence="confluence"
 
 class DocumentMetadata(BaseModel):
     source_type: Source
