@@ -79,12 +79,7 @@ These are the available API endpoints:
 - `/ask-llm`: Endpoint to get an answer to a question from an LLM, based on the data in the vectorstore. In the response, you get back the sources used in the answer, the user's intent, and whether or not the question is answerable based on the content in your vectorstore. 
 
 ## Contributing
-Sidekick is open for contribution! To add a new data connector, follow the outlined steps:
-
-1. Create a new folder under `connectors` named `<data-source>-connector` where `<data-source>` is the name of the source you are connecting to.
-2. This folder should contain a file `load.py` with a function `load_data` that returns `List[DocumentChunk]`
-3. Create a new endpoint in `/server/main.py` that calls `load_data`
-4. Add the new source type in `models/models.py`
+See [CONTRIBUTING.md](https://github.com/ai-sidekick/sidekick/blob/main/CONTRIBUTING.md)
 
 ## Acknowledgments
 
