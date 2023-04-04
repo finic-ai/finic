@@ -5,6 +5,9 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import os
 import uuid
+import json
+import importlib
+from typing import Any
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
@@ -12,29 +15,36 @@ class GoogleDocsConnector(DataConnector):
     source_type: Source = Source.google_docs
     config: AppConfig
     folder_name: str
-    auth_code: Optional[str]
+    auth_code: Optional[str] = None
+    flow: Optional[Any] = None
+    service: Optional[Any] = None
 
     def __init__(self, config: AppConfig, folder_name: str, auth_code: Optional[str]):
-        super().__init__()
-
-        self.config = config
-        self.folder_name = folder_name
-        self.auth_code = auth_code
+        super().__init__(config=config, folder_name=folder_name, auth_code=auth_code)
         
         # Set up the OAuth flow
-        self.flow = InstalledAppFlow.from_client_secrets_file(
-            os.path.join(os.getcwd(), 'client_secrets.json'),
-            SCOPES, 
-            redirect_uri='https://dashboard.getbuff.io/' 
-        )
-        self.service = None
+        file_path = 'client_secrets.json'
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        lines = os.path.join(dir_path, file_path)
+        with open(lines, 'r') as json_file:
+            json_data = json.load(json_file)
+            print(json_data)
+            self.flow = InstalledAppFlow.from_client_config(
+                json_data,
+                SCOPES, 
+                redirect_uri='https://dashboard.getbuff.io/' 
+            )
+        
 
     async def authorize(self) -> str | None:
         # Exchange the authorization code for credentials
+        print(self.auth_code)
         if self.auth_code is None:
+            print("auth code is none")
             # Generate the authorization URL
             auth_url, _ = self.flow.authorization_url(prompt='consent')
             return auth_url
+
 
         self.flow.fetch_token(code=self.auth_code)
 
@@ -44,7 +54,7 @@ class GoogleDocsConnector(DataConnector):
 
     async def load(self, source_id: str) -> List[Document]:
         folder_query = f"name='{self.folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
-        folder_result = self.folder_nameservice.files().list(q=folder_query, fields="nextPageToken, files(id)").execute()
+        folder_result = self.service.files().list(q=folder_query, fields="nextPageToken, files(id)").execute()
         folder_items = folder_result.get('files', [])
 
         if len(folder_items) == 0:
