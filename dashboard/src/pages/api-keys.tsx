@@ -90,7 +90,7 @@ import {
                   />
                 </div>
                 <div className="lg:col-span-2">
-                  <Label htmlFor="apiKeys.newKe">API Key</Label>
+                  <Label htmlFor="apiKeys.newKey">API Key</Label>
                   <TextInput
                     id="apiKeys.newKey"
                     name="apiKeys.newKey"
