@@ -26,7 +26,7 @@ class DocumentChunkMetadata(DocumentMetadata):
     chunk_id: str
 
 class DocumentChunk(BaseModel):
-    title: str
+    title: Optional[str] = ""
     text: str
     url: str
     source_type: Source
