@@ -4,6 +4,8 @@ import {
   ClerkProvider,
   SignedIn,
   SignedOut,
+  SignIn,
+  SignUp,
   UserButton,
   useUser,
   RedirectToSignIn,
@@ -13,7 +15,7 @@ import "./index.css";
 import theme from "./flowbite-theme";
 import { Flowbite } from "flowbite-react";
 import { Routes, Route } from "react-router";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Navigate } from "react-router-dom";
 import DashboardPage from "./pages";
 import ForgotPasswordPage from "./pages/authentication/forgot-password";
 import ProfileLockPage from "./pages/authentication/profile-lock";
@@ -40,6 +42,10 @@ import ApiKeysPage from "./pages/api-keys";
 
 const container = document.getElementById("root");
 
+if (typeof (window as any).global === 'undefined') {
+  (window as any).global = window;
+}
+
 
 // const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkPubKey = "pk_test_ZXZvbHZlZC1zYWxtb24tNTkuY2xlcmsuYWNjb3VudHMuZGV2JA"
@@ -51,16 +57,11 @@ if (!container) {
 const root = createRoot(container);
 
 root.render(
-  // <StrictMode>
+  <StrictMode>
     <ClerkProvider publishableKey={clerkPubKey}>
       <Flowbite theme={{ theme }}>
         <SignedIn>
-          <p>signed in</p>
-        </SignedIn>
-        <SignedOut>
-          <p>signed out</p>
-        </SignedOut>
-          {/* <BrowserRouter>
+          <BrowserRouter>
             <Routes>
               <Route path="/" element={<DashboardPage />} index />
               <Route path="/mailing/compose" element={<MailingComposePage />} />
@@ -104,8 +105,18 @@ root.render(
               <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
             </Routes>
-          </BrowserRouter> */}
+          </BrowserRouter>
+        </SignedIn>
+        <SignedOut>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/sign-up" element={<SignUp routing="path" path="/sign-up" />} />
+              <Route path="/sign-in" element={<SignIn routing="path" path="/sign-in" />} />
+              <Route path="*" element={<Navigate to="/sign-in"/>}/>
+            </Routes>
+          </BrowserRouter>
+        </SignedOut>
       </Flowbite>
     </ClerkProvider>
-  // </StrictMode>
+  </StrictMode>
 );
