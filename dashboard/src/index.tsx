@@ -51,16 +51,10 @@ if (!container) {
 const root = createRoot(container);
 
 root.render(
-  // <StrictMode>
+  <StrictMode>
     <ClerkProvider publishableKey={clerkPubKey}>
       <Flowbite theme={{ theme }}>
-        <SignedIn>
-          <p>signed in</p>
-        </SignedIn>
-        <SignedOut>
-          <p>signed out</p>
-        </SignedOut>
-          {/* <BrowserRouter>
+          <BrowserRouter>
             <Routes>
               <Route path="/" element={<DashboardPage />} index />
               <Route path="/mailing/compose" element={<MailingComposePage />} />
@@ -104,8 +98,8 @@ root.render(
               <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
             </Routes>
-          </BrowserRouter> */}
+          </BrowserRouter>
       </Flowbite>
     </ClerkProvider>
-  // </StrictMode>
+  </StrictMode>
 );
