@@ -6,6 +6,7 @@ from weaviate import Client
 import weaviate
 import os
 import uuid
+import html
 
 from weaviate.util import generate_uuid5
 
@@ -96,38 +97,10 @@ SCHEMA = {
             }
         },
         {
-            "name": "h2",
-            "description": "The 2nd level heading of the block.",
-            "dataType": ["string"],
-
-        },
-        {
-            "name": "h3",
-            "description": "The 3rd level heading of the block",
-            "dataType": ["string"],
-
-        },
-        {
-            "name": "h4",
-            "description": "The 4th level heading of the block",
-            "dataType": ["string"],
-
-        },
-        {
-            "name": "content",
+            "name": "text",
             "description": "the text content in this block",
             "dataType": ["string"],
         },
-        {
-            "name": "raw_markdown",
-            "description": "the raw markdown content of this block",
-            "dataType": ["string"],
-            "moduleConfig": {
-                "text2vec-openai": {
-                    "vectorizePropertyName": False
-                }
-            }
-        }
     ],
     "moduleConfig": {
         "text2vec-openai": {
@@ -201,19 +174,15 @@ class WeaviateDataStore(DataStore):
 
                 properties = {
                     "title": chunk.title,
-                    "url": chunk.metadata.url,
+                    "url": chunk.url,
                     "source_id": chunk.metadata.source_id,
                     "document_id": chunk.metadata.document_id,
                     "tenant_id": chunk.metadata.tenant_id,
-                    "h2": chunk.h2,
-                    "h3": chunk.h3,
-                    "h4": chunk.h4,
-                    "content": chunk.content,
-                    "raw_markdown": chunk.raw_markdown,
-                    "source_type": chunk.metadata.source_type
+                    "text": chunk.text,
+                    "source_type": chunk.source_type
                 }
-                batch.add_data_object(properties, WEAVIATE_INDEX, chunk.id)
-                doc_ids.append(chunk.id)
+                batch.add_data_object(properties, WEAVIATE_INDEX, chunk.metadata.chunk_id)
+                doc_ids.append(chunk.metadata.chunk_id)
         return doc_ids
 
     async def _query(
@@ -231,14 +200,17 @@ class WeaviateDataStore(DataStore):
             if query.filter and query.filter.source_type:
                 query_filter.source_type = query.filter.source_type
 
-            filters_ = self.build_filters(query.filter)
+            filters_ = self.build_filters(query_filter)
+
+            # Remove problematic characters from weaviate query
+            formatted_query = html.escape(query.query.replace("\n", " "))
 
             result = (
                 self.client.query.get(
                     WEAVIATE_INDEX,
                     list(extract_schema_properties(SCHEMA)),
                 )
-                .with_hybrid(query=query.query, alpha=0.75)
+                .with_hybrid(query=formatted_query, alpha=0.75)
                 .with_where(filters_)
                 .with_limit(query.top_k)  # type: ignore
                 .with_additional(["score", "vector"])
@@ -249,19 +221,15 @@ class WeaviateDataStore(DataStore):
 
             for resp in response:
                 result = DocumentChunkWithScore(
-                    id=resp["id"],
-                    content=resp["content"],
-                    raw_markdown=resp["raw_markdown"],
+                    text=resp["text"],
                     title=resp["title"],
-                    h2=resp["h2"],
-                    h3=resp["h3"],
-                    h4=resp["h4"],
+                    url=resp["url"],
+                    source_type=Source(resp["source_type"]),
                     metadata=DocumentChunkMetadata(
-                        document_id=resp["tenant_id"], 
-                        source_type=Source(resp["source_type"]) if resp["source_type"] else None,
+                        document_id=resp["document_id"],
+                        chunk_id="",
                         source_id=resp["source_id"], 
-                        tenant_id=resp["tenant_id"], 
-                        url=resp["url"]
+                        tenant_id=resp["tenant_id"],
                     ),
                     embedding=resp["_additional"]["vector"],
                     score=resp["_additional"]["score"]

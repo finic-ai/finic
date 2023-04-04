@@ -12,21 +12,28 @@ from models.api import (
     QueryResponse,
     UpsertResponse,
     UpsertWebDataRequest,
+    UpsertGoogleDocsRequest,
     LLMResponse,
     AskLLMRequest,
+    UpsertRequest,
+    UpsertOAuthResponse
 )
 
 from llm.LLM import LLM
-
+from connectors.google_docs_connector import GoogleDocsConnector
 from connectors.web_connector import WebConnector
 from chunkers.html_chunker import HTMLChunker
+from chunkers.default_chunker import DefaultChunker
 
 from appstatestore.statestore import StateStore
 from models.models import (
     Source,
     AppConfig,
-    DocumentChunk
+    DocumentChunk,
+    DocumentChunkMetadata,
+    DocumentMetadata
 )
+import uuid
 
 from datastore.factory import get_datastore
 
@@ -54,6 +61,40 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_sc
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return app_config
 
+
+@app.post(
+    "/upsert-google-docs",
+    response_model=UpsertOAuthResponse,
+)
+async def upsert_google_docs(
+    request: UpsertGoogleDocsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    folder_name = request.folder_name
+    auth_code = request.auth_code
+    source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, request.folder_name))
+
+    try:
+        google_connector = GoogleDocsConnector(config, folder_name, auth_code)
+        if auth_code is None:
+            auth_url = await google_connector.authorize()
+            return UpsertOAuthResponse(auth_url=auth_url)
+        else: 
+            await google_connector.authorize()
+            documents = await google_connector.load(source_id=source_id)
+            chunker = DefaultChunker()
+            chunks = []
+            for doc in documents:
+                chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+            ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+            return UpsertOAuthResponse(ids=ids)
+
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
+    
 
 @app.post(
     "/upsert-web-data",
@@ -85,6 +126,34 @@ async def upsert_web_data(
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
+    "/upsert-documents",
+    response_model=UpsertResponse,
+)
+async def upsert_documents(
+    request: UpsertRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    documents = request.documents
+    try:
+        chunker = DefaultChunker()
+        chunks = []
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, documents[0].url))
+        for doc in documents:
+            doc.metadata = DocumentMetadata(
+                document_id=str(uuid.uuid4()),
+                tenant_id=config.tenant_id,
+                source_id=source_id,
+            )
+            chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        return UpsertResponse(ids=ids)
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
+
+@app.post(
     "/ask-llm",
     response_model=LLMResponse,
 )
@@ -103,8 +172,6 @@ async def ask_llm(
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
-
-
 
 @app.post(
     "/query",
