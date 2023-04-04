@@ -1,0 +1,6 @@
+{
+  "name": "testUtils",
+  "main": "../dist/testUtils/index.js",
+  "module": "../dist/testUtils/index.mjs",
+  "types": "../dist/types/testUtils/index.d.ts"
+}

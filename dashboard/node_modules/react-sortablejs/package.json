@@ -1,0 +1,113 @@
+{
+  "name": "react-sortablejs",
+  "version": "6.1.4",
+  "author": {
+    "name": "Wayne Van Son",
+    "email": "waynevanson@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SortableJS/react-sortablejs.git"
+  },
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "commit": "cz",
+    "prepublishOnly": "yarn build",
+    "build": "yarn build:parcel",
+    "build:parcel": "parcel build ./src/index.ts",
+    "serve": "npm-run-all --parallel serve:*",
+    "serve:parcel": "parcel watch ./src/index.ts",
+    "format": "npm-run-all format:*",
+    "format:eslint": "yarn lint --fix",
+    "format:prettier": "prettier --write \"src/**.{js,ts}\"",
+    "lint": "eslint \"src/**.{js,ts}\"",
+    "phoenix": "rm -rf ./node_modules && rm -f yarn.lock && yarn install --prefer-online"
+  },
+  "peerDependencies": {
+    "@types/sortablejs": "1",
+    "react": ">=16.9.0",
+    "react-dom": ">=16.9.0",
+    "sortablejs": "1"
+  },
+  "dependencies": {
+    "classnames": "2.3.1",
+    "tiny-invariant": "1.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "11",
+    "@commitlint/config-conventional": "11",
+    "@parcel/packager-ts": "2.6.0",
+    "@parcel/transformer-typescript-types": "2.6.0",
+    "@semantic-release/changelog": "5",
+    "@semantic-release/git": "9",
+    "@types/jest": "^26.0.14",
+    "@types/node": "14.11.2",
+    "@types/react": ">=16.9.0",
+    "@types/react-dom": ">=16.9.0",
+    "@types/sortablejs": "1",
+    "@typescript-eslint/eslint-plugin": "4.33",
+    "@typescript-eslint/parser": "4.33",
+    "commitizen": "4",
+    "cz-conventional-changelog": "3",
+    "eslint": "7",
+    "eslint-plugin-react": "7",
+    "husky": "4.3",
+    "jest": "26",
+    "lint-staged": "10",
+    "npm-run-all": "4",
+    "parcel": "2",
+    "prettier": "2.5",
+    "react": ">=16.9.0",
+    "react-dom": ">=16.9.0",
+    "semantic-release": "17",
+    "sortablejs": "1",
+    "ts-jest": "26",
+    "ts-node": "9",
+    "typescript": "4"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "yarn lint-staged",
+      "pre-push": "yarn build"
+    }
+  },
+  "lint-staged": {
+    "*.{ts}": "yarn format"
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/github",
+      "@semantic-release/npm",
+      "@semantic-release/git",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
+  }
+}
