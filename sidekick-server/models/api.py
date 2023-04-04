@@ -10,12 +10,15 @@ from models.models import (
 from pydantic import BaseModel
 from typing import List, Optional
 
-
 class UpsertRequest(BaseModel):
     documents: List[Document]
 
 class UpsertWebDataRequest(BaseModel):
     url: str
+
+class UpsertGoogleDocsRequest(BaseModel):
+    folder_name: str
+    auth_code: Optional[str]
 
 class AskLLMRequest(BaseModel):
     queries: List[Query]
@@ -23,6 +26,10 @@ class AskLLMRequest(BaseModel):
 
 class UpsertResponse(BaseModel):
     ids: List[str]
+
+class UpsertOAuthResponse(BaseModel):
+    ids: Optional[List[str]] = None
+    auth_url: Optional[str] = None
 
 
 class QueryRequest(BaseModel):
@@ -39,7 +46,6 @@ class DeleteRequest(BaseModel):
     ids: Optional[List[str]] = None
     filter: Optional[DocumentMetadataFilter] = None
     delete_all: Optional[bool] = False
-
 
 class DeleteResponse(BaseModel):
     success: bool
