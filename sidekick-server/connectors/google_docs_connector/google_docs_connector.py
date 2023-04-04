@@ -28,7 +28,6 @@ class GoogleDocsConnector(DataConnector):
         lines = os.path.join(dir_path, file_path)
         with open(lines, 'r') as json_file:
             json_data = json.load(json_file)
-            print(json_data)
             self.flow = InstalledAppFlow.from_client_config(
                 json_data,
                 SCOPES, 
@@ -38,7 +37,6 @@ class GoogleDocsConnector(DataConnector):
 
     async def authorize(self) -> str | None:
         # Exchange the authorization code for credentials
-        print(self.auth_code)
         if self.auth_code is None:
             print("auth code is none")
             # Generate the authorization URL

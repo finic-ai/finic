@@ -20,7 +20,7 @@ import {
   HiKey,
   HiGithub
 } from "react-icons/hi";
-import {FaGithub} from "react-icons/fa"
+import {FaGithub, FaGoogleDrive} from "react-icons/fa"
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
@@ -212,6 +212,12 @@ const ExampleSidebar: FC = function () {
                   icon={HiKey}
                 >
                   API Keys
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="/google-drive"
+                  icon={FaGoogleDrive}
+                >
+                  Google Drive
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="https://github.com/ai-sidekick/sidekick"

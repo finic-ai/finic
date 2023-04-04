@@ -37,6 +37,7 @@ import MailingReadPage from "./pages/mailing/read";
 import MailingReplyPage from "./pages/mailing/reply";
 import MailingComposePage from "./pages/mailing/compose";
 import ApiKeysPage from "./pages/api-keys";
+import GoogleDrivePage from "./pages/google-drive";
 
 const container = document.getElementById("root");
 
@@ -97,6 +98,7 @@ root.render(
               <Route path="/users/profile" element={<UserProfilePage />} />
               <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
+              <Route path="/google-drive" element={<GoogleDrivePage />} />
             </Routes>
           </BrowserRouter>
       </Flowbite>
