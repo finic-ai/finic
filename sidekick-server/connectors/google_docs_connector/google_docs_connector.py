@@ -32,7 +32,7 @@ class GoogleDocsConnector(DataConnector):
         self.flow = InstalledAppFlow.from_client_config(
             client_secrets,
             SCOPES, 
-            redirect_uri='{}/google-drive'.format(DASHBOARD_URL) 
+            redirect_uri='{}/connectors/google-drive'.format(DASHBOARD_URL) 
         )        
 
     async def authorize(self) -> str | None:
