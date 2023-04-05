@@ -40,6 +40,7 @@ import MailingReplyPage from "./pages/mailing/reply";
 import MailingComposePage from "./pages/mailing/compose";
 import ApiKeysPage from "./pages/api-keys";
 import ConnectionsPage from "./pages/connections";
+import GoogleDrivePage from "./pages/google-drive";
 
 const container = document.getElementById("root");
 
@@ -106,6 +107,7 @@ root.render(
               <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
               <Route path="/connections" element={<ConnectionsPage />} />
+              <Route path="/google-drive" element={<GoogleDrivePage />} />
             </Routes>
           </BrowserRouter>
         </SignedIn>
