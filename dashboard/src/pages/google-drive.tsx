@@ -108,7 +108,7 @@ import {
                     <TextInput
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='Path to the folder in Google Drive you want to sync with Sidekick'
+                      placeholder='Path to the folder you want to sync with Sidekick'
                       className="mt-1"
                       onChange={(e) => setFolderName(e.target.value.trim())}
                       value={folderName}
