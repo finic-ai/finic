@@ -30,8 +30,7 @@ class GoogleDocsConnector(DataConnector):
             client_secrets,
             SCOPES, 
             redirect_uri='{}/google-drive'.format(DASHBOARD_URL) 
-        )
-        
+        )        
 
     async def authorize(self) -> str | None:
         # Exchange the authorization code for credentials
@@ -41,17 +40,20 @@ class GoogleDocsConnector(DataConnector):
             auth_url, _ = self.flow.authorization_url(prompt='consent')
             return auth_url
 
-
+        print("fetching token")
         self.flow.fetch_token(code=self.auth_code)
-
+        
         # Build the Google Drive API client with the credentials
         creds = self.flow.credentials
+        print(creds)
         self.service = build('drive', 'v3', credentials=creds)
 
     async def load(self, source_id: str) -> List[Document]:
+        print("loading documents")
         folder_query = f"name='{self.folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
         folder_result = self.service.files().list(q=folder_query, fields="nextPageToken, files(id)").execute()
         folder_items = folder_result.get('files', [])
+        print("folder items:", folder_items)
 
         if len(folder_items) == 0:
             print(f"No folder named '{self.folder_name}' was found.")
@@ -65,6 +67,8 @@ class GoogleDocsConnector(DataConnector):
         results = self.service.files().list(q=f"'{folder_id}' in parents and trashed = false",
                                     fields="nextPageToken, files(id, name, webViewLink)").execute()
         items = results.get('files', [])
+
+        print(items)
 
 
         documents: List[Document] = []

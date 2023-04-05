@@ -10,8 +10,8 @@ import {
     TextInput,
   } from "flowbite-react";
   import type { FC } from "react";
-  import { useState } from "react";
-  import { FaPlus } from "react-icons/fa";
+  import { useState, useEffect } from "react";
+  import { FaPlus, FaGoogle } from "react-icons/fa";
   import {
     HiCog,
     HiDotsVertical,
@@ -33,20 +33,21 @@ import {
     const authCode = queryParams.get('code');
     const [folderName, setFolderName] = useState('');
 
-    async function connectGoogleDrive() {
+    async function connectGoogleDrive(code: string | null) {
       console.log(folderName);
       try {
         // Define the URL to make the request to
-        const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
+        // const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
+        const url = 'http://localhost:8080/upsert-google-docs';
         var payload = {
           folder_name: folderName,
-          auth_code: authCode
+          auth_code: code
         }
-    
+
         // Make the request using the fetch function and await the response
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer test' },
           body: JSON.stringify(payload),
         });
     
@@ -59,7 +60,8 @@ import {
         const jsonData = await response.json();
 
         if (jsonData.auth_url) {
-          window.open(jsonData.auth_url)
+          console.log(jsonData.auth_url)
+          window.location.href = jsonData.auth_url
         } else {
           const numChunks = jsonData.ids.length
           console.log(`Successfully upserted ${numChunks} chunks`)
@@ -69,7 +71,6 @@ import {
         console.error('Error connecting to google drive:', error);
       }
     }
-    
 
     return (
       <NavbarSidebarLayout isFooter={false}>
@@ -97,6 +98,10 @@ import {
               <form>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <div>
+                    <Button color="primary" onClick={() => connectGoogleDrive(null) }>
+                      <FaGoogle className="mr-3 text-sm" />
+                      Authorize Google
+                    </Button>
                     <Label htmlFor="apiKeys.label">Folder name</Label>
                     <TextInput
                       id="apiKeys.label"
@@ -108,7 +113,7 @@ import {
                     />
                   </div>
                   <div className="lg:col-span-2">
-                      <Button color="primary" onClick={() => connectGoogleDrive()}>
+                      <Button color="primary" disabled={authCode == null} onClick={() => connectGoogleDrive(authCode) }>
                         <FaPlus className="mr-3 text-sm" />
                         Connect
                       </Button>
