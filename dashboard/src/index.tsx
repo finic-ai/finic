@@ -107,7 +107,7 @@ root.render(
               <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
               <Route path="/connections" element={<ConnectionsPage />} />
-              <Route path="/google-drive" element={<GoogleDrivePage />} />
+              <Route path="/connectors/google-drive" element={<GoogleDrivePage />} />
             </Routes>
           </BrowserRouter>
         </SignedIn>

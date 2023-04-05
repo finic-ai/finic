@@ -7,7 +7,8 @@ import {
   HiChartPie,
   HiSearch,
   HiKey,
-  HiLink
+  HiLink,
+  HiBeaker
 } from "react-icons/hi";
 import {FaGithub, FaGoogleDrive} from "react-icons/fa"
 
@@ -19,16 +20,14 @@ const ExampleSidebar: FC = function () {
     useSidebarContext();
 
   const [currentPage, setCurrentPage] = useState("");
-  const [isEcommerceOpen, setEcommerceOpen] = useState(true);
-  const [isUsersOpen, setUsersOpen] = useState(true);
+  const [isConnectorsOpen, setEcommerceOpen] = useState(true);
 
   useEffect(() => {
     const newPage = window.location.pathname;
 
     setCurrentPage(newPage);
-    setEcommerceOpen(newPage.includes("/e-commerce/"));
-    setUsersOpen(newPage.includes("/users/"));
-  }, [setCurrentPage, setEcommerceOpen, setUsersOpen]);
+    setEcommerceOpen(newPage.includes("/connectors/"));
+  }, [setCurrentPage, setEcommerceOpen]);
 
   return (
     <div
@@ -62,15 +61,32 @@ const ExampleSidebar: FC = function () {
                 >
                   Dashboard
                 </Sidebar.Item>
-                <Sidebar.Item
-                  href="/connections"
+                <Sidebar.Collapse
                   icon={HiLink}
-                  className={
-                    "/" === currentPage ? "bg-gray-100 dark:bg-gray-700" : ""
-                  }
+                  label="Connectors"
+                  open={isConnectorsOpen}
                 >
-                  Connections
-                </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/website"
+                    className={
+                      "/connectors/website" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Website
+                  </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/google-drive"
+                    className={
+                      "/connectors/google-drive" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Google Drive
+                  </Sidebar.Item>
+                </Sidebar.Collapse>
                 {/* <Sidebar.Item
                   href="/kanban"
                   icon={HiViewGrid}
@@ -212,24 +228,18 @@ const ExampleSidebar: FC = function () {
                   API Keys
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="/google-drive"
-                  icon={FaGoogleDrive}
-                >
-                  Google Drive
-                </Sidebar.Item>
-                <Sidebar.Item
                   href="https://github.com/ai-sidekick/sidekick"
                   target="_blank"
                   icon={FaGithub}
                 >
                   Docs
                 </Sidebar.Item>
-                {/* <Sidebar.Item
-                  href="https://github.com/themesberg/flowbite-react/issues"
-                  icon={HiInformationCircle}
+                <Sidebar.Item
+                  href="/api-docs"
+                  icon={HiBeaker}
                 >
-                  Help
-                </Sidebar.Item> */}
+                  API Testing
+                </Sidebar.Item>
               </Sidebar.ItemGroup>
             </Sidebar.Items>
           </div>

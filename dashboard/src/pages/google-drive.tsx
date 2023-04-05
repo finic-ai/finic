@@ -31,10 +31,10 @@ import {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const authCode = queryParams.get('code');
+    const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
     const [folderName, setFolderName] = useState('');
 
     async function connectGoogleDrive(code: string | null) {
-      console.log(folderName);
       try {
         // Define the URL to make the request to
         // const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
@@ -64,6 +64,7 @@ import {
           window.location.href = jsonData.auth_url
         } else {
           const numChunks = jsonData.ids.length
+          setUpsertedChunks(jsonData.ids)
           console.log(`Successfully upserted ${numChunks} chunks`)
         }
       } catch (error) {
@@ -84,6 +85,7 @@ import {
                     <span className="dark:text-white">Home</span>
                   </div>
                 </Breadcrumb.Item>
+                <Breadcrumb.Item>Connectors</Breadcrumb.Item>
                 <Breadcrumb.Item>Google Drive</Breadcrumb.Item>
               </Breadcrumb>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
@@ -98,25 +100,27 @@ import {
               <form>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <div>
-                    <Button color="primary" onClick={() => connectGoogleDrive(null) }>
+                    <Button color="primary" className="mb-6" onClick={() => connectGoogleDrive(null) } disabled={authCode ? true : false}>
                       <FaGoogle className="mr-3 text-sm" />
-                      Authorize Google
+                      {authCode ? "Authorized" : "Authorize Google"}
                     </Button>
                     <Label htmlFor="apiKeys.label">Folder name</Label>
                     <TextInput
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='Name of the folder you want to sync with Sidekick'
+                      placeholder='Path to the folder in Google Drive you want to sync with Sidekick'
                       className="mt-1"
                       onChange={(e) => setFolderName(e.target.value.trim())}
                       value={folderName}
+                      helperText="Only Google Docs files in this folder will by synced"
                     />
                   </div>
                   <div className="lg:col-span-2">
-                      <Button color="primary" disabled={authCode == null} onClick={() => connectGoogleDrive(authCode) }>
+                      <Button color="primary" className="mb-6" disabled={authCode == null || upsertedChunks.length > 0} onClick={() => connectGoogleDrive(authCode) } >
                         <FaPlus className="mr-3 text-sm" />
                         Connect
                       </Button>
+                      {upsertedChunks.length > 0 ? <p>{`Successfully upserted ${upsertedChunks.length} chunks`}</p> : null}
                   </div>
                 </div>
               </form>
