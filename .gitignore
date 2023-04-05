@@ -1,5 +1,0 @@
-.DS_Store
-*.env
-buffgpt_main.py
-prompts.py
-**/config.json
