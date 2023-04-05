@@ -10,6 +10,8 @@ import importlib
 from typing import Any
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
+CLIENT_SECRETS = os.environ.get("GDRIVE_CLIENT_SECRETS")
+DASHBOARD_URL = os.environ.get("DASHBOARD_URL")
 
 class GoogleDocsConnector(DataConnector):
     source_type: Source = Source.google_docs
@@ -23,16 +25,12 @@ class GoogleDocsConnector(DataConnector):
         super().__init__(config=config, folder_name=folder_name, auth_code=auth_code)
         
         # Set up the OAuth flow
-        file_path = 'client_secrets.json'
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        lines = os.path.join(dir_path, file_path)
-        with open(lines, 'r') as json_file:
-            json_data = json.load(json_file)
-            self.flow = InstalledAppFlow.from_client_config(
-                json_data,
-                SCOPES, 
-                redirect_uri='https://dashboard.getbuff.io/' 
-            )
+        client_secrets = json.loads(CLIENT_SECRETS)
+        self.flow = InstalledAppFlow.from_client_config(
+            client_secrets,
+            SCOPES, 
+            redirect_uri='{}/google-drive'.format(DASHBOARD_URL) 
+        )
         
 
     async def authorize(self) -> str | None:
