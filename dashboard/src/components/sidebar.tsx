@@ -4,21 +4,10 @@ import { Dropdown, Sidebar, TextInput, Tooltip } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
-  HiAdjustments,
   HiChartPie,
-  HiChartSquareBar,
-  HiClipboard,
-  HiCog,
-  HiCollection,
-  HiInboxIn,
-  HiInformationCircle,
-  HiLockClosed,
   HiSearch,
-  HiShoppingBag,
-  HiUsers,
-  HiViewGrid,
   HiKey,
-  HiGithub
+  HiLink
 } from "react-icons/hi";
 import {FaGithub} from "react-icons/fa"
 
@@ -72,6 +61,15 @@ const ExampleSidebar: FC = function () {
                   }
                 >
                   Dashboard
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="/connections"
+                  icon={HiLink}
+                  className={
+                    "/" === currentPage ? "bg-gray-100 dark:bg-gray-700" : ""
+                  }
+                >
+                  Connections
                 </Sidebar.Item>
                 {/* <Sidebar.Item
                   href="/kanban"

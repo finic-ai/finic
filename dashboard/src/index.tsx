@@ -39,6 +39,7 @@ import MailingReadPage from "./pages/mailing/read";
 import MailingReplyPage from "./pages/mailing/reply";
 import MailingComposePage from "./pages/mailing/compose";
 import ApiKeysPage from "./pages/api-keys";
+import ConnectionsPage from "./pages/connections";
 
 const container = document.getElementById("root");
 
@@ -104,6 +105,7 @@ root.render(
               <Route path="/users/profile" element={<UserProfilePage />} />
               <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
+              <Route path="/connections" element={<ConnectionsPage />} />
             </Routes>
           </BrowserRouter>
         </SignedIn>
