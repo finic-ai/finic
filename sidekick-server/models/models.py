@@ -53,6 +53,7 @@ class DocumentMetadataFilter(BaseModel):
 
 class DataConnector(BaseModel, ABC):
     source_type: Source
+    connector_id: int
 
     @abstractmethod
     def load(self, *args, **kwargs) -> List[Document]:

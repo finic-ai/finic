@@ -2,7 +2,9 @@ from models.models import Source, AppConfig, Document, DocumentMetadata, Documen
 from typing import List, Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+from appstatestore.statestore import StateStore
 import os
 import uuid
 import json
@@ -15,6 +17,7 @@ DASHBOARD_URL = os.environ.get("DASHBOARD_URL")
 
 class GoogleDocsConnector(DataConnector):
     source_type: Source = Source.google_docs
+    connector_id: int = 1
     config: AppConfig
     folder_name: str
     auth_code: Optional[str] = None
@@ -33,20 +36,33 @@ class GoogleDocsConnector(DataConnector):
         )        
 
     async def authorize(self) -> str | None:
+        # check if we already have credentials
+        credential_string = StateStore().load_credentials(self.config, self)
+        if credential_string:
+            # use the stored credentials. we call loads twice because the credentials are stored as a stringified json object
+            credential_json = json.loads(json.loads(credential_string))
+            creds = Credentials.from_authorized_user_info(
+                credential_json
+            )
+            # Check if the access token is expired and refresh it if necessary
+            if not creds.valid and creds.refresh_token:
+                creds.refresh(Request())
+                creds_string = json.dumps(creds.to_json())
+                StateStore().save_credentials(self.config, creds_string, self)
+            self.service = build('drive', 'v3', credentials=creds)
         # Exchange the authorization code for credentials
-        if self.auth_code is None:
+        elif self.auth_code is None:
             print("auth code is none")
             # Generate the authorization URL
             auth_url, _ = self.flow.authorization_url(prompt='consent')
             return auth_url
-
-        print("fetching token")
-        self.flow.fetch_token(code=self.auth_code)
-        
-        # Build the Google Drive API client with the credentials
-        creds = self.flow.credentials
-        print(creds)
-        self.service = build('drive', 'v3', credentials=creds)
+        else:
+            self.flow.fetch_token(code=self.auth_code)
+            # Build the Google Drive API client with the credentials
+            creds = self.flow.credentials
+            creds_string = json.dumps(creds.to_json())
+            self.service = build('drive', 'v3', credentials=creds)
+            StateStore().save_credentials(self.config, creds_string, self)
 
     async def load(self, source_id: str) -> List[Document]:
         print("loading documents")

@@ -1,9 +1,10 @@
 from typing import Dict, List, Optional
-from models.models import AppConfig
+from models.models import AppConfig, DataConnector
 import os
 import uuid
 from supabase import create_client, Client
 from google.oauth2.credentials import Credentials
+import json
 
 class StateStore:
     is_self_hosted = None
@@ -28,15 +29,34 @@ class StateStore:
                 return AppConfig(app_id=row['app_id'], tenant_id=row['uuid'])
         return None
     
-    def save_gdrive_credentials(self, config: AppConfig, credentials: Credentials):
+    def save_credentials(self, config: AppConfig, credential: str, connector: DataConnector):
         # if this is a self hosted instance, return a config with a constant app_id and tenant_id since namespace conflicts aren't an issue
         if self.is_self_hosted:
             return
-        response = self.supabase.table('app_config').select('*').filter('app_id', 'eq', config.app_id).execute()
+        insert_data = {
+            'user_id': config.tenant_id,
+            'connector_id': connector.connector_id,
+            'credential': credential
+        }
+        self.supabase.table("credentials").upsert(insert_data).execute()
+
+
+    def load_credentials(self, config: AppConfig, connector: DataConnector) -> Optional[str]:
+        response = self.supabase.table('credentials').select('*').filter(
+            'user_id', 
+            'eq', 
+            config.tenant_id
+        ).filter(
+            'connector_id', 
+            'eq', 
+            connector.connector_id
+        ).execute()
+
         for row in response.data:
-            if row['app_id'] == config.app_id:
-                self.supabase.table('app_config').update({'gdrive_credentials': credentials}).match({'id': row['id']}).execute()
-                return
-        self.supabase.table('app_config').insert({'app_id': config.app_id, 'gdrive_credentials': credentials}).execute()
+            if row['user_id'] == config.tenant_id and row['connector_id'] == connector.connector_id:
+                return row['credential']
+        return None
+            
+
         
 

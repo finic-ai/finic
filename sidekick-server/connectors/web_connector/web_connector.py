@@ -105,6 +105,7 @@ async def load_data_from_url(source_id: str, url: str, config: AppConfig, source
 
 class WebConnector(DataConnector):
     source_type: Source = Source.web
+    connector_id: int = 2
     config: AppConfig
     url: str
 
