@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Badge, Dropdown, Table, useTheme } from "flowbite-react";
+import { Dropdown, useTheme } from "flowbite-react";
 import type { FC } from "react";
-import { useEffect } from "react";
 import Chart from "react-apexcharts";
-import svgMap from "svgmap";
 import "svgmap/dist/svgMap.min.css";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 
