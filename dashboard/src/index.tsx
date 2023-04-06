@@ -108,10 +108,11 @@ root.render(
           </BrowserRouter>
         </SignedIn>
         <SignedOut>
+        {/* <div className="flex items-center justify-center h-screen"><SignIn routing="hash"/></div> */}
           <BrowserRouter>
             <Routes>
-              <Route path="/sign-up" element={<div className="flex items-center justify-center h-screen"><SignUp routing="path" path="/sign-up" /></div>} />
-              <Route path="/sign-in" element={<div className="flex items-center justify-center h-screen"><SignIn routing="path" path="/sign-in" /></div>} />
+              <Route path="/sign-up" element={<div className="flex items-center justify-center h-screen"><SignUp routing="hash" /></div>} />
+              <Route path="/sign-in" element={<div className="flex items-center justify-center h-screen"><SignIn routing="hash" /></div>} />
               <Route path="*" element={<Navigate to="/sign-in"/>}/>
             </Routes>
           </BrowserRouter>
