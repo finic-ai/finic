@@ -17,7 +17,6 @@ DASHBOARD_URL = os.environ.get("DASHBOARD_URL")
 
 class GoogleDocsConnector(DataConnector):
     source_type: Source = Source.google_drive
-    client_secrets: str
     connector_id: int = 1
     config: AppConfig
     folder_name: str
