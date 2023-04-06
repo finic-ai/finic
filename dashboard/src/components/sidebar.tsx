@@ -66,7 +66,7 @@ const ExampleSidebar: FC = function () {
                   label="Connectors"
                   open={isConnectorsOpen}
                 >
-                  <Sidebar.Item
+                  {/* <Sidebar.Item
                     href="/connectors/website"
                     className={
                       "/connectors/website" === currentPage
@@ -75,7 +75,7 @@ const ExampleSidebar: FC = function () {
                     }
                   >
                     Website
-                  </Sidebar.Item>
+                  </Sidebar.Item> */}
                   <Sidebar.Item
                     href="/connectors/google-drive"
                     className={
@@ -221,12 +221,12 @@ const ExampleSidebar: FC = function () {
                 {/* </Sidebar.Collapse> */}
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
-                <Sidebar.Item
+                {/* <Sidebar.Item
                   href="/api-keys"
                   icon={HiKey}
                 >
                   API Keys
-                </Sidebar.Item>
+                </Sidebar.Item> */}
                 <Sidebar.Item
                   href="https://github.com/ai-sidekick/sidekick"
                   target="_blank"
@@ -235,8 +235,9 @@ const ExampleSidebar: FC = function () {
                   Docs
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="/api-docs"
+                  href="https://sidekick-server-ezml2kwdva-uc.a.run.app/docs"
                   icon={HiBeaker}
+                  target="_blank"
                 >
                   API Testing
                 </Sidebar.Item>
