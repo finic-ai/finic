@@ -14,8 +14,6 @@ import {
   } from "react-icons/hi";
   import NavbarSidebarLayout from "../layouts/navbar-sidebar";
   import { useLocation } from 'react-router-dom';
-
-  const DASHBOARD_URL = process.env['REACT_APP_DASHBOARD_URL'];
   
   const GoogleDrivePage: FC = function () {
     const location = useLocation();
