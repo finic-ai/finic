@@ -20,6 +20,7 @@ class UpsertGoogleDocsRequest(BaseModel):
     folder_name: str
 
 class AuthorizeGoogleDriveRequest(BaseModel):
+    redirect_uri: str
     auth_code: Optional[str]
 
 class AuthorizeGoogleDriveResponse(BaseModel):

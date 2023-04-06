@@ -79,8 +79,9 @@ async def authorize_google_drive(
     config: AppConfig = Depends(validate_token),
 ):
     auth_code = request.auth_code
+    redirect_uri = request.redirect_uri
     google_connector = GoogleDocsConnector(config, "")
-    auth_url = await google_connector.authorize(auth_code)
+    auth_url = await google_connector.authorize(redirect_uri, auth_code)
     return AuthorizeGoogleDriveResponse(auth_url=auth_url, authorized=auth_url is None)
 
 @app.post(

@@ -15,6 +15,7 @@ import {
   import NavbarSidebarLayout from "../layouts/navbar-sidebar";
   import { useLocation } from 'react-router-dom';
 
+  const DASHBOARD_URL = process.env['REACT_APP_DASHBOARD_URL'];
   
   const GoogleDrivePage: FC = function () {
     const location = useLocation();
@@ -29,7 +30,8 @@ import {
       setAuthLoading(true)
       const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/authorize-google-drive';
       var payload = {
-        auth_code: authCode
+        auth_code: authCode,
+        redirect_uri: `${DASHBOARD_URL}/connectors/google-drive`
       }
 
       const response = await fetch(url, {
