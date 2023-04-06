@@ -46,8 +46,7 @@ if (typeof (window as any).global === 'undefined') {
 }
 
 
-// const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-const clerkPubKey = "pk_test_ZXZvbHZlZC1zYWxtb24tNTkuY2xlcmsuYWNjb3VudHMuZGV2JA"
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!container) {
   throw new Error("React root element doesn't exist!");
