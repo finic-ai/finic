@@ -16,16 +16,15 @@ CLIENT_SECRETS = os.environ.get("GDRIVE_CLIENT_SECRETS")
 DASHBOARD_URL = os.environ.get("DASHBOARD_URL")
 
 class GoogleDocsConnector(DataConnector):
-    source_type: Source = Source.google_docs
+    source_type: Source = Source.google_drive
     connector_id: int = 1
     config: AppConfig
     folder_name: str
-    auth_code: Optional[str] = None
     flow: Optional[Any] = None
     service: Optional[Any] = None
 
-    def __init__(self, config: AppConfig, folder_name: str, auth_code: Optional[str]):
-        super().__init__(config=config, folder_name=folder_name, auth_code=auth_code)
+    def __init__(self, config: AppConfig, folder_name: str):
+        super().__init__(config=config, folder_name=folder_name)
         
         # Set up the OAuth flow
         client_secrets = json.loads(CLIENT_SECRETS)
@@ -35,36 +34,34 @@ class GoogleDocsConnector(DataConnector):
             redirect_uri='{}/connectors/google-drive'.format(DASHBOARD_URL) 
         )        
 
-    async def authorize(self) -> str | None:
-        # check if we already have credentials
-        credential_string = StateStore().load_credentials(self.config, self)
-        if credential_string:
-            # use the stored credentials. we call loads twice because the credentials are stored as a stringified json object
-            credential_json = json.loads(json.loads(credential_string))
-            creds = Credentials.from_authorized_user_info(
-                credential_json
-            )
-            # Check if the access token is expired and refresh it if necessary
-            if not creds.valid and creds.refresh_token:
-                creds.refresh(Request())
-                creds_string = json.dumps(creds.to_json())
-                StateStore().save_credentials(self.config, creds_string, self)
-            self.service = build('drive', 'v3', credentials=creds)
-        # Exchange the authorization code for credentials
-        elif self.auth_code is None:
-            print("auth code is none")
-            # Generate the authorization URL
-            auth_url, _ = self.flow.authorization_url(prompt='consent')
-            return auth_url
-        else:
-            self.flow.fetch_token(code=self.auth_code)
+    async def authorize(self, auth_code: Optional[str]) -> str | None:
+        if auth_code is not None:
+            self.flow.fetch_token(code=auth_code)
             # Build the Google Drive API client with the credentials
             creds = self.flow.credentials
             creds_string = json.dumps(creds.to_json())
             self.service = build('drive', 'v3', credentials=creds)
             StateStore().save_credentials(self.config, creds_string, self)
+        else:
+            # Generate the authorization URL
+            auth_url, _ = self.flow.authorization_url(prompt='consent')
+            return auth_url
 
     async def load(self, source_id: str) -> List[Document]:
+        # initialize credentials
+        credential_string = StateStore().load_credentials(self.config, self)
+        credential_json = json.loads(json.loads(credential_string))
+        creds = Credentials.from_authorized_user_info(
+            credential_json
+        )
+
+        if not creds.valid and creds.refresh_token:
+            creds.refresh(Request())
+            creds_string = json.dumps(creds.to_json())
+            StateStore().save_credentials(self.config, creds_string, self)
+        self.service = build('drive', 'v3', credentials=creds)
+        
+
         print("loading documents")
         folder_query = f"name='{self.folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
         folder_result = self.service.files().list(q=folder_query, fields="nextPageToken, files(id)").execute()
@@ -106,7 +103,7 @@ class GoogleDocsConnector(DataConnector):
                     title=item['name'],
                     text=content,
                     url=item['webViewLink'],
-                    source_type=Source.google_docs,
+                    source_type=Source.google_drive,
                     metadata=DocumentMetadata(
                         document_id=str(uuid.uuid4()),
                         source_id=source_id,

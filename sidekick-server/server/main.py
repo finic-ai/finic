@@ -13,11 +13,12 @@ from models.api import (
     QueryResponse,
     UpsertResponse,
     UpsertWebDataRequest,
+    AuthorizeGoogleDriveRequest,
     UpsertGoogleDocsRequest,
+    AuthorizeGoogleDriveResponse,
     LLMResponse,
     AskLLMRequest,
-    UpsertRequest,
-    UpsertOAuthResponse
+    UpsertRequest
 )
 
 from llm.LLM import LLM
@@ -69,34 +70,41 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_sc
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return app_config
 
+@app.post(
+    "/authorize-google-drive",
+    response_model=AuthorizeGoogleDriveResponse,
+)
+async def authorize_google_drive(
+    request: AuthorizeGoogleDriveRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    auth_code = request.auth_code
+    google_connector = GoogleDocsConnector(config, "")
+    auth_url = await google_connector.authorize(auth_code)
+    return AuthorizeGoogleDriveResponse(auth_url=auth_url, authorized=auth_url is None)
 
 @app.post(
     "/upsert-google-docs",
-    response_model=UpsertOAuthResponse,
+    response_model=UpsertResponse,
 )
 async def upsert_google_docs(
     request: UpsertGoogleDocsRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     folder_name = request.folder_name
-    auth_code = request.auth_code
     source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, request.folder_name))
 
     try:
-        google_connector = GoogleDocsConnector(config, folder_name, auth_code)
-        if auth_code is None:
-            auth_url = await google_connector.authorize()
-            return UpsertOAuthResponse(auth_url=auth_url)
-        else: 
-            await google_connector.authorize()
-            documents = await google_connector.load(source_id=source_id)
-            chunker = DefaultChunker()
-            chunks = []
-            for doc in documents:
-                chunks.extend(chunker.chunk(source_id, doc, 1000))
+        google_connector = GoogleDocsConnector(config, folder_name)
 
-            ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
-            return UpsertOAuthResponse(ids=ids)
+        documents = await google_connector.load(source_id=source_id)
+        chunker = DefaultChunker()
+        chunks = []
+        for doc in documents:
+            chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        return UpsertResponse(ids=ids)
 
     except Exception as e:
         print("Error:", e)

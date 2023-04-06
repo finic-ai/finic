@@ -14,7 +14,7 @@ class Source(str, Enum):
     github_markdown="github-markdown"
     discourse="discourse"
     string="string"
-    google_docs="google-docs"
+    google_drive="google-drive"
 
 class DocumentMetadata(BaseModel):
     document_id: str

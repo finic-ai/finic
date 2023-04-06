@@ -18,7 +18,13 @@ class UpsertWebDataRequest(BaseModel):
 
 class UpsertGoogleDocsRequest(BaseModel):
     folder_name: str
+
+class AuthorizeGoogleDriveRequest(BaseModel):
     auth_code: Optional[str]
+
+class AuthorizeGoogleDriveResponse(BaseModel):
+    auth_url: Optional[str]
+    authorized: bool
 
 class AskLLMRequest(BaseModel):
     queries: List[Query]
@@ -26,10 +32,6 @@ class AskLLMRequest(BaseModel):
 
 class UpsertResponse(BaseModel):
     ids: List[str]
-
-class UpsertOAuthResponse(BaseModel):
-    ids: Optional[List[str]] = None
-    auth_url: Optional[str] = None
 
 
 class QueryRequest(BaseModel):

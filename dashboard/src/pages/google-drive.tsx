@@ -8,6 +8,7 @@ import {
     Table,
     Textarea,
     TextInput,
+    Spinner
   } from "flowbite-react";
   import type { FC } from "react";
   import { useState, useEffect } from "react";
@@ -33,15 +34,45 @@ import {
     const authCode = queryParams.get('code');
     const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
     const [folderName, setFolderName] = useState('');
+    const [authLoading, setAuthLoading] = useState(false);
+    const [connectLoading, setConnectLoading] = useState(false)
 
-    async function connectGoogleDrive(code: string | null) {
+    async function authorize() {
+      setAuthLoading(true)
+      const url = 'http://localhost:8080/authorize-google-drive';
+      var payload = {
+        auth_code: authCode
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer test' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const jsonData = await response.json();
+
+      if (jsonData.auth_url) {
+        console.log(jsonData.auth_url)
+        window.location.href = jsonData.auth_url
+      } else {
+        console.log('successfuly authenticated')
+        // remove the code from the url
+        window.history.replaceState({}, document.title, "/");
+        setAuthLoading(false)
+      }
+    }
+
+    async function connectGoogleDrive() {
+      setConnectLoading(true)
       try {
         // Define the URL to make the request to
         // const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
         const url = 'http://localhost:8080/upsert-google-docs';
         var payload = {
-          folder_name: folderName,
-          auth_code: code
+          folder_name: folderName
         }
 
         // Make the request using the fetch function and await the response
@@ -59,19 +90,22 @@ import {
         // Parse the response body as JSON and await the result
         const jsonData = await response.json();
 
-        if (jsonData.auth_url) {
-          console.log(jsonData.auth_url)
-          window.location.href = jsonData.auth_url
-        } else {
-          const numChunks = jsonData.ids.length
-          setUpsertedChunks(jsonData.ids)
-          console.log(`Successfully upserted ${numChunks} chunks`)
-        }
+        const numChunks = jsonData.ids.length
+        setUpsertedChunks(jsonData.ids)
+        console.log(`Successfully upserted ${numChunks} chunks`)
+        setConnectLoading(false)
+        
       } catch (error) {
         // Handle any errors that occurred during the fetch
         console.error('Error connecting to google drive:', error);
+        setConnectLoading(false)
       }
     }
+    useEffect(() => {
+      if (authCode) {
+        authorize()
+      }
+    }, []);
 
     return (
       <NavbarSidebarLayout isFooter={false}>
@@ -100,9 +134,11 @@ import {
               <form>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <div>
-                    <Button color="primary" className="mb-6" onClick={() => connectGoogleDrive(null) } disabled={authCode ? true : false}>
+                    <Button color="primary" className="mb-6" onClick={() => authorize() } >
+                      {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
                       <FaGoogle className="mr-3 text-sm" />
-                      {authCode ? "Authorized" : "Authorize Google"}
+                      Authorize Google
+                      </>}
                     </Button>
                     <Label htmlFor="apiKeys.label">Folder name</Label>
                     <TextInput
@@ -116,9 +152,12 @@ import {
                     />
                   </div>
                   <div className="lg:col-span-2">
-                      <Button color="primary" className="mb-6" disabled={authCode == null || upsertedChunks.length > 0} onClick={() => connectGoogleDrive(authCode) } >
+                      <Button color="primary" className="mb-6" onClick={() => connectGoogleDrive() } >
+                        {connectLoading ? <Spinner className="mr-3 text-sm" /> : <>
                         <FaPlus className="mr-3 text-sm" />
                         Connect
+                        </>}
+                       
                       </Button>
                       {upsertedChunks.length > 0 ? <p>{`Successfully upserted ${upsertedChunks.length} chunks`}</p> : null}
                   </div>
