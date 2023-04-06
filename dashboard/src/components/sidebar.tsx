@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import {
   HiChartPie,
   HiSearch,
-  HiKey,
   HiLink,
   HiBeaker
 } from "react-icons/hi";
