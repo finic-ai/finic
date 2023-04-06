@@ -2,28 +2,16 @@
 import {
     Breadcrumb,
     Button,
-    Checkbox,
     Label,
-    Modal,
-    Table,
-    Textarea,
     TextInput,
   } from "flowbite-react";
   import type { FC } from "react";
-  import { useState, useEffect } from "react";
+  import { useState } from "react";
   import { FaPlus, FaGoogle } from "react-icons/fa";
   import {
-    HiCog,
-    HiDotsVertical,
-    HiExclamationCircle,
     HiHome,
-    HiOutlineExclamationCircle,
-    HiPencilAlt,
-    HiTrash,
-    HiUpload,
   } from "react-icons/hi";
   import NavbarSidebarLayout from "../layouts/navbar-sidebar";
-  import { Pagination } from "./users/list";
   import { useLocation } from 'react-router-dom';
 
   

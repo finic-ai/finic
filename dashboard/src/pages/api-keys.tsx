@@ -2,28 +2,20 @@
 import {
     Breadcrumb,
     Button,
-    Checkbox,
     Label,
     Modal,
     Table,
-    Textarea,
     TextInput,
   } from "flowbite-react";
   import type { FC } from "react";
   import { useState } from "react";
   import { FaPlus } from "react-icons/fa";
   import {
-    HiCog,
-    HiDotsVertical,
-    HiExclamationCircle,
     HiHome,
     HiOutlineExclamationCircle,
-    HiPencilAlt,
     HiTrash,
-    HiUpload,
   } from "react-icons/hi";
   import NavbarSidebarLayout from "../layouts/navbar-sidebar";
-  import { Pagination } from "./users/list";
   
   const ApiKeysPage: FC = function () {
     return (
