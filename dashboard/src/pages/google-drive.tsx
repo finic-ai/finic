@@ -28,10 +28,12 @@ import {
 
     async function authorize() {
       setAuthLoading(true)
+      const currentUrl = new URL(window.location.href);
+      const urlWithoutQueryParams = currentUrl.origin + currentUrl.pathname;
       const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/authorize-google-drive';
       var payload = {
         auth_code: authCode,
-        redirect_uri: `${DASHBOARD_URL}/connectors/google-drive`
+        redirect_uri: urlWithoutQueryParams
       }
 
       const response = await fetch(url, {
