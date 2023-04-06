@@ -50,7 +50,7 @@ import {
       } else {
         console.log('successfuly authenticated')
         // remove the code from the url
-        window.history.replaceState({}, document.title, "/");
+        window.history.replaceState({}, document.title, "/connectors/google-drive");
         setAuthLoading(false)
       }
     }
@@ -59,7 +59,6 @@ import {
       setConnectLoading(true)
       try {
         // Define the URL to make the request to
-        // const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
         const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
         var payload = {
           folder_name: folderName
