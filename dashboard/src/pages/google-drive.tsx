@@ -27,7 +27,7 @@ import {
 
     async function authorize() {
       setAuthLoading(true)
-      const url = 'http://localhost:8080/authorize-google-drive';
+      const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/authorize-google-drive';
       var payload = {
         auth_code: authCode
       }
@@ -58,7 +58,7 @@ import {
       try {
         // Define the URL to make the request to
         // const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
-        const url = 'http://localhost:8080/upsert-google-docs';
+        const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
         var payload = {
           folder_name: folderName
         }
