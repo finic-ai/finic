@@ -111,8 +111,8 @@ root.render(
         <SignedOut>
           <BrowserRouter>
             <Routes>
-              <Route path="/sign-up" element={<SignUp routing="path" path="/sign-up" />} />
-              <Route path="/sign-in" element={<SignIn routing="path" path="/sign-in" />} />
+              <Route path="/sign-up" element={<div className="flex items-center justify-center h-screen"><SignUp routing="path" path="/sign-up" /></div>} />
+              <Route path="/sign-in" element={<div className="flex items-center justify-center h-screen"><SignIn routing="path" path="/sign-in" /></div>} />
               <Route path="*" element={<Navigate to="/sign-in"/>}/>
             </Routes>
           </BrowserRouter>
