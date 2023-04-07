@@ -5,6 +5,7 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
   HiChartPie,
+  HiKey, 
   HiSearch,
   HiLink,
   HiBeaker
@@ -230,12 +231,12 @@ const ExampleSidebar: FC = function () {
                 {/* </Sidebar.Collapse> */}
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
-                {/* <Sidebar.Item
+                <Sidebar.Item
                   href="/api-keys"
                   icon={HiKey}
                 >
-                  API Keys
-                </Sidebar.Item> */}
+                  API Key
+                </Sidebar.Item>
                 <Sidebar.Item
                   href="https://github.com/ai-sidekick/sidekick"
                   target="_blank"

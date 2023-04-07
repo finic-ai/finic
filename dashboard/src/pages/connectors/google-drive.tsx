@@ -14,6 +14,7 @@ import {
   } from "react-icons/hi";
   import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
   import { useLocation } from 'react-router-dom';
+  import { useUserStateContext } from "../../context/UserStateContext";
   
   const GoogleDriveConnectorPage: FC = function () {
     const location = useLocation();
@@ -23,6 +24,7 @@ import {
     const [folderName, setFolderName] = useState('');
     const [authLoading, setAuthLoading] = useState(false);
     const [connectLoading, setConnectLoading] = useState(false)
+    const {bearer} = useUserStateContext()
 
     async function authorize() {
       setAuthLoading(true)
@@ -36,7 +38,7 @@ import {
 
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer test' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
         body: JSON.stringify(payload),
       });
       if (!response.ok) {
@@ -45,7 +47,6 @@ import {
       const jsonData = await response.json();
 
       if (jsonData.auth_url) {
-        console.log(jsonData.auth_url)
         window.location.href = jsonData.auth_url
       } else {
         console.log('successfuly authenticated')
@@ -67,7 +68,7 @@ import {
         // Make the request using the fetch function and await the response
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer test' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
           body: JSON.stringify(payload),
         });
     
@@ -91,10 +92,10 @@ import {
       }
     }
     useEffect(() => {
-      if (authCode) {
+      if (authCode && bearer) {
         authorize()
       }
-    }, []);
+    }, [bearer]);
 
     return (
       <NavbarSidebarLayout isFooter={false}>

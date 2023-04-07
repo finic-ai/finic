@@ -15,9 +15,11 @@ import {
     HiOutlineExclamationCircle,
     HiTrash,
   } from "react-icons/hi";
+import { useUserStateContext } from "../context/UserStateContext";
   import NavbarSidebarLayout from "../layouts/navbar-sidebar";
   
   const ApiKeysPage: FC = function () {
+    
     return (
       <NavbarSidebarLayout isFooter={false}>
         <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
@@ -61,10 +63,10 @@ import {
   
     return (
       <>
-        <Button color="primary" onClick={() => setOpen(!isOpen)}>
+        {/* <Button color="primary" onClick={() => setOpen(!isOpen)}>
           <FaPlus className="mr-3 text-sm" />
           Create new key
-        </Button>
+        </Button> */}
         <Modal onClose={() => setOpen(false)} show={isOpen}>
           <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
             <strong>Create new API key</strong>
@@ -143,36 +145,24 @@ import {
     );
   };
 
-  const testAPIKeys = [
-    {
-        id: "520f6f25-ac93-4ad5-a395-545cfad95e9d",
-        label: "Production",
-        created: "2022-03-19T03:43:23.000Z",
-        last_used: "2023-03-31T33:41:13.000Z",
-    },
-    {
-        id: "65f73dc4-9a5e-49d5-8a3e-cb0e7c497e5e",
-        label: "Staging",
-        created: "2022-03-18T14:49:18.000Z",
-        last_used: "2022-12-12T12:38:58.000Z",
-    },
-    {
-        id: "c00cbc5c-890d-423a-9272-3ac44ea8e91b",
-        label: "Local",
-        created: "2022-01-28T18:49:43.000Z",
-        last_used: "2022-07-05T04:04:19.000Z",
-    },
-  ]
+
   
   const ProductsTable: FC = function () {
+    const {bearer} = useUserStateContext()
+    const testAPIKeys = [
+      {
+          id: bearer,
+          label: "Production",
+      }
+    ]
     return (
       <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
         <Table.Head className="bg-gray-100 dark:bg-gray-700">
           <Table.HeadCell>Label</Table.HeadCell>
           <Table.HeadCell>API Key</Table.HeadCell>
-          <Table.HeadCell>Created</Table.HeadCell>
+          {/* <Table.HeadCell>Created</Table.HeadCell>
           <Table.HeadCell>Last Used</Table.HeadCell>
-          <Table.HeadCell>Actions</Table.HeadCell>
+          <Table.HeadCell>Actions</Table.HeadCell> */}
         </Table.Head>
         <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
             {testAPIKeys.map((key, i) => (
@@ -187,7 +177,7 @@ import {
                         {key.id}
                     </div>
                 </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                {/* <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
                 {key.created}
                 </Table.Cell>
                 <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
@@ -197,7 +187,7 @@ import {
                     <div className="flex items-center gap-x-3">
                         <DeleteProductModal />
                     </div>
-                </Table.Cell>
+                </Table.Cell> */}
             </Table.Row>
             ))}
         </Table.Body>

@@ -79,9 +79,6 @@ class GoogleDocsConnector(DataConnector):
                                     fields="nextPageToken, files(id, name, webViewLink)").execute()
         items = results.get('files', [])
 
-        print(items)
-
-
         documents: List[Document] = []
         # Loop through each file and create documents
         for item in items:

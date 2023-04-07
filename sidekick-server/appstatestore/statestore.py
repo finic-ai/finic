@@ -22,6 +22,7 @@ class StateStore:
         # if this is a self hosted instance, return a config with a constant app_id and tenant_id since namespace conflicts aren't an issue
         if self.is_self_hosted:
             return AppConfig(app_id='sidekick', tenant_id="sidekick")
+        print(bearer_token)
         response = self.supabase.table('users').select('*').filter('bearer', 'eq', bearer_token).execute()
 
         for row in response.data:
@@ -70,8 +71,11 @@ class StateStore:
             connector.connector_id
         ).execute()
 
+        print(config.tenant_id)
+
         for row in response.data:
             if row['user_id'] == config.tenant_id and row['connector_id'] == connector.connector_id:
+                print(row['credential'])
                 return row['credential']
         return None
             

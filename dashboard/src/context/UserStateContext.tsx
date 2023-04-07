@@ -1,9 +1,9 @@
 import type { PropsWithChildren } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-import isBrowser from "../helpers/is-browser";
-import isSmallScreen from "../helpers/is-small-screen";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import supabaseClient from "../lib/supabaseClient";
+import { v4 as uuidv4 } from 'uuid';
+
 
 interface UserStateContextProps {
   bearer: any;
@@ -12,22 +12,43 @@ interface UserStateContextProps {
 const UserStateContext = createContext<UserStateContextProps>(undefined!);
 
 export function UserStateProvider({ children }: PropsWithChildren) {
-  const { getToken } = useAuth();
+  const { getToken, userId, orgId, orgSlug} = useAuth();
+  const {user} = useUser();
 
   const [bearer, setBearer] = useState(null)
 
   const fetchData = async () => {
     // TODO #1: Replace with your JWT template name
-    const token = await getToken({ template: 'supabase' }) || ""
+    console.log("fetching data")
+    try {
+      const token = await getToken({ template: 'supabase' }) || ""
 
-    const supabase = await supabaseClient(token)
+      const supabase = await supabaseClient(token)
 
-    // TODO #2: Replace with your database table name
-    const { data, error } = await supabase.from('users').select()
-    console.log(data, error)
+      // TODO #2: Replace with your database table name
+      const { data, error } = await supabase.from('users').select()
+      console.log(error)
+      const email = user?.emailAddresses?.[0]?.emailAddress || ''
 
-    if (data && data[0]) {
-      setBearer(data[0]['bearer'])
+      if (data && data[0]) {
+        setBearer(data[0]['bearer'])
+      } else {
+
+        const response = await supabase.from('users').insert({
+          uuid: userId,
+          bearer: uuidv4(),
+          app_id: uuidv4(),
+          email: email
+        }).select()
+
+        if (response.data && response.data[0]) {
+          setBearer(response.data[0]['bearer'])
+        } else {
+          setBearer(null)
+        }
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 

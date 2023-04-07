@@ -36,7 +36,8 @@
     "react-icons": "^4.7.1",
     "react-sortablejs": "^6.1.4",
     "sortablejs": "^1.15.0",
-    "svgmap": "^2.10.1"
+    "svgmap": "^2.10.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
