@@ -37,7 +37,8 @@ import MailingReplyPage from "./pages/mailing/reply";
 import MailingComposePage from "./pages/mailing/compose";
 import ApiKeysPage from "./pages/api-keys";
 import ConnectionsPage from "./pages/connections";
-import GoogleDrivePage from "./pages/google-drive";
+import GoogleDriveConnectorPage from "./pages/connectors/google-drive";
+import WebsiteConnectorPage from "./pages/connectors/website";
 
 const container = document.getElementById("root");
 
@@ -103,7 +104,8 @@ root.render(
               <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
               <Route path="/connections" element={<ConnectionsPage />} />
-              <Route path="/connectors/google-drive" element={<GoogleDrivePage />} />
+              <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
+              <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
             </Routes>
           </BrowserRouter>
         </SignedIn>

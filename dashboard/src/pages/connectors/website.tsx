@@ -2,6 +2,7 @@
 import {
     Breadcrumb,
     Button,
+    Checkbox,
     Label,
     TextInput,
     Spinner
@@ -12,56 +13,22 @@ import {
   import {
     HiHome,
   } from "react-icons/hi";
-  import NavbarSidebarLayout from "../layouts/navbar-sidebar";
-  import { useLocation } from 'react-router-dom';
+  import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
   
-  const GoogleDrivePage: FC = function () {
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const authCode = queryParams.get('code');
-    const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
-    const [folderName, setFolderName] = useState('');
-    const [authLoading, setAuthLoading] = useState(false);
+  const WebsiteConnectorPage: FC = function () {
+    const [rootUrl, setRootUrl] = useState('');
     const [connectLoading, setConnectLoading] = useState(false)
+    const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
+    const [shouldCrawl, setShouldCrawl] = useState(false);
 
-    async function authorize() {
-      setAuthLoading(true)
-      const currentUrl = new URL(window.location.href);
-      const urlWithoutQueryParams = currentUrl.origin + currentUrl.pathname;
-      const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/authorize-google-drive';
-      var payload = {
-        auth_code: authCode,
-        redirect_uri: urlWithoutQueryParams
-      }
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer test' },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const jsonData = await response.json();
-
-      if (jsonData.auth_url) {
-        console.log(jsonData.auth_url)
-        window.location.href = jsonData.auth_url
-      } else {
-        console.log('successfuly authenticated')
-        // remove the code from the url
-        window.history.replaceState({}, document.title, "/connectors/google-drive");
-        setAuthLoading(false)
-      }
-    }
-
-    async function connectGoogleDrive() {
+    async function crawlPages() {
       setConnectLoading(true)
       try {
         // Define the URL to make the request to
-        const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
+        const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-web';
         var payload = {
-          folder_name: folderName
+          url: url,
+          crawl: shouldCrawl
         }
 
         // Make the request using the fetch function and await the response
@@ -90,11 +57,10 @@ import {
         setConnectLoading(false)
       }
     }
-    useEffect(() => {
-      if (authCode) {
-        authorize()
-      }
-    }, []);
+
+    function toggleCrawl() {
+      setShouldCrawl(!shouldCrawl)
+    }
 
     return (
       <NavbarSidebarLayout isFooter={false}>
@@ -109,10 +75,10 @@ import {
                   </div>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Connectors</Breadcrumb.Item>
-                <Breadcrumb.Item>Google Drive</Breadcrumb.Item>
+                <Breadcrumb.Item>Website</Breadcrumb.Item>
               </Breadcrumb>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-                Connect Google Drive
+                Scrape web content
               </h1>
             </div>
           </div>
@@ -122,26 +88,29 @@ import {
             <div className="mb-4">
               <form>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox id="crawl" checked={shouldCrawl} onChange={toggleCrawl}/>
+                  <div className="ml-2 text-sm">
+                    <Label htmlFor="crawl">
+                      Crawl all pages at this path
+                    </Label>
+                    <p id="helper-checkbox-text" className="text-xs font-normal text-gray-500 dark:text-gray-300">Warning: This will recursively scrape every page starting with this URL path. It may take a long time.</p>
+                  </div>
+                </div>
                   <div>
-                    <Button color="primary" className="mb-6" onClick={() => authorize() } >
-                      {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
-                      <FaGoogle className="mr-3 text-sm" />
-                      Authorize Google
-                      </>}
-                    </Button>
-                    <Label htmlFor="apiKeys.label">Folder name</Label>
+                    <Label htmlFor="apiKeys.label">URL</Label>
                     <TextInput
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='Path to the folder you want to sync with Sidekick'
+                      placeholder='URL of the page you want to scrape'
                       className="mt-1"
-                      onChange={(e) => setFolderName(e.target.value.trim())}
-                      value={folderName}
+                      onChange={(e) => setRootUrl(e.target.value.trim())}
+                      value={rootUrl}
                       helperText="Only Google Docs files in this folder will by synced"
                     />
                   </div>
                   <div className="lg:col-span-2">
-                      <Button color="primary" className="mb-6" onClick={() => connectGoogleDrive() } >
+                      <Button color="primary" className="mb-6" onClick={() => crawlPages() } >
                         {connectLoading ? <Spinner className="mr-3 text-sm" /> : <>
                         <FaPlus className="mr-3 text-sm" />
                         Connect
@@ -159,5 +128,5 @@ import {
     );
   };
   
-  export default GoogleDrivePage;
+  export default WebsiteConnectorPage;
   

@@ -28,7 +28,7 @@ import {
       setAuthLoading(true)
       const currentUrl = new URL(window.location.href);
       const urlWithoutQueryParams = currentUrl.origin + currentUrl.pathname;
-      const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/authorize-google-drive';
+      const url = import.meta.env.VITE_SERVER_URL + '/authorize-google-drive';
       var payload = {
         auth_code: authCode,
         redirect_uri: urlWithoutQueryParams
@@ -59,7 +59,7 @@ import {
       setConnectLoading(true)
       try {
         // Define the URL to make the request to
-        const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-google-docs';
+        const url = import.meta.env.VITE_SERVER_URL + '/upsert-google-docs';
         var payload = {
           folder_name: folderName
         }
