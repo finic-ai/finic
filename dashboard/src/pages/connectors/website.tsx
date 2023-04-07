@@ -8,8 +8,8 @@ import {
     Spinner
   } from "flowbite-react";
   import type { FC } from "react";
-  import { useState, useEffect } from "react";
-  import { FaPlus, FaGoogle } from "react-icons/fa";
+  import { useState } from "react";
+  import { FaPlus } from "react-icons/fa";
   import {
     HiHome,
   } from "react-icons/hi";
