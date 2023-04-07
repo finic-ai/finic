@@ -38,7 +38,25 @@ class StateStore:
             'connector_id': connector.connector_id,
             'credential': credential
         }
-        self.supabase.table("credentials").upsert(insert_data).execute()
+        # check if the credential already exists
+        response = self.supabase.table('credentials').select('*').filter(
+            'user_id', 
+            'eq', 
+            config.tenant_id
+        ).filter(
+            'connector_id', 
+            'eq', 
+            connector.connector_id
+        ).execute()
+
+        existing_credentials = response.data
+        if len(existing_credentials) > 0:
+            to_upsert = existing_credentials[0]
+            to_upsert['credential'] = credential
+            print(to_upsert)
+            self.supabase.table("credentials").upsert(to_upsert).execute()
+        else:
+            self.supabase.table("credentials").upsert(insert_data).execute()
 
 
     def load_credentials(self, config: AppConfig, connector: DataConnector) -> Optional[str]:

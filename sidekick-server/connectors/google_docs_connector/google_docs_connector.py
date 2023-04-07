@@ -38,7 +38,7 @@ class GoogleDocsConnector(DataConnector):
             flow.fetch_token(code=auth_code)
             # Build the Google Drive API client with the credentials
             creds = flow.credentials
-            creds_string = json.dumps(creds.to_json())
+            creds_string = creds.to_json()
             StateStore().save_credentials(self.config, creds_string, self)
         else:
             # Generate the authorization URL
@@ -48,7 +48,7 @@ class GoogleDocsConnector(DataConnector):
     async def load(self, source_id: str) -> List[Document]:
         # initialize credentials
         credential_string = StateStore().load_credentials(self.config, self)
-        credential_json = json.loads(json.loads(credential_string))
+        credential_json = json.loads(credential_string)
         creds = Credentials.from_authorized_user_info(
             credential_json
         )

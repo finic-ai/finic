@@ -39,6 +39,7 @@ import ApiKeysPage from "./pages/api-keys";
 import ConnectionsPage from "./pages/connections";
 import GoogleDriveConnectorPage from "./pages/connectors/google-drive";
 import WebsiteConnectorPage from "./pages/connectors/website";
+import { UserStateProvider } from "./context/UserStateContext";
 
 const container = document.getElementById("root");
 
@@ -60,6 +61,7 @@ root.render(
     <ClerkProvider publishableKey={clerkPubKey}>
       <Flowbite theme={{ theme }}>
         <SignedIn>
+          <UserStateProvider>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<DashboardPage />} index />
@@ -108,6 +110,7 @@ root.render(
               <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
             </Routes>
           </BrowserRouter>
+          </UserStateProvider>
         </SignedIn>
         <SignedOut>
         {/* <div className="flex items-center justify-center h-screen"><SignIn routing="hash"/></div> */}
