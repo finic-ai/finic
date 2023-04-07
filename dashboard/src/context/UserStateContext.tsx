@@ -12,7 +12,7 @@ interface UserStateContextProps {
 const UserStateContext = createContext<UserStateContextProps>(undefined!);
 
 export function UserStateProvider({ children }: PropsWithChildren) {
-  const { getToken, userId, orgId, orgSlug} = useAuth();
+  const { getToken, userId } = useAuth();
   const {user} = useUser();
 
   const [bearer, setBearer] = useState(null)

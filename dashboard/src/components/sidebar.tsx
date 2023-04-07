@@ -4,7 +4,6 @@ import { Sidebar, TextInput } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
-  HiChartPie,
   HiKey, 
   HiSearch,
   HiLink,
@@ -52,7 +51,7 @@ const ExampleSidebar: FC = function () {
             </form>
             <Sidebar.Items>
               <Sidebar.ItemGroup>
-                <Sidebar.Item
+                {/* <Sidebar.Item
                   href="/"
                   icon={HiChartPie}
                   className={
@@ -60,7 +59,7 @@ const ExampleSidebar: FC = function () {
                   }
                 >
                   Dashboard
-                </Sidebar.Item>
+                </Sidebar.Item> */}
                 <Sidebar.Collapse
                   icon={HiLink}
                   label="Connectors"

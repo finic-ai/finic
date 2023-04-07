@@ -64,7 +64,7 @@ root.render(
           <UserStateProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<DashboardPage />} index />
+              <Route path="/" element={<ApiKeysPage />} index />
               <Route path="/mailing/compose" element={<MailingComposePage />} />
               <Route path="/mailing/inbox" element={<MailingInboxPage />} />
               <Route path="/mailing/read" element={<MailingReadPage />} />
