@@ -9,7 +9,7 @@ headers = {"Authorization": f"Bearer {NOTION_API_KEY}", "Content-Type": "applica
 
 class NotionConnector(DataConnector):
     source_type: Source = Source.notion
-    connector_id: int = 2
+    connector_id: int = 4
     config: AppConfig
 
     def __init__(self, config: AppConfig):
