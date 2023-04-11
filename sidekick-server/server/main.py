@@ -141,7 +141,6 @@ async def upsert_notion_docs(
         print("Error:", e)
         raise HTTPException(status_code=500, detail=f"str({e})")
 
-    
 
 @app.post(
     "/upsert-web-data",

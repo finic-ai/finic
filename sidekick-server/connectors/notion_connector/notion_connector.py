@@ -43,12 +43,18 @@ class NotionConnector(DataConnector):
             object_type = item.get('object')
             object_id = item.get('id')
             url = item.get('url')
+            title = ""
             page_text = []
+
             if object_type == 'page':
                 title_content = item.get('properties').get('title')
                 if title_content:
                     title = title_content.get('title')[0].get('text').get('content')
-                    page_text.append([title])
+                elif item.get('properties').get('Name'):
+                    if len(item.get('properties').get('Name').get('title')) > 0:
+                        title = item.get('properties').get('Name').get('title')[0].get('text').get('content')
+
+                page_text.append([title])
                 page_content = self.get_page_text(object_id)
                 page_text.append(page_content)
 
