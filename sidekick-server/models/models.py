@@ -15,6 +15,7 @@ class Source(str, Enum):
     discourse="discourse"
     string="string"
     google_drive="google-drive"
+    notion="notion"
 
 class DocumentMetadata(BaseModel):
     document_id: str

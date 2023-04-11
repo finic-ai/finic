@@ -23,6 +23,7 @@ from models.api import (
 
 from llm.LLM import LLM
 from connectors.google_docs_connector import GoogleDocsConnector
+from connectors.notion_connector import NotionConnector
 from connectors.web_connector import WebConnector
 from chunkers.html_chunker import HTMLChunker
 from chunkers.default_chunker import DefaultChunker
@@ -99,6 +100,35 @@ async def upsert_google_docs(
         google_connector = GoogleDocsConnector(config, folder_name)
 
         documents = await google_connector.load(source_id=source_id)
+        chunker = DefaultChunker()
+        chunks = []
+        for doc in documents:
+            chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        return UpsertResponse(ids=ids)
+
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
+
+@app.post(
+    "/upsert-notion-docs",
+    response_model=UpsertResponse,
+)
+async def upsert_notion_docs(
+    config: AppConfig = Depends(validate_token),
+):
+    # TODO: Neet to fix source id, hardcoded "notion" for now
+    source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, "notion"))
+    print("namespace url:", uuid.NAMESPACE_URL)
+    print("source id:", source_id)
+
+    try:
+        notion_connector = NotionConnector(config)
+        documents = notion_connector.load(source_id)
+
         chunker = DefaultChunker()
         chunks = []
         for doc in documents:
@@ -237,4 +267,4 @@ async def startup():
 
 
 def start():
-    uvicorn.run("server.main:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run("server.main:app", host="0.0.0.0", port=8000, reload=True)
