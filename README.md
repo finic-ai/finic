@@ -20,7 +20,7 @@
 </a>
 </p>
 
-[Sidekick](https://getsidekick.ai/) is a framework for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector store. You can also use the integrations and chunkers from built by the community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
+[Sidekick](https://getsidekick.ai/) is a framework for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector store. You can also use the integrations and chunkers built by the community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
 
 ## Demo
 Get an API key to test out a hosted version by [joining our Slack community.](https://sidekick-public.slack.com/). Post in the #api-keys channel to request a new key. You can test it out on some pre-ingested developer docs by tagging the Sidekick bot in the #sidekick-demo channel.
@@ -47,8 +47,8 @@ To run Sidekick locally:
 3. Navigate to the `sidekick-server` directory: `cd /path/to/sidekick/sidekick-server`
 4. Install poetry: `pip install poetry`
 5. Create a new virtual environment with Python 3.10: `poetry env use python3.10`
-6. Install `poetry-dotenv`: `poetry self add poetry-dotenv`
-7. Activate the virtual environment: `poetry shell`
+6. Activate the virtual environment: `poetry shell`
+7. Install `poetry-dotenv`: `poetry self add poetry-dotenv`
 8. Install app dependencies: `poetry install`
 9. Set the required environment variables in a `.env` file in `sidekick-server`:
 
