@@ -47,8 +47,8 @@ To run Sidekick locally:
 3. Navigate to the `sidekick-server` directory: `cd /path/to/sidekick/sidekick-server`
 4. Install poetry: `pip install poetry`
 5. Create a new virtual environment with Python 3.10: `poetry env use python3.10`
-6. Install `poetry-dotenv`: `poetry self add poetry-dotenv`
-7. Activate the virtual environment: `poetry shell`
+6. Activate the virtual environment: `poetry shell`
+7. Install `poetry-dotenv`: `poetry self add poetry-dotenv`
 8. Install app dependencies: `poetry install`
 9. Set the required environment variables in a `.env` file in `sidekick-server`:
 
