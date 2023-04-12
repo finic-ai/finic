@@ -18,7 +18,10 @@ from models.api import (
     AuthorizeGoogleDriveResponse,
     LLMResponse,
     AskLLMRequest,
-    UpsertRequest
+    UpsertRequest,
+    AuthorizeResponse,
+    AuthorizeWithApiKeyRequest,
+    UpsertFromConnectorRequest
 )
 
 from llm.LLM import LLM
@@ -33,9 +36,10 @@ from models.models import (
     Source,
     AppConfig,
     DocumentChunk,
-    DocumentChunkMetadata,
+    DataConnector,
     DocumentMetadata
 )
+from connectors.connector_utils import get_connector_for_id
 import uuid
 
 from datastore.factory import get_datastore
@@ -67,9 +71,34 @@ assert BEARER_TOKEN is not None
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
     app_config = StateStore().get_config(credentials.credentials)
+    print('config', app_config)
     if credentials.scheme != "Bearer" or app_config is None:
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return app_config
+
+@app.post(
+    "/authorize-with-api-key",
+    response_model=AuthorizeResponse,
+)
+async def authorize_with_api_key(
+    request: AuthorizeWithApiKeyRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+
+    api_key = request.api_key
+    connector_id = request.connector_id
+    subdomain = request.subdomain
+    email = request.email
+
+    connector = get_connector_for_id(connector_id, config)
+
+    if connector is None:
+        raise HTTPException(status_code=404, detail="Connector not found")
+    
+    auth_result = await connector.authorize(api_key, subdomain, email)
+    
+    return AuthorizeResponse(authorized=auth_result.authorized)
+    
 
 @app.post(
     "/authorize-google-drive",
@@ -86,6 +115,36 @@ async def authorize_google_drive(
     return AuthorizeGoogleDriveResponse(auth_url=auth_url, authorized=auth_url is None)
 
 @app.post(
+    "/upsert-from-connector",
+    response_model=UpsertResponse,
+)
+async def upsert_from_connector(
+    request: UpsertFromConnectorRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    if request.path is None:
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, str(request.connector_id)))
+    else:
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, request.path))
+
+    try:
+        path = request.path or ""
+        connector = get_connector_for_id(request.connector_id, config, path)
+
+        documents = await connector.load(source_id=source_id)
+        chunker = DefaultChunker()
+        chunks = []
+        for doc in documents:
+            chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        return UpsertResponse(ids=ids)
+
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
+@app.post(
     "/upsert-google-docs",
     response_model=UpsertResponse,
 )
@@ -100,35 +159,6 @@ async def upsert_google_docs(
         google_connector = GoogleDocsConnector(config, folder_name)
 
         documents = await google_connector.load(source_id=source_id)
-        chunker = DefaultChunker()
-        chunks = []
-        for doc in documents:
-            chunks.extend(chunker.chunk(source_id, doc, 1000))
-
-        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
-        return UpsertResponse(ids=ids)
-
-    except Exception as e:
-        print("Error:", e)
-        raise HTTPException(status_code=500, detail=f"str({e})")
-
-
-@app.post(
-    "/upsert-notion-docs",
-    response_model=UpsertResponse,
-)
-async def upsert_notion_docs(
-    config: AppConfig = Depends(validate_token),
-):
-    # TODO: Neet to fix source id, hardcoded "notion" for now
-    source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, "notion"))
-    print("namespace url:", uuid.NAMESPACE_URL)
-    print("source id:", source_id)
-
-    try:
-        notion_connector = NotionConnector(config)
-        documents = notion_connector.load(source_id)
-
         chunker = DefaultChunker()
         chunks = []
         for doc in documents:

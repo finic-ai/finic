@@ -39,6 +39,8 @@ import ConnectionsPage from "./pages/connections";
 import GoogleDriveConnectorPage from "./pages/connectors/google-drive";
 import WebsiteConnectorPage from "./pages/connectors/website";
 import { UserStateProvider } from "./context/UserStateContext";
+import ZendeskConnectorPage from "./pages/connectors/zendesk";
+import ConfluenceConnectorPage from "./pages/connectors/confluence";
 
 const container = document.getElementById("root");
 
@@ -106,6 +108,8 @@ root.render(
               <Route path="/api-keys" element={<ApiKeysPage />} />
               <Route path="/connections" element={<ConnectionsPage />} />
               <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
+              <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
+              <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
               <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
             </Routes>
           </BrowserRouter>

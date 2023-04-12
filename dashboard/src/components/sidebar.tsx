@@ -85,6 +85,26 @@ const ExampleSidebar: FC = function () {
                   >
                     Google Drive
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/zendesk"
+                    className={
+                      "/connectors/zendesk" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Zendesk
+                  </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/confluence"
+                    className={
+                      "/connectors/confluence" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Confluence
+                  </Sidebar.Item>
                   {/* <Sidebar.Item
                     href="/connectors/website"
                     className={

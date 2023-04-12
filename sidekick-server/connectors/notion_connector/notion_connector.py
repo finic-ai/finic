@@ -1,26 +1,47 @@
 import requests
 import os
+import json
 from typing import Dict, List
-from models.models import Source, AppConfig, Document, DocumentMetadata, DataConnector
+from models.models import Source, AppConfig, Document, DocumentMetadata, DataConnector, AuthorizationResult
+from appstatestore.statestore import StateStore
 
-NOTION_API_KEY = os.environ.get("NOTION_API_KEY")
-headers = {"Authorization": f"Bearer {NOTION_API_KEY}", "Content-Type": "application/json", "Notion-Version": "2022-06-28"}
+BASE_URL = "https://api.notion.com"
 
 
 class NotionConnector(DataConnector):
     source_type: Source = Source.notion
     connector_id: int = 4
     config: AppConfig
+    headers: Dict = {}
 
     def __init__(self, config: AppConfig):
         super().__init__(config=config)
 
+    async def authorize(self, api_key: str, subdomain: str, email: str) -> AuthorizationResult:
+        creds = {
+            "api_key": api_key,
+        }
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json", "Notion-Version": "2022-06-28"}
+
+        try:
+            response = requests.post(f"{BASE_URL}/v1/search", headers=headers, data={})
+            if response.status_code != 200:
+                print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
+                return AuthorizationResult(authorized=False)
+        except Exception as e:
+            print(e)
+            return AuthorizationResult(authorized=False)
+
+        creds_string = json.dumps(creds)
+        StateStore().save_credentials(self.config, creds_string, self)
+        return AuthorizationResult(authorized=True)
+
     def notion_get_blocks(self, page_id: str):
-        res = requests.get(f"https://api.notion.com/v1/blocks/{page_id}/children?page_size=100", headers=headers)
+        res = requests.get(f"{BASE_URL}/v1/blocks/{page_id}/children?page_size=100", headers=self.headers)
         return res.json()
 
     def notion_search(self, query: Dict):
-        res = requests.post("https://api.notion.com/v1/search", headers=headers, data=query)
+        res = requests.post(f"{BASE_URL}/v1/search", headers=self.headers, data=query)
         return res.json()
 
     def get_page_text(self, page_id: str):
@@ -35,7 +56,13 @@ class NotionConnector(DataConnector):
                     page_text.append(plain_text)
         return page_text
 
-    def load(self, source_id: str) -> List[Document]:
+    async def load(self, source_id: str) -> List[Document]:
+        credential_string = StateStore().load_credentials(self.config, self)
+        credential_json = json.loads(credential_string)
+        api_key = credential_json["api_key"]
+        self.headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json",
+                        "Notion-Version": "2022-06-28"}
+
         documents: List[Document] = []
         all_notion_documents = self.notion_search({})
         items = all_notion_documents.get('results')
