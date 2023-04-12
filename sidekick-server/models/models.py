@@ -15,6 +15,7 @@ class Source(str, Enum):
     discourse="discourse"
     string="string"
     google_drive="google-drive"
+    notion="notion"
     zendesk="zendesk"
     confluence="confluence"
 
