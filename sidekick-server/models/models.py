@@ -48,9 +48,10 @@ class Document(BaseModel):
 class DocumentWithChunks(Document):
     chunks: List[DocumentChunk]
 
-
-class DocumentMetadataFilter(BaseModel):
+class DocumentSourceTypeFilter(BaseModel):
     source_type: Optional[Source] = None
+
+class DocumentMetadataFilter(DocumentSourceTypeFilter):
     tenant_id: Optional[str] = None
 
 class AuthorizationResult(BaseModel):
@@ -78,7 +79,7 @@ class DataChunker(BaseModel, ABC):
 
 class Query(BaseModel):
     query: str
-    filter: Optional[DocumentMetadataFilter] = None
+    filter: Optional[DocumentSourceTypeFilter] = None
     top_k: Optional[int] = 3
 
 class QueryWithEmbedding(Query):
