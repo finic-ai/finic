@@ -23,12 +23,10 @@
 [Sidekick](https://getsidekick.ai/) is a platform for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector database. You can also use the integrations and chunkers built by the core team and community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
 
 ## Demo
+[Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0)
 Get an API key to test out the cloud version by creating an account on the [Sidekick dashboard.](https://app.getsidekick.ai/)
 
-[Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0)
-
 If you have any questions on how to get started, [come join our Slack community!](https://sidekick-public.slack.com/).
-
 
 ## 💎 Features
 * Scrape HTML pages and chunk them
@@ -42,6 +40,17 @@ If you have any questions on how to get started, [come join our Slack community!
 * Connect to Pinecone, Milvus, and Qdrant vector stores
 
 ## Getting Started - 15 min
+To use the cloud version for free:
+1. Create an account on the [Sidekick dashboard.](https://app.getsidekick.ai/)
+2. Choose the Connector you want to use and click "Authorize".
+3. After successfully authorizing, click "Connect" to load the data
+4. If the data was successfully loaded, you will see a message showing how many chunks were uploaded
+5. Copy the API key from the "API Keys" page
+5. Click "API Testing" on the dashboard to access a FastAPI docs page where you can try out the different endpoints.
+6. Click "Authorize" in the FastAPI page and paste in your API key as the bearer token.
+7. Click "Try it out" on the `/ask-llm` endpoint to get an answer to question based on the data that you just ingested. This endpoint performs a semantic search, then uses OpenAI's text-davinci API to summarize the results as an answer to the query. Leave `possible_intents` empty. 
+8. Alternatively, use the `/query` endpoint to do only a semantic search and return matching chunks from your data.
+
 To run Sidekick locally:
 
 1. Install Python 3.10, if not already installed.
