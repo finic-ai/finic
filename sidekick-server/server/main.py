@@ -26,6 +26,7 @@ from models.api import (
 
 from llm.LLM import LLM
 from connectors.google_docs_connector import GoogleDocsConnector
+from connectors.notion_connector import NotionConnector
 from connectors.web_connector import WebConnector
 from chunkers.html_chunker import HTMLChunker
 from chunkers.default_chunker import DefaultChunker
@@ -71,6 +72,7 @@ assert BEARER_TOKEN is not None
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
     app_config = StateStore().get_config(credentials.credentials)
+    print('config', app_config)
     if credentials.scheme != "Bearer" or app_config is None:
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return app_config
@@ -83,7 +85,6 @@ async def authorize_with_api_key(
     request: AuthorizeWithApiKeyRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
-    logger = Logger(config)
     try:
         api_key = request.api_key
         connector_id = request.connector_id
@@ -99,7 +100,7 @@ async def authorize_with_api_key(
         
         return AuthorizeResponse(authorized=auth_result.authorized)
     except Exception as e:
-        raise e
+        raise HTTPException(status_code=500, detail=f"str({e})")
     
 
 @app.post(
@@ -195,7 +196,6 @@ async def upsert_google_docs(
         )
         raise HTTPException(status_code=500, detail=f"str({e})")
 
-    
 
 @app.post(
     "/upsert-web-data",
