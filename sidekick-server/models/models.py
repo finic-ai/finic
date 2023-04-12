@@ -15,6 +15,8 @@ class Source(str, Enum):
     discourse="discourse"
     string="string"
     google_drive="google-drive"
+    zendesk="zendesk"
+    confluence="confluence"
 
 class DocumentMetadata(BaseModel):
     document_id: str
@@ -51,12 +53,20 @@ class DocumentMetadataFilter(BaseModel):
     source_type: Optional[Source] = None
     tenant_id: Optional[str] = None
 
+class AuthorizationResult(BaseModel):
+    auth_url: Optional[str] = None
+    authorized: bool = False
+
 class DataConnector(BaseModel, ABC):
     source_type: Source
     connector_id: int
 
     @abstractmethod
-    def load(self, *args, **kwargs) -> List[Document]:
+    async def authorize(self, *args, **kwargs) -> AuthorizationResult:
+        pass
+
+    @abstractmethod
+    async def load(self, *args, **kwargs) -> List[Document]:
         pass
 
 class DataChunker(BaseModel, ABC):

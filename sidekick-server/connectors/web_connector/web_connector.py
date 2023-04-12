@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup, PageElement, Tag
 from playwright.async_api import async_playwright, Browser
 from tqdm import tqdm
 
-from models.models import Source, AppConfig, Document, DocumentMetadata, DocumentChunk, DataConnector
+from models.models import Source, AppConfig, Document, DocumentMetadata, AuthorizationResult, DataConnector
 from typing import List, Optional
 
 from connectors.web_connector.evaluate_url import evaluate_url
@@ -111,6 +111,9 @@ class WebConnector(DataConnector):
 
     def __init__(self, config: AppConfig, url: str):
         super().__init__(config=config, url=url)
+
+    def authorize(self) -> AuthorizationResult:
+        return AuthorizationResult(authorized=True)
 
     async def load(self, source_id: str) -> List[Document]:
         return await load_data_from_url(source_id, self.url, self.config, self.source_type)

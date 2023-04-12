@@ -13,6 +13,10 @@ from typing import List, Optional
 class UpsertRequest(BaseModel):
     documents: List[Document]
 
+class UpsertFromConnectorRequest(BaseModel):
+    connector_id: int
+    path: Optional[str]
+
 class UpsertWebDataRequest(BaseModel):
     url: str
 
@@ -23,9 +27,18 @@ class AuthorizeGoogleDriveRequest(BaseModel):
     redirect_uri: str
     auth_code: Optional[str]
 
-class AuthorizeGoogleDriveResponse(BaseModel):
-    auth_url: Optional[str]
+class AuthorizeWithApiKeyRequest(BaseModel):
+    api_key: str
+    connector_id: int
+    subdomain: Optional[str] = None
+    email: Optional[str] = None
+    
+
+class AuthorizeResponse(BaseModel):
     authorized: bool
+
+class AuthorizeGoogleDriveResponse(AuthorizeResponse):
+    auth_url: Optional[str]
 
 class AskLLMRequest(BaseModel):
     queries: List[Query]

@@ -18,7 +18,10 @@ from models.api import (
     AuthorizeGoogleDriveResponse,
     LLMResponse,
     AskLLMRequest,
-    UpsertRequest
+    UpsertRequest,
+    AuthorizeResponse,
+    AuthorizeWithApiKeyRequest,
+    UpsertFromConnectorRequest
 )
 
 from llm.LLM import LLM
@@ -32,9 +35,10 @@ from models.models import (
     Source,
     AppConfig,
     DocumentChunk,
-    DocumentChunkMetadata,
+    DataConnector,
     DocumentMetadata
 )
+from connectors.connector_utils import get_connector_for_id
 import uuid
 
 from datastore.factory import get_datastore
@@ -71,6 +75,29 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_sc
     return app_config
 
 @app.post(
+    "/authorize-with-api-key",
+    response_model=AuthorizeResponse,
+)
+async def authorize_with_api_key(
+    request: AuthorizeWithApiKeyRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    api_key = request.api_key
+    connector_id = request.connector_id
+    subdomain = request.subdomain
+    email = request.email
+
+    connector = get_connector_for_id(connector_id, config)
+
+    if connector is None:
+        raise HTTPException(status_code=404, detail="Connector not found")
+    
+    auth_result = await connector.authorize(api_key, subdomain, email)
+    
+    return AuthorizeResponse(authorized=auth_result.authorized)
+    
+
+@app.post(
     "/authorize-google-drive",
     response_model=AuthorizeGoogleDriveResponse,
 )
@@ -83,6 +110,36 @@ async def authorize_google_drive(
     google_connector = GoogleDocsConnector(config, "")
     auth_url = await google_connector.authorize(redirect_uri, auth_code)
     return AuthorizeGoogleDriveResponse(auth_url=auth_url, authorized=auth_url is None)
+
+@app.post(
+    "/upsert-from-connector",
+    response_model=UpsertResponse,
+)
+async def upsert_from_connector(
+    request: UpsertFromConnectorRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    if request.path is None:
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, str(request.connector_id)))
+    else:
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, request.path))
+
+    try:
+        path = request.path or ""
+        connector = get_connector_for_id(request.connector_id, config, path)
+
+        documents = await connector.load(source_id=source_id)
+        chunker = DefaultChunker()
+        chunks = []
+        for doc in documents:
+            chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        return UpsertResponse(ids=ids)
+
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
     "/upsert-google-docs",
