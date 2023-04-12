@@ -40,6 +40,7 @@ from models.models import (
 )
 from connectors.connector_utils import get_connector_for_id
 import uuid
+from logger import Logger
 
 from datastore.factory import get_datastore
 
@@ -82,19 +83,23 @@ async def authorize_with_api_key(
     request: AuthorizeWithApiKeyRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
-    api_key = request.api_key
-    connector_id = request.connector_id
-    subdomain = request.subdomain
-    email = request.email
+    logger = Logger(config)
+    try:
+        api_key = request.api_key
+        connector_id = request.connector_id
+        subdomain = request.subdomain
+        email = request.email
 
-    connector = get_connector_for_id(connector_id, config)
+        connector = get_connector_for_id(connector_id, config)
 
-    if connector is None:
-        raise HTTPException(status_code=404, detail="Connector not found")
-    
-    auth_result = await connector.authorize(api_key, subdomain, email)
-    
-    return AuthorizeResponse(authorized=auth_result.authorized)
+        if connector is None:
+            raise HTTPException(status_code=404, detail="Connector not found")
+        
+        auth_result = await connector.authorize(api_key, subdomain, email)
+        
+        return AuthorizeResponse(authorized=auth_result.authorized)
+    except Exception as e:
+        raise e
     
 
 @app.post(
@@ -119,6 +124,7 @@ async def upsert_from_connector(
     request: UpsertFromConnectorRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    logger = Logger(config)
     if request.path is None:
         source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, str(request.connector_id)))
     else:
@@ -135,10 +141,20 @@ async def upsert_from_connector(
             chunks.extend(chunker.chunk(source_id, doc, 1000))
 
         ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        logger.log_upsert_data(
+            connector=request.connector_id,
+            chunks=len(ids),
+            error=False
+        )
         return UpsertResponse(ids=ids)
 
     except Exception as e:
         print("Error:", e)
+        logger.log_upsert_data(
+            connector=request.connector_id,
+            chunks=0,
+            error=True
+        )
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
@@ -151,6 +167,7 @@ async def upsert_google_docs(
 ):
     folder_name = request.folder_name
     source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, request.folder_name))
+    logger = Logger(config)
 
     try:
         google_connector = GoogleDocsConnector(config, folder_name)
@@ -162,10 +179,20 @@ async def upsert_google_docs(
             chunks.extend(chunker.chunk(source_id, doc, 1000))
 
         ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        logger.log_upsert_data(
+            connector=google_connector.connector_id,
+            chunks=len(ids),
+            error=False
+        )
         return UpsertResponse(ids=ids)
 
     except Exception as e:
         print("Error:", e)
+        logger.log_upsert_data(
+            connector=google_connector.connector_id,
+            chunks=0,
+            error=True
+        )
         raise HTTPException(status_code=500, detail=f"str({e})")
 
     
@@ -180,11 +207,18 @@ async def upsert_web_data(
 ):
     url = request.url
     parsed_url = urlparse(url)
+    logger = Logger(config)
+    web_connector = WebConnector(config, url)
+
     if parsed_url.scheme not in ["http", "https"]:
         print("Error:", "Invalid URL")
+        logger.log_upsert_data(
+            connector= web_connector.connector_id,
+            chunks=0,
+            error=True
+        )
         raise HTTPException(status_code=400, detail="Invalid URL")
     try:
-        web_connector = WebConnector(config, url)
         html_chunker = HTMLChunker()
         source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, url))
         documents = await web_connector.load(source_id=source_id)
@@ -194,9 +228,19 @@ async def upsert_web_data(
             chunks.extend(html_chunker.chunk(source_id, doc, 500))
 
         ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        logger.log_upsert_data(
+            connector= web_connector.connector_id,
+            chunks=len(ids),
+            error=False
+        )
         return UpsertResponse(ids=ids)
     except Exception as e:
         print("Error:", e)
+        logger.log_upsert_data(
+            connector= web_connector.connector_id,
+            chunks=0,
+            error=True
+        )
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
@@ -235,6 +279,7 @@ async def ask_llm(
     request: AskLLMRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    logger = Logger(config)
     try:
         query_results = await datastore.query(
             request.queries,
@@ -242,9 +287,19 @@ async def ask_llm(
         )
         print(query_results)
         results = await LLM().ask_llm(query_results, request.possible_intents)
+        logger.log_ask_llm(
+            query=str(request.queries),
+            response=str(results),
+            error=False
+        )
         return LLMResponse(results=results)
     except Exception as e:
         print("Error:", e)
+        logger.log_ask_llm(
+            query=str(request.queries),
+            response="",
+            error=True
+        )
         raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
@@ -255,14 +310,25 @@ async def query_main(
     request: QueryRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    logger = Logger(config)
     try:
         results = await datastore.query(
             request.queries,
             tenant_id=config.tenant_id,
         )
+        logger.log_query(
+            query=str(request.queries),
+            response=str(results),
+            error=False
+        )
         return QueryResponse(results=results)
     except Exception as e:
         print("Error:", e)
+        logger.log_query(
+            query=str(request.queries),
+            response="",
+            error=True
+        )
         raise HTTPException(status_code=500, detail="Internal Service Error")
 
 
