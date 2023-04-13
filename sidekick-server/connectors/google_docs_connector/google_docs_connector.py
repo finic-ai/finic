@@ -10,10 +10,24 @@ import uuid
 import json
 import importlib
 from typing import Any
+import io 
+from PyPDF2 import PdfReader
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 CLIENT_SECRETS = os.environ.get("GDRIVE_CLIENT_SECRETS")
 DASHBOARD_URL = os.environ.get("DASHBOARD_URL")
+
+def download_pdf(service, file_id):
+    request = service.files().get_media(fileId=file_id)
+    file = io.BytesIO(request.execute())
+    return file
+
+def extract_pdf_text(pdf_file):
+    reader = PdfReader(pdf_file)
+    text = ''
+    for page_num in range(len(reader.pages)):
+        text += reader.pages[page_num].extract_text()
+    return text
 
 class GoogleDocsConnector(DataConnector):
     source_type: Source = Source.google_drive
@@ -86,12 +100,16 @@ class GoogleDocsConnector(DataConnector):
             # Retrieve the full metadata for the file
             file_metadata = service.files().get(fileId=item['id']).execute()
             mime_type = file_metadata.get('mimeType', '')
-            if mime_type != 'application/vnd.google-apps.document':
+            if mime_type == 'application/vnd.google-apps.document':
+                # Retrieve the document content
+                doc = service.files().export(fileId=item['id'], mimeType='text/plain').execute()
+                content = doc.decode('utf-8')
+            elif mime_type == 'application/pdf':
+                pdf_file = download_pdf(service, item['id'])
+                content = extract_pdf_text(pdf_file)
+            else:
+                print(f"Unsupported file type: {mime_type}")
                 continue
-
-            # Retrieve the document content
-            doc = service.files().export(fileId=item['id'], mimeType='text/plain').execute()
-            content = doc.decode('utf-8')
 
             documents.append(
                 Document(
@@ -107,3 +125,4 @@ class GoogleDocsConnector(DataConnector):
                 )
             )
         return documents
+    
