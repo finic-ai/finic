@@ -105,6 +105,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Confluence
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/notion"
+                    className={
+                      "/connectors/notion" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Notion
+                  </Sidebar.Item>
                   {/* <Sidebar.Item
                     href="/connectors/website"
                     className={

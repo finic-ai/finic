@@ -41,6 +41,7 @@ import WebsiteConnectorPage from "./pages/connectors/website";
 import { UserStateProvider } from "./context/UserStateContext";
 import ZendeskConnectorPage from "./pages/connectors/zendesk";
 import ConfluenceConnectorPage from "./pages/connectors/confluence";
+import NotionConnectorPage from "./pages/connectors/notion";
 
 const container = document.getElementById("root");
 
@@ -110,6 +111,7 @@ root.render(
               <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
               <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
               <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
+              <Route path="/connectors/notion" element={<NotionConnectorPage />} />
               <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
             </Routes>
           </BrowserRouter>

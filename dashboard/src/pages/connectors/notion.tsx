@@ -10,7 +10,7 @@ import {
   import type { FC } from "react";
   import { useState } from "react";
   import { FaPlus } from "react-icons/fa";
-  import { SiConfluence } from "react-icons/si";
+  import { SiNotion } from "react-icons/si";
 
   import {
     HiHome,
@@ -18,12 +18,11 @@ import {
   import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
   import { useUserStateContext } from "../../context/UserStateContext";
   
-  const ConfluenceConnectorPage: FC = function () {
+  const NotionConnectorPage: FC = function () {
     const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
     const [authorized, setAuthorized] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
     const [connectLoading, setConnectLoading] = useState(false)
-    const [space, setSpace] = useState('');
     const [apiKey, setApiKey] = useState('');
     const [subdomain, setSubdomain] = useState('');
     const [email, setEmail] = useState('');
@@ -34,9 +33,7 @@ import {
       const url = import.meta.env.VITE_SERVER_URL + '/authorize-with-api-key';
       var payload = {
         api_key: apiKey,
-        subdomain: subdomain,
-        email: email,
-        connector_id: 6
+        connector_id: 4
       }
 
       try {
@@ -73,8 +70,7 @@ import {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
           body: JSON.stringify({
-            connector_id: 6,
-            path: space
+            connector_id: 4,
           }),
         });
     
@@ -111,10 +107,10 @@ import {
                   </div>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Connectors</Breadcrumb.Item>
-                <Breadcrumb.Item>Confluence</Breadcrumb.Item>
+                <Breadcrumb.Item>Notion</Breadcrumb.Item>
               </Breadcrumb>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-                Connect Confluence
+                Connect Notion
               </h1>
             </div>
           </div>
@@ -125,21 +121,10 @@ import {
               <form>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <div>
-                    
                     <AuthorizeModal authorize={authorize} authLoading={authLoading} authorized={authorized} apiKey={apiKey} setApiKey={setApiKey} subdomain={subdomain} setSubdomain={setSubdomain} email={email} setEmail={setEmail} />
-                    <Label htmlFor="apiKeys.label">Confluence space</Label>
-                    <TextInput
-                      id="apiKeys.label"
-                      name="apiKeys.label"
-                      placeholder='Confluence space ID you want to sync with Sidekick'
-                      className="mt-1"
-                      onChange={(e) => setSpace(e.target.value.trim())}
-                      value={space}
-                      helperText="Only Confluence pages in this space will be synced. You can find the space id in the URL of your wiki."
-                    />
                   </div>
                   <div className="lg:col-span-2">
-                      <Button color="primary" className="mb-6" disabled={!space} onClick={() => connect() } >
+                      <Button color="primary" className="mb-6" onClick={() => connect() } >
                         {connectLoading ? <Spinner className="mr-3 text-sm" /> : <>
                         <FaPlus className="mr-3 text-sm" />
                         Connect
@@ -178,13 +163,13 @@ import {
       <>
         <Button color="primary" className="mb-6" disabled={authorized} onClick={() => setOpen(true) } >
           {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
-          <SiConfluence className="mr-3 text-sm" />
-          Authorize Confluence
+          <SiNotion className="mr-3 text-sm" />
+          Authorize Notion
           </>}
         </Button>
         <Modal onClose={() => setOpen(false)} show={isOpen}>
           <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-            <strong>Authorize Confluence</strong>
+            <strong>Authorize Notion</strong>
           </Modal.Header>
           <Modal.Body>
             <form>
@@ -194,25 +179,7 @@ import {
                   <TextInput
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
-                    placeholder='Confluence API Key'
-                    className="mt-1"
-                  />
-                </div>
-                <div className="lg:col-span-2">
-                  <Label htmlFor="apiKeys.newKey">Email</Label>
-                  <TextInput
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder='Confluence Email'
-                    className="mt-1"
-                  />
-                </div>
-                <div className="lg:col-span-2">
-                  <Label>Subdomain</Label>
-                  <TextInput
-                    value={subdomain}
-                    onChange={(e) => setSubdomain(e.target.value)}
-                    placeholder='Confluence Subdomain'
+                    placeholder='Notion API Key'
                     className="mt-1"
                   />
                 </div>
@@ -232,5 +199,5 @@ import {
     );
   };
   
-  export default ConfluenceConnectorPage;
+  export default NotionConnectorPage;
   
