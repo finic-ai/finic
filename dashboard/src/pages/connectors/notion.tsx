@@ -154,7 +154,7 @@ import {
     setEmail: (email: string) => void;
   }
 
-  const AuthorizeModal: FC<AuthorizeModalProps> = function ({authorize, apiKey, setApiKey, subdomain, setSubdomain, email, setEmail, authorized, authLoading}: AuthorizeModalProps) {
+  const AuthorizeModal: FC<AuthorizeModalProps> = function ({authorize, apiKey, setApiKey, authorized, authLoading}: AuthorizeModalProps) {
     const [isOpen, setOpen] = useState(false);
 
     console.log(authorized)
