@@ -2,9 +2,9 @@
 import {
     Breadcrumb,
     Button,
-    Checkbox,
     Label,
     TextInput,
+    Textarea,
     Spinner
   } from "flowbite-react";
   import type { FC } from "react";
@@ -14,27 +14,33 @@ import {
     HiHome,
   } from "react-icons/hi";
   import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
+  import { useUserStateContext } from "../../context/UserStateContext";
+
   
   const WebsiteConnectorPage: FC = function () {
-    const [rootUrl, setRootUrl] = useState('');
+    const [urlsInput, setUrlsInput] = useState('');
+    const [shouldCrawl, setShouldCrawl] = useState(false);
     const [connectLoading, setConnectLoading] = useState(false)
     const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
-    const [shouldCrawl, setShouldCrawl] = useState(false);
+    const [cssSelector, setCssSelector] = useState('');
+    const {bearer} = useUserStateContext()
 
     async function crawlPages() {
       setConnectLoading(true)
       try {
         // Define the URL to make the request to
-        const url = 'https://sidekick-server-ezml2kwdva-uc.a.run.app/upsert-web';
+        // split by comma and remove whitespace
+        const urls = urlsInput.split(',').map(url => url.trim())
         var payload = {
-          url: url,
-          crawl: shouldCrawl
+          urls: urls, 
+          css_selector: cssSelector
         }
 
         // Make the request using the fetch function and await the response
+        const url = import.meta.env.VITE_SERVER_URL + '/upsert-web-data';
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer test' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
           body: JSON.stringify(payload),
         });
     
@@ -88,29 +94,32 @@ import {
             <div className="mb-4">
               <form>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div className="flex items-center gap-2">
-                  <Checkbox id="crawl" checked={shouldCrawl} onChange={toggleCrawl}/>
-                  <div className="ml-2 text-sm">
-                    <Label htmlFor="crawl">
-                      Crawl all pages at this path
-                    </Label>
-                    <p id="helper-checkbox-text" className="text-xs font-normal text-gray-500 dark:text-gray-300">Warning: This will recursively scrape every page starting with this URL path. It may take a long time.</p>
-                  </div>
-                </div>
-                  <div>
-                    <Label htmlFor="apiKeys.label">URL</Label>
-                    <TextInput
+                  <div className="lg:col-span-2">
+                    <Label htmlFor="apiKeys.label">URLs</Label>
+                    <Textarea 
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='URL of the page you want to scrape'
-                      className="mt-1"
-                      onChange={(e) => setRootUrl(e.target.value.trim())}
-                      value={rootUrl}
-                      helperText="Only Google Docs files in this folder will by synced"
+                      placeholder='URLs of the pages you want to scrape'
+                      className="mt-1 w-1/2"
+                      onChange={(e) => setUrlsInput(e.target.value)}
+                      value={urlsInput}
+                      helperText="Comma separated list of URLs to scrape"
                     />
                   </div>
                   <div className="lg:col-span-2">
-                      <Button color="primary" className="mb-6" onClick={() => crawlPages() } >
+                    <Label htmlFor="apiKeys.label">CSS Selector</Label>
+                    <TextInput
+                      id="apiKeys.label"
+                      name="apiKeys.label"
+                      placeholder='CSS selector of the html elements you want to include in the scrape'
+                      className="mt-1 w-1/2"
+                      onChange={(e) => setCssSelector(e.target.value.trim())}
+                      value={cssSelector}
+                      helperText="CSS selector of the html elements you want to include in the scrape"
+                    />
+                  </div>
+                  <div className="lg:col-span-2">
+                      <Button color="primary" disabled={!urlsInput} className="mb-6" onClick={() => crawlPages() } >
                         {connectLoading ? <Spinner className="mr-3 text-sm" /> : <>
                         <FaPlus className="mr-3 text-sm" />
                         Connect

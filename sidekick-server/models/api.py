@@ -18,7 +18,8 @@ class UpsertFromConnectorRequest(BaseModel):
     path: Optional[str]
 
 class UpsertWebDataRequest(BaseModel):
-    url: str
+    urls: List[str]
+    css_selector: str
 
 class UpsertGoogleDocsRequest(BaseModel):
     folder_name: str

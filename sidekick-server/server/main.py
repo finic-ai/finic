@@ -28,6 +28,7 @@ from llm.LLM import LLM
 from connectors.google_docs_connector import GoogleDocsConnector
 from connectors.notion_connector import NotionConnector
 from connectors.web_connector import WebConnector
+from connectors.website_connector import WebsiteConnector
 from chunkers.html_chunker import HTMLChunker
 from chunkers.default_chunker import DefaultChunker
 
@@ -205,22 +206,15 @@ async def upsert_web_data(
     request: UpsertWebDataRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
-    url = request.url
-    parsed_url = urlparse(url)
     logger = Logger(config)
-    web_connector = WebConnector(config, url)
-
-    if parsed_url.scheme not in ["http", "https"]:
-        print("Error:", "Invalid URL")
-        logger.log_upsert_data(
-            connector= web_connector.connector_id,
-            chunks=0,
-            error=True
-        )
-        raise HTTPException(status_code=400, detail="Invalid URL")
+    web_connector = WebsiteConnector(
+        config=config, 
+        urls=request.urls, 
+        css_selector=request.css_selector 
+    )
     try:
         html_chunker = HTMLChunker()
-        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, url))
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, Source.web.value))
         documents = await web_connector.load(source_id=source_id)
         chunks = []
         

@@ -76,6 +76,16 @@ const ExampleSidebar: FC = function () {
                     Website
                   </Sidebar.Item> */}
                   <Sidebar.Item
+                    href="/connectors/website"
+                    className={
+                      "/connectors/website" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Website
+                  </Sidebar.Item>
+                  <Sidebar.Item
                     href="/connectors/google-drive"
                     className={
                       "/connectors/google-drive" === currentPage

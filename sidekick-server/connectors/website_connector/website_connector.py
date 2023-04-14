@@ -1,5 +1,4 @@
 from __future__ import annotations
-from markdownify import MarkdownConverter
 import time
 import uuid
 from urllib.parse import urlparse
@@ -8,17 +7,16 @@ from bs4 import BeautifulSoup, PageElement, Tag
 # from playwright.sync_api import sync_playwright, Browser
 from playwright.async_api import async_playwright, Browser
 from tqdm import tqdm
-
-from models.models import Source, AppConfig, Document, DocumentMetadata, DocumentChunk, DataConnector
+import random
+from models.models import Source, AppConfig, Document, DocumentMetadata, AuthorizationResult, DataConnector
 from typing import List, Optional
-
 from connectors.web_connector.evaluate_url import evaluate_url
 
 
 create_document = lambda title, text, url, source_type, : Document(text)
 
 
-async def load_data_from_url(source_id: str, url: str, config: AppConfig, source_type: Source, css_connector: str) -> List[Document]:
+async def load_data_from_url(source_id: str, url: str, config: AppConfig, source_type: Source, css_connector: str) -> Document:
     """
     Convert HTML within the element matching css_connector to text, or if css_connector is None, convert the entire page to text.
     """
@@ -75,11 +73,22 @@ class WebsiteConnector(DataConnector):
     source_type: Source = Source.web
     connector_id: int = 2
     config: AppConfig
-    url: str
-    css_connector: Optional[str] = None
+    urls: List[str]
+    css_selector: Optional[str] = None
 
-    def __init__(self, config: AppConfig, url: str, css_selector: str):
-        super().__init__(config=config, url=url, css_selector=css_selector)
+    def __init__(self, config: AppConfig, urls: List[str], css_selector: str):
+        super().__init__(config=config, urls=urls, css_selector=css_selector)
+
+    async def authorize(self) -> AuthorizationResult:
+        pass
 
     async def load(self, source_id: str) -> List[Document]:
-        return await load_data_from_url(source_id, self.url, self.config, self.source_type, self.css_connector)
+        documents = []
+        for url in self.urls:
+            parsed_url = urlparse(url)
+            if parsed_url.scheme not in ["http", "https"]:
+                raise Exception(f"Invalid URL: {url}")
+            document = await load_data_from_url(source_id, url, self.config, self.source_type, self.css_selector)
+            documents.append(document)
+            time.sleep(random.uniform(1, 2))
+        return documents
