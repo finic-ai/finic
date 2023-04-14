@@ -19,7 +19,6 @@ import {
   
   const WebsiteConnectorPage: FC = function () {
     const [urlsInput, setUrlsInput] = useState('');
-    const [shouldCrawl, setShouldCrawl] = useState(false);
     const [connectLoading, setConnectLoading] = useState(false)
     const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
     const [cssSelector, setCssSelector] = useState('');
@@ -62,10 +61,6 @@ import {
         console.error('Error connecting to google drive:', error);
         setConnectLoading(false)
       }
-    }
-
-    function toggleCrawl() {
-      setShouldCrawl(!shouldCrawl)
     }
 
     return (
