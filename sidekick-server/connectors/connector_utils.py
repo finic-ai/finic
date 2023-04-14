@@ -3,6 +3,7 @@ from .web_connector import WebConnector
 from .zendesk_connector import ZendeskConnector
 from .confluence_connector import ConfluenceConnector
 from .notion_connector import NotionConnector
+from .dropbox_connector import DropboxConnector
 from models.models import AppConfig, DataConnector
 from typing import Optional
 
@@ -14,6 +15,7 @@ def get_connector_for_id(connector_id: int, config: AppConfig, path: Optional[st
         None,
         NotionConnector(config=config),
         ZendeskConnector(config=config, folder_name=path),
-        ConfluenceConnector(config=config, space=path)
+        ConfluenceConnector(config=config, space=path),
+        DropboxConnector(config=config, folder_name=path)
     ]
     return connectors[index]
