@@ -18,6 +18,7 @@ class Source(str, Enum):
     notion="notion"
     zendesk="zendesk"
     confluence="confluence"
+    dropbox="dropbox"
 
 class DocumentMetadata(BaseModel):
     document_id: str
