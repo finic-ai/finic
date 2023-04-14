@@ -32,7 +32,10 @@ class AuthorizeWithApiKeyRequest(BaseModel):
     connector_id: int
     subdomain: Optional[str] = None
     email: Optional[str] = None
-    
+
+class AuthorizeWithApiKeyRequestV2(BaseModel):
+    connector_id: int
+    credentials: dict
 
 class AuthorizeResponse(BaseModel):
     authorized: bool

@@ -20,37 +20,79 @@ class DropboxConnector(DataConnector):
     def __init__(self, config: AppConfig, folder_name: str):
         super().__init__(config=config, folder_name=folder_name)
 
-    async def authorize(self, api_key: str, subdomain: str, email: str) -> AuthorizationResult:
-        creds = {
-            "api_key": api_key,
-        }
-
+    def check_valid_access_token(self, access_token: str) -> bool:
         headers = {
-            'Authorization': f'Bearer {api_key}',
+            'Authorization': f'Bearer {access_token}',
             'Content-Type': 'application/json',
         }
 
         json_data = {
             'query': 'foo',
         }
+        response = requests.post(f'{BASE_URL}/2/check/user', headers=headers, json=json_data)
+        if response.status_code == 200:
+            return True
+        else:
+            return False
 
-        try:
-            response = requests.post(f'{BASE_URL}/2/check/user', headers=headers, json=json_data)
-            print("authorize response", response.status_code)
-            if response.status_code != 200:
-                print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
-                return AuthorizationResult(authorized=False)
-        except Exception as e:
-            print(e)
-            return AuthorizationResult(authorized=False)
+    async def authorize(self, credentials: dict) -> AuthorizationResult:
+        app_key = credentials.get('app_key')
+        app_secret = credentials.get('app_secret')
+        access_code = credentials.get('access_code')
 
-        creds_string = json.dumps(creds)
-        StateStore().save_credentials(self.config, creds_string, self)
-        return AuthorizationResult(authorized=True)
+        # Note: Go to the below url to get access_code
+        # https://www.dropbox.com/oauth2/authorize?client_id=<APP_KEY>&token_access_type=offline&response_type=code
 
-    def get_all_files_under_folder(self, api_key: str, folder_name: str):
+        if app_key and app_secret and access_code:
+            data = {
+                'code': access_code,
+                'grant_type': 'authorization_code',
+                'client_id': app_key,
+                'client_secret': app_secret,
+            }
+
+            response = requests.post('https://api.dropbox.com/oauth2/token', data=data)
+            if response.status_code == 200:
+                response_data = response.json()
+                refresh_token = response_data.get('refresh_token')
+                temp_access_token = response_data.get('access_token')
+
+                creds = {
+                    "app_key": app_key,
+                    "app_secret": app_secret,
+                    "refresh_token": refresh_token
+                }
+
+                try:
+                    if not self.check_valid_access_token(temp_access_token):
+                        print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
+                        return AuthorizationResult(authorized=False)
+                except Exception as e:
+                    print(e)
+                    return AuthorizationResult(authorized=False)
+
+                creds_string = json.dumps(creds)
+                StateStore().save_credentials(self.config, creds_string, self)
+                return AuthorizationResult(authorized=True)
+
+    def get_new_access_token(self, app_key: str, app_secret: str, refresh_token: str):
+        data = {
+            'grant_type': 'refresh_token',
+            'refresh_token': refresh_token,
+            'client_id': app_key,
+            'client_secret': app_secret,
+        }
+
+        response = requests.post('https://api.dropbox.com/oauth2/token', data=data)
+        if response.status_code == 200:
+            res_data = response.json()
+            return res_data.get('access_token')
+        else:
+            return None
+
+    def get_all_files_under_folder(self, access_token: str, folder_name: str):
         headers = {
-            'Authorization': f"Bearer {api_key}",
+            'Authorization': f"Bearer {access_token}",
             'Content-Type': 'application/json',
         }
 
@@ -79,11 +121,11 @@ class DropboxConnector(DataConnector):
 
         return file_metadata
 
-    def extract_text_from_document(self, api_key: str, document_path: str, file_type: str):
+    def extract_text_from_document(self, access_token: str, document_path: str, file_type: str):
         path = {"path": document_path}
         path = json.dumps(path)
         headers = {
-            'Authorization': f'Bearer {api_key}',
+            'Authorization': f'Bearer {access_token}',
             'Dropbox-API-Arg': path,
         }
 
@@ -116,14 +158,22 @@ class DropboxConnector(DataConnector):
     async def load(self, source_id: str) -> List[Document]:
         credential_string = StateStore().load_credentials(self.config, self)
         credential_json = json.loads(credential_string)
-        api_key = credential_json["api_key"]
 
         documents: List[Document] = []
 
-        files = self.get_all_files_under_folder(api_key, self.folder_name)
+        app_key = credential_json.get('app_key')
+        app_secret = credential_json.get('app_secret')
+        refresh_token = credential_json.get('refresh_token')
+
+        access_token = self.get_new_access_token(app_key, app_secret, refresh_token)
+
+        if not access_token:
+            return documents
+
+        files = self.get_all_files_under_folder(access_token, self.folder_name)
 
         for file_name, file_path, file_type in files:
-            text = self.extract_text_from_document(api_key, file_path, file_type)
+            text = self.extract_text_from_document(access_token, file_path, file_type)
             if text:
                 documents.append(
                     Document(

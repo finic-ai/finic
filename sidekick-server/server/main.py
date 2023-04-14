@@ -21,6 +21,7 @@ from models.api import (
     UpsertRequest,
     AuthorizeResponse,
     AuthorizeWithApiKeyRequest,
+    AuthorizeWithApiKeyRequestV2,
     UpsertFromConnectorRequest
 )
 
@@ -98,6 +99,32 @@ async def authorize_with_api_key(
         
         auth_result = await connector.authorize(api_key, subdomain, email)
         
+        return AuthorizeResponse(authorized=auth_result.authorized)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
+
+@app.post(
+    "/authorize-with-api-key-v2",
+    response_model=AuthorizeResponse,
+)
+async def authorize_with_api_key_v2(
+        request: AuthorizeWithApiKeyRequestV2 = Body(...),
+        config: AppConfig = Depends(validate_token),
+):
+    try:
+        connector_id = request.connector_id
+        credentials = request.credentials
+
+        connector = get_connector_for_id(connector_id, config)
+
+        print("connector", connector)
+
+        if connector is None:
+            raise HTTPException(status_code=404, detail="Connector not found")
+
+        auth_result = await connector.authorize(credentials)
+
         return AuthorizeResponse(authorized=auth_result.authorized)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"str({e})")
