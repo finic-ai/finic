@@ -29,6 +29,7 @@ from llm.LLM import LLM
 from connectors.google_docs_connector import GoogleDocsConnector
 from connectors.notion_connector import NotionConnector
 from connectors.web_connector import WebConnector
+from connectors.dropbox_connector import DropboxConnector
 from chunkers.html_chunker import HTMLChunker
 from chunkers.default_chunker import DefaultChunker
 
@@ -143,6 +144,51 @@ async def authorize_google_drive(
     google_connector = GoogleDocsConnector(config, "")
     auth_url = await google_connector.authorize(redirect_uri, auth_code)
     return AuthorizeGoogleDriveResponse(auth_url=auth_url, authorized=auth_url is None)
+
+
+@app.post(
+    "/authorize-dropbox",
+    response_model=AuthorizeGoogleDriveResponse,
+)
+async def authorize_dropbox(
+    request: AuthorizeGoogleDriveRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    auth_code = request.auth_code
+    redirect_uri = request.redirect_uri
+    dropbox_connector = DropboxConnector(config, "")
+    auth_url = await dropbox_connector.authorize(redirect_uri, auth_code)
+    return AuthorizeGoogleDriveResponse(auth_url=auth_url, authorized=auth_url is None)
+
+
+@app.post(
+    "/upsert-dropbox",
+    response_model=UpsertResponse,
+)
+async def upsert_dropbox(
+    request: UpsertGoogleDocsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    folder_name = request.folder_name
+    source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, request.folder_name))
+
+    try:
+        dropbox_connector = DropboxConnector(config, folder_name)
+
+        documents = await dropbox_connector.load(source_id=source_id)
+        chunker = DefaultChunker()
+        chunks = []
+        for doc in documents:
+            chunks.extend(chunker.chunk(source_id, doc, 1000))
+
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+
+        return UpsertResponse(ids=ids)
+
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=f"str({e})")
+
 
 @app.post(
     "/upsert-from-connector",

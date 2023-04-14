@@ -1,14 +1,17 @@
 import requests
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 from models.models import Source, AppConfig, Document, DocumentMetadata, DataConnector, AuthorizationResult
 from appstatestore.statestore import StateStore
 from io import BytesIO
 from PyPDF2 import PdfReader
 import docx
 import uuid
+import os
 
 BASE_URL = "https://api.dropboxapi.com"
+APP_KEY = os.environ.get("DROPBOX_APP_KEY")
+APP_SECRET = os.environ.get("DROPBOX_APP_SECRET")
 
 
 class DropboxConnector(DataConnector):
@@ -35,45 +38,31 @@ class DropboxConnector(DataConnector):
         else:
             return False
 
-    async def authorize(self, credentials: dict) -> AuthorizationResult:
-        app_key = credentials.get('app_key')
-        app_secret = credentials.get('app_secret')
-        access_code = credentials.get('access_code')
-
-        # Note: Go to the below url to get access_code
-        # https://www.dropbox.com/oauth2/authorize?client_id=<APP_KEY>&token_access_type=offline&response_type=code
-
-        if app_key and app_secret and access_code:
+    async def authorize(self, redirect_uri: str, auth_code: Optional[str]) -> str | None:
+        if APP_KEY and APP_SECRET and auth_code:
             data = {
-                'code': access_code,
+                'code': auth_code,
                 'grant_type': 'authorization_code',
-                'client_id': app_key,
-                'client_secret': app_secret,
+                'client_id': APP_KEY,
+                'client_secret': APP_SECRET,
             }
 
             response = requests.post('https://api.dropbox.com/oauth2/token', data=data)
             if response.status_code == 200:
                 response_data = response.json()
                 refresh_token = response_data.get('refresh_token')
-                temp_access_token = response_data.get('access_token')
 
                 creds = {
-                    "app_key": app_key,
-                    "app_secret": app_secret,
                     "refresh_token": refresh_token
                 }
 
-                try:
-                    if not self.check_valid_access_token(temp_access_token):
-                        print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
-                        return AuthorizationResult(authorized=False)
-                except Exception as e:
-                    print(e)
-                    return AuthorizationResult(authorized=False)
-
                 creds_string = json.dumps(creds)
                 StateStore().save_credentials(self.config, creds_string, self)
-                return AuthorizationResult(authorized=True)
+        else:
+            if APP_KEY:
+                auth_url = f"https://www.dropbox.com/oauth2/authorize?client_id={APP_KEY}&token_access_type=offline&response_type=code"
+                return auth_url
+
 
     def get_new_access_token(self, app_key: str, app_secret: str, refresh_token: str):
         data = {
@@ -161,8 +150,12 @@ class DropboxConnector(DataConnector):
 
         documents: List[Document] = []
 
-        app_key = credential_json.get('app_key')
-        app_secret = credential_json.get('app_secret')
+        # app_key = credential_json.get('app_key')
+        # app_secret = credential_json.get('app_secret')
+        # refresh_token = credential_json.get('refresh_token')
+
+        app_key = APP_KEY
+        app_secret = APP_SECRET
         refresh_token = credential_json.get('refresh_token')
 
         access_token = self.get_new_access_token(app_key, app_secret, refresh_token)
