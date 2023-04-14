@@ -27,20 +27,24 @@ class AuthorizeGoogleDriveRequest(BaseModel):
     redirect_uri: str
     auth_code: Optional[str]
 
+class AuthorizeOauthRequest(BaseModel):
+    redirect_uri: str
+    auth_code: Optional[str]
+    connector_id: int
+
 class AuthorizeWithApiKeyRequest(BaseModel):
     api_key: str
     connector_id: int
     subdomain: Optional[str] = None
     email: Optional[str] = None
 
-class AuthorizeWithApiKeyRequestV2(BaseModel):
-    connector_id: int
-    credentials: dict
-
 class AuthorizeResponse(BaseModel):
     authorized: bool
 
 class AuthorizeGoogleDriveResponse(AuthorizeResponse):
+    auth_url: Optional[str]
+
+class OauthResponse(AuthorizeResponse):
     auth_url: Optional[str]
 
 class AskLLMRequest(BaseModel):
