@@ -107,6 +107,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Notion
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/stripe"
+                    className={
+                      "/connectors/stripe" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Stripe
+                  </Sidebar.Item>
                   {/* <Sidebar.Item
                     href="/connectors/website"
                     className={

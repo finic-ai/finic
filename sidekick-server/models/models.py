@@ -19,6 +19,7 @@ class Source(str, Enum):
     zendesk="zendesk"
     confluence="confluence"
     dropbox="dropbox"
+    stripe="stripe"
 
 class Vectorstore(int, Enum):
     default = 1
