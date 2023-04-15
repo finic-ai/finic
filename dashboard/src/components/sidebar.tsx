@@ -122,7 +122,7 @@ const ExampleSidebar: FC = function () {
                   href="/vectorstore"
                   icon={HiDatabase}
                 >
-                  Vectorstore
+                  Vector Store
                 </Sidebar.Item>
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
