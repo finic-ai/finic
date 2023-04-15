@@ -1,4 +1,3 @@
-# TODO
 import asyncio
 from typing import Dict, List, Optional
 from loguru import logger
@@ -327,23 +326,3 @@ class WeaviateDataStore(DataStore):
                 operands.append(operand)
 
         return {"operator": "And", "operands": operands}
-
-    @staticmethod
-    def _is_valid_weaviate_id(candidate_id: str) -> bool:
-        """
-        Check if candidate_id is a valid UUID for weaviate's use
-
-        Weaviate supports UUIDs of version 3, 4 and 5. This function checks if the candidate_id is a valid UUID of one of these versions.
-        See https://weaviate.io/developers/weaviate/more-resources/faq#q-are-there-restrictions-on-uuid-formatting-do-i-have-to-adhere-to-any-standards
-        for more information.
-        """
-        acceptable_version = [3, 4, 5]
-
-        try:
-            result = uuid.UUID(candidate_id)
-            if result.version not in acceptable_version:
-                return False
-            else:
-                return True
-        except ValueError:
-            return False

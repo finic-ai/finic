@@ -7,7 +7,8 @@ import {
   HiKey, 
   HiSearch,
   HiLink,
-  HiBeaker
+  HiBeaker,
+  HiDatabase
 } from "react-icons/hi";
 import {FaGithub} from "react-icons/fa"
 
@@ -51,30 +52,11 @@ const ExampleSidebar: FC = function () {
             </form>
             <Sidebar.Items>
               <Sidebar.ItemGroup>
-                {/* <Sidebar.Item
-                  href="/"
-                  icon={HiChartPie}
-                  className={
-                    "/" === currentPage ? "bg-gray-100 dark:bg-gray-700" : ""
-                  }
-                >
-                  Dashboard
-                </Sidebar.Item> */}
                 <Sidebar.Collapse
                   icon={HiLink}
                   label="Connectors"
                   open={isConnectorsOpen}
                 >
-                  {/* <Sidebar.Item
-                    href="/connectors/website"
-                    className={
-                      "/connectors/website" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Website
-                  </Sidebar.Item> */}
                   <Sidebar.Item
                     href="/connectors/website"
                     className={
@@ -136,138 +118,12 @@ const ExampleSidebar: FC = function () {
                     Website
                   </Sidebar.Item> */}
                 </Sidebar.Collapse>
-                {/* <Sidebar.Item
-                  href="/kanban"
-                  icon={HiViewGrid}
-                  className={
-                    "/kanban" === currentPage
-                      ? "bg-gray-100 dark:bg-gray-700"
-                      : ""
-                  }
-                >
-                  Kanban
-                </Sidebar.Item>
                 <Sidebar.Item
-                  href="/mailing/inbox"
-                  icon={HiInboxIn}
-                  label="3"
-                  className={
-                    "/mailing/inbox" === currentPage
-                      ? "bg-gray-100 dark:bg-gray-700"
-                      : ""
-                  }
+                  href="/vectorstore"
+                  icon={HiDatabase}
                 >
-                  Inbox
+                  Vectorstore
                 </Sidebar.Item>
-                <Sidebar.Collapse
-                  icon={HiShoppingBag}
-                  label="E-commerce"
-                  open={isEcommerceOpen}
-                >
-                  <Sidebar.Item
-                    href="/e-commerce/products"
-                    className={
-                      "/e-commerce/products" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Products
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/e-commerce/billing"
-                    className={
-                      "/e-commerce/billing" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Billing
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/e-commerce/invoice"
-                    className={
-                      "/e-commerce/invoice" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Invoice
-                  </Sidebar.Item>
-                </Sidebar.Collapse>
-                <Sidebar.Collapse
-                  icon={HiUsers}
-                  label="Users"
-                  open={isUsersOpen}
-                >
-                  <Sidebar.Item
-                    href="/users/list"
-                    className={
-                      "/users/list" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Users list
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/users/profile"
-                    className={
-                      "/users/profile" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Profile
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/users/feed"
-                    className={
-                      "/users/feed" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Feed
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/users/settings"
-                    className={
-                      "/users/settings" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Settings
-                  </Sidebar.Item>
-                </Sidebar.Collapse>
-                <Sidebar.Collapse icon={HiChartSquareBar} label="Pages">
-                  <Sidebar.Item href="/pages/pricing">Pricing</Sidebar.Item>
-                  <Sidebar.Item href="/pages/maintenance">
-                    Maintenace
-                  </Sidebar.Item>
-                  <Sidebar.Item href="/pages/404">404 not found</Sidebar.Item>
-                  <Sidebar.Item href="/pages/500">
-                    500 server error
-                  </Sidebar.Item>
-                </Sidebar.Collapse>
-                <Sidebar.Collapse icon={HiLockClosed} label="Authentication">
-                  <Sidebar.Item href="/authentication/sign-in">
-                    Sign in
-                  </Sidebar.Item>
-                  <Sidebar.Item href="/authentication/sign-up">
-                    Sign up
-                  </Sidebar.Item>
-                  <Sidebar.Item href="/authentication/forgot-password">
-                    Forgot password
-                  </Sidebar.Item>
-                  <Sidebar.Item href="/authentication/reset-password">
-                    Reset password
-                  </Sidebar.Item>
-                  <Sidebar.Item href="/authentication/profile-lock">
-                    Profile lock
-                  </Sidebar.Item> */}
-                {/* </Sidebar.Collapse> */}
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
                 <Sidebar.Item

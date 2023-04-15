@@ -5,7 +5,8 @@ from models.models import (
     Query,
     QueryResult,
     LLMResult,
-    Intent
+    Intent,
+    Vectorstore
 )
 from pydantic import BaseModel
 from typing import List, Optional
@@ -33,7 +34,13 @@ class AuthorizeWithApiKeyRequest(BaseModel):
     connector_id: int
     subdomain: Optional[str] = None
     email: Optional[str] = None
-    
+
+class SelectVectorstoreRequest(BaseModel):
+    vectorstore: Vectorstore
+    credentials: Optional[str]
+
+class SelectVectorstoreResponse(BaseModel):
+    success: bool
 
 class AuthorizeResponse(BaseModel):
     authorized: bool

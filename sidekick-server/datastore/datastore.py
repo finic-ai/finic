@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 import asyncio
 
 from models.models import (
-    Document,
+    Source,
     DocumentChunk,
     DocumentMetadataFilter,
     Query,
@@ -16,7 +16,8 @@ class DataStore(ABC):
     async def upsert(
         self, 
         chunks: List[DocumentChunk],
-        tenant_id: str
+        tenant_id: str,
+        source_type: Source,
     ) -> List[str]:
         """
         Takes in a list of documents and inserts them into the database.
@@ -29,6 +30,7 @@ class DataStore(ABC):
                 self.delete(
                     filter=DocumentMetadataFilter(
                         tenant_id=tenant_id,
+                        source_type=source_type,
                     ),
                     delete_all=False,
                 )

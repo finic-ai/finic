@@ -42,6 +42,7 @@ import { UserStateProvider } from "./context/UserStateContext";
 import ZendeskConnectorPage from "./pages/connectors/zendesk";
 import ConfluenceConnectorPage from "./pages/connectors/confluence";
 import NotionConnectorPage from "./pages/connectors/notion";
+import VectorstorePage from "./pages/vectorstore";
 
 const container = document.getElementById("root");
 
@@ -113,6 +114,7 @@ root.render(
               <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
               <Route path="/connectors/notion" element={<NotionConnectorPage />} />
               <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
+              <Route path="/vectorstore" element={<VectorstorePage />} />
             </Routes>
           </BrowserRouter>
           </UserStateProvider>

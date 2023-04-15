@@ -21,7 +21,9 @@ from models.api import (
     UpsertRequest,
     AuthorizeResponse,
     AuthorizeWithApiKeyRequest,
-    UpsertFromConnectorRequest
+    UpsertFromConnectorRequest,
+    SelectVectorstoreRequest,
+    SelectVectorstoreResponse,
 )
 
 from llm.LLM import LLM
@@ -44,7 +46,7 @@ from connectors.connector_utils import get_connector_for_id
 import uuid
 from logger import Logger
 
-from datastore.factory import get_datastore
+from datastore.factory import get_datastore, update_vectorstore
 
 
 app = FastAPI()
@@ -77,6 +79,23 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_sc
     if credentials.scheme != "Bearer" or app_config is None:
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return app_config
+
+
+@app.post(
+    "/select-vectorstore",
+    response_model=SelectVectorstoreResponse,
+)
+async def select_vectorstore(
+    request: SelectVectorstoreRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        
+        update_vectorstore(config, request.vectorstore, request.credentials)
+        
+        return SelectVectorstoreResponse(success=True)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"str({e})")
 
 @app.post(
     "/authorize-with-api-key",
@@ -127,6 +146,7 @@ async def upsert_from_connector(
     config: AppConfig = Depends(validate_token),
 ):
     logger = Logger(config)
+    datastore = get_datastore(config=config)
     if request.path is None:
         source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, str(request.connector_id)))
     else:
@@ -142,7 +162,7 @@ async def upsert_from_connector(
         for doc in documents:
             chunks.extend(chunker.chunk(source_id, doc, 1000))
 
-        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id, source_type=connector.source_type)
         logger.log_upsert_data(
             connector=request.connector_id,
             chunks=len(ids),
@@ -170,6 +190,7 @@ async def upsert_google_docs(
     folder_name = request.folder_name
     source_id = str(uuid.uuid5(uuid.NAMESPACE_URL, request.folder_name))
     logger = Logger(config)
+    datastore = get_datastore(config=config)
 
     try:
         google_connector = GoogleDocsConnector(config, folder_name)
@@ -180,7 +201,7 @@ async def upsert_google_docs(
         for doc in documents:
             chunks.extend(chunker.chunk(source_id, doc, 1000))
 
-        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id, source_type=google_connector.source_type)
         logger.log_upsert_data(
             connector=google_connector.connector_id,
             chunks=len(ids),
@@ -207,6 +228,7 @@ async def upsert_web_data(
     config: AppConfig = Depends(validate_token),
 ):
     logger = Logger(config)
+    datastore = get_datastore(config=config)
     web_connector = WebsiteConnector(
         config=config, 
         urls=request.urls, 
@@ -221,7 +243,7 @@ async def upsert_web_data(
         for doc in documents:
             chunks.extend(html_chunker.chunk(source_id, doc, 500))
 
-        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id, source_type=web_connector.source_type)
         logger.log_upsert_data(
             connector= web_connector.connector_id,
             chunks=len(ids),
@@ -246,6 +268,7 @@ async def upsert_documents(
     config: AppConfig = Depends(validate_token),
 ):
     documents = request.documents
+    datastore = get_datastore(config=config)
     try:
         chunker = DefaultChunker()
         chunks = []
@@ -258,7 +281,7 @@ async def upsert_documents(
             )
             chunks.extend(chunker.chunk(source_id, doc, 1000))
 
-        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id)
+        ids = await datastore.upsert(chunks, tenant_id=config.tenant_id, source_type=Source.web)
         return UpsertResponse(ids=ids)
     except Exception as e:
         print("Error:", e)
@@ -274,6 +297,7 @@ async def ask_llm(
     config: AppConfig = Depends(validate_token),
 ):
     logger = Logger(config)
+    datastore = get_datastore(config=config)
     try:
         query_results = await datastore.query(
             request.queries,
@@ -305,6 +329,7 @@ async def query_main(
     config: AppConfig = Depends(validate_token),
 ):
     logger = Logger(config)
+    datastore = get_datastore(config=config)
     try:
         results = await datastore.query(
             request.queries,
@@ -336,6 +361,7 @@ async def query(
     request: QueryRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    datastore = get_datastore(config=config)
     try:
         results = await datastore.query(
             request.queries,
@@ -347,10 +373,11 @@ async def query(
         raise HTTPException(status_code=500, detail="Internal Service Error")
 
 
-@app.on_event("startup")
-async def startup():
-    global datastore
-    datastore = await get_datastore()
+# @app.on_event("startup")
+# async def startup():
+#     global datastore
+#     datastore = get_datastore()
+    
 
 
 def start():

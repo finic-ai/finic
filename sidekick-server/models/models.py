@@ -19,6 +19,11 @@ class Source(str, Enum):
     zendesk="zendesk"
     confluence="confluence"
 
+class Vectorstore(int, Enum):
+    default = 1
+    weaviate = 2
+    pinecone = 3
+
 class DocumentMetadata(BaseModel):
     document_id: str
     tenant_id: str
@@ -29,7 +34,7 @@ class DocumentChunkMetadata(DocumentMetadata):
     chunk_id: str
 
 class DocumentChunk(BaseModel):
-    title: Optional[str] = ""
+    title: Optional[str] = "Unknown"
     text: str
     url: str
     source_type: Source
@@ -107,3 +112,4 @@ class EvaluationResult(BaseModel):
 class AppConfig(BaseModel):
     app_id: str
     tenant_id: str
+    vectorstore_id: Vectorstore = Vectorstore.default
