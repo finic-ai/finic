@@ -33,10 +33,10 @@ import { useUserStateContext } from "../context/UserStateContext";
                     <span className="dark:text-white">Home</span>
                   </div>
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>Vectorstores</Breadcrumb.Item>
+                <Breadcrumb.Item>Vector Stores</Breadcrumb.Item>
               </Breadcrumb>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-                Vectorstores
+                Vector Stores
               </h1>
             </div>
             <div className="block items-center sm:flex">
@@ -91,7 +91,7 @@ import { useUserStateContext } from "../context/UserStateContext";
         </Button>
         <Modal onClose={() => setOpen(false)} show={isOpen}>
           <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-            <strong>{`Set vectorstore to ${vectorstoreName}`}</strong>
+            <strong>{`Set vector store to ${vectorstoreName}`}</strong>
           </Modal.Header>
           <Modal.Body>
             <form>

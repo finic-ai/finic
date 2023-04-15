@@ -8,9 +8,9 @@ import {
   HiSearch,
   HiLink,
   HiBeaker,
-  HiDatabase
+  HiDatabase,
 } from "react-icons/hi";
-import {FaGithub} from "react-icons/fa"
+import {FaGithub, FaReadme} from "react-icons/fa"
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
@@ -132,7 +132,7 @@ const ExampleSidebar: FC = function () {
                   href="/vectorstore"
                   icon={HiDatabase}
                 >
-                  Vectorstore
+                  Vector Store
                 </Sidebar.Item>
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
@@ -146,6 +146,13 @@ const ExampleSidebar: FC = function () {
                   href="https://github.com/ai-sidekick/sidekick"
                   target="_blank"
                   icon={FaGithub}
+                >
+                  GitHub
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="https://sidekick.mintlify.app/introduction"
+                  target="_blank"
+                  icon={FaReadme}
                 >
                   Docs
                 </Sidebar.Item>

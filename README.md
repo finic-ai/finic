@@ -9,14 +9,18 @@
 <a href="https://sidekick-public.slack.com/" target="_blank">
     <img src="https://img.shields.io/badge/slack-join-blue.svg?logo=slack" alt="Slack">
 </a>
+</a>
+  <a href="https://sidekick.mintlify.app/introduction" target="_blank">
+    <img src="https://img.shields.io/badge/-docs-blue" alt="Docs">
+</a>
 <a href="https://github.com/ai-sidekick/sidekick/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/static/v1?label=license&message=GPL-3.0&color=blue" alt="License">
 </a>
 <a href="https://github.com/ai-sidekick/sidekick/issues?q=is%3Aissue+is%3Aclosed" target="_blank">
-    <img src="https://img.shields.io/github/issues-closed/ai-sidekick/sidekick?color=blue" alt="License">
+    <img src="https://img.shields.io/github/issues-closed/ai-sidekick/sidekick?color=blue" alt="Issues">
 </a>
   <a href="https://twitter.com/getsidekickai" target="_blank">
-    <img src="https://img.shields.io/twitter/follow/getsidekickai?style=social" alt="License">
+    <img src="https://img.shields.io/twitter/follow/getsidekickai?style=social" alt="Twitter">
 </a>
 </p>
 
