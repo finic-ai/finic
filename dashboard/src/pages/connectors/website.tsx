@@ -94,11 +94,11 @@ import {
                     <Textarea 
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='URLs of the pages you want to scrape'
+                      placeholder='https://www.example.com, https://www.example2.com, ...'
                       className="mt-1 w-1/2"
                       onChange={(e) => setUrlsInput(e.target.value)}
                       value={urlsInput}
-                      helperText="Comma separated list of URLs to scrape"
+                      helperText="URLs of the pages you want to scrape. Must be a comma separated list."
                     />
                   </div>
                   <div className="lg:col-span-2">
@@ -106,11 +106,11 @@ import {
                     <TextInput
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='CSS selector of the html elements you want to include in the scrape'
                       className="mt-1 w-1/2"
+                      placeholder=".example-class"
                       onChange={(e) => setCssSelector(e.target.value.trim())}
                       value={cssSelector}
-                      helperText="CSS selector of the html elements you want to include in the scrape"
+                      helperText={<p>Only elements matching the <a className="text-blue-400" href="https://www.w3schools.com/cssref/css_selectors.php">CSS selector</a> will be ingested. Applies to all URLs provided.</p>}
                     />
                   </div>
                   <div className="lg:col-span-2">
