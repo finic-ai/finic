@@ -18,6 +18,7 @@ class Source(str, Enum):
     notion="notion"
     zendesk="zendesk"
     confluence="confluence"
+    dropbox="dropbox"
 
 class Vectorstore(int, Enum):
     default = 1

@@ -2433,6 +2433,20 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "python-docx"
+version = "0.8.11"
+description = "Create and update Microsoft Word .docx files."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-docx-0.8.11.tar.gz", hash = "sha256:1105d233a0956dd8dd1e710d20b159e2d72ac3c301041b95f4d4ceb3e0ebebc4"},
+]
+
+[package.dependencies]
+lxml = ">=2.3.2"
+
+[[package]]
 name = "python-dotenv"
 version = "0.21.1"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -3722,4 +3736,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d6f626796afe6dfebcfc1153b01f0501995bcce49c3ba7dd43e0c4426eba8501"
+content-hash = "cc88b1724bca2cbc43276c6c66624d2c174e79f976b50b8b4b85a96345064dca"

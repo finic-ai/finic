@@ -16,6 +16,7 @@ from models.api import (
     AuthorizeGoogleDriveRequest,
     UpsertGoogleDocsRequest,
     AuthorizeGoogleDriveResponse,
+    OauthResponse,
     LLMResponse,
     AskLLMRequest,
     UpsertRequest,
@@ -24,11 +25,11 @@ from models.api import (
     UpsertFromConnectorRequest,
     SelectVectorstoreRequest,
     SelectVectorstoreResponse,
+    AuthorizeOauthRequest
 )
 
 from llm.LLM import LLM
 from connectors.google_docs_connector import GoogleDocsConnector
-from connectors.notion_connector import NotionConnector
 from connectors.web_connector import WebConnector
 from connectors.website_connector import WebsiteConnector
 from chunkers.html_chunker import HTMLChunker
@@ -121,7 +122,30 @@ async def authorize_with_api_key(
         return AuthorizeResponse(authorized=auth_result.authorized)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"str({e})")
-    
+
+
+@app.post(
+    "/authorize-oauth",
+    response_model=OauthResponse,
+)
+async def authorize_oauth(
+    request: AuthorizeOauthRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    auth_code = request.auth_code
+    redirect_uri = request.redirect_uri
+    connector_id = request.connector_id
+
+    connector = get_connector_for_id(connector_id, config)
+
+    print("connector", connector)
+
+    if connector is None:
+        raise HTTPException(status_code=404, detail="Connector not found")
+
+    auth_url = await connector.authorize(redirect_uri, auth_code)
+    return OauthResponse(auth_url=auth_url, authorized=auth_url is None)
+
 
 @app.post(
     "/authorize-google-drive",
@@ -136,6 +160,7 @@ async def authorize_google_drive(
     google_connector = GoogleDocsConnector(config, "")
     auth_url = await google_connector.authorize(redirect_uri, auth_code)
     return AuthorizeGoogleDriveResponse(auth_url=auth_url, authorized=auth_url is None)
+
 
 @app.post(
     "/upsert-from-connector",
