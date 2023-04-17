@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/slack-join-blue.svg?logo=slack" alt="Slack">
 </a>
 </a>
-  <a href="https://sidekick.mintlify.app/introduction" target="_blank">
+  <a href="https://docs.getsidekick.ai" target="_blank">
     <img src="https://img.shields.io/badge/-docs-blue" alt="Docs">
 </a>
 <a href="https://github.com/ai-sidekick/sidekick/blob/main/LICENSE" target="_blank">
@@ -25,6 +25,8 @@
 </p>
 
 [Sidekick](https://getsidekick.ai/) is a platform for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector database. You can also use the integrations and chunkers built by the core team and community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
+
+### [Read the docs](https://docs.getsidekick.ai)
 
 ## Demo
 [Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0).
