@@ -150,7 +150,7 @@ const ExampleSidebar: FC = function () {
                   GitHub
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="https://sidekick.mintlify.app/introduction"
+                  href="https://docs.getsidekick.ai/introduction"
                   target="_blank"
                   icon={FaReadme}
                 >
