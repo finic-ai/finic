@@ -184,7 +184,10 @@ import {
         </Button>
         <Modal onClose={() => setOpen(false)} show={isOpen}>
           <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-            <strong>Authorize Confluence</strong>
+            <div className="flex flex-col">
+              <strong>Authorize Confluence</strong>
+              <a className="text-sm font-normal text-blue-500 dark:text-blue-400" href="https://docs.getsidekick.ai/data-connectors#auth-4" target="_blank">Documentation</a>
+            </div>
           </Modal.Header>
           <Modal.Body>
             <form>
