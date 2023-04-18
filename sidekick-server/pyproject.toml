@@ -37,6 +37,8 @@ atlassian-python-api = "^3.36.0"
 posthog = "^2.5.0"
 python-docx = "^0.8.11"
 stripe = "^5.4.0"
+pygithub = "^1.58.1"
+markdown = "^3.4.3"
 
 [tool.poetry.scripts]
 start = "server.main:start"
