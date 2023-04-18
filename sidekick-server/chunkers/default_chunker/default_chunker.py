@@ -78,23 +78,6 @@ class DefaultChunker(DataChunker):
 
             tokens = tokens[len(tokenizer.encode(chunk_text, disallowed_special=())):]
 
-        if tokens:
-            remaining_text = tokenizer.decode(tokens).replace("\n", " ").strip()
-            if remaining_text and (not remaining_text.isspace()):
-                chunk = DocumentChunk(
-                    title=document.title,
-                    text=remaining_text,
-                    url=document.url,
-                    source_type=document.source_type,
-                    metadata=DocumentChunkMetadata(
-                        document_id=document.metadata.document_id,
-                        source_id=document.metadata.source_id,
-                        tenant_id=document.metadata.tenant_id,
-                        chunk_id=str(uuid.uuid4())
-                    )
-                )
-                chunks.append(chunk)
-
         return chunks
 
 
