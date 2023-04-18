@@ -9,6 +9,7 @@ import {
   HiLink,
   HiBeaker,
   HiDatabase,
+  HiQuestionMarkCircle
 } from "react-icons/hi";
 import {FaGithub, FaReadme} from "react-icons/fa"
 
@@ -162,6 +163,13 @@ const ExampleSidebar: FC = function () {
                   target="_blank"
                 >
                   API Testing
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="https://join.slack.com/t/sidekick-public/shared_invite/zt-1tfq2k2dw-Ri7udiTSLEe5d2V0mvSxxw"
+                  icon={HiQuestionMarkCircle}
+                  target="_blank"
+                >
+                  Support
                 </Sidebar.Item>
               </Sidebar.ItemGroup>
             </Sidebar.Items>
