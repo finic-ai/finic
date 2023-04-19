@@ -5,6 +5,7 @@ from .confluence_connector import ConfluenceConnector
 from .notion_connector import NotionConnector
 from .dropbox_connector import DropboxConnector
 from .stripe_connector import StripeConnector
+from .github_connector import GithubConnector
 from models.models import AppConfig, DataConnector
 from typing import Optional
 
@@ -19,5 +20,6 @@ def get_connector_for_id(connector_id: int, config: AppConfig, path: Optional[st
         ConfluenceConnector(config=config, space=path),
         DropboxConnector(config=config, folder_name=path),
         StripeConnector(config=config),
+        GithubConnector(config=config, repo_name=path)
     ]
     return connectors[index]
