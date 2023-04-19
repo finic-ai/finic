@@ -23,7 +23,6 @@ class GithubConnector(DataConnector):
         creds = {
             "api_key": api_key,
         }
-        # headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json", "Notion-Version": "2022-06-28"}
 
         try:
             github = Github(login_or_token=api_key)
@@ -38,6 +37,7 @@ class GithubConnector(DataConnector):
         return AuthorizationResult(authorized=True)
 
     def get_markdown_text_in_repo(self, repo_name: str):
+        markdown_extensions = (".md", ".rst", ".mdx", ".mkd", ".mdwn", ".mdown", ".mdtxt", ".mdtext", ".markdown")
         texts = []
         try:
             repo = self.user.get_repo(repo_name)
@@ -45,7 +45,7 @@ class GithubConnector(DataConnector):
 
             while len(contents) > 0:
                 file_content = contents.pop(0)
-                if file_content.path.endswith(".md") or file_content.path.endswith(".MD"):
+                if file_content.path.lower().endswith(markdown_extensions):
                     file_name = file_content.name
                     url = file_content.html_url
                     markdown_text = file_content.decoded_content.decode('utf-8')
