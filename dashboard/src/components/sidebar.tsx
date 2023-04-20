@@ -9,9 +9,9 @@ import {
   HiLink,
   HiBeaker,
   HiDatabase,
-  HiQuestionMarkCircle
+  HiQuestionMarkCircle,
 } from "react-icons/hi";
-import {FaGithub, FaReadme} from "react-icons/fa"
+import {FaGithub, FaReadme, FaRobot} from "react-icons/fa"
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
@@ -137,6 +137,12 @@ const ExampleSidebar: FC = function () {
                 </Sidebar.Item>
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
+                <Sidebar.Item
+                  href="/query"
+                  icon={FaRobot}
+                >
+                  Query
+                </Sidebar.Item>
                 <Sidebar.Item
                   href="/api-keys"
                   icon={HiKey}

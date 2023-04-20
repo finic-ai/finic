@@ -35,7 +35,9 @@
     "flowbite-react": "^0.3.7",
     "react-apexcharts": "^1.4.0",
     "react-icons": "^4.7.1",
+    "react-markdown": "^8.0.7",
     "react-sortablejs": "^6.1.4",
+    "remark-gfm": "^3.0.1",
     "sortablejs": "^1.15.0",
     "svgmap": "^2.10.1",
     "uuid": "^9.0.0"

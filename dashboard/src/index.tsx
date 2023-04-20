@@ -44,6 +44,7 @@ import ConfluenceConnectorPage from "./pages/connectors/confluence";
 import NotionConnectorPage from "./pages/connectors/notion";
 import VectorstorePage from "./pages/vectorstore";
 import StripeConnectorPage from "./pages/connectors/stripe";
+import QueryPage from "./pages/query";
 
 const container = document.getElementById("root");
 
@@ -117,6 +118,7 @@ root.render(
               <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
               <Route path="/connectors/stripe" element={<StripeConnectorPage />} />
               <Route path="/vectorstore" element={<VectorstorePage />} />
+              <Route path="/query" element={<QueryPage />} />
             </Routes>
           </BrowserRouter>
           </UserStateProvider>
