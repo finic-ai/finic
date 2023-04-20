@@ -150,11 +150,13 @@ import NavbarSidebarLayout from "../layouts/navbar-sidebar";
             type="text"
             value={input}
             onChange={handleChange}
+            disabled={loading}
             className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             placeholder="Type your message"
           />
           <button
             type="submit"
+            disabled={loading}
             className="ml-4 py-2 px-6 bg-blue-500 text-white rounded-lg focus:outline-none focus:bg-blue-600"
           >
             {
