@@ -6,7 +6,7 @@
   <p align="center">Connect your SaaS tools to a vector database and keep your data synced</p>
 </p>
 <p align="center">
-<a href="https://sidekick-public.slack.com/" target="_blank">
+<a href="https://join.slack.com/t/sidekick-public/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg" target="_blank">
     <img src="https://img.shields.io/badge/slack-join-blue.svg?logo=slack" alt="Slack">
 </a>
 </a>
