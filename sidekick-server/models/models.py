@@ -20,6 +20,7 @@ class Source(str, Enum):
     confluence="confluence"
     dropbox="dropbox"
     stripe="stripe"
+    github="github"
 
 class Vectorstore(int, Enum):
     default = 1
