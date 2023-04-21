@@ -19,6 +19,9 @@ import {
   import { useUserStateContext } from "../../context/UserStateContext";
   
   const ConfluenceConnectorPage: FC = function () {
+    const {bearer} = useUserStateContext()
+
+
     const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
     const [authorized, setAuthorized] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
@@ -27,10 +30,11 @@ import {
     const [apiKey, setApiKey] = useState('');
     const [subdomain, setSubdomain] = useState('');
     const [email, setEmail] = useState('');
-    const {bearer} = useUserStateContext()
+    const [error, setError] = useState<string | null>(null)
 
     async function authorize() {
       setAuthLoading(true)
+      setError(null)
       const url = import.meta.env.VITE_SERVER_URL + '/authorize-with-api-key';
       var payload = {
         api_key: apiKey,
@@ -51,19 +55,21 @@ import {
         const jsonData = await response.json();
         const isAuthorized = jsonData.authorized
         console.log(jsonData)
-        if (!isAuthorized) {
-          console.log('failed to authenticate')
-        }
         setAuthLoading(false)
+        if (!isAuthorized) {
+          setError("Failed to authorize. Please check your credentials and try again.")
+          return
+        }
         setAuthorized(isAuthorized)
       } catch (error) {
-        setAuthLoading(false)
+        setError(`${error}`)
         setAuthLoading(false)
       }
     }
 
     async function connect() {
       setConnectLoading(true)
+      setError(null)
       try {
         // Define the URL to make the request to
         const url = import.meta.env.VITE_SERVER_URL + '/upsert-from-connector';
@@ -77,23 +83,20 @@ import {
             path: space
           }),
         });
-    
-        // Check if the response status is OK (200)
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-    
         // Parse the response body as JSON and await the result
         const jsonData = await response.json();
 
-        const numChunks = jsonData.ids.length
+        // Check if the response status is OK (200)
+        if (!response.ok) {
+          throw new Error(`${jsonData.detail}`);
+        }
+
         setUpsertedChunks(jsonData.ids)
-        console.log(`Successfully upserted ${numChunks} chunks`)
         setConnectLoading(false)
         
       } catch (error) {
         // Handle any errors that occurred during the fetch
-        console.error('Error connecting to google drive:', error);
+        setError(`${error}. Check to make sure you have the correct space ID.`);
         setConnectLoading(false)
       }
     }
@@ -144,8 +147,8 @@ import {
                         <FaPlus className="mr-3 text-sm" />
                         Connect
                         </>}
-                       
                       </Button>
+                      {error ? <p className="text-red-500">{error}</p> : null}
                       {upsertedChunks.length > 0 ? <p>{`Successfully upserted ${upsertedChunks.length} chunks`}</p> : null}
                   </div>
                 </div>
