@@ -15,16 +15,35 @@ import {
   import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
   import { useLocation } from 'react-router-dom';
   import { useUserStateContext } from "../../context/UserStateContext";
+  import { SupabaseService } from "../../services/supabase-service";
+  import { useAuth } from "@clerk/clerk-react";
   
   const GoogleDriveConnectorPage: FC = function () {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const authCode = queryParams.get('code');
+
+    const { getToken, userId } = useAuth();
+    const {bearer} = useUserStateContext()
+
+
     const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
     const [folderName, setFolderName] = useState('');
-    const [authLoading, setAuthLoading] = useState(false);
+    const [authLoading, setAuthLoading] = useState(true);
     const [connectLoading, setConnectLoading] = useState(false)
-    const {bearer} = useUserStateContext()
+    const [credential, setCredential] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>(null)
+    
+
+    async function updateAuthorizationStatus() {
+      if (authCode) {
+        authorize()
+      } else {
+        const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1, getToken)
+        setCredential(credential)
+        setAuthLoading(false)
+      }
+    }
 
     async function authorize() {
       setAuthLoading(true)
@@ -52,12 +71,16 @@ import {
         console.log('successfuly authenticated')
         // remove the code from the url
         window.history.replaceState({}, document.title, "/connectors/google-drive");
+        const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1, getToken)
+        setCredential(credential)
         setAuthLoading(false)
       }
     }
 
     async function connectGoogleDrive() {
       setConnectLoading(true)
+      setError("")
+      setUpsertedChunks([])
       try {
         // Define the URL to make the request to
         const url = import.meta.env.VITE_SERVER_URL + '/upsert-google-docs';
@@ -71,14 +94,14 @@ import {
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
           body: JSON.stringify(payload),
         });
-    
-        // Check if the response status is OK (200)
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+  
     
         // Parse the response body as JSON and await the result
         const jsonData = await response.json();
+
+        if (!response.ok) {
+          setError(`Error upserting chunks: ${jsonData.detail}`)
+        }
 
         const numChunks = jsonData.ids.length
         setUpsertedChunks(jsonData.ids)
@@ -87,13 +110,13 @@ import {
         
       } catch (error) {
         // Handle any errors that occurred during the fetch
-        console.error('Error connecting to google drive:', error);
+        setError(`Error connecting to google drive: ${error}`);
         setConnectLoading(false)
       }
     }
     useEffect(() => {
-      if (authCode && bearer) {
-        authorize()
+      if (bearer && userId) {
+        updateAuthorizationStatus()
       }
     }, [bearer]);
 
@@ -124,31 +147,38 @@ import {
               <form>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <div>
-                    <Button color="primary" className="mb-6" disabled={authCode ? true : false} onClick={() => authorize() } >
-                      {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
-                      <FaGoogle className="mr-3 text-sm" />
-                      Authorize Google
-                      </>}
-                    </Button>
-                    <Label htmlFor="apiKeys.label">Folder name</Label>
+                    <div className="flex items-center">
+                      <Button color="primary" className="mb-6" onClick={() => authorize() } >
+                        {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
+                          {credential ? <><FaGoogle className="mr-3 text-sm" /> Reauthenticate Google</> : <>
+                            <FaGoogle className="mr-3 text-sm" />
+                            Authenticate Google
+                            </>
+                          }
+                        </>}
+                      </Button>
+                      {(credential && !authLoading) && <div className="text-green-500 ml-3 mb-6">Authorized</div>}
+                    </div>
+                    <Label htmlFor="apiKeys.label">Folder link</Label>
                     <TextInput
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='Path to the folder you want to sync with Sidekick'
+                      placeholder='Link to the folder you want to sync with Sidekick'
                       className="mt-1"
                       onChange={(e) => setFolderName(e.target.value.trim())}
                       value={folderName}
-                      helperText="Only Google Docs files in this folder will by synced"
+                      helperText="Only files in this folder will by synced. You can find the link to the folder in your Google Drive account."
                     />
                   </div>
                   <div className="lg:col-span-2">
-                      <Button color="primary" className="mb-6" onClick={() => connectGoogleDrive() } >
+                      <Button color="primary" disabled={!folderName || !credential} className="mb-6" onClick={() => connectGoogleDrive() } >
                         {connectLoading ? <Spinner className="mr-3 text-sm" /> : <>
                         <FaPlus className="mr-3 text-sm" />
                         Connect
                         </>}
                        
                       </Button>
+                      {error ? <p className="text-red-500">{error}</p> : null}
                       {upsertedChunks.length > 0 ? <p>{`Successfully upserted ${upsertedChunks.length} chunks`}</p> : null}
                   </div>
                 </div>

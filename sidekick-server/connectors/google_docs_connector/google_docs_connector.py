@@ -12,6 +12,9 @@ import importlib
 from typing import Any
 import io 
 from PyPDF2 import PdfReader
+import re
+from collections import deque
+
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 CLIENT_SECRETS = os.environ.get("GDRIVE_CLIENT_SECRETS")
@@ -72,57 +75,90 @@ class GoogleDocsConnector(DataConnector):
             creds_string = json.dumps(creds.to_json())
             StateStore().save_credentials(self.config, creds_string, self)
         service = build('drive', 'v3', credentials=creds)
-        
 
-        print("loading documents")
-        folder_query = f"name='{self.folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
-        folder_result = service.files().list(q=folder_query, fields="nextPageToken, files(id)").execute()
-        folder_items = folder_result.get('files', [])
-        print("folder items:", folder_items)
-
-        if len(folder_items) == 0:
-            print(f"No folder named '{self.folder_name}' was found.")
-            raise Exception(f"No folder named '{self.folder_name}' was found.")
-        elif len(folder_items) > 1:
-            print(f"Multiple folders named '{self.folder_name}' were found. Using the first one.")
-
-        folder_id = folder_items[0]['id']
+        folder_id = get_id_from_url(self.folder_name)
 
         # List the files in the specified folder
         results = service.files().list(q=f"'{folder_id}' in parents and trashed = false",
                                     fields="nextPageToken, files(id, name, webViewLink)").execute()
         items = results.get('files', [])
 
-        documents: List[Document] = []
-        # Loop through each file and create documents
-        for item in items:
-            # Check if the file is a Google Doc
-            # Retrieve the full metadata for the file
-            file_metadata = service.files().get(fileId=item['id']).execute()
-            mime_type = file_metadata.get('mimeType', '')
-            if mime_type == 'application/vnd.google-apps.document':
-                # Retrieve the document content
-                doc = service.files().export(fileId=item['id'], mimeType='text/plain').execute()
-                content = doc.decode('utf-8')
-            elif mime_type == 'application/pdf':
-                pdf_file = download_pdf(service, item['id'])
-                content = extract_pdf_text(pdf_file)
-            else:
-                print(f"Unsupported file type: {mime_type}")
-                continue
+        if len(items) == 0:
+            raise Exception("Folder is empty")
+        
+        return get_documents_from_folder(service, folder_id, source_id, self.config.tenant_id)
 
-            documents.append(
-                Document(
-                    title=item['name'],
-                    text=content,
-                    url=item['webViewLink'],
-                    source_type=Source.google_drive,
-                    metadata=DocumentMetadata(
-                        document_id=str(uuid.uuid4()),
-                        source_id=source_id,
-                        tenant_id=self.config.tenant_id
+def list_files_in_folder(service, folder_id):
+    query = f"'{folder_id}' in parents"
+    results = service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
+    items = results.get("files", [])
+    return items
+
+def get_documents_from_folder(service, folder_id, source_id, tenant_id) -> List[Document]:
+    documents: List[Document] = []
+    folders_to_process = deque([folder_id])
+
+    while folders_to_process:
+        current_folder = folders_to_process.popleft()
+        items = list_files_in_folder(service, current_folder)
+
+        for item in items:
+            mime_type = item.get("mimeType", "")
+
+            if mime_type == "application/vnd.google-apps.folder":
+                folders_to_process.append(item["id"])
+            elif mime_type in ["application/vnd.google-apps.document", "application/pdf"]:
+                # Retrieve the full metadata for the file
+                file_metadata = service.files().get(fileId=item["id"]).execute()
+                mime_type = file_metadata.get("mimeType", "")
+
+                if mime_type == "application/vnd.google-apps.document":
+                    doc = service.files().export(fileId=item["id"], mimeType="text/plain").execute()
+                    content = doc.decode("utf-8")
+                elif mime_type == "application/pdf":
+                    pdf_file = download_pdf(service, item["id"])
+                    content = extract_pdf_text(pdf_file)
+
+                documents.append(
+                    Document(
+                        title=item["name"],
+                        text=content,
+                        url=item["webViewLink"],
+                        source_type=Source.google_drive,
+                        metadata=DocumentMetadata(
+                            document_id=str(uuid.uuid4()),
+                            source_id=source_id,
+                            tenant_id=tenant_id
+                        )
                     )
                 )
-            )
-        return documents
+            else:
+                print(f"Unsupported file type: {mime_type}")
+
+    return documents
+
+def get_id_from_folder_name(folder_name: str, service) -> str:
+    print("loading documents")
+    folder_query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+    folder_result = service.files().list(q=folder_query, fields="nextPageToken, files(id)").execute()
+    folder_items = folder_result.get('files', [])
+    print("folder items:", folder_items)
+
+    if len(folder_items) == 0:
+        print(f"No folder named '{folder_name}' was found.")
+        raise Exception(f"No folder named '{folder_name}' was found.")
+    elif len(folder_items) > 1:
+        print(f"Multiple folders named '{folder_name}' were found. Using the first one.")
+
+    folder_id = folder_items[0]['id']
+    return folder_id
+
+def get_id_from_url(url: str):
+    # Extract the folder ID from the link
+    folder_id = re.search(r'folders/([\w-]+)', url)
+    if folder_id:
+        folder_id = folder_id.group(1)
+        return folder_id
+    else:
+        raise Exception("Invalid Google Drive folder link.")
     

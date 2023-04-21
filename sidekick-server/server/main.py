@@ -96,7 +96,7 @@ async def select_vectorstore(
         
         return SelectVectorstoreResponse(success=True)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"str({e})")
+        raise HTTPException(status_code=500, detail=f"{e}")
 
 @app.post(
     "/authorize-with-api-key",
@@ -121,7 +121,7 @@ async def authorize_with_api_key(
         
         return AuthorizeResponse(authorized=auth_result.authorized)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"str({e})")
+        raise HTTPException(status_code=500, detail=f"{e}")
 
 
 @app.post(
@@ -202,7 +202,7 @@ async def upsert_from_connector(
             chunks=0,
             error=True
         )
-        raise HTTPException(status_code=500, detail=f"str({e})")
+        raise HTTPException(status_code=500, detail=f"{e}")
 
 @app.post(
     "/upsert-google-docs",
@@ -241,7 +241,7 @@ async def upsert_google_docs(
             chunks=0,
             error=True
         )
-        raise HTTPException(status_code=500, detail=f"str({e})")
+        raise HTTPException(status_code=500, detail=f"{e}")
 
 
 @app.post(
@@ -282,7 +282,7 @@ async def upsert_web_data(
             chunks=0,
             error=True
         )
-        raise HTTPException(status_code=500, detail=f"str({e})")
+        raise HTTPException(status_code=500, detail=f"{e}")
 
 @app.post(
     "/upsert-documents",
@@ -310,7 +310,7 @@ async def upsert_documents(
         return UpsertResponse(ids=ids)
     except Exception as e:
         print("Error:", e)
-        raise HTTPException(status_code=500, detail=f"str({e})")
+        raise HTTPException(status_code=500, detail=f"{e}")
 
 
 @app.post(
@@ -343,7 +343,7 @@ async def ask_llm(
             response="",
             error=True
         )
-        raise HTTPException(status_code=500, detail=f"str({e})")
+        raise HTTPException(status_code=500, detail=f"{e}")
 
 @app.post(
     "/query",

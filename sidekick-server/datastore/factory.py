@@ -9,15 +9,20 @@ from datastore.providers.weaviate_datastore import WeaviateDataStore
 from datastore.providers.pinecone_datastore import PineconeDataStore
 from typing import Optional
 
+
+default_vectorstore = WeaviateDataStore()
+
+
 def get_datastore(config: AppConfig) -> DataStore:
     vectorstore = config.vectorstore_id
+    
 
     print(vectorstore)
 
     if vectorstore == Vectorstore.default:
-        return WeaviateDataStore()
+        return default_vectorstore
     elif vectorstore == Vectorstore.weaviate:
-        return WeaviateDataStore()
+        return default_vectorstore
     elif vectorstore == Vectorstore.pinecone:
         credentials = StateStore().load_vectorstore_credentials(config, vectorstore)
         if credentials is None:

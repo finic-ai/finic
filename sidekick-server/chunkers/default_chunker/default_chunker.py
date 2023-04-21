@@ -10,10 +10,6 @@ from langchain import text_splitter
 import uuid
 import tiktoken
 
-tokenizer = tiktoken.get_encoding(
-    "cl100k_base"
-)
-
 
 class DefaultChunker(DataChunker):
     supported_sources: List[Source] = [Source.web]
@@ -44,6 +40,10 @@ class DefaultChunker(DataChunker):
         return chunks
 
     def chunk_tokens(self, source_id: str, document: Document, token_limit: int = 1000) -> List[DocumentChunk]:
+        tokenizer = tiktoken.get_encoding(
+            "cl100k_base"
+        )
+
         text = document.text
         chunks = []
         tokens = tokenizer.encode(text, disallowed_special=())
