@@ -72,7 +72,7 @@ class GoogleDocsConnector(DataConnector):
 
         if not creds.valid and creds.refresh_token:
             creds.refresh(Request())
-            creds_string = json.dumps(creds.to_json())
+            creds_string = creds.to_json()
             StateStore().save_credentials(self.config, creds_string, self)
         service = build('drive', 'v3', credentials=creds)
 

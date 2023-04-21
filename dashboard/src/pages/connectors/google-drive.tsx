@@ -101,6 +101,8 @@ import {
 
         if (!response.ok) {
           setError(`Error upserting chunks: ${jsonData.detail}`)
+          setConnectLoading(false)
+          return
         }
 
         const numChunks = jsonData.ids.length
