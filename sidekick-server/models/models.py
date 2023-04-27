@@ -26,6 +26,7 @@ class Vectorstore(int, Enum):
     default = 1
     weaviate = 2
     pinecone = 3
+    milvus = 4
 
 class DocumentMetadata(BaseModel):
     document_id: str
