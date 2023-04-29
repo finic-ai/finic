@@ -1,38 +1,46 @@
 import type { PropsWithChildren } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth, useUser } from "@clerk/clerk-react";
-import supabase from "../lib/supabaseClient";
+import supabaseClient from "../lib/supabaseClient";
 import { v4 as uuidv4 } from 'uuid';
 
 
 interface UserStateContextProps {
   bearer: any;
+  vectorstore: any;
+  setVectorstore: any;
 }
 
 const UserStateContext = createContext<UserStateContextProps>(undefined!);
 
 export function UserStateProvider({ children }: PropsWithChildren) {
-  const { userId } = useAuth();
+  const { getToken, userId } = useAuth();
   const {user} = useUser();
 
   const [bearer, setBearer] = useState(null)
+  const [vectorstore, setVectorstore] = useState(null)
 
   const fetchData = async () => {
     // TODO #1: Replace with your JWT template name
     console.log("fetching data")
     try {
+      const token = await getToken({ template: 'supabase' }) || ""
 
-      // Select the row corresponding to this userId
-      const { data, error } = await supabase.from('users').select().eq('uuid', userId).single()
+      const supabase = await supabaseClient(token)
+
+      // TODO #2: Replace with your database table name
+      const { data, error } = await supabase.from('users').select()
       console.log(error)
+      const email = user?.emailAddresses?.[0]?.emailAddress || ''
 
       if (data && data[0]) {
-        setBearer(data[0]['secret_key'])
+        setBearer(data[0]['bearer'])
+        setVectorstore(data[0]['vectorstore'])
       } else {
-        const email = user?.emailAddresses?.[0]?.emailAddress || ''
+
         const response = await supabase.from('users').insert({
-          id: userId,
-          secret_key: uuidv4(),
+          uuid: userId,
+          bearer: uuidv4(),
           app_id: uuidv4(),
           email: email
         }).select()
@@ -40,6 +48,7 @@ export function UserStateProvider({ children }: PropsWithChildren) {
         if (response.data && response.data[0]) {
           console.log(response.data)
           setBearer(response.data[0]['bearer'])
+          setVectorstore(response.data[0]['vectorstore'])
         } else {
           setBearer(null)
         }
@@ -57,6 +66,8 @@ export function UserStateProvider({ children }: PropsWithChildren) {
     <UserStateContext.Provider
       value={{
         bearer: bearer,
+        vectorstore: vectorstore,
+        setVectorstore: setVectorstore
       }}
     >
       {children}
