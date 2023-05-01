@@ -9,10 +9,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
 
 from models.api import (
-    QueryRequest,
-    QueryResponse,
     OauthResponse,
-    AuthorizeOauthRequest
+    AuthorizeOauthRequest,
+    EnableConnectorRequest,
+    ConnectorStatusRequest,
+    ConnectorStatusResponse,
 )
 
 
@@ -46,6 +47,32 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_sc
     return app_config
 
 @app.post(
+    "/enable-connector",
+    response_model=ConnectorStatusResponse,
+)
+async def enable_connector(
+    request: EnableConnectorRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    connector_id = request.connector_id
+    credential = request.credential
+    status = StateStore().enable_connector(connector_id, credential, config)
+    return ConnectorStatusResponse(status=status)
+
+@app.post(
+    "/get-connector-status",
+    response_model=ConnectorStatusResponse,
+)
+async def get_connector_status(
+    request: ConnectorStatusRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    connector_id = request.connector_id
+    status = StateStore().get_connector_status(connector_id, config)
+    return ConnectorStatusResponse(status=status)
+
+
+@app.post(
     "/authorize-oauth",
     response_model=OauthResponse,
 )
@@ -67,37 +94,6 @@ async def authorize_oauth(
     auth_url = await connector.authorize(redirect_uri, auth_code)
     return OauthResponse(auth_url=auth_url, authorized=auth_url is None)
 
-
-
-@app.post(
-    "/query",
-    response_model=QueryResponse,
-)
-async def query_main(
-    request: QueryRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    logger = Logger(config)
-    datastore = get_datastore(config=config)
-    try:
-        results = await datastore.query(
-            request.queries,
-            tenant_id=config.tenant_id,
-        )
-        logger.log_query(
-            query=str(request.queries),
-            response=str(results),
-            error=False
-        )
-        return QueryResponse(results=results)
-    except Exception as e:
-        print("Error:", e)
-        logger.log_query(
-            query=str(request.queries),
-            response="",
-            error=True
-        )
-        raise HTTPException(status_code=500, detail="Internal Service Error")
 
 
 # @app.on_event("startup")

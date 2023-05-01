@@ -1,12 +1,5 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignIn,
-  SignUp,
-} from "@clerk/clerk-react";
 
 import "./index.css";
 import theme from "./flowbite-theme";

@@ -7,9 +7,6 @@ import {
   TextInput,
 } from "flowbite-react";
 import {
-  UserButton
-} from "@clerk/clerk-react";
-import {
   HiMenuAlt1,
   HiSearch,
   HiX
@@ -78,7 +75,6 @@ const ExampleNavbar: FC = function () {
               <DarkThemeToggle />
             </div>
             <div className="hidden lg:block">
-              <UserButton />
             </div>
           </div>
         </div>
