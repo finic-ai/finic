@@ -7,29 +7,85 @@ import {
   Table,
   TextInput,
 } from "flowbite-react";
-import {
-  HiLockClosed,
-  HiEyeSlash,
-  HiOutlineArrowLeft
-} from "react-icons/hi2";
 import React from "react";
 import { useState } from "react";
+
+import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
+
+import NotionIcon from "./connector_icons/NotionIcon";
+import GoogleDriveIcon from "./connector_icons/GoogleDriveIcon";
+import ConfluenceIcon from "./connector_icons/ConfluenceIcon";
+import ZendeskIcon from "./connector_icons/ZendeskIcon";
+import GithubIcon from "./connector_icons/GithubIcon";
+
+// This should be set via a config file eventually so new connectors can be added declaratively without modifying this file
+const connectors = [
+  {
+    name: "Notion",
+    icon: NotionIcon,
+    label: "Popular",
+    labelBackgroundColor: "bg-gray-200",
+    active: true,
+  },
+  {
+    name: "Google Drive",
+    icon: GoogleDriveIcon,
+    label: null,
+    labelBackgroundColor: "bg-gray-200",
+    active: true
+  },
+  {
+    name: "Confluence",
+    icon: ConfluenceIcon,
+    label: "In Development",
+    labelBackgroundColor: "bg-yellow-100",
+    active: false
+  },
+  {
+    name: "Zendesk",
+    icon: ZendeskIcon,
+    label: "In Development",
+    labelBackgroundColor: "bg-yellow-100",
+    active: false
+  },
+  {
+    name: "Github",
+    icon: GithubIcon,
+    label: "In Development",
+    labelBackgroundColor: "bg-yellow-100",
+    active: false
+  },
+]
 
 interface StartPageProps {
   customerName: string,
   setCurrentStep: Function,
-  customerLogoUrl: string
-}
-
-interface ModalHeaderProps {
-  customerLogoUrl: string
+  customerLogoUrl: string,
+  setConnectorName: Function
 }
   
-const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, setCurrentStep}) => {
-  // Workaround needed because Flowbite doesn't support forwarding props
-  const withModalHeaderProps = (Component: React.ComponentType<ModalHeaderProps>, additionalProps: ModalHeaderProps) => {
-    return (props: any) => <Component {...additionalProps} {...props} />;
-  };
+const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, setCurrentStep, setConnectorName}) => {
+  const pickConnector = (connectorName: string) => {
+    setCurrentStep(2)
+    setConnectorName(connectorName)
+  }
+
+  const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, label: string|null, labelBackgroundColor: string|null, active: boolean) => {
+    return (
+      <button
+        className={active ? "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 hover:bg-gray-100 hover:shadow" : "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 pointer-events-none opacity-50"}
+        onClick={() => pickConnector(connectorName)}
+      >
+        <ConnectorIcon/>
+        <span className="ml-3 flex-1 whitespace-nowrap">
+          {connectorName}
+        </span>
+        {label && (<span className={"ml-3 inline-flex items-center justify-center rounded px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400" + " " + labelBackgroundColor}>
+          {label}
+        </span>)}
+      </button>
+    )
+  }
 
   const renderModalHeader = () => {
     return (
@@ -41,23 +97,24 @@ const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl,
   const renderModalBody = () => {
     return (
       <Modal.Body className="space-y-6 px-8">
-        <div className="space-y-1">
-          <HiLockClosed className="text-3xl mr-1 text-gray-600" />
-          <h5 className="text-xl font-bold tracking-tight text-gray-900 mt-2">
-            Your data is secure
-          </h5>
-          <p className="text-base leading-relaxed text-gray-500">
-          Sidekick is SOC2 compliant and doesn’t sell your data, or share it with any third parties except those you explicitly authorize.
-          </p>
-        </div>
-        <div className="space-y-1">
-          <HiEyeSlash className="text-3xl mr-1 text-gray-600" />
-          <h5 className="text-xl font-bold tracking-tight text-gray-900 mt-2">
-            Your organization’s controls are respected
-          </h5>
-          <p className="text-base leading-relaxed text-gray-500">
-          Sidekick ensures that access control lists (ACLs) set by your organization are preserved. Only those resources you have permission to view will be shared with Support Hero.
-          </p>
+        <div className="space-y-6">
+          <p className="font-normal">Choose the application you want to connect to <span className="font-bold">{customerName}</span>.</p>
+          <ul className="my-4 space-y-3">
+            {connectors.map((connector) => {
+              return (<li>
+                {renderConnectorButton(connector.icon, connector.name, connector.label, connector.labelBackgroundColor, connector.active)}
+              </li>)
+            })}
+          </ul>
+          <div className="text-xs font-normal text-gray-500">
+            {"When you connect an account, your data in application will be shared with Support Hero. The specific resources shared will depend on your permissions in the application, as well as the scopes configured by Support Hero. "}
+            <a
+              href="#"
+              className="underline text-blue-500 hover:text-blue-600"
+            >
+            Click here to learn more.
+            </a>
+          </div>
         </div>
       </Modal.Body>
     )
@@ -66,9 +123,6 @@ const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl,
   const renderModalFooter = () => {
     return (
       <Modal.Footer className="flex flex-col space-y-6">
-        <p className="text-sm text-gray-500">
-          By selecting “Continue” you agree to the <a href="https://www.getsidekick.ai/privacy-policy" className="underline text-blue-500">Sidekick End User Privacy Policy</a>
-        </p>
         <Button size="xl" className="w-3/5 min-w-300" onClick={() => setCurrentStep(1)}>
           Continue
         </Button>
@@ -83,31 +137,6 @@ const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl,
       {renderModalFooter()}
     </div>
   );
-}
-
-const ModalHeader: React.FC<ModalHeaderProps> = ({customerLogoUrl}) => {
-  return (
-    <div className="flex w-full justify-between">
-        <button className="items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900">
-          <HiOutlineArrowLeft className="h-5 w-5 text-gray-400"/>
-        </button>
-        <Avatar.Group>
-            <Avatar
-              img={customerLogoUrl}
-              rounded={true}
-              stacked={true}
-              size="sm"
-            />
-            <Avatar
-              img="https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9fa48bde357e0426aee7_dark_icon.png"
-              rounded={true}
-              stacked={true}
-              size="sm"
-            />
-          </Avatar.Group>
-          <div className="w-px:32"></div>
-      </div>
-  )
 }
 
 export default ConnectorPage;
