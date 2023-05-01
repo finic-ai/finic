@@ -2,6 +2,7 @@
 import {
   Avatar,
   Button,
+  Badge,
   Label,
   Modal,
   Table,
@@ -12,11 +13,11 @@ import { useState } from "react";
 
 import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
 
-import NotionIcon from "./connector_icons/NotionIcon";
-import GoogleDriveIcon from "./connector_icons/GoogleDriveIcon";
-import ConfluenceIcon from "./connector_icons/ConfluenceIcon";
-import ZendeskIcon from "./connector_icons/ZendeskIcon";
-import GithubIcon from "./connector_icons/GithubIcon";
+import NotionIcon from "./icons/NotionIcon";
+import GoogleDriveIcon from "./icons/GoogleDriveIcon";
+import ConfluenceIcon from "./icons/ConfluenceIcon";
+import ZendeskIcon from "./icons/ZendeskIcon";
+import GithubIcon from "./icons/GithubIcon";
 
 // This should be set via a config file eventually so new connectors can be added declaratively without modifying this file
 const connectors = [
@@ -24,53 +25,54 @@ const connectors = [
     name: "Notion",
     icon: NotionIcon,
     label: "Popular",
-    labelBackgroundColor: "bg-gray-200",
+    labelColor: "info",
     active: true,
   },
   {
     name: "Google Drive",
     icon: GoogleDriveIcon,
     label: null,
-    labelBackgroundColor: "bg-gray-200",
+    labelColor: "info",
     active: true
   },
   {
     name: "Confluence",
     icon: ConfluenceIcon,
     label: "In Development",
-    labelBackgroundColor: "bg-yellow-100",
+    labelColor: "warning",
     active: false
   },
   {
     name: "Zendesk",
     icon: ZendeskIcon,
     label: "In Development",
-    labelBackgroundColor: "bg-yellow-100",
+    labelColor: "warning",
     active: false
   },
   {
     name: "Github",
     icon: GithubIcon,
     label: "In Development",
-    labelBackgroundColor: "bg-yellow-100",
+    labelColor: "warning",
     active: false
   },
 ]
 
-interface StartPageProps {
+interface ConnectorPageProps {
   customerName: string,
+  currentStep: number,
   setCurrentStep: Function,
   customerLogoUrl: string,
   setConnectorName: Function
 }
   
-const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, setCurrentStep, setConnectorName}) => {
+const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName}) => {
   const pickConnector = (connectorName: string) => {
     setCurrentStep(2)
     setConnectorName(connectorName)
   }
 
-  const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, label: string|null, labelBackgroundColor: string|null, active: boolean) => {
+  const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, label: string|null, labelColor: string, active: boolean) => {
     return (
       <button
         className={active ? "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 hover:bg-gray-100 hover:shadow" : "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 pointer-events-none opacity-50"}
@@ -80,16 +82,14 @@ const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl,
         <span className="ml-3 flex-1 whitespace-nowrap">
           {connectorName}
         </span>
-        {label && (<span className={"ml-3 inline-flex items-center justify-center rounded px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400" + " " + labelBackgroundColor}>
-          {label}
-        </span>)}
+        {label && <Badge color={labelColor}>{label}</Badge>}
       </button>
     )
   }
 
   const renderModalHeader = () => {
     return (
-      <Modal.Header as={withModalHeaderProps(ModalHeader, { customerLogoUrl })} />
+      <Modal.Header as={withModalHeaderProps(ModalHeader, { customerLogoUrl, currentStep, setCurrentStep })} />
     )
 
   }
@@ -98,16 +98,16 @@ const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl,
     return (
       <Modal.Body className="space-y-6 px-8">
         <div className="space-y-6">
-          <p className="font-normal">Choose the application you want to connect to <span className="font-bold">{customerName}</span>.</p>
+          <p className="font-normal">Choose the knowledge base you want to share with <span className="font-bold">{customerName}</span>.</p>
           <ul className="my-4 space-y-3">
             {connectors.map((connector) => {
               return (<li>
-                {renderConnectorButton(connector.icon, connector.name, connector.label, connector.labelBackgroundColor, connector.active)}
+                {renderConnectorButton(connector.icon, connector.name, connector.label, connector.labelColor, connector.active)}
               </li>)
             })}
           </ul>
           <div className="text-xs font-normal text-gray-500">
-            {"When you connect an account, your data in application will be shared with Support Hero. The specific resources shared will depend on your permissions in the application, as well as the scopes configured by Support Hero. "}
+            {"When you connect an application, your data in the application will be shared with Support Hero. The specific resources shared will depend on your permissions in the application, as well as the scopes configured by Support Hero. "}
             <a
               href="#"
               className="underline text-blue-500 hover:text-blue-600"
@@ -123,8 +123,8 @@ const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl,
   const renderModalFooter = () => {
     return (
       <Modal.Footer className="flex flex-col space-y-6">
-        <Button size="xl" className="w-3/5 min-w-300" onClick={() => setCurrentStep(1)}>
-          Continue
+        <Button color="gray" size="xl" className="w-3/5 min-w-300" onClick={() => setCurrentStep(0)}>
+          Go Back
         </Button>
       </Modal.Footer>
     )
@@ -134,7 +134,6 @@ const ConnectorPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl,
     <div>
       {renderModalHeader()}
       {renderModalBody()}
-      {renderModalFooter()}
     </div>
   );
 }

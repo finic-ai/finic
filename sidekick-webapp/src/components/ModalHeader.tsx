@@ -16,13 +16,15 @@ import {
   import { useState } from "react";
 
 interface ModalHeaderProps {
-    customerLogoUrl: string
+    customerLogoUrl: string,
+    currentStep: number,
+    setCurrentStep: Function
 }
 
-const ModalHeader: React.FC<ModalHeaderProps> = ({customerLogoUrl}) => {
+const ModalHeader: React.FC<ModalHeaderProps> = ({customerLogoUrl, currentStep, setCurrentStep}) => {
     return (
       <div className="flex w-full justify-between">
-          <button className="items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900">
+          <button onClick={() => setCurrentStep(currentStep - 1)} className="items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900">
             <HiOutlineArrowLeft className="h-5 w-5 text-gray-400"/>
           </button>
           <Avatar.Group>
