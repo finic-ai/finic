@@ -1,7 +1,8 @@
 from models.models import (
     Connection,
     ConnectorId,
-    ConnectorStatus
+    ConnectorStatus,
+    AuthorizationResult
 )
 from pydantic import BaseModel
 from typing import List, Optional, Dict
@@ -18,16 +19,12 @@ class EnableConnectorRequest(BaseModel):
     credential: Dict
 
 class AuthorizeOauthRequest(BaseModel):
-    redirect_uri: str
+    connector_id: ConnectorId
+    connection_id: str
     auth_code: Optional[str]
-    connector_id: int
 
 
-class AuthorizeResponse(BaseModel):
-    authorized: bool
-
-
-class OauthResponse(AuthorizeResponse):
-    auth_url: Optional[str]
+class AuthorizationResponse(BaseModel):
+    result: AuthorizationResult
 
 

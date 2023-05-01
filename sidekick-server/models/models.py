@@ -15,8 +15,6 @@ class ConnectorStatus(BaseModel):
     is_enabled: bool
     connections: List[Connection] = []
 
-
-
 class Document(BaseModel):
     title: str
     content: str
@@ -25,6 +23,7 @@ class Document(BaseModel):
 class AuthorizationResult(BaseModel):
     auth_url: Optional[str] = None
     authorized: bool = False
+    connection: Optional[Connection] = None
 
 class DataConnector(BaseModel, ABC):
     connector_id: ConnectorId

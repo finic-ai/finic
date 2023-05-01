@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
 
 from models.api import (
-    OauthResponse,
+    AuthorizationResponse,
     AuthorizeOauthRequest,
     EnableConnectorRequest,
     ConnectorStatusRequest,
@@ -41,7 +41,12 @@ bearer_scheme = HTTPBearer()
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
     app_config = StateStore().get_config(credentials.credentials)
-    print('config', app_config)
+    if credentials.scheme != "Bearer" or app_config is None:
+        raise HTTPException(status_code=401, detail="Invalid or missing token")
+    return app_config
+
+def validate_public_key(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
+    app_config = StateStore().get_config_from_public_key(credentials.credentials)
     if credentials.scheme != "Bearer" or app_config is None:
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return app_config
@@ -73,16 +78,16 @@ async def get_connector_status(
 
 
 @app.post(
-    "/authorize-oauth",
-    response_model=OauthResponse,
+    "/add-oauth-connection",
+    response_model=AuthorizationResponse,
 )
 async def authorize_oauth(
     request: AuthorizeOauthRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
+    config: AppConfig = Depends(validate_public_key),
 ):
     auth_code = request.auth_code
-    redirect_uri = request.redirect_uri
     connector_id = request.connector_id
+    connection_id = request.connection_id
 
     connector = get_connector_for_id(connector_id, config)
 
@@ -91,8 +96,8 @@ async def authorize_oauth(
     if connector is None:
         raise HTTPException(status_code=404, detail="Connector not found")
 
-    auth_url = await connector.authorize(redirect_uri, auth_code)
-    return OauthResponse(auth_url=auth_url, authorized=auth_url is None)
+    result = await connector.authorize(connection_id, auth_code)
+    return AuthorizationResponse(result=result)
 
 
 

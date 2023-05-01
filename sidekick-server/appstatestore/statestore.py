@@ -21,6 +21,13 @@ class StateStore:
             return AppConfig(app_id=row['app_id'], user_id=row['id'])
         return None
     
+    def get_config_from_public_key(self, bearer_token: str) -> Optional[AppConfig]:
+        response = self.supabase.table('users').select('*').filter('app_id', 'eq', bearer_token).execute()
+        if len(response.data) > 0:
+            row = response.data[0]
+            return AppConfig(app_id=row['app_id'], user_id=row['id'])
+        return None
+    
     def enable_connector(self, connector_id: ConnectorId, credential: Dict, config: AppConfig) -> ConnectorStatus:
         # Upsert the credential into enabled_connectors
         insert_data = {
@@ -67,56 +74,62 @@ class StateStore:
             )
         
         return ConnectorStatus(is_enabled=isEnabled, connections=connections)
-
-
     
-    def save_credentials(self, config: AppConfig, credential: str, connector: DataConnector):
-        # if this is a self hosted instance, return a config with a constant app_id and tenant_id since namespace conflicts aren't an issue
-        if self.is_self_hosted:
-            return
+    def get_connector_credential(self, connector_id: ConnectorId, config: AppConfig) -> Optional[Dict]:
+        response = self.supabase.table('enabled_connectors').select('*').filter(
+            'user_id', 
+            'eq', 
+            config.user_id
+        ).filter(
+            'connector_id', 
+            'eq', 
+            connector_id
+        ).execute()
+
+        if len(response.data) > 0:
+            return json.loads(response.data[0]['credential'])
+        return None
+    
+    def add_connection(self, 
+                       config: AppConfig, 
+                       credential: str, 
+                       connector_id: ConnectorId, 
+                       connection_id: str, 
+                       metadata: Dict) -> Connection:
         insert_data = {
-            'user_id': config.tenant_id,
-            'connector_id': connector.connector_id,
-            'credential': credential
+            'id': connection_id,
+            'user_id': config.user_id,
+            'app_id': config.app_id,
+            'connector_id': connector_id,
+            'credential': credential,
+            'metadata': metadata
         }
-        # check if the credential already exists
+        print(insert_data)
+        self.supabase.table("connections").upsert(insert_data).execute()
+
+        return Connection(
+            connection_id=connection_id,
+            metadata=metadata
+        )
+
+    def load_credentials(self, config: AppConfig, connector_id: ConnectorId, connection_id: str) -> Optional[str]:
         response = self.supabase.table('credentials').select('*').filter(
             'user_id', 
             'eq', 
-            config.tenant_id
+            config.user_id
         ).filter(
             'connector_id', 
             'eq', 
-            connector.connector_id
-        ).execute()
-
-        existing_credentials = response.data
-        if len(existing_credentials) > 0:
-            to_upsert = existing_credentials[0]
-            to_upsert['credential'] = credential
-            print(to_upsert)
-            self.supabase.table("credentials").upsert(to_upsert).execute()
-        else:
-            self.supabase.table("credentials").upsert(insert_data).execute()
-
-
-    def load_credentials(self, config: AppConfig, connector: DataConnector) -> Optional[str]:
-        response = self.supabase.table('credentials').select('*').filter(
-            'user_id', 
-            'eq', 
-            config.tenant_id
+            connector_id
         ).filter(
-            'connector_id', 
-            'eq', 
-            connector.connector_id
+            'connection_id',
+            'eq',
+            connection_id
         ).execute()
 
-        print(config.tenant_id)
-
-        for row in response.data:
-            if row['user_id'] == config.tenant_id and row['connector_id'] == connector.connector_id:
-                print(row['credential'])
-                return row['credential']
+        if len(response.data) > 0:
+            data = response.data[0]
+            return data['credential']
         return None
     
   

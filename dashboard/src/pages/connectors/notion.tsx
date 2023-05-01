@@ -25,8 +25,7 @@ import {
     const [clientId, setClientId] = useState('');
     const [clientSecret, setClientSecret] = useState('');
     const [authorizationUrl, setAuthorizationUrl] = useState('');
-    const [subdomain, setSubdomain] = useState('');
-    const [email, setEmail] = useState('');
+    const [redirectUri, setRedirectUri] = useState('');
     const [connections, setConnections] = useState([] as any[])
     const {bearer} = useUserStateContext()
 
@@ -39,6 +38,7 @@ import {
           client_id: clientId,
           client_secret: clientSecret,
           authorization_url: authorizationUrl,
+          redirect_uri: redirectUri
         }
       }
 
@@ -133,10 +133,8 @@ import {
                       setClientSecret={setClientSecret}
                       authorizationUrl={authorizationUrl}
                       setAuthorizationUrl={setAuthorizationUrl}
-                      subdomain={subdomain} 
-                      setSubdomain={setSubdomain} 
-                      email={email} 
-                      setEmail={setEmail} 
+                      redirectUri={redirectUri} 
+                      setRedirectUri={setRedirectUri} 
                     />
                   </div>
                 </div>
@@ -154,19 +152,17 @@ import {
     authorized: boolean;
     authLoading: boolean;
     clientId: string;
-    setClientId: (apiKey: string) => void;
+    setClientId: (clientId: string) => void;
     clientSecret: string;
-    setClientSecret: (apiKey: string) => void;
+    setClientSecret: (clientSecret: string) => void;
     authorizationUrl: string;
-    setAuthorizationUrl: (apiKey: string) => void;
-    subdomain: string;
-    setSubdomain: (subdomain: string) => void;
-    email: string;
-    setEmail: (email: string) => void;
+    setAuthorizationUrl: (authorizationUrl: string) => void;
+    redirectUri: string;
+    setRedirectUri: (redirect_uri: string) => void;
   }
 
   const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-    authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading
+    authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, redirectUri, setRedirectUri, authorized, authLoading
   }: AuthorizeModalProps) {
     const [isOpen, setOpen] = useState(false);
 
@@ -211,6 +207,15 @@ import {
                     value={authorizationUrl}
                     onChange={(e) => setAuthorizationUrl(e.target.value)}
                     placeholder='Notion authorization URL'
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="apiKeys.label">Redirect URI</Label>
+                  <TextInput
+                    value={redirectUri}
+                    onChange={(e) => setRedirectUri(e.target.value)}
+                    placeholder='Notion Redirect URI'
                     className="mt-1"
                   />
                 </div>
