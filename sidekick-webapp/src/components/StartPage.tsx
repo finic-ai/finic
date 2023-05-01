@@ -75,7 +75,7 @@ const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, set
     return (
       <Modal.Footer className="flex flex-col space-y-6">
         <p className="text-sm text-gray-500">
-          By selecting “Continue” you agree to the <a href="https://www.getsidekick.ai/privacy-policy" className="underline text-blue-500">Sidekick End User Privacy Policy</a>
+          By selecting “Continue” you agree to the <a href="https://www.getsidekick.ai/privacy-policy" target="_blank" className="underline text-blue-500">Sidekick End User Privacy Policy</a>
         </p>
         <Button size="xl" className="w-3/5 min-w-300" onClick={() => setCurrentStep(1)}>
           Continue
