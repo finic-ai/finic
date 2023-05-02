@@ -10,6 +10,7 @@
     "@types/node": "^16.18.25",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.1",
+    "axios": "^1.4.0",
     "flowbite": "^1.6.5",
     "flowbite-react": "^0.4.4",
     "react": "^18.2.0",
