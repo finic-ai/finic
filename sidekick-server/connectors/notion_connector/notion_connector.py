@@ -90,11 +90,11 @@ class NotionConnector(DataConnector):
                     page_text.append(plain_text)
         return page_text
 
-    async def load(self, source_id: str) -> List[Document]:
-        credential_string = StateStore().load_credentials(self.config, self)
+    async def load(self, connection_id: str) -> List[Document]:
+        credential_string = StateStore().load_credentials(self.config, self.connector_id, connection_id)
         credential_json = json.loads(credential_string)
-        api_key = credential_json["api_key"]
-        self.headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json",
+        access_token = credential_json["access_token"]
+        self.headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json",
                         "Notion-Version": "2022-06-28"}
 
         documents: List[Document] = []
@@ -125,14 +125,8 @@ class NotionConnector(DataConnector):
                     documents.append(
                         Document(
                             title=title,
-                            text=text_per_page,
-                            url=url,
-                            source_type=Source.notion,
-                            metadata=DocumentMetadata(
-                                document_id=object_id,
-                                source_id=source_id,
-                                tenant_id=self.config.tenant_id
-                            )
+                            content=text_per_page,
+                            uri=url
                         )
                     )
 

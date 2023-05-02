@@ -1,5 +1,5 @@
 from models.models import (
-    Connection,
+    Document,
     ConnectorId,
     ConnectorStatus,
     AuthorizationResult
@@ -27,4 +27,9 @@ class AuthorizeOauthRequest(BaseModel):
 class AuthorizationResponse(BaseModel):
     result: AuthorizationResult
 
+class GetDocumentsRequest(BaseModel):
+    connector_id: ConnectorId
+    connection_id: str
 
+class GetDocumentsResponse(BaseModel):
+    documents: List[Document]

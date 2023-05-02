@@ -14,6 +14,8 @@ from models.api import (
     EnableConnectorRequest,
     ConnectorStatusRequest,
     ConnectorStatusResponse,
+    GetDocumentsRequest,
+    GetDocumentsResponse,
 )
 
 
@@ -81,7 +83,7 @@ async def get_connector_status(
     "/add-oauth-connection",
     response_model=AuthorizationResponse,
 )
-async def authorize_oauth(
+async def add_oauth_connection(
     request: AuthorizeOauthRequest = Body(...),
     config: AppConfig = Depends(validate_public_key),
 ):
@@ -98,6 +100,27 @@ async def authorize_oauth(
 
     result = await connector.authorize(connection_id, auth_code)
     return AuthorizationResponse(result=result)
+
+@app.post(
+    "/get-documents",
+    response_model=GetDocumentsResponse,
+)
+async def get_documents(
+    request: GetDocumentsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    connector_id = request.connector_id
+    connection_id = request.connection_id
+
+    connector = get_connector_for_id(connector_id, config)
+
+    print("connector", connector)
+
+    if connector is None:
+        raise HTTPException(status_code=404, detail="Connector not found")
+
+    result = await connector.load(connection_id)
+    return GetDocumentsResponse(documents=result)
 
 
 
