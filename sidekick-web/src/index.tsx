@@ -1,5 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import React from 'react';
+
 
 import "./index.css";
 import { Flowbite } from "flowbite-react";
@@ -16,6 +18,15 @@ if (!container) {
 }
 
 const root = createRoot(container);
+
+const SidekickModal = () => {
+  return (
+    <Flowbite>
+      <App />
+    </Flowbite>
+  )
+}
+export default SidekickModal
 
 root.render(
   <StrictMode>
