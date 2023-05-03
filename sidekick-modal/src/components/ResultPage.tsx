@@ -18,11 +18,11 @@ interface ResultPageProps {
   setCurrentStep: Function,
   customerLogoUrl: string,
   connectorName: string,
-  setShowModal: Function
+  setShowModal: Function,
+  isLoading: boolean,
 }
   
-const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, setShowModal}) => {
-  const [isLoading, setIsLoading] = useState(false)
+const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, setShowModal, isLoading}) => {
   const [isError, setIsError] = useState(true)
   const [isSuccess, setIsSuccess] = useState(true)
 

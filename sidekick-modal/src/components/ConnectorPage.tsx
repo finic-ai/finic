@@ -63,13 +63,15 @@ interface ConnectorPageProps {
   currentStep: number,
   setCurrentStep: Function,
   customerLogoUrl: string,
-  setConnectorName: Function
+  setConnectorName: Function,
+  startConnectorAuthFlow: Function
 }
   
-const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName}) => {
+const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, startConnectorAuthFlow}) => {
   const pickConnector = (connectorName: string) => {
     setCurrentStep(2)
     setConnectorName(connectorName)
+    startConnectorAuthFlow(connectorName)
   }
 
   const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, label: string|null, labelColor: string, active: boolean) => {
