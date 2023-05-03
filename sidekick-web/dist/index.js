@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import React from 'react';
 import "./index.css";
@@ -17,6 +16,10 @@ var SidekickModal = function () {
         React.createElement(App, null)));
 };
 export default SidekickModal;
-root.render(React.createElement(StrictMode, null,
-    React.createElement(Flowbite, null,
-        React.createElement(App, null))));
+// root.render(
+//   <StrictMode>
+//     <Flowbite>
+//       <App />
+//     </Flowbite>
+//   </StrictMode>
+// );

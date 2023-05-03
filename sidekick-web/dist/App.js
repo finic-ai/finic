@@ -53,6 +53,7 @@ var App = function () {
             return [2 /*return*/];
         });
     }); };
+    console.log(currentStep);
     var renderAppStep = function () {
         switch (currentStep) {
             case 0:

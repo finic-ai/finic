@@ -28,10 +28,10 @@ const SidekickModal = () => {
 }
 export default SidekickModal
 
-root.render(
-  <StrictMode>
-    <Flowbite>
-      <App />
-    </Flowbite>
-  </StrictMode>
-);
+// root.render(
+//   <StrictMode>
+//     <Flowbite>
+//       <App />
+//     </Flowbite>
+//   </StrictMode>
+// );
