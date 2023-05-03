@@ -4,8 +4,8 @@ import {
   Modal,
 } from "flowbite-react";
 import './App.css';
-import Sidekick from "../../sidekick-web/dist"
-import SidekickModal from '../../sidekick-web/dist';
+import Sidekick from "getsidekick"
+import SidekickModal from 'getsidekick';
 
 const App: React.FC = () => {
 

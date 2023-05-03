@@ -1,7 +1,7 @@
 {
-  "name": "sidekick",
+  "name": "getsidekick",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "axios": "^1.4.0",
     "flowbite": "^1.6.5",
