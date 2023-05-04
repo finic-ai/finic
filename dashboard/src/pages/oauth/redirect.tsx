@@ -1,10 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
   import type { FC } from "react";
-  import { useState, useEffect } from "react";
-  import {
-    HiHome,
-  } from "react-icons/hi";
-  
+  import { useEffect } from "react";
+
   export const RedirectPage: FC = function () {
 
     useEffect(() => {
@@ -18,6 +15,6 @@
     }, [])
     
     return (
-      <div></div>
+      <div> </div>
     )
   }
