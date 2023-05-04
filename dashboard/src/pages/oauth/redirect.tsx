@@ -5,12 +5,14 @@
   export const RedirectPage: FC = function () {
 
     useEffect(() => {
+      console.log(window.opener)
         if (window.opener) {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
             if (code) {
                 window.opener.postMessage({ code: code }, '*')
             }
+            window.close()
         }
     }, [])
     
