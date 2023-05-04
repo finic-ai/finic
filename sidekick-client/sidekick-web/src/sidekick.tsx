@@ -15,30 +15,10 @@ export function useNotionOAuth(connector_id: string, connection_id: string, publ
     if (windowObjectReference === null || windowObjectReference.closed) {
       const strWindowFeatures = 'toolbar=no,menubar=no,width=600,height=700,top=100,left=100';
       windowObjectReference = window.open(url, 'NotionOAuth', strWindowFeatures);
-      windowObjectReference!.addEventListener('hashchange', handleHashChange);
-      windowObjectReference!.addEventListener('popstate', handlePopState);
     } else {
       windowObjectReference.focus();
     }
   }
-
-  function handleHashChange(event: HashChangeEvent) {
-    console.log('hash change')
-    console.log(event)
-    // if (event.data?.notion_oauth_code && event.origin === window.origin) {
-    //     console.log(event.data)
-    //     setAuthCode(event.data.notion_oauth_code);
-    // }
-}
-
-function handlePopState(event: PopStateEvent) {
-    console.log('pop state')
-    console.log(event)
-    // if (event.data?.notion_oauth_code && event.origin === window.origin) {
-    //     console.log(event.data)
-    //     setAuthCode(event.data.notion_oauth_code);
-    // }
-}
 
   useEffect(() => {
     
@@ -49,8 +29,22 @@ function handlePopState(event: PopStateEvent) {
     // window.addEventListener('hashchange', handleHashChange);
     // window.addEventListener('popstate', handlePopState);
 
+    function handleMessage(event: MessageEvent) {
+        console.log(event)
+        if (event.origin !== "http://localhost:5173") {
+            console.log('wrong origin')
+            return;
+          }
+        const data = event.data;
+        if (data) {
+            setAuthCode(data.code)
+        }
+    }
+
+    window.addEventListener('message', handleMessage, false);
+
     return () => {
-        // window.removeEventListener('hashchange', handleHashChange);
+        window.removeEventListener('message', handleMessage);
         // window.removeEventListener('popstate', handlePopState);
     //   window.removeEventListener('hashchange', handleOAuthMessage);
     };

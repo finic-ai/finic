@@ -56,7 +56,7 @@ function __generator(thisArg, body) {
 }
 
 function useNotionOAuth(connector_id, connection_id, public_key) {
-    var _a = react.useState(null), authCode = _a[0]; _a[1];
+    var _a = react.useState(null), authCode = _a[0], setAuthCode = _a[1];
     var windowObjectReference = null;
     function authorize() {
         return __awaiter(this, void 0, void 0, function () {
@@ -70,8 +70,6 @@ function useNotionOAuth(connector_id, connection_id, public_key) {
                         if (windowObjectReference === null || windowObjectReference.closed) {
                             strWindowFeatures = 'toolbar=no,menubar=no,width=600,height=700,top=100,left=100';
                             windowObjectReference = window.open(url, 'NotionOAuth', strWindowFeatures);
-                            windowObjectReference.addEventListener('hashchange', handleHashChange);
-                            windowObjectReference.addEventListener('popstate', handlePopState);
                         }
                         else {
                             windowObjectReference.focus();
@@ -81,29 +79,25 @@ function useNotionOAuth(connector_id, connection_id, public_key) {
             });
         });
     }
-    function handleHashChange(event) {
-        console.log('hash change');
-        console.log(event);
-        // if (event.data?.notion_oauth_code && event.origin === window.origin) {
-        //     console.log(event.data)
-        //     setAuthCode(event.data.notion_oauth_code);
-        // }
-    }
-    function handlePopState(event) {
-        console.log('pop state');
-        console.log(event);
-        // if (event.data?.notion_oauth_code && event.origin === window.origin) {
-        //     console.log(event.data)
-        //     setAuthCode(event.data.notion_oauth_code);
-        // }
-    }
     react.useEffect(function () {
         // handlePopState({} as PopStateEvent)
         console.log("hello");
         // window.addEventListener('hashchange', handleHashChange);
         // window.addEventListener('popstate', handlePopState);
+        function handleMessage(event) {
+            console.log(event);
+            if (event.origin !== "http://localhost:5173") {
+                console.log('wrong origin');
+                return;
+            }
+            var data = event.data;
+            if (data) {
+                setAuthCode(data.code);
+            }
+        }
+        window.addEventListener('message', handleMessage, false);
         return function () {
-            // window.removeEventListener('hashchange', handleHashChange);
+            window.removeEventListener('message', handleMessage);
             // window.removeEventListener('popstate', handlePopState);
             //   window.removeEventListener('hashchange', handleOAuthMessage);
         };
