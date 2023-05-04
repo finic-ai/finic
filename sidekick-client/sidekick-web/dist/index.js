@@ -55,17 +55,30 @@ function __generator(thisArg, body) {
     }
 }
 
-function useNotionOAuth(connector_id, connection_id, public_key) {
-    var _a = react.useState(null), authCode = _a[0], setAuthCode = _a[1];
+function useSidekickAuth(connector_id, connection_id, public_key, sidekick_url) {
+    var _a = react.useState(false), authorized = _a[0], setAuthorized = _a[1];
+    var _b = react.useState(false), loading = _b[0], setLoading = _b[1];
+    var _c = react.useState(null), newConnection = _c[0], setNewConnection = _c[1];
+    var _d = react.useState(null), error = _d[0], setError = _d[1];
     var windowObjectReference = null;
+    var authCodeHandled = react.useRef(false);
     function authorize() {
         return __awaiter(this, void 0, void 0, function () {
             var authorizeResult, url, strWindowFeatures;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, authorizeConnection(null, connector_id, connection_id, public_key)];
+                    case 0:
+                        setLoading(true);
+                        setAuthorized(false);
+                        setError(null);
+                        setNewConnection(null);
+                        return [4 /*yield*/, authorizeConnection(null, connector_id, connection_id, public_key, sidekick_url, setError)];
                     case 1:
                         authorizeResult = _a.sent();
+                        if (!authorizeResult) {
+                            setLoading(false);
+                            return [2 /*return*/];
+                        }
                         url = authorizeResult.auth_url;
                         if (windowObjectReference === null || windowObjectReference.closed) {
                             strWindowFeatures = 'toolbar=no,menubar=no,width=600,height=700,top=100,left=100';
@@ -80,20 +93,38 @@ function useNotionOAuth(connector_id, connection_id, public_key) {
         });
     }
     react.useEffect(function () {
-        // handlePopState({} as PopStateEvent)
-        console.log("hello");
-        // window.addEventListener('hashchange', handleHashChange);
-        // window.addEventListener('popstate', handlePopState);
         function handleMessage(event) {
             console.log(event);
-            if (event.origin !== "http://localhost:5173") {
-                console.log('wrong origin');
+            // check if oigin is not http://localhost:5173 or app.getsidekick.ai
+            if (event.origin !== "http://localhost:5173" && event.origin !== "https://app.getsidekick.ai") {
                 return;
             }
             var data = event.data;
-            if (data) {
-                setAuthCode(data.code);
+            if (data && data.code && !authCodeHandled.current) {
+                authCodeHandled.current = true;
+                completeAuthWithCode(data.code);
             }
+        }
+        function completeAuthWithCode(code) {
+            return __awaiter(this, void 0, void 0, function () {
+                var result;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, authorizeConnection(code, connector_id, connection_id, public_key, sidekick_url, setError)];
+                        case 1:
+                            result = _a.sent();
+                            if (!result) {
+                                setLoading(false);
+                                return [2 /*return*/];
+                            }
+                            console.log(result);
+                            setAuthorized(result.authorized);
+                            setNewConnection(result.connection.connection_id);
+                            setLoading(false);
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
         window.addEventListener('message', handleMessage, false);
         return function () {
@@ -102,15 +133,15 @@ function useNotionOAuth(connector_id, connection_id, public_key) {
             //   window.removeEventListener('hashchange', handleOAuthMessage);
         };
     }, []);
-    return { authorize: authorize, authCode: authCode };
+    return { authorize: authorize, authorized: authorized, loading: loading, newConnection: newConnection, error: error };
 }
-function authorizeConnection(auth_code, connector_id, connection_id, public_key) {
+function authorizeConnection(auth_code, connector_id, connection_id, public_key, sidekick_url, setError) {
     return __awaiter(this, void 0, void 0, function () {
-        var baseUrl, url, payload, response, data;
+        var baseUrl, url, payload, response, data, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    baseUrl = "http://localhost:8080";
+                    baseUrl = sidekick_url;
                     url = baseUrl + '/add-oauth-connection';
                     payload = {
                         connection_id: connection_id,
@@ -119,24 +150,32 @@ function authorizeConnection(auth_code, connector_id, connection_id, public_key)
                     if (auth_code) {
                         payload.auth_code = auth_code;
                     }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
                     return [4 /*yield*/, fetch(url, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer ".concat(public_key) },
                             body: JSON.stringify(payload),
                         })];
-                case 1:
+                case 2:
                     response = _a.sent();
                     if (!response.ok) {
-                        throw new Error("Authorization failed with status: ".concat(response.status));
+                        setError("Authorization failed with status: ".concat(response.status));
                     }
                     return [4 /*yield*/, response.json()];
-                case 2:
+                case 3:
                     data = _a.sent();
                     return [2 /*return*/, data.result];
+                case 4:
+                    error_1 = _a.sent();
+                    setError("Authorization failed with error: ".concat(error_1));
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
             }
         });
     });
 }
 
-exports.useNotionOAuth = useNotionOAuth;
+exports.useSidekickAuth = useSidekickAuth;
 //# sourceMappingURL=index.js.map

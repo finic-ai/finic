@@ -1,4 +1,7 @@
-export declare function useNotionOAuth(connector_id: string, connection_id: string, public_key: string): {
+export declare function useSidekickAuth(connector_id: string, connection_id: string, public_key: string, sidekick_url: string): {
     authorize: () => Promise<void>;
-    authCode: string | null;
+    authorized: boolean;
+    loading: boolean;
+    newConnection: string | null;
+    error: string | null;
 };

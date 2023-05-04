@@ -1,1 +1,1 @@
-export { useNotionOAuth } from './sidekick';
+export { useSidekickAuth } from './sidekick';
