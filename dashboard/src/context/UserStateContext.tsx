@@ -10,7 +10,6 @@ interface UserStateContextProps {
   email: any;
   avatarUrl: any;
   fullName: any;
-
 }
 
 const UserStateContext = createContext<UserStateContextProps>(undefined!);
@@ -27,6 +26,7 @@ export function UserStateProvider({ children }: PropsWithChildren) {
     // TODO #1: Replace with your JWT template name
     console.log("fetching data")
     try {
+      const token = await getToken({ template: 'supabase' }) || ""
 
       const {
         data: { user },
@@ -51,8 +51,8 @@ export function UserStateProvider({ children }: PropsWithChildren) {
         // Create the user row if it doesn't exist
 
         const response = await supabase.from('users').insert({
-          id: userId,
-          secret_key: uuidv4(),
+          uuid: userId,
+          bearer: uuidv4(),
           app_id: uuidv4(),
           email: email
         }).select()
