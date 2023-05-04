@@ -345,7 +345,7 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({connectorId
         Playground
       </h2>
       <p className="mb-6">See how users will experience using Sidekick to connect their Notion workspace.</p>
-      <Label htmlFor="apiKeys.label">OAuth client ID</Label>
+      <Label htmlFor="apiKeys.label">Connection ID</Label>
       <TextInput
         value={connectionId}
         onChange={(e) => setConnectionId(e.target.value)}
