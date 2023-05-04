@@ -29,7 +29,7 @@ const NotionConnectorPage: FC = function () {
   const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
 
-  const {bearer} = useUserStateContext()
+  const {bearer, appId} = useUserStateContext()
 
   async function authorize() {
     setAuthLoading(true)
@@ -84,7 +84,6 @@ const NotionConnectorPage: FC = function () {
         const jsonData = await response.json();
         const isAuthorized = jsonData.status.is_enabled
         const connections = jsonData.status.connections
-        console.log(connections)
         setAuthorized(isAuthorized)
         setConnections(connections)
         setAuthLoading(false)
@@ -166,7 +165,7 @@ const NotionConnectorPage: FC = function () {
           <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
             <div className="mb-1 w-full">
               <div className="mb-4">
-                {authorized && <ConnectorPlayground />}
+                {authorized && <ConnectorPlayground connectorId="notion" bearer={appId} />}
               </div>
             </div>
           </div>
@@ -295,12 +294,50 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: Con
 };
 
 interface ConnectorPlaygroundProps {
-  createNewConnection: (connectionId: string, connectorId: string) => void;
   connectorId: string;
+  bearer: string;
 }
 
-const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({createNewConnection, connectorId}: ConnectorPlaygroundProps) {
+const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({connectorId, bearer}: ConnectorPlaygroundProps) {
   const [connectionId, setConnectionId] = useState('');
+
+  const createNewConnection = async (connectionId: string, connectorId: string) => {
+    const url = import.meta.env.VITE_SERVER_URL + '/add-oauth-connection';
+    var payload = {
+      connector_id: connectorId,
+      connection_id: connectionId,
+    }
+
+    // TODO: Replace this entire block with the Sidekick SDK
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const jsonData = await response.json();
+      const isAuthorized = jsonData.result.authorized
+      const authUrl = jsonData.result.auth_url
+      const width = 600
+      const height = 800
+      const left = (window.screen.width - width) / 2
+      const top = (window.screen.height - height) / 2
+      window.open(authUrl, '_blank', `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`)
+      window.addEventListener('message', (event) => {
+        if (event.origin !== "http://localhost:5173") {
+          console.log('wrong origin')
+          return;
+        }
+        console.log(event.data)
+      }, false);
+      console.log(jsonData)
+    } catch (error) {
+      console.log('error creating new connection')
+    }
+  }
 
   return (
     <>
@@ -308,7 +345,7 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({createNewCo
         Playground
       </h2>
       <p className="mb-6">See how users will experience using Sidekick to connect their Notion workspace.</p>
-      <Label htmlFor="apiKeys.label">OAuth client ID</Label>
+      <Label htmlFor="apiKeys.label">Connection ID</Label>
       <TextInput
         value={connectionId}
         onChange={(e) => setConnectionId(e.target.value)}

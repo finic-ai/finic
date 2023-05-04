@@ -87,7 +87,7 @@ async def add_oauth_connection(
     request: AuthorizeOauthRequest = Body(...),
     config: AppConfig = Depends(validate_public_key),
 ):
-    auth_code = request.auth_code
+    auth_code = request.auth_code or None
     connector_id = request.connector_id
     connection_id = request.connection_id
 
