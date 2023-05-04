@@ -10,6 +10,7 @@ import ApiKeysPage from "./pages/api-keys";
 import ConnectionsPage from "./pages/connections";
 import { UserStateProvider } from "./context/UserStateContext";
 import NotionConnectorPage from "./pages/connectors/notion";
+import { RedirectPage } from "./pages/oauth/redirect";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import  supabase  from "./lib/supabaseClient";
@@ -47,11 +48,20 @@ function App() {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
-          <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
-        </div>
-      </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/oauth/redirect" element={<RedirectPage />} />
+          <Route path="*" element={
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+              <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
+                <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+              </div>
+            </div>
+          } />
+        </Routes>
+      </BrowserRouter>
+
+      
     )
   }
   else {
@@ -64,6 +74,7 @@ function App() {
               <Route path="/api-keys" element={<ApiKeysPage />} />
               <Route path="/connections" element={<ConnectionsPage />} />
               <Route path="/connectors/notion" element={<NotionConnectorPage />} />
+              <Route path="/oauth/redirect" element={<RedirectPage />} />
             </Routes>
           </BrowserRouter>
         </UserStateProvider>
