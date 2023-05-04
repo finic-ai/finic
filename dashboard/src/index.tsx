@@ -1,12 +1,5 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignIn,
-  SignUp,
-} from "@clerk/clerk-react";
 
 import "./index.css";
 import theme from "./flowbite-theme";
@@ -42,9 +35,10 @@ import { UserStateProvider } from "./context/UserStateContext";
 import ZendeskConnectorPage from "./pages/connectors/zendesk";
 import ConfluenceConnectorPage from "./pages/connectors/confluence";
 import NotionConnectorPage from "./pages/connectors/notion";
-import VectorstorePage from "./pages/vectorstore";
-import StripeConnectorPage from "./pages/connectors/stripe";
-import QueryPage from "./pages/query";
+import { RedirectPage } from "./pages/oauth/redirect";
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
+import  supabase  from "./lib/supabaseClient";
 
 const container = document.getElementById("root");
 
@@ -61,79 +55,62 @@ if (!container) {
 
 const root = createRoot(container);
 
-root.render(
-  <StrictMode>
-    <ClerkProvider publishableKey={clerkPubKey}>
+function App() {
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      setSession(session)
+    })
+    
+    return () => subscription.unsubscribe()
+  }, [])
+
+  if (!session) {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/oauth/redirect" element={<RedirectPage />} />
+          <Route path="*" element={
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+              <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
+                <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+              </div>
+            </div>
+          } />
+        </Routes>
+      </BrowserRouter>
+
+      
+    )
+  }
+  else {
+    return (
       <Flowbite theme={{ theme }}>
-        <SignedIn>
-          <UserStateProvider>
+        <UserStateProvider>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<ApiKeysPage />} index />
-              <Route path="/mailing/compose" element={<MailingComposePage />} />
-              <Route path="/mailing/inbox" element={<MailingInboxPage />} />
-              <Route path="/mailing/read" element={<MailingReadPage />} />
-              <Route path="/mailing/reply" element={<MailingReplyPage />} />
-              <Route path="/kanban" element={<KanbanPage />} />
-              <Route path="/pages/pricing" element={<PricingPage />} />
-              <Route path="/pages/maintenance" element={<MaintenancePage />} />
-              <Route path="/pages/404" element={<NotFoundPage />} />
-              <Route path="/pages/500" element={<ServerErrorPage />} />
-              <Route path="/authentication/sign-in" element={<SignInPage />} />
-              <Route path="/authentication/sign-up" element={<SignUpPage />} />
-              <Route
-                path="/authentication/forgot-password"
-                element={<ForgotPasswordPage />}
-              />
-              <Route
-                path="/authentication/reset-password"
-                element={<ResetPasswordPage />}
-              />
-              <Route
-                path="/authentication/profile-lock"
-                element={<ProfileLockPage />}
-              />
-              <Route
-                path="/e-commerce/billing"
-                element={<EcommerceBillingPage />}
-              />
-              <Route
-                path="/e-commerce/invoice"
-                element={<EcommerceInvoicePage />}
-              />
-              <Route
-                path="/e-commerce/products"
-                element={<EcommerceProductsPage />}
-              />
-              <Route path="/users/feed" element={<UserFeedPage />} />
-              <Route path="/users/list" element={<UserListPage />} />
-              <Route path="/users/profile" element={<UserProfilePage />} />
-              <Route path="/users/settings" element={<UserSettingsPage />} />
               <Route path="/api-keys" element={<ApiKeysPage />} />
               <Route path="/connections" element={<ConnectionsPage />} />
-              <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
-              <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
-              <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
               <Route path="/connectors/notion" element={<NotionConnectorPage />} />
-              <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
-              <Route path="/connectors/stripe" element={<StripeConnectorPage />} />
-              <Route path="/vectorstore" element={<VectorstorePage />} />
-              <Route path="/query" element={<QueryPage />} />
+              <Route path="/oauth/redirect" element={<RedirectPage />} />
             </Routes>
           </BrowserRouter>
-          </UserStateProvider>
-        </SignedIn>
-        <SignedOut>
-        {/* <div className="flex items-center justify-center h-screen"><SignIn routing="hash"/></div> */}
-          <BrowserRouter>
-            <Routes>
-              <Route path="/sign-up" element={<div className="flex items-center justify-center h-screen"><SignUp routing="hash" /></div>} />
-              <Route path="/sign-in" element={<div className="flex items-center justify-center h-screen"><SignIn routing="hash" /></div>} />
-              <Route path="*" element={<Navigate to="/sign-in"/>}/>
-            </Routes>
-          </BrowserRouter>
-        </SignedOut>
+        </UserStateProvider>
       </Flowbite>
-    </ClerkProvider>
+    )
+  }
+}
+
+root.render(
+  <StrictMode>
+    <App />
   </StrictMode>
 );

@@ -1,0 +1,93 @@
+{
+  "name": "@rollup/plugin-commonjs",
+  "version": "24.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Convert CommonJS modules to ES2015",
+  "license": "MIT",
+  "repository": {
+    "url": "rollup/plugins",
+    "directory": "packages/commonjs"
+  },
+  "author": "Rich Harris <richard.a.harris@gmail.com>",
+  "homepage": "https://github.com/rollup/plugins/tree/master/packages/commonjs/#readme",
+  "bugs": "https://github.com/rollup/plugins/issues",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "exports": {
+    "types": "./types/index.d.ts",
+    "import": "./dist/es/index.js",
+    "default": "./dist/cjs/index.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "ci:coverage": "nyc pnpm test && nyc report --reporter=text-lcov > coverage.lcov",
+    "ci:lint": "pnpm build && pnpm lint",
+    "ci:lint:commits": "commitlint --from=${CIRCLE_BRANCH} --to=${CIRCLE_SHA1}",
+    "ci:test": "pnpm test -- --verbose && pnpm test:ts",
+    "prebuild": "del-cli dist",
+    "prepare": "if [ ! -d 'dist' ]; then pnpm build; fi",
+    "prepublishOnly": "pnpm build",
+    "prerelease": "pnpm build",
+    "pretest": "pnpm build",
+    "release": "pnpm --workspace-root plugin:release --pkg $npm_package_name",
+    "test": "ava",
+    "test:ts": "tsc types/index.d.ts test/types.ts --noEmit"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "types",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "rollup",
+    "plugin",
+    "npm",
+    "modules",
+    "commonjs",
+    "require"
+  ],
+  "peerDependencies": {
+    "rollup": "^2.68.0||^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "rollup": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@rollup/pluginutils": "^5.0.1",
+    "commondir": "^1.0.1",
+    "estree-walker": "^2.0.2",
+    "glob": "^8.0.3",
+    "is-reference": "1.2.1",
+    "magic-string": "^0.27.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^5.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "locate-character": "^2.0.5",
+    "require-relative": "^0.8.7",
+    "rollup": "^3.19.0",
+    "shx": "^0.3.4",
+    "source-map": "^0.7.4",
+    "source-map-support": "^0.5.21",
+    "typescript": "^4.8.3"
+  },
+  "types": "./types/index.d.ts",
+  "ava": {
+    "workerThreads": false,
+    "files": [
+      "!**/fixtures/**",
+      "!**/helpers/**",
+      "!**/recipes/**",
+      "!**/types.ts"
+    ]
+  }
+}

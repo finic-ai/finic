@@ -1,24 +1,26 @@
 import type { PropsWithChildren } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth, useUser } from "@clerk/clerk-react";
-import supabaseClient from "../lib/supabaseClient";
+import supabase from "../lib/supabaseClient";
 import { v4 as uuidv4 } from 'uuid';
 
 
 interface UserStateContextProps {
   bearer: any;
-  vectorstore: any;
-  setVectorstore: any;
+  appId: any;
+  email: any;
+  avatarUrl: any;
+  fullName: any;
 }
 
 const UserStateContext = createContext<UserStateContextProps>(undefined!);
 
 export function UserStateProvider({ children }: PropsWithChildren) {
-  const { getToken, userId } = useAuth();
-  const {user} = useUser();
 
   const [bearer, setBearer] = useState(null)
-  const [vectorstore, setVectorstore] = useState(null)
+  const [email, setEmail] = useState(null)
+  const [appId, setAppId] = useState(null)
+  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [fullName, setFullName] = useState(null)
 
   const fetchData = async () => {
     // TODO #1: Replace with your JWT template name
@@ -26,17 +28,27 @@ export function UserStateProvider({ children }: PropsWithChildren) {
     try {
       const token = await getToken({ template: 'supabase' }) || ""
 
-      const supabase = await supabaseClient(token)
-
-      // TODO #2: Replace with your database table name
-      const { data, error } = await supabase.from('users').select()
-      console.log(error)
-      const email = user?.emailAddresses?.[0]?.emailAddress || ''
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      let metadata = user!.user_metadata
+      console.log(metadata)
+      const email = metadata.email
+      const userId = user!.id
+      console.log(userId)
+      // Select the row corresponding to this userId
+      const { data, error } = await supabase.from('users').select().eq('id', userId)
+      console.log(data)
 
       if (data && data[0]) {
-        setBearer(data[0]['bearer'])
-        setVectorstore(data[0]['vectorstore'])
+        setBearer(data[0]['secret_key'])
+        setAppId(data[0]['app_id'])
+        setEmail(email)
+        setAvatarUrl(metadata.avatar_url)
+        setFullName(metadata.full_name)
+
       } else {
+        // Create the user row if it doesn't exist
 
         const response = await supabase.from('users').insert({
           uuid: userId,
@@ -44,14 +56,16 @@ export function UserStateProvider({ children }: PropsWithChildren) {
           app_id: uuidv4(),
           email: email
         }).select()
+        console.log(response)
 
         if (response.data && response.data[0]) {
-          console.log(response.data)
-          setBearer(response.data[0]['bearer'])
-          setVectorstore(response.data[0]['vectorstore'])
-        } else {
-          setBearer(null)
-        }
+          const data = response.data[0]
+          setBearer(data['secret_key'])
+          setAppId(data['app_id'])
+          setEmail(email)
+          setAvatarUrl(metadata.avatar_url)
+          setFullName(metadata.full_name)
+        } 
       }
     } catch (error) {
       console.log(error)
@@ -66,8 +80,10 @@ export function UserStateProvider({ children }: PropsWithChildren) {
     <UserStateContext.Provider
       value={{
         bearer: bearer,
-        vectorstore: vectorstore,
-        setVectorstore: setVectorstore
+        appId: appId,
+        email: email,
+        avatarUrl: avatarUrl,
+        fullName: fullName
       }}
     >
       {children}

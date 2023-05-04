@@ -1,6 +1,5 @@
 from typing import Dict, List, Optional
-from models.models import AppConfig, DataConnector, Vectorstore
-from models.api import SelectVectorstoreRequest
+from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection
 import os
 import uuid
 from supabase import create_client, Client
@@ -11,146 +10,129 @@ class StateStore:
     is_self_hosted = None
 
     def __init__(self): 
-        self.is_self_hosted = os.environ.get('IS_SELF_HOSTED')
-        # No need to fetch the config and determine tenant if this is a self-hosted instance
-        if self.is_self_hosted:
-            return
         supabase_url = os.environ.get('SUPABASE_URL')
         supabase_key = os.environ.get('SUPABASE_KEY')
         self.supabase = create_client(supabase_url, supabase_key)
 
     def get_config(self, bearer_token: str) -> Optional[AppConfig]:
-        # if this is a self hosted instance, return a config with a constant app_id and tenant_id since namespace conflicts aren't an issue
-        if self.is_self_hosted:
-            return AppConfig(app_id='sidekick', tenant_id="sidekick")
-        print(bearer_token)
-        response = self.supabase.table('users').select('*').filter('bearer', 'eq', bearer_token).execute()
-
-        for row in response.data:
-            if row['bearer'] == bearer_token:
-                return AppConfig(app_id=row['app_id'], tenant_id=row['uuid'], vectorstore_id=row['vectorstore'])
+        response = self.supabase.table('users').select('*').filter('secret_key', 'eq', bearer_token).execute()
+        if len(response.data) > 0:
+            row = response.data[0]
+            return AppConfig(app_id=row['app_id'], user_id=row['id'])
         return None
     
-    def save_credentials(self, config: AppConfig, credential: str, connector: DataConnector):
-        # if this is a self hosted instance, return a config with a constant app_id and tenant_id since namespace conflicts aren't an issue
-        if self.is_self_hosted:
-            return
+    def get_config_from_public_key(self, bearer_token: str) -> Optional[AppConfig]:
+        response = self.supabase.table('users').select('*').filter('app_id', 'eq', bearer_token).execute()
+        if len(response.data) > 0:
+            row = response.data[0]
+            return AppConfig(app_id=row['app_id'], user_id=row['id'])
+        return None
+    
+    def enable_connector(self, connector_id: ConnectorId, credential: Dict, config: AppConfig) -> ConnectorStatus:
+        # Upsert the credential into enabled_connectors
         insert_data = {
-            'user_id': config.tenant_id,
-            'connector_id': connector.connector_id,
-            'credential': credential
+            'user_id': config.user_id,
+            'connector_id': connector_id,
+            'credential': json.dumps(credential)
         }
-        # check if the credential already exists
-        response = self.supabase.table('credentials').select('*').filter(
+        self.supabase.table("enabled_connectors").upsert(insert_data).execute()
+        return ConnectorStatus(is_enabled=True)
+
+    def get_connector_status(self, connector_id: ConnectorId, config: AppConfig) -> ConnectorStatus:
+        response = self.supabase.table('enabled_connectors').select('*').filter(
             'user_id', 
             'eq', 
-            config.tenant_id
+            config.user_id
         ).filter(
             'connector_id', 
             'eq', 
-            connector.connector_id
+            connector_id
         ).execute()
 
-        existing_credentials = response.data
-        if len(existing_credentials) > 0:
-            to_upsert = existing_credentials[0]
-            to_upsert['credential'] = credential
-            print(to_upsert)
-            self.supabase.table("credentials").upsert(to_upsert).execute()
-        else:
-            self.supabase.table("credentials").upsert(insert_data).execute()
-
-
-    def load_credentials(self, config: AppConfig, connector: DataConnector) -> Optional[str]:
-        response = self.supabase.table('credentials').select('*').filter(
-            'user_id', 
-            'eq', 
-            config.tenant_id
-        ).filter(
-            'connector_id', 
-            'eq', 
-            connector.connector_id
-        ).execute()
-
-        print(config.tenant_id)
-
-        for row in response.data:
-            if row['user_id'] == config.tenant_id and row['connector_id'] == connector.connector_id:
-                print(row['credential'])
-                return row['credential']
-        return None
-    
-    def update_vectorstore(self, config: AppConfig, vectorstore: Vectorstore, credentials: Optional[str]):
-        # if this is a self hosted instance, return a config with a constant app_id and tenant_id since namespace conflicts aren't an issue
-        if self.is_self_hosted:
-            return
+        isEnabled = False
+        if len(response.data) > 0:
+            isEnabled = True
         
-        # Update the 'vectorstore' column of the users table with the new vectorstore id
-        response = self.supabase.table('users').select('*').filter(
-            'uuid',
-            'eq',
-            config.tenant_id
-        ).execute()
-        
-        updated_row = False
-        for row in response.data:
-            if row['uuid'] == config.tenant_id:
-                row['vectorstore'] = vectorstore
-                self.supabase.table('users').upsert(row).execute()
-                updated_row = True
-                break
-
-        if not updated_row:
-            raise Exception("Couldn't find user with the given id")
-        
-        # check if a credential was passed in 
-        if credentials is None:
-            if vectorstore == Vectorstore.default:
-                return
-            else:
-                raise Exception("No credentials passed in for non-default vectorstore")
-
-        # Check if the credential corresponding to the user id + vectorstore already exists
-        response = self.supabase.table('vectorstore_credentials').select('*').filter(
+        # check the connections table for all connections with the given connector_id and app_id
+        response = self.supabase.table('connections').select('*').filter(
             'user_id',
             'eq',
-            config.tenant_id
+            config.user_id
         ).filter(
-            'vectorstore',
+            'connector_id',
             'eq',
-            vectorstore
+            connector_id
         ).execute()
 
-        existing_credentials = response.data
-        if len(existing_credentials) > 0:
-            to_upsert = existing_credentials[0]
-            to_upsert['credential'] = credentials
-            self.supabase.table("vectorstore_credentials").upsert(to_upsert).execute()
-        else:
-            # Add the credentials to the vectorstore_credentials table
-            insert_data = {
-                'user_id': config.tenant_id,
-                'vectorstore': vectorstore,
-                'credential': credentials
-            }
-            self.supabase.table("vectorstore_credentials").upsert(insert_data).execute()
+        connections: List[Connection] = []
+        for row in response.data:
+            connections.append(
+                Connection(
+                    connection_id=row['id'],
+                    metadata=row['metadata']
+                )
+            )
+        
+        return ConnectorStatus(is_enabled=isEnabled, connections=connections)
     
-    def load_vectorstore_credentials(self, config: AppConfig, vectorstore: Vectorstore) -> Optional[str]:
-        response = self.supabase.table('vectorstore_credentials').select('*').filter(
+    def get_connector_credential(self, connector_id: ConnectorId, config: AppConfig) -> Optional[Dict]:
+        response = self.supabase.table('enabled_connectors').select('*').filter(
             'user_id', 
             'eq', 
-            config.tenant_id
+            config.user_id
         ).filter(
-            'vectorstore', 
+            'connector_id', 
             'eq', 
-            vectorstore
+            connector_id
         ).execute()
 
-        for row in response.data:
-            if row['user_id'] == config.tenant_id and row['vectorstore'] == vectorstore:
-                return row['credential']
+        if len(response.data) > 0:
+            return json.loads(response.data[0]['credential'])
         return None
+    
+    def add_connection(self, 
+                       config: AppConfig, 
+                       credential: str, 
+                       connector_id: ConnectorId, 
+                       connection_id: str, 
+                       metadata: Dict) -> Connection:
+        insert_data = {
+            'id': connection_id,
+            'user_id': config.user_id,
+            'app_id': config.app_id,
+            'connector_id': connector_id,
+            'credential': credential,
+            'metadata': metadata
+        }
+        print(insert_data)
+        self.supabase.table("connections").upsert(insert_data).execute()
 
+        return Connection(
+            connection_id=connection_id,
+            metadata=metadata
+        )
+
+    def load_credentials(self, config: AppConfig, connector_id: ConnectorId, connection_id: str) -> Optional[str]:
+        response = self.supabase.table('credentials').select('*').filter(
+            'user_id', 
+            'eq', 
+            config.user_id
+        ).filter(
+            'connector_id', 
+            'eq', 
+            connector_id
+        ).filter(
+            'connection_id',
+            'eq',
+            connection_id
+        ).execute()
+
+        if len(response.data) > 0:
+            data = response.data[0]
+            return data['credential']
+        return None
+    
+  
         
 
         
