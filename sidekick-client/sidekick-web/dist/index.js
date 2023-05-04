@@ -55,14 +55,16 @@ function __generator(thisArg, body) {
     }
 }
 
-function useSidekickAuth(connector_id, connection_id, public_key, sidekick_url) {
+function useSidekickAuth(public_key, sidekick_url) {
     var _a = react.useState(false), authorized = _a[0], setAuthorized = _a[1];
     var _b = react.useState(false), loading = _b[0], setLoading = _b[1];
     var _c = react.useState(null), newConnection = _c[0], setNewConnection = _c[1];
     var _d = react.useState(null), error = _d[0], setError = _d[1];
     var windowObjectReference = null;
     var authCodeHandled = react.useRef(false);
-    function authorize() {
+    var connectorId = react.useRef("");
+    var connectionId = react.useRef("");
+    function authorize(connector_id, connection_id) {
         return __awaiter(this, void 0, void 0, function () {
             var authorizeResult, url, strWindowFeatures;
             return __generator(this, function (_a) {
@@ -72,7 +74,9 @@ function useSidekickAuth(connector_id, connection_id, public_key, sidekick_url) 
                         setAuthorized(false);
                         setError(null);
                         setNewConnection(null);
-                        return [4 /*yield*/, authorizeConnection(null, connector_id, connection_id, public_key, sidekick_url, setError)];
+                        connectorId.current = connector_id;
+                        connectionId.current = connection_id;
+                        return [4 /*yield*/, authorizeConnection(null, connectorId.current, connectionId.current, public_key, sidekick_url, setError)];
                     case 1:
                         authorizeResult = _a.sent();
                         if (!authorizeResult) {
@@ -110,7 +114,7 @@ function useSidekickAuth(connector_id, connection_id, public_key, sidekick_url) 
                 var result;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, authorizeConnection(code, connector_id, connection_id, public_key, sidekick_url, setError)];
+                        case 0: return [4 /*yield*/, authorizeConnection(code, connectorId.current, connectionId.current, public_key, sidekick_url, setError)];
                         case 1:
                             result = _a.sent();
                             if (!result) {
@@ -142,6 +146,12 @@ function authorizeConnection(auth_code, connector_id, connection_id, public_key,
             switch (_a.label) {
                 case 0:
                     baseUrl = sidekick_url;
+                    console.log(baseUrl);
+                    console.log(auth_code);
+                    console.log(connector_id);
+                    console.log(connection_id);
+                    console.log(public_key);
+                    console.log(sidekick_url);
                     url = baseUrl + '/add-oauth-connection';
                     payload = {
                         connection_id: connection_id,

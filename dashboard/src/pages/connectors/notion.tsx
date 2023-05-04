@@ -13,6 +13,8 @@ import { FC, useEffect } from "react";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { SiNotion } from "react-icons/si";
+import {useSidekickAuth} from "getsidekick"
+
 
 import {
   HiHome,
@@ -301,43 +303,11 @@ interface ConnectorPlaygroundProps {
 const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({connectorId, bearer}: ConnectorPlaygroundProps) {
   const [connectionId, setConnectionId] = useState('');
 
-  const createNewConnection = async (connectionId: string, connectorId: string) => {
-    const url = import.meta.env.VITE_SERVER_URL + '/add-oauth-connection';
-    var payload = {
-      connector_id: connectorId,
-      connection_id: connectionId,
-    }
+  const publicKey = bearer
+  const serverUrl = import.meta.env.VITE_SERVER_URL
+  console.log(serverUrl)
 
-    // TODO: Replace this entire block with the Sidekick SDK
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const jsonData = await response.json();
-      const isAuthorized = jsonData.result.authorized
-      const authUrl = jsonData.result.auth_url
-      const width = 600
-      const height = 800
-      const left = (window.screen.width - width) / 2
-      const top = (window.screen.height - height) / 2
-      window.open(authUrl, '_blank', `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`)
-      window.addEventListener('message', (event) => {
-        if (event.origin !== "http://localhost:5173") {
-          console.log('wrong origin')
-          return;
-        }
-        console.log(event.data)
-      }, false);
-      console.log(jsonData)
-    } catch (error) {
-      console.log('error creating new connection')
-    }
-  }
+  const { authorize, loading, newConnection, error } = useSidekickAuth( publicKey, serverUrl)
 
   return (
     <>
@@ -353,10 +323,17 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({connectorId
         helperText="This ID will appear in your Active Connections list if the test is successful." 
         className="mt-1"
       />
-      <Button color="primary" className="mt-6"  onClick={() => createNewConnection(connectionId, connectorId) } >
+      <Button color="primary" className="mt-6"  onClick={() => {
+          console.log("hello")
+          authorize(connectorId, connectionId)
+      }} >
+        {loading ? <Spinner className="mr-3 text-sm" /> : <>
         <SiNotion className="mr-3 text-sm" />
         Connect to Notion
+        </>}
       </Button>
+      {newConnection && <div className="text-green-500 ml-3 mt-6">Connection successful</div>}
+      {error && <div className="text-red-500 ml-3 mt-6">{error}</div>}
     </>
   );
 };

@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 
 const NOTION_OAUTH_URL = 'https://www.notion.com/oauth/authorize';
 
-export function useSidekickAuth(connector_id: string, connection_id: string, public_key: string, sidekick_url: string) {
+export function useSidekickAuth(public_key: string, sidekick_url: string) {
   const [authorized, setAuthorized] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [newConnection, setNewConnection] = useState<string | null>(null);
@@ -11,13 +11,24 @@ export function useSidekickAuth(connector_id: string, connection_id: string, pub
 
   let windowObjectReference: Window | null = null;
   const authCodeHandled = useRef(false)
+  const connectorId = useRef("")
+  const connectionId = useRef("")
 
-  async function authorize() {
+  async function authorize(connector_id: string, connection_id: string,) {
     setLoading(true);
     setAuthorized(false);
     setError(null);
     setNewConnection(null);
-    const authorizeResult = await authorizeConnection(null, connector_id, connection_id, public_key, sidekick_url, setError)
+    connectorId.current = connector_id
+    connectionId.current = connection_id
+    const authorizeResult = await authorizeConnection(
+        null, 
+        connectorId.current, 
+        connectionId.current, 
+        public_key, 
+        sidekick_url, 
+        setError 
+    )
     if (!authorizeResult) {
         setLoading(false)
         return
@@ -49,7 +60,14 @@ export function useSidekickAuth(connector_id: string, connection_id: string, pub
     }
 
     async function completeAuthWithCode(code: string) {
-        const result = await authorizeConnection(code, connector_id, connection_id, public_key, sidekick_url, setError)
+        const result = await authorizeConnection(
+            code, 
+            connectorId.current, 
+            connectionId.current, 
+            public_key, 
+            sidekick_url,
+            setError
+        )
         if (!result) {
             setLoading(false)
             return
@@ -90,6 +108,14 @@ async function authorizeConnection(auth_code: string | null,
                                     sidekick_url: string,
                                     setError: (error: string | null) => void) {
     const baseUrl = sidekick_url
+
+    console.log(baseUrl)
+    console.log(auth_code)
+    console.log(connector_id)
+    console.log(connection_id)
+    console.log(public_key)
+    console.log(sidekick_url)
+
     const url = baseUrl + '/add-oauth-connection';
 
     var payload: AuthPayload = {

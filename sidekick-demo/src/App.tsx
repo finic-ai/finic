@@ -12,9 +12,9 @@ const App: React.FC = () => {
   const connectionId = "2cbaa840-0b21-4d8e-924c-e418a08ce53f"
   const sidekickBaseUrl = "http://localhost:8080"
 
-  const { authorize, loading, newConnection, error } = useSidekickAuth("notion", connectionId, publicKey, sidekickBaseUrl)
+  const { authorize, loading, newConnection, error } = useSidekickAuth( publicKey, sidekickBaseUrl)
   useEffect(() => {
-    authorize()
+    authorize("notion", connectionId,)
 
   }, [])
 
