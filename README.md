@@ -3,7 +3,7 @@
 </h2>
 
 <p align="center">
-  <p align="center">Connect your SaaS tools to a vector database and keep your data synced</p>
+  <p align="center">Unified APIs for unstructured data</p>
 </p>
 <p align="center">
 <a href="https://join.slack.com/t/sidekick-public/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg" target="_blank">
@@ -24,7 +24,7 @@
 </a>
 </p>
 
-[Sidekick](https://getsidekick.ai/) is a platform for integrating with your customer’s SaaS tools like Notion, Zendesk, Confluence, and Google Drive and synciing documents from these applications to your SQL or vector database. You can think of it like Plaid for unstructured documents. Sidekick is easy to set up - you use it by importing the NPM package and configuring it with your Sidekick API key, which you can get from the [Sidekick dashboard](https://dashboard.getsidekick.ai/). When your users connect their applications, you can view these connections from the dashboard.
+[Sidekick](https://getsidekick.ai/) is a platform for integrating with your customer’s SaaS tools like Notion, Zendesk, Confluence, and Google Drive and syncing documents from these applications to your SQL or vector database. You can think of it like Plaid for unstructured data. Sidekick is easy to set up - you use it by importing the NPM package and configuring it with your Sidekick API key, which you can get from the [Sidekick dashboard](https://dashboard.getsidekick.ai/). When your users connect their applications, you can view these connections from the dashboard.
 
 ### <a href="https://docs.getsidekick.ai" target="_blank">Read the docs</a>
 
