@@ -24,38 +24,34 @@
 </a>
 </p>
 
-[Sidekick](https://getsidekick.ai/) is a platform for integrating with SaaS tools like Salesforce, Github, Notion, Zendesk and syncing data between these tools and a vector database. You can also use the integrations and chunkers built by the core team and community to get started quickly, or quickly build new integrations and write custom chunkers for different content types based on Sidekick's `DataConnector` and `DataChunker` specs.
+[Sidekick](https://getsidekick.ai/) is a platform for integrating with your customer’s SaaS tools like Notion, Zendesk, Confluence, and Google Drive and synciing documents from these applications to your SQL or vector database. You can think of it like Plaid for unstructured documents. Sidekick is easy to set up - you use it by importing the NPM package and configuring it with your Sidekick API key, which you can get from the [Sidekick dashboard](https://dashboard.getsidekick.ai/). When your users connect their applications, you can view these connections from the dashboard.
 
 ### <a href="https://docs.getsidekick.ai" target="_blank">Read the docs</a>
 
 ## Demo
 [Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0).
-Get an API key to test out the cloud version by creating an account on the [Sidekick dashboard.](https://app.getsidekick.ai/)
+Get an API key to test out the cloud version by creating an account on the [Sidekick dashboard.](https://dashboard.getsidekick.ai/)
 
 If you have any questions on how to get started, [come join our Slack community!](https://sidekick-public.slack.com/).
 
 ## 💎 Features
-* [Dashboard](https://app.getsidekick.ai/sign-in) to manage connectors, handle auth, and run queries
+* [Dashboard](https://dashboard.getsidekick.ai/sign-in) to manage connections, handle auth, define data schemas, and run test queries
 * API Connectors to Zendesk, Notion, Google Drive, Confluence
 * General purpose web scraper for all other content
-* Support for Weaviate and Pinecone vector databases
-* FastAPI endpoint to query your Documents from all connected sources
-* FastAPI endpoint to perform Q&A over your Documents
+* Support for chunking and generating embeddings from synced documents automatically
+* Support for Weaviate and Pinecone vector databases as destinations
+* Endpoint to query your Documents from all connected sources
+* Endpoint to perform Q&A over your Documents
 
 ## 🚧 Upcoming
 * Support for Milvus, and Qdrant vector stores
+* Slack Connector
 * DropBox Connector
-* Query page for dashboard to replace FastAPI UI
-* Data synchronization via scheduling
-* Data synchronization via webhooks when available
+* Scheduled data synchronization
+* Webhook-based data synchronization, for APIs where webhooks are available
 
 ## Getting Started - 15 min
 Check out the [quickstart tutorial](https://docs.getsidekick.ai/quickstart) to get started.
 
 ## Contributing
 See [CONTRIBUTING.md](https://github.com/ai-sidekick/sidekick/blob/main/CONTRIBUTING.md)
-
-## Acknowledgments
-
-* The boilerplate for this project is based on the [ChatGPT Retrieval Plugin](https://github.com/openai/chatgpt-retrieval-plugin)
-* The licensing for this project is inspired by [Airbyte's licensing model](https://github.com/airbytehq/airbyte/tree/master/docs/project-overview/licenses)
