@@ -1,15 +1,12 @@
 
-import supabaseClient from "../lib/supabaseClient";
+import supabase from "../lib/supabaseClient";
 
 
 export class SupabaseService {
   
-    public static async getCredentialsByUserIdAndConnectorId(user_id: string, connector_id: number, getToken: any): Promise<string | null> {
+    public static async getCredentialsByUserIdAndConnectorId(user_id: string, connector_id: number): Promise<string | null> {
       try {
 
-        const token = await getToken({ template: 'supabase' }) || ""
-
-        const supabase = await supabaseClient(token)
 
         const { data, error } = await supabase
           .from('credentials')

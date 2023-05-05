@@ -23,7 +23,7 @@ const GoogleDriveConnectorPage: FC = function () {
   const queryParams = new URLSearchParams(location.search);
   const authCode = queryParams.get('code');
 
-  const { getToken, userId } = useAuth();
+  const {  userId } = useAuth();
   const {bearer} = useUserStateContext()
 
 
@@ -39,7 +39,7 @@ const GoogleDriveConnectorPage: FC = function () {
     if (authCode) {
       authorize()
     } else {
-      const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1, getToken)
+      const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1)
       setCredential(credential)
       setAuthLoading(false)
     }
@@ -71,7 +71,7 @@ const GoogleDriveConnectorPage: FC = function () {
       console.log('successfuly authenticated')
       // remove the code from the url
       window.history.replaceState({}, document.title, "/connectors/google-drive");
-      const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1, getToken)
+      const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1)
       setCredential(credential)
       setAuthLoading(false)
     }
