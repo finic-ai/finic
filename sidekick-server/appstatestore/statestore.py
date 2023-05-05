@@ -113,7 +113,7 @@ class StateStore:
         )
 
     def load_credentials(self, config: AppConfig, connector_id: ConnectorId, connection_id: str) -> Optional[str]:
-        response = self.supabase.table('credentials').select('*').filter(
+        response = self.supabase.table('connections').select('*').filter(
             'user_id', 
             'eq', 
             config.user_id
