@@ -164,7 +164,7 @@ const ExampleSidebar: FC = function () {
                   Docs
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="https://sidekick-server-ezml2kwdva-uc.a.run.app/docs"
+                  href="https://sidekick-ezml2kwdva-uc.a.run.app/docs"
                   icon={HiBeaker}
                   target="_blank"
                 >
