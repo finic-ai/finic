@@ -38,10 +38,8 @@ If you have any questions on how to get started, [come join our Slack community!
 * [Dashboard](https://dashboard.getsidekick.ai/sign-in) to manage connections, handle auth, define data schemas, and run test queries
 * API Connectors to Zendesk, Notion, Google Drive, Confluence
 * General purpose web scraper for all other content
-* Support for chunking and generating embeddings from synced documents automatically
-* Support for Weaviate and Pinecone vector databases as destinations
-* Endpoint to query your Documents from all connected sources
-* Endpoint to perform Q&A over your Documents
+* Document normalization so you only need to write one parser that works with N sources
+* Set the destination to be an API endpoint you control, or upload directly to a Weaviate/Pinecone vector database
 
 ## 🚧 Upcoming
 * Support for Milvus, and Qdrant vector stores
