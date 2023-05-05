@@ -27,7 +27,6 @@ const NotionConnectorPage: FC = function () {
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [authorizationUrl, setAuthorizationUrl] = useState('');
-  const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
 
   const {bearer, appId} = useUserStateContext()
@@ -41,7 +40,6 @@ const NotionConnectorPage: FC = function () {
         client_id: clientId,
         client_secret: clientSecret,
         authorization_url: authorizationUrl,
-        redirect_uri: redirectUri
       }
     }
 
@@ -140,8 +138,6 @@ const NotionConnectorPage: FC = function () {
                         setClientSecret={setClientSecret}
                         authorizationUrl={authorizationUrl}
                         setAuthorizationUrl={setAuthorizationUrl}
-                        redirectUri={redirectUri} 
-                        setRedirectUri={setRedirectUri} 
                       />
                     </div>
                   </div>
@@ -186,12 +182,10 @@ interface AuthorizeModalProps {
   setClientSecret: (clientSecret: string) => void;
   authorizationUrl: string;
   setAuthorizationUrl: (authorizationUrl: string) => void;
-  redirectUri: string;
-  setRedirectUri: (redirect_uri: string) => void;
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, redirectUri, setRedirectUri, authorized, authLoading
+  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading
 }: AuthorizeModalProps) {
   const [isOpen, setOpen] = useState(false);
 
@@ -233,15 +227,6 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
                   value={authorizationUrl}
                   onChange={(e) => setAuthorizationUrl(e.target.value)}
                   placeholder='Notion authorization URL'
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="apiKeys.label">Redirect URI</Label>
-                <TextInput
-                  value={redirectUri}
-                  onChange={(e) => setRedirectUri(e.target.value)}
-                  placeholder='Notion Redirect URI'
                   className="mt-1"
                 />
               </div>

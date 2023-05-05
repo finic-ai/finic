@@ -24,7 +24,7 @@ class NotionConnector(DataConnector):
             client_id = self.connector_credentials['client_id']
             client_secret = self.connector_credentials['client_secret']
             authorization_url = self.connector_credentials['authorization_url']
-            redirect_uri = self.connector_credentials['redirect_uri']
+            redirect_uri = "https://dashboard.getsidekick.ai/oauth/redirect"
         except Exception as e:
             raise Exception("Connector is not enabled")
         
