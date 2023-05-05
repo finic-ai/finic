@@ -2133,9 +2133,9 @@ get-symbol-description@^1.0.0:
     get-intrinsic "^1.1.1"
 
 getsidekick@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/getsidekick/-/getsidekick-1.0.2.tgz#1343662feadbd6d39e164bd6d23e90124a7bd91a"
-  integrity sha512-a0Xm0sSDbuBx8+sZRMQ9Ro32ngDfUg/Zaq4BAWjONSQk8AtYYqf+oV6oBKRU9HuPnVUnXjdnVL0lqx4bq4VArw==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/getsidekick/-/getsidekick-1.0.3.tgz#4f1497e9ab9e7fe0367f7843b2791aab2d0996c4"
+  integrity sha512-C03+yH52iDi37o0Or5b2IZ+MkdshwxS+D+6YzZT/WkOg8sZ4M2ZWmcaLCskK2WSMLrjyfDd6zwhTUrOLgn8cEw==
 
 glob-parent@^5.1.2, glob-parent@~5.1.2:
   version "5.1.2"

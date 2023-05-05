@@ -98,7 +98,7 @@ function useSidekickAuth(public_key, sidekick_url) {
         function handleMessage(event) {
             console.log(event);
             // check if oigin is not http://localhost:5173 or app.getsidekick.ai
-            if (event.origin !== "http://localhost:5173" && event.origin !== "https://app.getsidekick.ai") {
+            if (event.origin !== "http://localhost:5173" && event.origin !== "https://dashboard.getsidekick.ai") {
                 return;
             }
             var data = event.data;
