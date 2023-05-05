@@ -26,7 +26,6 @@ export function UserStateProvider({ children }: PropsWithChildren) {
     // TODO #1: Replace with your JWT template name
     console.log("fetching data")
     try {
-      const token = await getToken({ template: 'supabase' }) || ""
 
       const {
         data: { user },
@@ -37,7 +36,7 @@ export function UserStateProvider({ children }: PropsWithChildren) {
       const userId = user!.id
       console.log(userId)
       // Select the row corresponding to this userId
-      const { data, error } = await supabase.from('users').select().eq('id', userId)
+      const { data } = await supabase.from('users').select().eq('id', userId)
       console.log(data)
 
       if (data && data[0]) {

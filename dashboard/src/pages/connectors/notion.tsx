@@ -11,7 +11,6 @@ import {
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
-import { FaPlus } from "react-icons/fa";
 import { SiNotion } from "react-icons/si";
 import {useSidekickAuth} from "getsidekick"
 
