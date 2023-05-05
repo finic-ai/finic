@@ -122,7 +122,7 @@ class StateStore:
             'eq', 
             connector_id
         ).filter(
-            'connection_id',
+            'id',
             'eq',
             connection_id
         ).execute()
