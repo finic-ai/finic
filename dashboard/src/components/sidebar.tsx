@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import classNames from "classnames";
-import { Sidebar, TextInput } from "flowbite-react";
+import { Sidebar, TextInput, Tooltip } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
@@ -42,7 +42,7 @@ const ExampleSidebar: FC = function () {
       >
         <div className="flex h-full flex-col justify-between py-2">
           <div>
-            <form className="pb-3 md:hidden">
+            {/* <form className="pb-3 md:hidden">
               <TextInput
                 icon={HiSearch}
                 type="search"
@@ -50,7 +50,7 @@ const ExampleSidebar: FC = function () {
                 required
                 size={32}
               />
-            </form>
+            </form> */}
             <Sidebar.Items>
               <Sidebar.ItemGroup>
                 <Sidebar.Collapse
@@ -58,46 +58,6 @@ const ExampleSidebar: FC = function () {
                   label="Connectors"
                   open={isConnectorsOpen}
                 >
-                  <Sidebar.Item
-                    href="/connectors/website"
-                    className={
-                      "/connectors/website" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Website
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/connectors/google-drive"
-                    className={
-                      "/connectors/google-drive" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Google Drive
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/connectors/zendesk"
-                    className={
-                      "/connectors/zendesk" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Zendesk
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/connectors/confluence"
-                    className={
-                      "/connectors/confluence" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Confluence
-                  </Sidebar.Item>
                   <Sidebar.Item
                     href="/connectors/notion"
                     className={
@@ -108,16 +68,38 @@ const ExampleSidebar: FC = function () {
                   >
                     Notion
                   </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/connectors/stripe"
-                    className={
-                      "/connectors/stripe" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Stripe
-                  </Sidebar.Item>
+                  <Tooltip content="Coming Soon" trigger="hover">
+                    <Sidebar.Item
+                      href="/connectors/google-drive"
+                      className="pointer-events-none text-gray-400"
+                    >
+                      Google Drive
+                    </Sidebar.Item>
+                  </Tooltip>
+                  <Tooltip content="Coming Soon" trigger="hover">
+                    <Sidebar.Item
+                      href="/connectors/zendesk"
+                      className="pointer-events-none text-gray-400"
+                    >
+                      Zendesk
+                    </Sidebar.Item>
+                  </Tooltip>
+                  <Tooltip content="Coming Soon" trigger="hover">
+                    <Sidebar.Item
+                      href="/connectors/confluence"
+                      className="pointer-events-none text-gray-400"
+                    >
+                      Confluence
+                    </Sidebar.Item>
+                  </Tooltip>
+                  <Tooltip content="Coming Soon" trigger="hover">
+                    <Sidebar.Item
+                      href="/connectors/website"
+                      className="pointer-events-none text-gray-400"
+                    >
+                      Website
+                    </Sidebar.Item>
+                  </Tooltip>
                   {/* <Sidebar.Item
                     href="/connectors/website"
                     className={
