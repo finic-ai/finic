@@ -1,1 +1,1 @@
-export { useSidekickAuth } from './sidekick';
+export { useSidekickLink } from './sidekick';

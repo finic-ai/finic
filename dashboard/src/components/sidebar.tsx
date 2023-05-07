@@ -1,17 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import classNames from "classnames";
-import { Sidebar, TextInput, Tooltip } from "flowbite-react";
+import { Sidebar, Tooltip } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
   HiKey, 
-  HiSearch,
   HiLink,
   HiBeaker,
-  HiDatabase,
   HiQuestionMarkCircle,
 } from "react-icons/hi";
-import {FaGithub, FaReadme, FaRobot} from "react-icons/fa"
+import {FaGithub, FaReadme} from "react-icons/fa"
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
