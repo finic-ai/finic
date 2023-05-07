@@ -1,5 +1,5 @@
 {
-  "name": "getsidekick",
+  "name": "sidekick-modal",
   "version": "0.1.1",
   "private": false,
   "dependencies": {
@@ -7,20 +7,22 @@
     "flowbite": "^1.6.5",
     "flowbite-react": "^0.4.4",
     "react-icons": "^4.8.0",
+    "react-router": "^6.11.1",
+    "react-router-dom": "^6.11.1",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@types/node": "^16.18.25",
     "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.1"
+    "@types/react-dom": "^18.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "tsc && npm run copy-assets",
+    "build": "react-scripts build",
     "copy-assets": "copyfiles -u 1 \"src/**/*.css\" dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

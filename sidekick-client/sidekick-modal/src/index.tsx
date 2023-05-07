@@ -1,11 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import React from 'react';
+import { Routes, Route } from "react-router";
+import { BrowserRouter } from "react-router-dom";
 
 
 import "./index.css";
 import { Flowbite } from "flowbite-react";
 import App from "./App";
+import RedirectPage from "./oauth/redirect";
 
 const container = document.getElementById("root");
 
@@ -23,7 +26,12 @@ const root = createRoot(container);
 root.render(
   <StrictMode>
     <Flowbite>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} index />
+          <Route path="/oauth/redirect" element={<RedirectPage />} />
+        </Routes>
+      </BrowserRouter>
     </Flowbite>
   </StrictMode>
 );
