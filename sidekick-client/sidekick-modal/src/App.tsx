@@ -34,8 +34,6 @@ const App: React.FC = () => {
     // 4. Use the auth code to call /add-oauth-connection again to complete the connection
     // 5. Pass the connectionId back to the opener window where the Sidekick hook was used
 
-    console.log('here')
-
     setIsLoading(true)
     if (!connectionId || !publicKey) {
       setError('Invalid connection_id or public_key')
@@ -57,7 +55,7 @@ const App: React.FC = () => {
   // Listen for messages from OAuth windows opened by this component
   const handleMessage = useCallback((event: MessageEvent) => {
     // check if oigin is not http://localhost:5173 or app.getsidekick.ai
-    if (event.origin !== "http://localhost:5173" && event.origin !== "https://dashboard.getsidekick.ai") {
+    if (event.origin !== "http://localhost:3000" && event.origin !== "https://link.psychic.dev") {
       return;
     }
     const data = event.data;

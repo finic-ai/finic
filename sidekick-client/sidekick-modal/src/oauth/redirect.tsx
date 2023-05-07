@@ -10,7 +10,7 @@ const RedirectPage: React.FC = () => {
           const urlParams = new URLSearchParams(window.location.search);
           const code = urlParams.get('code');
           if (code) {
-              window.opener.postMessage({ code: code }, '*')
+            window.opener.postMessage({ code: code }, '*')
           }
           window.close()
       }
