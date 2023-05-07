@@ -52,7 +52,7 @@ const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, set
             Your data is secure
           </h5>
           <p className="text-base leading-relaxed text-gray-500">
-          Sidekick is SOC2 compliant and doesn’t sell your data, or share it with any third parties except those you explicitly authorize.
+          Sidekick implements controls aligned with SOC2 requirements and doesn’t sell your data, or share it with any third parties except those you explicitly authorize.
           </p>
         </div>
         <div className="space-y-1">
