@@ -19,19 +19,11 @@ if (!container) {
 
 const root = createRoot(container);
 
-const SidekickModal = () => {
-  return (
+
+root.render(
+  <StrictMode>
     <Flowbite>
       <App />
     </Flowbite>
-  )
-}
-export default SidekickModal
-
-// root.render(
-//   <StrictMode>
-//     <Flowbite>
-//       <App />
-//     </Flowbite>
-//   </StrictMode>
-// );
+  </StrictMode>
+);
