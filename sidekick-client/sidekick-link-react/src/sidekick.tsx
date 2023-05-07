@@ -6,20 +6,21 @@ const SIDEKICK_URL = 'https://link.psychic.dev';
 export function useSidekickLink(public_key: string, onSuccessCallback: Function) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [authorized, setAuthorized] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   let windowObjectReference: Window | null = null;
 
   async function open(connectionId: string) {
+    setIsLoading(true)
     // Open the Sidekick Link modal
     const url = `${SIDEKICK_URL}?public_key=${public_key}&connection_id=${connectionId}`
 
     if (windowObjectReference === null || windowObjectReference.closed) {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const left = window.screenX
-      const top = window.screenY
+      const width = 600;
+      const height = 800;
+      const left = (window.screen.width - width) / 2;
+      const top = (window.screen.height - height) / 2;
       windowObjectReference = window.open(url, '_blank', `addressbar=no, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`)
     } else {
       windowObjectReference.focus();
@@ -33,7 +34,10 @@ export function useSidekickLink(public_key: string, onSuccessCallback: Function)
     }
     const data = event.data;
     if (data && data.connection_id) {
+      setIsLoading(false)
       onSuccessCallback(data.connection_id)
+    } else {
+      setError("Connection failed. Please try again later.")
     }
   }, [])
 
@@ -41,11 +45,11 @@ export function useSidekickLink(public_key: string, onSuccessCallback: Function)
     // Add event listeners to get auth codes
     window.addEventListener('message', handleMessage, false);
     setIsReady(true)
-    
+
     return () => {
       window.removeEventListener('message', handleMessage);
     };
   }, []);
 
-  return { open, isReady };
+  return { open, isReady, isLoading, error};
 }
