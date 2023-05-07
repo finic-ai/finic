@@ -45,11 +45,11 @@ const App: React.FC = () => {
     const auth_url = result.auth_url
     console.log(result)
     // Open the auth url in a new window and center it.
-    const width = 600
-    const height = 800
-    const left = (window.screen.width - width) / 2
-    const top = (window.screen.height - height) / 2
-    window.open(auth_url, '_blank', `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`)
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const left = window.screenX
+    const top = window.screenY
+    window.open(auth_url, '_blank', `addressbar=no, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`)
   }
 
   // Listen for messages from OAuth windows opened by this component
