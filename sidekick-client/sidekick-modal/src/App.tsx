@@ -34,6 +34,8 @@ const App: React.FC = () => {
     // 4. Use the auth code to call /add-oauth-connection again to complete the connection
     // 5. Pass the connectionId back to the opener window where the Sidekick hook was used
 
+    console.log('here')
+
     setIsLoading(true)
     if (!connectionId || !publicKey) {
       setError('Invalid connection_id or public_key')
