@@ -18,18 +18,17 @@ interface ResultPageProps {
   setCurrentStep: Function,
   customerLogoUrl: string,
   connectorName: string,
-  setShowModal: Function,
   isLoading: boolean,
 }
   
-const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, setShowModal, isLoading}) => {
+const ResultPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading}) => {
   const [isError, setIsError] = useState(true)
   const [isSuccess, setIsSuccess] = useState(true)
 
   const renderResult = () => {
     if (isSuccess) {
       return (
-        <div className="flex flex-col space-y-4 items-center text-center">
+        <div className="flex flex-col mb-4 space-y-4 items-center text-center">
           <SuccessIcon />
           <p className="text-gray-600">You have successfully connected to <span className="font-bold">{connectorName}</span>.</p>
         </div>
@@ -37,7 +36,7 @@ const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl
     }
 
   return (
-    <div className="flex flex-col space-y-4 items-center text-center">
+    <div className="flex flex-col mb-4 space-y-4 items-center text-center">
       <ErrorIcon />
       <div>
         <p className="text-gray-600">We couldn't connect to <span className="font-bold">{connectorName}</span>.</p>
@@ -49,14 +48,14 @@ const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl
 
   const renderModalHeader = () => {
     return (
-      <Modal.Header as={withModalHeaderProps(ModalHeader, { customerLogoUrl, currentStep, setCurrentStep })} />
+      <ModalHeader customerLogoUrl={customerLogoUrl} currentStep={currentStep} setCurrentStep={setCurrentStep}/>
     )
 
   }
 
   const renderModalBody = () => {
     return (
-      <Modal.Body className="space-y-6 px-8">
+      <div className="space-y-6 px-8">
         {isLoading ? <div className="text-center">
           <div className="text-center">
             {isLoading ? <Spinner size="xl"/> : renderResult()}
@@ -64,15 +63,15 @@ const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl
           <p className="mt-6">Authenticating with <span className="font-bold">{connectorName}</span>...</p>
         </div> : 
         renderResult()}
-      </Modal.Body>
+      </div>
     )
   }
 
   const renderModalFooter = () => {
     return (
-      <Modal.Footer className="flex flex-col space-y-6">
+      <div className="flex flex-col space-y-6 items-center">
         {isSuccess && !isLoading &&
-          <Button size="xl" className="w-3/5 min-w-300" onClick={() => setShowModal(false)}>
+          <Button size="xl" className="w-3/5 min-w-300" onClick={() => window.close()}>
             Finish
           </Button>
         }
@@ -81,7 +80,7 @@ const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl
             Go Back
           </Button>
         }
-      </Modal.Footer>
+      </div>
     )
   }
 
@@ -94,5 +93,5 @@ const ConnectorPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl
   );
 }
 
-export default ConnectorPage;
+export default ResultPage;
   

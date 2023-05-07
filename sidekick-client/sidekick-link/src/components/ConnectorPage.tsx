@@ -11,6 +11,10 @@ import {
 import React from "react";
 import { useState } from "react";
 
+import {
+  HiOutlineArrowLeft
+} from "react-icons/hi2";
+
 import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
 
 import NotionIcon from "./icons/NotionIcon";
@@ -91,16 +95,17 @@ const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogo
 
   const renderModalHeader = () => {
     return (
-      <Modal.Header as={withModalHeaderProps(ModalHeader, { customerLogoUrl, currentStep, setCurrentStep })} />
+      <div>
+        <ModalHeader customerLogoUrl={customerLogoUrl} currentStep={currentStep} setCurrentStep={setCurrentStep}/>
+        <p className="font-normal">Choose the knowledge base you want to share with <span className="font-bold">{customerName}</span>.</p>
+      </div>
     )
-
   }
 
   const renderModalBody = () => {
     return (
-      <Modal.Body className="space-y-6 px-8">
+      <div className="space-y-6 px-8 text-left">
         <div className="space-y-6">
-          <p className="font-normal">Choose the knowledge base you want to share with <span className="font-bold">{customerName}</span>.</p>
           <ul className="my-4 space-y-3">
             {connectors.map((connector) => {
               return (<li>
@@ -118,17 +123,7 @@ const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogo
             </a>
           </div>
         </div>
-      </Modal.Body>
-    )
-  }
-
-  const renderModalFooter = () => {
-    return (
-      <Modal.Footer className="flex flex-col space-y-6">
-        <Button color="gray" size="xl" className="w-3/5 min-w-300" onClick={() => setCurrentStep(0)}>
-          Go Back
-        </Button>
-      </Modal.Footer>
+      </div>
     )
   }
 

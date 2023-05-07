@@ -1,11 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import {
   Avatar,
-  Button,
-  Label,
-  Modal,
-  Table,
-  TextInput,
+  Button
 } from "flowbite-react";
 import {
   HiLockClosed,
@@ -23,7 +19,7 @@ interface StartPageProps {
 const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, setCurrentStep}) => {
   const renderModalHeader = () => {
     return (
-      <Modal.Header>
+      <div>
         <div className="flex flex-col items-center">
           <Avatar.Group className="my-4">
             <Avatar
@@ -41,14 +37,15 @@ const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, set
           </Avatar.Group>
           <p className="font-normal text-center"><span className="font-bold">{customerName}</span> uses <span className="font-bold">Sidekick</span> to connect to your knowledge base applications.</p>
         </div>
-      </Modal.Header>
+        <hr className="h-px my-8 mx-6 bg-gray-200 border-0" />
+      </div>
     )
 
   }
 
   const renderModalBody = () => {
     return (
-      <Modal.Body className="space-y-6 px-8">
+      <div className="space-y-6 px-8 text-left">
         <div className="space-y-1">
           <HiLockClosed className="text-3xl mr-1 text-gray-600" />
           <h5 className="text-xl font-bold tracking-tight text-gray-900 mt-2">
@@ -67,20 +64,21 @@ const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, set
           Sidekick ensures that access control lists (ACLs) set by your organization are preserved. Only those resources you have permission to view will be shared with Support Hero.
           </p>
         </div>
-      </Modal.Body>
+        <hr className="h-px my-8 bg-gray-200 border-0" />
+      </div>
     )
   }
 
   const renderModalFooter = () => {
     return (
-      <Modal.Footer className="flex flex-col space-y-6">
+      <div className="flex flex-col space-y-6 mt-6 items-center">
         <p className="text-sm text-gray-500">
           By selecting “Continue” you agree to the <a href="https://www.getsidekick.ai/privacy-policy" target="_blank" className="underline text-blue-500">Sidekick End User Privacy Policy</a>
         </p>
         <Button size="xl" className="w-3/5 min-w-300" onClick={() => setCurrentStep(1)}>
           Continue
         </Button>
-      </Modal.Footer>
+      </div>
     )
   }
 
