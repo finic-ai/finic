@@ -1,11 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
-
+import axios, { AxiosResponse } from 'axios';
 
 const NOTION_OAUTH_URL = 'https://www.notion.com/oauth/authorize';
+const SIDEKICK_URL = 'https://dashboard.getsidekick.ai';
 
-export function useSidekickAuth(public_key: string, sidekick_url: string) {
+export function useSidekickLink(public_key: string) {
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [sidekickLink, setSidekickLink] = useState<Element | null>(null);
   const [authorized, setAuthorized] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [newConnection, setNewConnection] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,8 +18,15 @@ export function useSidekickAuth(public_key: string, sidekick_url: string) {
   const connectorId = useRef("")
   const connectionId = useRef("")
 
+  async function open() {
+    // Open the Sidekick Link modal
+
+  }
+
   async function authorize(connector_id: string, connection_id: string,) {
-    setLoading(true);
+    // initiate the authorization flow for a chosen connector
+    setIsLoading(true);
+    setShowModal(true);
     setAuthorized(false);
     setError(null);
     setNewConnection(null);
@@ -26,11 +37,10 @@ export function useSidekickAuth(public_key: string, sidekick_url: string) {
         connectorId.current, 
         connectionId.current, 
         public_key, 
-        sidekick_url, 
         setError 
     )
     if (!authorizeResult) {
-        setLoading(false)
+      setIsLoading(false)
         return
     }
     const url = authorizeResult.auth_url
@@ -45,6 +55,8 @@ export function useSidekickAuth(public_key: string, sidekick_url: string) {
   }
 
   useEffect(() => {
+
+    // Initialize the component
 
     function handleMessage(event: MessageEvent) {
         console.log(event)
@@ -64,22 +76,21 @@ export function useSidekickAuth(public_key: string, sidekick_url: string) {
             code, 
             connectorId.current, 
             connectionId.current, 
-            public_key, 
-            sidekick_url,
+            public_key,
             setError
         )
         if (!result) {
-            setLoading(false)
+          setIsLoading(false)
             return
         }
         console.log(result)
         setAuthorized(result.authorized)
         setNewConnection(result.connection.connection_id)
-        setLoading(false)
+        setIsLoading(false)
         // window.close()
     }
 
-
+    // Add event listeners to get auth codes
     window.addEventListener('message', handleMessage, false);
 
     return () => {
@@ -89,7 +100,7 @@ export function useSidekickAuth(public_key: string, sidekick_url: string) {
     };
   }, []);
 
-  return { authorize, authorized, loading, newConnection, error };
+  return { authorize, authorized, isReady, isLoading, newConnection, error };
 }
 
 // export default useNotionOAuth;
@@ -100,23 +111,19 @@ type AuthPayload = {
     auth_code?: string;
 }
 
-
 async function authorizeConnection(auth_code: string | null, 
                                     connector_id: string, 
                                     connection_id: string,
                                     public_key: string,
-                                    sidekick_url: string,
                                     setError: (error: string | null) => void) {
-    const baseUrl = sidekick_url
 
-    console.log(baseUrl)
     console.log(auth_code)
     console.log(connector_id)
     console.log(connection_id)
     console.log(public_key)
-    console.log(sidekick_url)
+    console.log(SIDEKICK_URL)
 
-    const url = baseUrl + '/add-oauth-connection';
+    const url = SIDEKICK_URL + '/add-oauth-connection';
 
     var payload: AuthPayload = {
         connection_id: connection_id,

@@ -27,6 +27,7 @@ import GithubIcon from "./icons/GithubIcon";
 const connectors = [
   {
     name: "Notion",
+    id: "notion",
     icon: NotionIcon,
     label: "Popular",
     labelColor: "info",
@@ -34,6 +35,7 @@ const connectors = [
   },
   {
     name: "Google Drive",
+    id: "google-drive",
     icon: GoogleDriveIcon,
     label: null,
     labelColor: "info",
@@ -41,6 +43,7 @@ const connectors = [
   },
   {
     name: "Confluence",
+    id: "confluence",
     icon: ConfluenceIcon,
     label: "In Development",
     labelColor: "warning",
@@ -48,6 +51,7 @@ const connectors = [
   },
   {
     name: "Zendesk",
+    id: "zendesk",
     icon: ZendeskIcon,
     label: "In Development",
     labelColor: "warning",
@@ -55,6 +59,7 @@ const connectors = [
   },
   {
     name: "Github",
+    id: "github",
     icon: GithubIcon,
     label: "In Development",
     labelColor: "warning",
@@ -68,21 +73,23 @@ interface ConnectorPageProps {
   setCurrentStep: Function,
   customerLogoUrl: string,
   setConnectorName: Function,
+  setSelectedConnectorId: Function,
   startConnectorAuthFlow: Function
 }
   
-const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, startConnectorAuthFlow}) => {
-  const pickConnector = (connectorName: string) => {
+const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow}) => {
+  const pickConnector = (connectorName: string, connectorId: string) => {
     setCurrentStep(2)
     setConnectorName(connectorName)
-    startConnectorAuthFlow(connectorName)
+    setSelectedConnectorId(connectorId)
+    startConnectorAuthFlow(connectorId)
   }
 
-  const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, label: string|null, labelColor: string, active: boolean) => {
+  const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, connectorId: string, label: string|null, labelColor: string, active: boolean) => {
     return (
       <button
         className={active ? "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 hover:bg-gray-100 hover:shadow" : "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 pointer-events-none opacity-50"}
-        onClick={() => pickConnector(connectorName)}
+        onClick={() => pickConnector(connectorName, connectorId)}
       >
         <ConnectorIcon/>
         <span className="ml-3 flex-1 whitespace-nowrap">
@@ -109,7 +116,7 @@ const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogo
           <ul className="my-4 space-y-3">
             {connectors.map((connector) => {
               return (<li>
-                {renderConnectorButton(connector.icon, connector.name, connector.label, connector.labelColor, connector.active)}
+                {renderConnectorButton(connector.icon, connector.name, connector.id, connector.label, connector.labelColor, connector.active)}
               </li>)
             })}
           </ul>

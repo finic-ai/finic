@@ -111,20 +111,20 @@ const ExampleSidebar: FC = function () {
                     Website
                   </Sidebar.Item> */}
                 </Sidebar.Collapse>
-                <Sidebar.Item
+                {/* <Sidebar.Item
                   href="/vectorstore"
                   icon={HiDatabase}
                 >
                   Vector Store
-                </Sidebar.Item>
+                </Sidebar.Item> */}
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
-                <Sidebar.Item
+                {/* <Sidebar.Item
                   href="/query"
                   icon={FaRobot}
                 >
                   Query
-                </Sidebar.Item>
+                </Sidebar.Item> */}
                 <Sidebar.Item
                   href="/api-keys"
                   icon={HiKey}

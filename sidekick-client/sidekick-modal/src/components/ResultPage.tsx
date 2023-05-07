@@ -19,11 +19,11 @@ interface ResultPageProps {
   customerLogoUrl: string,
   connectorName: string,
   isLoading: boolean,
+  error: string,
+  isSuccess: boolean
 }
   
-const ResultPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading}) => {
-  const [isError, setIsError] = useState(true)
-  const [isSuccess, setIsSuccess] = useState(true)
+const ResultPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading, error, isSuccess}) => {
 
   const renderResult = () => {
     if (isSuccess) {
