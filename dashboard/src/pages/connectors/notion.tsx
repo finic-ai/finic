@@ -296,7 +296,7 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: Co
       <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
         Playground
       </h2>
-      <p className="mb-6">See how users will experience using Sidekick to connect their Notion workspace.</p>
+      <p className="mb-6">See how users will experience using Psychic Link to connect their Notion workspace.</p>
       <Label htmlFor="apiKeys.label">Connection ID</Label>
       <TextInput
         value={connectionId}

@@ -134,7 +134,7 @@ const ConfluenceConnectorPage: FC = function () {
                   <TextInput
                     id="apiKeys.label"
                     name="apiKeys.label"
-                    placeholder='Confluence space ID you want to sync with Sidekick'
+                    placeholder='Confluence space ID you want to sync with Psychic Link'
                     className="mt-1"
                     onChange={(e) => setSpace(e.target.value.trim())}
                     value={space}
