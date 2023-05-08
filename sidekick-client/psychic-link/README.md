@@ -1,6 +1,6 @@
-# getsidekick
+# Psychic Link
 
-`getsidekick` is a React library that provides a hook for easy authentication with popular SaaS applications such as Notion, Google Drive, and more.
+`@psychicdev/link` is a React library that provides a hook for easy authentication with popular SaaS applications such as Notion, Google Drive, and more. Find us at https://psychic.dev
 
 ## Table of Contents
 
@@ -15,26 +15,31 @@
 Install the library using npm:
 
 ```sh
-npm install getsidekick
+npm install @psychicdev/link
 ```
 
 ## Usage
 
-Here's an example of how to use the `getsidekick` library:
+Here's an example of how to use the library:
 
 ```javascript
-import React, { useEffect } from 'react';
-import { useSidekickAuth } from 'getsidekick';
+import React, { useEffect, useState } from 'react';
+import { usePsychicLink } from '@psychicdev/link';
 
 const App = () => {
+  const [newConnection, setNewConnection] = useState(null);
+  // Your Psychic.dev public API key
   const publicKey = '5c362fda-bb72-4a6c-b930-71f33ad45f79';
+  
+  // Unique ID for this connection
   const connectionId = '2cbaa840-0b21-4d8e-924c-e418a08ce53f';
-  const sidekickBaseUrl = 'http://localhost:8080';
 
-  const { authorize, loading, newConnection, error } = useSidekickAuth(publicKey, sidekickBaseUrl);
+  // usePsychicLink accepts a callback that handles your application logic once a new connection is established
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: string) => setNewConnection(newConnection));
 
   useEffect(() => {
-    authorize('notion', connectionId);
+    // Shows the Psychic Link modal to the user
+    open(connectionId);
   }, []);
 
   return (
@@ -47,44 +52,8 @@ const App = () => {
 export default App;
 ```
 
-## Running Locally
-
-To run the `getsidekick` library locally, follow these steps:
-
-1. Build the library:
-
-   ```sh
-   npm run build
-   ```
-
-2. Link the library to your local npm:
-
-   ```sh
-   npm link
-   ```
-
-3. Link the library to the target project (e.g. `sidekick-demo`):
-
-   ```sh
-   cd path/to/sidekick-demo
-   npm link getsidekick
-   ```
-
-4. Import and use the library in the target project:
-
-   ```javascript
-   import { useSidekickAuth } from 'getsidekick';
-   ```
-
-## Publishing
-
-To publish the `getsidekick` library, use the following command:
-
-```sh
-npm publish
-```
-
 ## Troubleshooting
+For assistance, join the Psychic community Slack [here](https://join.slack.com/t/sidekick-public/shared_invite/zt-1tfq2k2dw-Ri7udiTSLEe5d2V0mvSxxw)
 
 ### Invalid Hook Call Warning
 
