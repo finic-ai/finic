@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import './App.css';
 
 // import useSidekickLink from './hooks/useSidekickLink';
@@ -8,6 +8,10 @@ import ConnectorPage from './components/ConnectorPage'
 import ResultPage from './components/ResultPage'
 
 const SIDEKICK_URL = process.env.REACT_APP_SIDEKICK_URL
+
+type Metadata = {
+  [key: string]: string | null;
+};
 
 const App: React.FC = () => {
   const [currentStep, setCurrentStep] = React.useState(0)
@@ -19,6 +23,8 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState('')
   const [isSuccess, setIsSuccess] = React.useState(false)
+  const [metadata, setMetadata] = useState<Metadata | null>(null)
+  const [authCode, setAuthCode] = useState('')
 
   const authCodeHandled = useRef(false)
 
@@ -64,7 +70,8 @@ const App: React.FC = () => {
     const data = event.data;
     if (data && data.code && !authCodeHandled.current) {
       authCodeHandled.current = true
-      completeAuthWithCode(selectedConnectorId, data.code)
+      setAuthCode(data.code)
+      
     }
   }, [selectedConnectorId])
 
@@ -105,6 +112,16 @@ const App: React.FC = () => {
     };
   }, [selectedConnectorId]);
 
+  useEffect(() => {
+    if (authCode) {
+      if (selectedConnectorId == 'notion') {
+        completeAuthWithCode(selectedConnectorId, authCode)
+      } else {
+        setIsLoading(false)
+      }
+    }
+  }, [authCode])
+
   const renderAppStep = () => {
     switch (currentStep) {
       case 0:
@@ -124,6 +141,9 @@ const App: React.FC = () => {
                   />
       case 2:
         return <ResultPage 
+                  selectedConnectorId={selectedConnectorId}
+                  metadata={metadata}
+                  setMetadata={setMetadata}
                   customerName={customerName} 
                   customerLogoUrl={customerLogoUrl} 
                   currentStep={currentStep} 

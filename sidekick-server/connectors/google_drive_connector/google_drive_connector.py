@@ -30,7 +30,7 @@ def extract_pdf_text(pdf_file):
         text += reader.pages[page_num].extract_text()
     return text
 
-class GoogleDocsConnector(DataConnector):
+class GoogleDriveConnector(DataConnector):
     connector_id: ConnectorId = ConnectorId.gdrive
     config: AppConfig
 
@@ -39,7 +39,6 @@ class GoogleDocsConnector(DataConnector):
                         
 
     async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
-        folder_url = metadata['folder_url']
         client_secrets = StateStore().get_connector_credential(self.connector_id, self.config)
 
         flow = InstalledAppFlow.from_client_config(
@@ -56,6 +55,7 @@ class GoogleDocsConnector(DataConnector):
         # Build the Google Drive API client with the credentials
         creds = flow.credentials
         creds_string = creds.to_json()
+        folder_url = metadata['folder_url']
         folder_id = get_id_from_url(folder_url)
 
         new_connection = StateStore().add_connection(

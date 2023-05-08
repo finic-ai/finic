@@ -165,7 +165,7 @@ const GoogleDriveConnectorPage: FC = function () {
                   <TextInput
                     id="apiKeys.label"
                     name="apiKeys.label"
-                    placeholder='Link to the folder you want to sync with Sidekick'
+                    placeholder='URL of the folder you want to sync with Psychic Link'
                     className="mt-1"
                     onChange={(e) => setFolderName(e.target.value.trim())}
                     value={folderName}

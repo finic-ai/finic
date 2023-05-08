@@ -479,10 +479,10 @@
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.6.tgz"
   integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
 
-"@psychic-dev/psychic-link@^1.0.1":
+"@psychicdev/link@^1.0.1":
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@psychic-dev/psychic-link/-/psychic-link-1.0.1.tgz#6cac8f5a9741c2b326377a31acc833459553f8a9"
-  integrity sha512-syZDaBKmEb0970vHMKwfSsqiv4aHrs/ZkD4mx/spqDwss0YWG1IlM993M4qAJfx4tEsmpiYGxmPVHzSE62qujw==
+  resolved "https://registry.npmjs.org/@psychicdev/link/-/link-1.0.1.tgz"
+  integrity sha512-Vj10g7uv0KiYwitDch4J16DfslFnunhwT8Y2lgqAPIWuaDoASbLrhMlaWJY6Ks8xL6VBzKz2AJ/m08FlnBdt1Q==
 
 "@remix-run/router@1.0.5":
   version "1.0.5"
@@ -2128,11 +2128,6 @@ get-symbol-description@^1.0.0:
     call-bind "^1.0.2"
     get-intrinsic "^1.1.1"
 
-getsidekick@^1.0.0:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/getsidekick/-/getsidekick-1.0.3.tgz"
-  integrity sha512-C03+yH52iDi37o0Or5b2IZ+MkdshwxS+D+6YzZT/WkOg8sZ4M2ZWmcaLCskK2WSMLrjyfDd6zwhTUrOLgn8cEw==
-
 glob-parent@^5.1.2, glob-parent@~5.1.2:
   version "5.1.2"
   resolved "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz"
@@ -3506,7 +3501,7 @@ punycode@^2.1.0:
 
 queue-microtask@^1.2.2:
   version "1.2.3"
-  resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
+  resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
 quick-lru@^5.1.1:

@@ -17,7 +17,7 @@ class NotionConnector(DataConnector):
     def __init__(self, config: AppConfig):
         super().__init__(config=config)
 
-    async def authorize(self, connection_id: str, auth_code: Optional[str]) -> AuthorizationResult:
+    async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Optional[Dict]) -> AuthorizationResult:
         connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
         try: 
             client_id = connector_credentials['client_id']

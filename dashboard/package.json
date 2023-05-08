@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^4.14.1",
-    "@psychic-dev/psychic-link": "^1.0.1",
+    "@psychicdev/link": "^1.0.1",
     "@supabase/auth-ui-react": "^0.3.6",
     "@supabase/auth-ui-shared": "^0.1.4",
     "@supabase/supabase-js": "^2.14.0",
@@ -36,7 +36,6 @@
     "dotenv": "^16.0.3",
     "flowbite": "^1.5.5",
     "flowbite-react": "^0.3.7",
-    "getsidekick": "^1.0.0",
     "react-apexcharts": "^1.4.0",
     "react-icons": "^4.7.1",
     "react-markdown": "^8.0.7",

@@ -11,8 +11,16 @@ import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
 
 import SuccessIcon from "./icons/SuccessIcon";
 import ErrorIcon from "./icons/ErrorIcon";
+import MetadataForm from './MetadataForm'
+
+type Metadata = {
+  [key: string]: string | null;
+};
 
 interface ResultPageProps {
+  selectedConnectorId: string,
+  metadata: Metadata | null,
+  setMetadata: Function,
   customerName: string,
   currentStep: number,
   setCurrentStep: Function,
@@ -23,7 +31,7 @@ interface ResultPageProps {
   isSuccess: boolean
 }
   
-const ResultPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading, error, isSuccess}) => {
+const ResultPage: React.FC<ResultPageProps> = ({selectedConnectorId, metadata, setMetadata, customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading, error, isSuccess}) => {
 
   const renderResult = () => {
     if (isSuccess) {
@@ -32,6 +40,16 @@ const ResultPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, c
           <SuccessIcon />
           <p className="text-gray-600">You have successfully connected to <span className="font-bold">{connectorName}</span>.</p>
         </div>
+      )
+    }
+
+    if (selectedConnectorId == 'gdrive' && metadata == null) {
+      return (
+        
+        // <div className="flex flex-col mb-4 space-y-4 items-center text-center">
+          <MetadataForm selectedConnectorId="gdrive" setMetadata={setMetadata} />
+          // <p className="text-gray-600">Please enter the link to the folder in your GDrive you want to sync</p>
+        // </div>
       )
     }
 
@@ -94,4 +112,6 @@ const ResultPage: React.FC<ResultPageProps> = ({customerName, customerLogoUrl, c
 }
 
 export default ResultPage;
+
+
   
