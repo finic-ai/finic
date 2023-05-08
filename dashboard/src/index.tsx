@@ -14,7 +14,8 @@ import { RedirectPage } from "./pages/oauth/redirect";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import  supabase  from "./lib/supabaseClient";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import useLocalStorage from "./useLocalStorage";
 
 const container = document.getElementById("root");
 
@@ -30,7 +31,7 @@ if (!container) {
 const root = createRoot(container);
 
 function App() {
-  const [session, setSession] = useState(null)
+  const [session, setSession] = useLocalStorage('session', null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: any) => {
