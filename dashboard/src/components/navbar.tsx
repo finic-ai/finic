@@ -48,7 +48,7 @@ const ExampleNavbar: FC = function () {
                 className="hidden dark:block mr-3 h-6 sm:h-6"
               />
             </Navbar.Brand>
-            <form className="ml-16 hidden md:block">
+            {/* <form className="ml-16 hidden md:block">
               <Label htmlFor="search" className="sr-only">
                 Search
               </Label>
@@ -61,7 +61,7 @@ const ExampleNavbar: FC = function () {
                 size={32}
                 type="search"
               />
-            </form>
+            </form> */}
           </div>
           <div className="flex items-center lg:gap-3">
             <div className="flex items-center">

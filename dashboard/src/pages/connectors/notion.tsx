@@ -12,7 +12,7 @@ import {
 import { FC, useEffect } from "react";
 import { useState } from "react";
 import { SiNotion } from "react-icons/si";
-import {useSidekickAuth} from "getsidekick"
+import {usePsychicLink} from "psychic-link"
 
 
 import {
@@ -162,7 +162,7 @@ const NotionConnectorPage: FC = function () {
           <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
             <div className="mb-1 w-full">
               <div className="mb-4">
-                {authorized && <ConnectorPlayground connectorId="notion" bearer={appId} />}
+                {authorized && <ConnectorPlayground bearer={appId} />}
               </div>
             </div>
           </div>
@@ -280,18 +280,16 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: Con
 };
 
 interface ConnectorPlaygroundProps {
-  connectorId: string;
   bearer: string;
 }
 
-const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({connectorId, bearer}: ConnectorPlaygroundProps) {
-  const [connectionId, setConnectionId] = useState('');
+const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: ConnectorPlaygroundProps) {
+  const [connectionId, setConnectionId] = useState<string>('');
+  const [newConnection, setNewConnection] = useState<string | null>(null);
 
   const publicKey = bearer
-  const serverUrl = import.meta.env.VITE_SERVER_URL
-  console.log(serverUrl)
 
-  const { authorize, loading, newConnection, error } = useSidekickAuth( publicKey, serverUrl)
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: string) => setNewConnection(newConnection))
 
   return (
     <>
@@ -307,16 +305,15 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({connectorId
         helperText="This ID will appear in your Active Connections list if the test is successful." 
         className="mt-1"
       />
-      <Button color="primary" className="mt-6"  onClick={() => {
-          console.log("hello")
-          authorize(connectorId, connectionId)
+      <Button disabled={!isReady} color="primary" className="mt-6"  onClick={() => {
+          open(connectionId)
       }} >
-        {loading ? <Spinner className="mr-3 text-sm" /> : <>
+        {isLoading ? <Spinner className="mr-3 text-sm" /> : <>
         <SiNotion className="mr-3 text-sm" />
         Connect to Notion
         </>}
       </Button>
-      {newConnection && <div className="text-green-500 ml-3 mt-6">Connection successful</div>}
+      {newConnection && <div className="text-green-500 ml-3 mt-6">New connection successfully established: {newConnection}</div>}
       {error && <div className="text-red-500 ml-3 mt-6">{error}</div>}
     </>
   );
