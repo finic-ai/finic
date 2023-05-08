@@ -1,13 +1,11 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import './App.css';
 
-// import useSidekickLink from './hooks/useSidekickLink';
-
 import StartPage from './components/StartPage'
 import ConnectorPage from './components/ConnectorPage'
 import ResultPage from './components/ResultPage'
 
-const SIDEKICK_URL = process.env.REACT_APP_SIDEKICK_URL
+const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
 
 type Metadata = {
   [key: string]: string | null;
@@ -34,12 +32,6 @@ const App: React.FC = () => {
   const publicKey = urlParams.get('public_key')
 
   const startConnectorAuthFlow = async (connectorId: string) => {
-    // 1. Open the OAuth flow for the connector
-    // 2. Wait for the OAuth flow to complete
-    // 3. Once redirected back to dashboard.getsidekick.ai/oauth/redirect, capture the auth code and send it to this component
-    // 4. Use the auth code to call /add-oauth-connection again to complete the connection
-    // 5. Pass the connectionId back to the opener window where the Sidekick hook was used
-
     setIsLoading(true)
     console.log("hello")
     console.log(connectionId)
@@ -63,7 +55,7 @@ const App: React.FC = () => {
 
   // Listen for messages from OAuth windows opened by this component
   const handleMessage = useCallback((event: MessageEvent) => {
-    // check if oigin is not http://localhost:5173 or app.getsidekick.ai
+    // check if oigin is not http://localhost:5173 or link.psychic.dev
     if (event.origin !== "http://localhost:3000" && event.origin !== "https://link.psychic.dev") {
       return;
     }
@@ -174,7 +166,7 @@ const App: React.FC = () => {
       authCode?: string
       ) {
 
-    const url = SIDEKICK_URL + '/add-oauth-connection';
+    const url = PSYCHIC_URL + '/add-oauth-connection';
 
     var payload: AuthPayload = {
       connection_id: connectionId,
