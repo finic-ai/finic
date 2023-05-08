@@ -12,7 +12,7 @@ import {
 import { FC, useEffect } from "react";
 import { useState } from "react";
 import { SiNotion } from "react-icons/si";
-import {usePsychicLink} from "psychic-link"
+import {usePsychicLink} from "@psychicdev/link";
 
 
 import {

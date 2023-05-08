@@ -2,9 +2,7 @@
 import type { FC } from "react";
 import {
   DarkThemeToggle,
-  Label,
   Navbar,
-  TextInput,
 } from "flowbite-react";
 import {
   HiMenuAlt1,

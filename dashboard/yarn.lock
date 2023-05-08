@@ -469,6 +469,11 @@
   "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.11.6.tgz"
   "version" "2.11.6"
 
+"@psychicdev/link@^1.0.1":
+  "integrity" "sha512-Vj10g7uv0KiYwitDch4J16DfslFnunhwT8Y2lgqAPIWuaDoASbLrhMlaWJY6Ks8xL6VBzKz2AJ/m08FlnBdt1Q=="
+  "resolved" "https://registry.npmjs.org/@psychicdev/link/-/link-1.0.1.tgz"
+  "version" "1.0.1"
+
 "@remix-run/router@1.0.5":
   "integrity" "sha512-my0Mycd+jruq/1lQuO5LBB6WTlL/e8DTCYWp44DfMTDcXz8DcTlgF0ISaLsGewt+ctHN+yA8xMq3q/N7uWJPug=="
   "resolved" "https://registry.npmjs.org/@remix-run/router/-/router-1.0.5.tgz"
@@ -503,9 +508,9 @@
     "cross-fetch" "^3.1.5"
 
 "@supabase/gotrue-js@^2.23.0":
-  "integrity" "sha512-ZsH4K5cbMTjfMytXaDYVYs9l9igmlZFxiwXn7J2IP/CklWR5qmLCma+dvat5rccPLITVkN6oAZbKxDzW+pEgCg=="
-  "resolved" "https://registry.npmjs.org/@supabase/gotrue-js/-/gotrue-js-2.24.0.tgz"
-  "version" "2.24.0"
+  "integrity" "sha512-tZXArO0f1NKMQo6rtGryOSqS51WQJQMS3lEHIyH50WffQb/n1tiYY1L8yCyrvTogz9RXpihdQeUjVW77kKd7sQ=="
+  "resolved" "https://registry.npmjs.org/@supabase/gotrue-js/-/gotrue-js-2.25.0.tgz"
+  "version" "2.25.0"
   dependencies:
     "cross-fetch" "^3.1.5"
 
@@ -3404,10 +3409,6 @@
   "integrity" "sha512-kma4U7AFCTwpqq5twzC1YVIDXSqg6qQK6JN0smOw8fgRy1OkMi0CYSzFmsy6dnqSenamAtj0CyXMUJ1Mf6oROg=="
   "resolved" "https://registry.npmjs.org/property-information/-/property-information-6.2.0.tgz"
   "version" "6.2.0"
-
-"psychic-link@file:../sidekick-client/psychic-link":
-  "resolved" "file:../sidekick-client/psychic-link"
-  "version" "1.0.3"
 
 "punycode@^2.1.0":
   "integrity" "sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A=="

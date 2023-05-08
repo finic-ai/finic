@@ -6,8 +6,6 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Running Locally](#running-locally)
-- [Publishing](#publishing)
 - [Troubleshooting](#troubleshooting)
 
 ## Installation
