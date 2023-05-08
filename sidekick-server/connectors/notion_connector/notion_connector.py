@@ -13,17 +13,16 @@ class NotionConnector(DataConnector):
     connector_id: ConnectorId = ConnectorId.notion
     config: AppConfig
     headers: Dict = {}
-    connector_credentials: Dict = {}
 
     def __init__(self, config: AppConfig):
         super().__init__(config=config)
-        self.connector_credentials = StateStore().get_connector_credential(self.connector_id, config)
 
     async def authorize(self, connection_id: str, auth_code: Optional[str]) -> AuthorizationResult:
+        connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
         try: 
-            client_id = self.connector_credentials['client_id']
-            client_secret = self.connector_credentials['client_secret']
-            authorization_url = self.connector_credentials['authorization_url']
+            client_id = connector_credentials['client_id']
+            client_secret = connector_credentials['client_secret']
+            authorization_url = connector_credentials['authorization_url']
             redirect_uri = "https://link.psychic.dev/oauth/redirect"
         except Exception as e:
             raise Exception("Connector is not enabled")
@@ -91,7 +90,8 @@ class NotionConnector(DataConnector):
         return page_text
 
     async def load(self, connection_id: str) -> List[Document]:
-        credential_string = StateStore().load_credentials(self.config, self.connector_id, connection_id)
+        connection = StateStore().load_credentials(self.config, self.connector_id, connection_id)
+        credential_string = connection.credential
         credential_json = json.loads(credential_string)
         access_token = credential_json["access_token"]
         self.headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json",

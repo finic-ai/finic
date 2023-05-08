@@ -1,4 +1,4 @@
-from models.models import Source, AppConfig, Document, DocumentMetadata, DocumentChunk, DataConnector
+from models.models import AppConfig, Document, ConnectorId, DataConnector, AuthorizationResult
 from typing import List, Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -9,7 +9,7 @@ import os
 import uuid
 import json
 import importlib
-from typing import Any
+from typing import Any, Dict
 import io 
 from PyPDF2 import PdfReader
 import re
@@ -17,8 +17,6 @@ from collections import deque
 
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
-CLIENT_SECRETS = os.environ.get("GDRIVE_CLIENT_SECRETS")
-DASHBOARD_URL = os.environ.get("DASHBOARD_URL")
 
 def download_pdf(service, file_id):
     request = service.files().get_media(fileId=file_id)
@@ -33,38 +31,56 @@ def extract_pdf_text(pdf_file):
     return text
 
 class GoogleDocsConnector(DataConnector):
-    source_type: Source = Source.google_drive
-    connector_id: int = 1
+    connector_id: ConnectorId = ConnectorId.gdrive
     config: AppConfig
-    folder_name: str
-    flow: Optional[Any] = None
 
-    def __init__(self, config: AppConfig, folder_name: str):
-        super().__init__(config=config, folder_name=folder_name)
+    def __init__(self, config: AppConfig):
+        super().__init__(config=config)
                         
 
-    async def authorize(self, redirect_uri: str, auth_code: Optional[str]) -> str | None:
-        client_secrets = json.loads(CLIENT_SECRETS)
+    async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
+        folder_url = metadata['folder_url']
+        client_secrets = StateStore().get_connector_credential(self.connector_id, self.config)
+
         flow = InstalledAppFlow.from_client_config(
             client_secrets,
             SCOPES, 
-            redirect_uri=redirect_uri
+            redirect_uri="https://link.psychic.dev/oauth/redirect"
+        )
+        
+        if not auth_code:
+            auth_url, _ = flow.authorization_url(prompt='consent')
+            return AuthorizationResult(authorized=False, auth_url=auth_url)
+        
+        flow.fetch_token(code=auth_code)
+        # Build the Google Drive API client with the credentials
+        creds = flow.credentials
+        creds_string = creds.to_json()
+        folder_id = get_id_from_url(folder_url)
+
+        new_connection = StateStore().add_connection(
+            config=self.config,
+            credential=creds_string,
+            connector_id=self.connector_id,
+            connection_id=connection_id,
+            metadata={
+                'folder_id': folder_id,
+            }
+        )
+        return AuthorizationResult(authorized=True, connection=new_connection)
+
+
+    async def load(self, connection_id: str) -> List[Document]:
+        # initialize credentials
+        connection = StateStore().load_credentials(
+            self.config, 
+            self.connector_id,
+            connection_id 
         )
 
-        if auth_code is not None:
-            flow.fetch_token(code=auth_code)
-            # Build the Google Drive API client with the credentials
-            creds = flow.credentials
-            creds_string = creds.to_json()
-            StateStore().save_credentials(self.config, creds_string, self)
-        else:
-            # Generate the authorization URL
-            auth_url, _ = flow.authorization_url(prompt='consent')
-            return auth_url
+        credential_string = connection.credential
+        folder_id = connection.metadata['folder_id']
 
-    async def load(self, source_id: str) -> List[Document]:
-        # initialize credentials
-        credential_string = StateStore().load_credentials(self.config, self)
         credential_json = json.loads(credential_string)
         creds = Credentials.from_authorized_user_info(
             credential_json
@@ -86,7 +102,7 @@ class GoogleDocsConnector(DataConnector):
         if len(items) == 0:
             raise Exception("Folder is empty")
         
-        return get_documents_from_folder(service, folder_id, source_id, self.config.tenant_id)
+        return get_documents_from_folder(service, folder_id)
 
 def list_files_in_folder(service, folder_id):
     query = f"'{folder_id}' in parents"
@@ -94,7 +110,7 @@ def list_files_in_folder(service, folder_id):
     items = results.get("files", [])
     return items
 
-def get_documents_from_folder(service, folder_id, source_id, tenant_id) -> List[Document]:
+def get_documents_from_folder(service, folder_id) -> List[Document]:
     documents: List[Document] = []
     folders_to_process = deque([folder_id])
 
@@ -122,14 +138,8 @@ def get_documents_from_folder(service, folder_id, source_id, tenant_id) -> List[
                 documents.append(
                     Document(
                         title=item["name"],
-                        text=content,
-                        url=item["webViewLink"],
-                        source_type=Source.google_drive,
-                        metadata=DocumentMetadata(
-                            document_id=str(uuid.uuid4()),
-                            source_id=source_id,
-                            tenant_id=tenant_id
-                        )
+                        content=content,
+                        uri=item["webViewLink"],
                     )
                 )
             else:

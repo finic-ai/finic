@@ -35,7 +35,7 @@ const connectors = [
   },
   {
     name: "Google Drive",
-    id: "google-drive",
+    id: "gdrive",
     icon: GoogleDriveIcon,
     label: null,
     labelColor: "info",

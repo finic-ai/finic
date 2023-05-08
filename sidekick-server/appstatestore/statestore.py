@@ -86,8 +86,20 @@ class StateStore:
             connector_id
         ).execute()
 
+
         if len(response.data) > 0:
             return json.loads(response.data[0]['credential'])
+        
+        # If no credentials are defined in enabled_connectors, use the default ones
+        response = self.supabase.table('connectors').select('*').filter(
+            'id',
+            'eq',
+            connector_id
+        ).execute()
+
+        if len(response.data) > 0:
+            return json.loads(response.data[0]['default_credentials'])
+
         return None
     
     def add_connection(self, 
@@ -112,7 +124,7 @@ class StateStore:
             metadata=metadata
         )
 
-    def load_credentials(self, config: AppConfig, connector_id: ConnectorId, connection_id: str) -> Optional[str]:
+    def load_credentials(self, config: AppConfig, connector_id: ConnectorId, connection_id: str) -> Optional[Connection]:
         response = self.supabase.table('connections').select('*').filter(
             'user_id', 
             'eq', 
@@ -129,7 +141,11 @@ class StateStore:
 
         if len(response.data) > 0:
             data = response.data[0]
-            return data['credential']
+            return Connection(
+                connection_id=connection_id,
+                metadata=data['metadata'],
+                credential=data['credential']
+            )
         return None
     
   

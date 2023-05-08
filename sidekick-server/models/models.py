@@ -6,10 +6,12 @@ from enum import Enum
 
 class ConnectorId(str, Enum):
     notion = "notion"
+    gdrive = "gdrive"
 
 class Connection(BaseModel):
     connection_id: str
     metadata: Dict
+    credential: Optional[str]
     
 class ConnectorStatus(BaseModel):
     is_enabled: bool

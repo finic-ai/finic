@@ -12,7 +12,7 @@ import {
 import { FC, useEffect } from "react";
 import { useState } from "react";
 import { SiNotion } from "react-icons/si";
-import {usePsychicLink} from "psychic-link"
+import {usePsychicLink} from "@psychic-dev/psychic-link"
 
 
 import {
@@ -68,6 +68,7 @@ const NotionConnectorPage: FC = function () {
   useEffect(() => {
     async function getConnectorStatus() {
       const url = import.meta.env.VITE_SERVER_URL + '/get-connector-status';
+      console.log(url)
       var payload = {
         connector_id: "notion",
       }

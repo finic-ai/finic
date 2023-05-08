@@ -92,6 +92,7 @@ async def add_oauth_connection(
     auth_code = request.auth_code or None
     connector_id = request.connector_id
     connection_id = request.connection_id
+    metadata = request.metadata
 
     connector = get_connector_for_id(connector_id, config)
 
@@ -100,7 +101,7 @@ async def add_oauth_connection(
     if connector is None:
         raise HTTPException(status_code=404, detail="Connector not found")
 
-    result = await connector.authorize(connection_id, auth_code)
+    result = await connector.authorize(connection_id, auth_code, metadata)
     return AuthorizationResponse(result=result)
     
 @app.post(

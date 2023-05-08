@@ -35,6 +35,9 @@ const App: React.FC = () => {
     // 5. Pass the connectionId back to the opener window where the Sidekick hook was used
 
     setIsLoading(true)
+    console.log("hello")
+    console.log(connectionId)
+    console.log(publicKey)
     if (!connectionId || !publicKey) {
       setError('Invalid connection_id or public_key')
       setIsLoading(false)

@@ -32,6 +32,7 @@ const root = createRoot(container);
 
 function App() {
   const [session, setSession] = useLocalStorage('session', null);
+  console.log(session)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: any) => {

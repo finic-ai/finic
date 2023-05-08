@@ -22,6 +22,7 @@ class AuthorizeOauthRequest(BaseModel):
     connector_id: ConnectorId
     connection_id: str
     auth_code: Optional[str]
+    metadata: Optional[Dict]
 
 
 class AuthorizationResponse(BaseModel):
