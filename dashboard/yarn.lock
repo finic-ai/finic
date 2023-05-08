@@ -469,10 +469,6 @@
   "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.11.6.tgz"
   "version" "2.11.6"
 
-"@psychic-data/psychic@file:../sidekick-client/sidekick-link-react":
-  "resolved" "file:../sidekick-client/sidekick-link-react"
-  "version" "1.0.3"
-
 "@remix-run/router@1.0.5":
   "integrity" "sha512-my0Mycd+jruq/1lQuO5LBB6WTlL/e8DTCYWp44DfMTDcXz8DcTlgF0ISaLsGewt+ctHN+yA8xMq3q/N7uWJPug=="
   "resolved" "https://registry.npmjs.org/@remix-run/router/-/router-1.0.5.tgz"
@@ -3408,6 +3404,10 @@
   "integrity" "sha512-kma4U7AFCTwpqq5twzC1YVIDXSqg6qQK6JN0smOw8fgRy1OkMi0CYSzFmsy6dnqSenamAtj0CyXMUJ1Mf6oROg=="
   "resolved" "https://registry.npmjs.org/property-information/-/property-information-6.2.0.tgz"
   "version" "6.2.0"
+
+"psychic-link@file:../sidekick-client/psychic-link":
+  "resolved" "file:../sidekick-client/psychic-link"
+  "version" "1.0.3"
 
 "punycode@^2.1.0":
   "integrity" "sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A=="

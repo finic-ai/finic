@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 
-const NOTION_OAUTH_URL = 'https://www.notion.com/oauth/authorize';
-const SIDEKICK_URL = 'https://link.psychic.dev';
+const PSYCHIC_URL = 'https://link.psychic.dev';
 
-export function useSidekickLink(public_key: string, onSuccessCallback: Function) {
+export function usePsychicLink(public_key: string, onSuccessCallback: Function) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -13,8 +12,8 @@ export function useSidekickLink(public_key: string, onSuccessCallback: Function)
 
   async function open(connectionId: string) {
     setIsLoading(true)
-    // Open the Sidekick Link modal
-    const url = `${SIDEKICK_URL}?public_key=${public_key}&connection_id=${connectionId}`
+    // Open the Psychic Link modal
+    const url = `${PSYCHIC_URL}?public_key=${public_key}&connection_id=${connectionId}`
 
     if (windowObjectReference === null || windowObjectReference.closed) {
       const width = 600;
@@ -28,7 +27,7 @@ export function useSidekickLink(public_key: string, onSuccessCallback: Function)
   }
 
   const handleMessage = useCallback((event: MessageEvent) => {
-    // check if oigin is not http://localhost:5173 or app.getsidekick.ai
+    // check if oigin is not http://localhost:3000 or link.psychic.dev
     if (event.origin !== "http://localhost:3000" && event.origin !== "https://link.psychic.dev") {
       return;
     }

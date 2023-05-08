@@ -12,7 +12,7 @@ import {
 import { FC, useEffect } from "react";
 import { useState } from "react";
 import { SiNotion } from "react-icons/si";
-import {useSidekickLink} from "@psychic-data/psychic"
+import {usePsychicLink} from "psychic-link"
 
 
 import {
@@ -289,7 +289,7 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: Co
 
   const publicKey = bearer
 
-  const { open, isReady, isLoading, error } = useSidekickLink(publicKey, (newConnection: string) => setNewConnection(newConnection))
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: string) => setNewConnection(newConnection))
 
   return (
     <>

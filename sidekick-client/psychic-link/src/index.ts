@@ -1,0 +1,1 @@
+export { usePsychicLink } from './usePsychicLink';
