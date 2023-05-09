@@ -66,14 +66,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Notion
                   </Sidebar.Item>
-                  <Tooltip content="Coming Soon" trigger="hover">
-                    <Sidebar.Item
-                      href="/connectors/google-drive"
-                      className="pointer-events-none text-gray-400"
-                    >
-                      Google Drive
-                    </Sidebar.Item>
-                  </Tooltip>
+                  <Sidebar.Item
+                    href="/connectors/google-drive"
+                    className={
+                      "/connectors/notion" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Google Drive
+                  </Sidebar.Item>
                   <Tooltip content="Coming Soon" trigger="hover">
                     <Sidebar.Item
                       href="/connectors/zendesk"

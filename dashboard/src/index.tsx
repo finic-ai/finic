@@ -10,6 +10,7 @@ import ApiKeysPage from "./pages/api-keys";
 import ConnectionsPage from "./pages/connections";
 import { UserStateProvider } from "./context/UserStateContext";
 import NotionConnectorPage from "./pages/connectors/notion";
+import GoogleDriveConnectorPage from "./pages/connectors/google-drive"
 import { RedirectPage } from "./pages/oauth/redirect";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
@@ -76,6 +77,7 @@ function App() {
               <Route path="/api-keys" element={<ApiKeysPage />} />
               <Route path="/connections" element={<ConnectionsPage />} />
               <Route path="/connectors/notion" element={<NotionConnectorPage />} />
+              <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
               <Route path="/oauth/redirect" element={<RedirectPage />} />
             </Routes>
           </BrowserRouter>

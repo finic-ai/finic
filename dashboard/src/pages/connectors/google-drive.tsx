@@ -4,123 +4,94 @@ import {
   Button,
   Label,
   TextInput,
-  Spinner
+  Spinner,
+  Modal,
+  Tabs,
+  Table
 } from "flowbite-react";
-import type { FC } from "react";
-import { useState, useEffect } from "react";
-import { FaPlus, FaGoogle } from "react-icons/fa";
+import { FC, useEffect } from "react";
+import { useState } from "react";
+import { SiGoogledrive, SiNotion } from "react-icons/si";
+import {usePsychicLink} from "@psychicdev/link";
+
+
 import {
   HiHome,
 } from "react-icons/hi";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
-import { useLocation } from 'react-router-dom';
 import { useUserStateContext } from "../../context/UserStateContext";
-import { SupabaseService } from "../../services/supabase-service";
-import { useAuth } from "@clerk/clerk-react";
 
 const GoogleDriveConnectorPage: FC = function () {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const authCode = queryParams.get('code');
-
-  const {  userId } = useAuth();
-  const {bearer} = useUserStateContext()
-
-
-  const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
-  const [folderName, setFolderName] = useState('');
+  const [authorized, setAuthorized] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
-  const [connectLoading, setConnectLoading] = useState(false)
-  const [credential, setCredential] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [authorizationUrl, setAuthorizationUrl] = useState('');
+  const [connections, setConnections] = useState([] as any[])
 
-  async function updateAuthorizationStatus() {
-    if (authCode) {
-      authorize()
-    } else {
-      const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1)
-      setCredential(credential)
-      setAuthLoading(false)
-    }
-  }
+  const {bearer, appId} = useUserStateContext()
 
   async function authorize() {
     setAuthLoading(true)
-    const currentUrl = new URL(window.location.href);
-    const urlWithoutQueryParams = currentUrl.origin + currentUrl.pathname;
-    const url = import.meta.env.VITE_SERVER_URL + '/authorize-google-drive';
+    const url = import.meta.env.VITE_SERVER_URL + '/enable-connector';
     var payload = {
-      auth_code: authCode,
-      redirect_uri: urlWithoutQueryParams
+      connector_id: "gdrive",
+      credential: JSON.parse(clientSecret)
     }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const jsonData = await response.json();
-
-    if (jsonData.auth_url) {
-      window.location.href = jsonData.auth_url
-    } else {
-      console.log('successfuly authenticated')
-      // remove the code from the url
-      window.history.replaceState({}, document.title, "/connectors/google-drive");
-      const credential = await SupabaseService.getCredentialsByUserIdAndConnectorId(userId || "", 1)
-      setCredential(credential)
-      setAuthLoading(false)
-    }
-  }
-
-  async function connectGoogleDrive() {
-    setConnectLoading(true)
-    setError("")
-    setUpsertedChunks([])
     try {
-      // Define the URL to make the request to
-      const url = import.meta.env.VITE_SERVER_URL + '/upsert-google-docs';
-      var payload = {
-        folder_name: folderName
-      }
-
-      // Make the request using the fetch function and await the response
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
         body: JSON.stringify(payload),
       });
-
-  
-      // Parse the response body as JSON and await the result
-      const jsonData = await response.json();
-
       if (!response.ok) {
-        setError(`Error upserting chunks: ${jsonData.detail}`)
-        setConnectLoading(false)
-        return
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
-      const numChunks = jsonData.ids.length
-      setUpsertedChunks(jsonData.ids)
-      console.log(`Successfully upserted ${numChunks} chunks`)
-      setConnectLoading(false)
-      
+      const jsonData = await response.json();
+      const isAuthorized = jsonData.status.is_enabled
+      console.log(jsonData)
+      if (!isAuthorized) {
+        console.log('failed to authenticate')
+      }
+      setAuthLoading(false)
+      setAuthorized(isAuthorized)
     } catch (error) {
-      // Handle any errors that occurred during the fetch
-      setError(`Error connecting to google drive: ${error}`);
-      setConnectLoading(false)
+      setAuthLoading(false)
     }
   }
+
   useEffect(() => {
-    if (bearer && userId) {
-      updateAuthorizationStatus()
+    async function getConnectorStatus() {
+      const url = import.meta.env.VITE_SERVER_URL + '/get-connector-status';
+      console.log(url)
+      var payload = {
+        connector_id: "gdrive",
+      }
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const jsonData = await response.json();
+        const isAuthorized = jsonData.status.is_enabled
+        const connections = jsonData.status.connections
+        setAuthorized(isAuthorized)
+        setConnections(connections)
+        setAuthLoading(false)
+      } catch (error) {
+        setAuthLoading(false)
+      }
     }
-  }, [bearer]);
+    if (bearer) {
+      getConnectorStatus()
+    }
+  }, [bearer])
+      
 
   return (
     <NavbarSidebarLayout isFooter={false}>
@@ -137,58 +108,193 @@ const GoogleDriveConnectorPage: FC = function () {
               <Breadcrumb.Item>Connectors</Breadcrumb.Item>
               <Breadcrumb.Item>Google Drive</Breadcrumb.Item>
             </Breadcrumb>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-              Connect Google Drive
-            </h1>
+            <div className="flex items-center">
+              <SiGoogledrive className="mr-2 text-xl" />
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+                Google Drive
+              </h1>
+            </div>
           </div>
         </div>
       </div>
-      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
-        <div className="mb-1 w-full">
-          <div className="mb-4">
-            <form>
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div>
-                  <div className="flex items-center">
-                    <Button color="primary" className="mb-6" onClick={() => authorize() } >
-                      {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
-                        {credential ? <><FaGoogle className="mr-3 text-sm" /> Reauthenticate Google</> : <>
-                          <FaGoogle className="mr-3 text-sm" />
-                          Authenticate Google
-                          </>
-                        }
-                      </>}
-                    </Button>
-                    {(credential && !authLoading) && <div className="text-green-500 ml-3 mb-6">Authorized</div>}
+      <Tabs.Group>
+        <Tabs.Item active={true} title="Configuration">
+          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+            <div className="mb-1 w-full">
+              <div className="mb-4">
+                <form>
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div>
+                      <AuthorizeModal 
+                        authorize={authorize} 
+                        authLoading={authLoading} 
+                        authorized={authorized} 
+                        clientId={clientId} 
+                        setClientId={setClientId}
+                        clientSecret={clientSecret}
+                        setClientSecret={setClientSecret}
+                        authorizationUrl={authorizationUrl}
+                        setAuthorizationUrl={setAuthorizationUrl}
+                      />
+                    </div>
                   </div>
-                  <Label htmlFor="apiKeys.label">Folder link</Label>
-                  <TextInput
-                    id="apiKeys.label"
-                    name="apiKeys.label"
-                    placeholder='URL of the folder you want to sync with Psychic Link'
-                    className="mt-1"
-                    onChange={(e) => setFolderName(e.target.value.trim())}
-                    value={folderName}
-                    helperText="Only files in this folder will by synced. You can find the link to the folder in your Google Drive account."
-                  />
-                </div>
-                <div className="lg:col-span-2">
-                    <Button color="primary" disabled={!folderName || !credential} className="mb-6" onClick={() => connectGoogleDrive() } >
-                      {connectLoading ? <Spinner className="mr-3 text-sm" /> : <>
-                      <FaPlus className="mr-3 text-sm" />
-                      Connect
-                      </>}
-                      
-                    </Button>
-                    {error ? <p className="text-red-500">{error}</p> : null}
-                    {upsertedChunks.length > 0 ? <p>{`Successfully upserted ${upsertedChunks.length} chunks`}</p> : null}
-                </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </div>
+        </Tabs.Item>
+        <Tabs.Item active={true} title="Active Connections">
+          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+            <div className="mb-1 w-full">
+              <div className="mb-4">
+                <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
+                  Active connections 
+                </h2>
+                {authorized && <ConnectionsTable connections={connections} />}
+              </div>
+            </div>
+          </div>
+        </Tabs.Item>
+        <Tabs.Item title="Playground">
+          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+            <div className="mb-1 w-full">
+              <div className="mb-4">
+                 <ConnectorPlayground bearer={appId} />
+              </div>
+            </div>
+          </div>
+        </Tabs.Item>
+      </Tabs.Group>
     </NavbarSidebarLayout>
+  );
+};
+
+interface AuthorizeModalProps {
+  authorize: () => void;
+  authorized: boolean;
+  authLoading: boolean;
+  clientId: string;
+  setClientId: (clientId: string) => void;
+  clientSecret: string;
+  setClientSecret: (clientSecret: string) => void;
+  authorizationUrl: string;
+  setAuthorizationUrl: (authorizationUrl: string) => void;
+}
+
+const AuthorizeModal: FC<AuthorizeModalProps> = function ({
+  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading
+}: AuthorizeModalProps) {
+  const [isOpen, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button color="primary" className="mb-6"  onClick={() => setOpen(true) } >
+        {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
+        {authorized ?  'Update Credentials'  : 'Custom Credentials'}
+        </>}
+      </Button>
+      <Modal onClose={() => setOpen(false)} show={isOpen}>
+        <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
+          <strong>Enable Custom Drive Connector</strong>
+        </Modal.Header>
+        <Modal.Body>
+          <form>
+            <div className="lg:col-span-2">
+              <div>
+                <Label htmlFor="apiKeys.label">Client Secret JSON</Label>
+                <TextInput
+                  value={clientId}
+                  onChange={(e) => setClientSecret(e.target.value)}
+                  placeholder='Client Secret'
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button color="primary" onClick={() => {
+            authorize()
+            setOpen(false)
+          }}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+interface ConnectionsTableProps {
+  connections: any[]
+}
+
+const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: ConnectionsTableProps) {
+  return (
+    <>
+    <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+      <Table.Head className="bg-gray-100 dark:bg-gray-700">
+        <Table.HeadCell>Connection ID</Table.HeadCell>
+        <Table.HeadCell>Workspace Name</Table.HeadCell>
+      </Table.Head>
+      <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+          {connections.map((item, i) => (
+          <Table.Row key={i} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <div className="text-base font-semibold text-gray-900 dark:text-white">
+                      {item.connection_id}
+                  </div>
+              </Table.Cell>
+              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                      {item.metadata.workspace_name}
+                  </div>
+              </Table.Cell>
+          </Table.Row>
+          ))}
+      </Table.Body>
+    </Table>
+    </>
+  );
+};
+
+interface ConnectorPlaygroundProps {
+  bearer: string;
+}
+
+const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: ConnectorPlaygroundProps) {
+  const [connectionId, setConnectionId] = useState<string>('');
+  const [newConnection, setNewConnection] = useState<string | null>(null);
+
+  const publicKey = bearer
+
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: string) => setNewConnection(newConnection))
+
+  return (
+    <>
+      <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
+        Playground
+      </h2>
+      <p className="mb-6">See how users will experience using Psychic Link to connect their Google Drive workspace.</p>
+      <Label htmlFor="apiKeys.label">Connection ID</Label>
+      <TextInput
+        value={connectionId}
+        onChange={(e) => setConnectionId(e.target.value)}
+        placeholder="The unique identifier for this connection."
+        helperText="This ID will appear in your Active Connections list if the test is successful." 
+        className="mt-1"
+      />
+      <Button disabled={!isReady} color="primary" className="mt-6"  onClick={() => {
+          open(connectionId)
+      }} >
+        {isLoading ? <Spinner className="mr-3 text-sm" /> : <>
+        <SiGoogledrive className="mr-3 text-sm" />
+        Connect to GDrive
+        </>}
+      </Button>
+      {newConnection && <div className="text-green-500 ml-3 mt-6">New connection successfully established: {newConnection}</div>}
+      {error && <div className="text-red-500 ml-3 mt-6">{error}</div>}
+    </>
   );
 };
 
