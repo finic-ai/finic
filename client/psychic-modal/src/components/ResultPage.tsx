@@ -45,11 +45,7 @@ const ResultPage: React.FC<ResultPageProps> = ({selectedConnectorId, metadata, s
 
     if (selectedConnectorId == 'gdrive' && metadata == null) {
       return (
-        
-        // <div className="flex flex-col mb-4 space-y-4 items-center text-center">
-          <MetadataForm selectedConnectorId="gdrive" setMetadata={setMetadata} />
-          // <p className="text-gray-600">Please enter the link to the folder in your GDrive you want to sync</p>
-        // </div>
+        <MetadataForm selectedConnectorId="gdrive" setMetadata={setMetadata} />
       )
     }
 
@@ -87,7 +83,7 @@ const ResultPage: React.FC<ResultPageProps> = ({selectedConnectorId, metadata, s
 
   const renderModalFooter = () => {
     return (
-      <div className="flex flex-col space-y-6 items-center">
+      <div className="flex flex-col space-y-6 px-8 items-center">
         {isSuccess && !isLoading &&
           <Button size="xl" className="w-3/5 min-w-300" onClick={() => window.close()}>
             Finish
