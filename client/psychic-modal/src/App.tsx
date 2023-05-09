@@ -183,7 +183,7 @@ const App: React.FC = () => {
       connector_id: connectorId
     }
     if (authCode) {
-      payload.auth_code = authCode
+      payload.auth_code = authCode 
     }
     if (metadata) {
       payload.metadata = metadata
