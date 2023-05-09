@@ -150,7 +150,7 @@ const GoogleDriveConnectorPage: FC = function () {
                 <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
                   Active connections 
                 </h2>
-                {authorized && <ConnectionsTable connections={connections} />}
+                <ConnectionsTable connections={connections} />
               </div>
             </div>
           </div>
@@ -230,12 +230,13 @@ interface ConnectionsTableProps {
 }
 
 const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: ConnectionsTableProps) {
+  console.log(connections)
   return (
     <>
     <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
       <Table.Head className="bg-gray-100 dark:bg-gray-700">
         <Table.HeadCell>Connection ID</Table.HeadCell>
-        <Table.HeadCell>Workspace Name</Table.HeadCell>
+        <Table.HeadCell>Folder ID</Table.HeadCell>
       </Table.Head>
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
           {connections.map((item, i) => (
@@ -247,7 +248,7 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: Con
               </Table.Cell>
               <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
                   <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                      {item.metadata.workspace_name}
+                      {item.metadata.folder_id}
                   </div>
               </Table.Cell>
           </Table.Row>

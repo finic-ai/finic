@@ -154,7 +154,7 @@ const NotionConnectorPage: FC = function () {
                 <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
                   Active connections 
                 </h2>
-                {authorized && <ConnectionsTable connections={connections} />}
+                <ConnectionsTable connections={connections} />
               </div>
             </div>
           </div>
