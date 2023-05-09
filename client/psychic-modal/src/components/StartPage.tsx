@@ -20,7 +20,7 @@ const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, set
   const renderModalHeader = () => {
     return (
       <div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center px-8">
           <Avatar.Group className="my-4">
             <Avatar
               img={customerLogoUrl}
@@ -71,7 +71,7 @@ const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, set
 
   const renderModalFooter = () => {
     return (
-      <div className="flex flex-col space-y-6 mt-6 items-center">
+      <div className="flex flex-col space-y-6 mt-6 px-8 items-center">
         <p className="text-sm text-gray-500">
           By selecting “Continue” you agree to the <a href="https://www.getsidekick.ai/privacy-policy" target="_blank" className="underline text-blue-500">Psychic.dev End User Privacy Policy</a>
         </p>
