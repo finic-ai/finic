@@ -11,7 +11,7 @@ import {
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
-import { SiGoogledrive, SiNotion } from "react-icons/si";
+import { SiGoogledrive } from "react-icons/si";
 import {usePsychicLink} from "@psychicdev/link";
 
 
@@ -24,9 +24,7 @@ import { useUserStateContext } from "../../context/UserStateContext";
 const GoogleDriveConnectorPage: FC = function () {
   const [authorized, setAuthorized] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
-  const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
-  const [authorizationUrl, setAuthorizationUrl] = useState('');
   const [connections, setConnections] = useState([] as any[])
 
   const {bearer, appId} = useUserStateContext()
@@ -129,12 +127,8 @@ const GoogleDriveConnectorPage: FC = function () {
                         authorize={authorize} 
                         authLoading={authLoading} 
                         authorized={authorized} 
-                        clientId={clientId} 
-                        setClientId={setClientId}
                         clientSecret={clientSecret}
                         setClientSecret={setClientSecret}
-                        authorizationUrl={authorizationUrl}
-                        setAuthorizationUrl={setAuthorizationUrl}
                       />
                     </div>
                   </div>
@@ -173,16 +167,12 @@ interface AuthorizeModalProps {
   authorize: () => void;
   authorized: boolean;
   authLoading: boolean;
-  clientId: string;
-  setClientId: (clientId: string) => void;
   clientSecret: string;
   setClientSecret: (clientSecret: string) => void;
-  authorizationUrl: string;
-  setAuthorizationUrl: (authorizationUrl: string) => void;
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading
+  authorize, clientSecret, setClientSecret, authorized, authLoading
 }: AuthorizeModalProps) {
   const [isOpen, setOpen] = useState(false);
 
@@ -203,7 +193,7 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
               <div>
                 <Label htmlFor="apiKeys.label">Client Secret JSON</Label>
                 <TextInput
-                  value={clientId}
+                  value={clientSecret}
                   onChange={(e) => setClientSecret(e.target.value)}
                   placeholder='Client Secret'
                   className="mt-1"
