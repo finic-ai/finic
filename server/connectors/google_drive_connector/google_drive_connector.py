@@ -92,7 +92,6 @@ class GoogleDriveConnector(DataConnector):
             StateStore().save_credentials(self.config, creds_string, self)
         service = build('drive', 'v3', credentials=creds)
 
-        folder_id = get_id_from_url(self.folder_name)
 
         # List the files in the specified folder
         results = service.files().list(q=f"'{folder_id}' in parents and trashed = false",

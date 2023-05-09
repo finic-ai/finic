@@ -50,8 +50,8 @@ export function UserStateProvider({ children }: PropsWithChildren) {
         // Create the user row if it doesn't exist
 
         const response = await supabase.from('users').insert({
-          uuid: userId,
-          bearer: uuidv4(),
+          id: userId,
+          secret_key: uuidv4(),
           app_id: uuidv4(),
           email: email
         }).select()
