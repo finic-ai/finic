@@ -68,7 +68,7 @@ const App: React.FC = () => {
   }, [selectedConnectorId])
 
   // If Oauth is successful, send the auth code to the backend
-  async function completeAuthWithCode(connectorId: string, authCode: string) {
+  async function completeAuthWithCode(connectorId: string, authCode: string, metadata?: any) {
     if (!connectionId || !publicKey) {
       setError('Invalid connection_id or public_key')
       setIsLoading(false)
@@ -78,7 +78,8 @@ const App: React.FC = () => {
         connectorId, 
         connectionId, 
         publicKey,
-        authCode
+        authCode,
+        metadata
     )
     if (!result) {
       setError('Something went wrong. Please try again.')
@@ -114,6 +115,12 @@ const App: React.FC = () => {
     }
   }, [authCode])
 
+  useEffect(() => {
+    if (metadata) {
+      completeAuthWithCode(selectedConnectorId, authCode, metadata)
+    }
+  }, [metadata])
+
   const renderAppStep = () => {
     switch (currentStep) {
       case 0:
@@ -142,6 +149,7 @@ const App: React.FC = () => {
                   setCurrentStep={setCurrentStep} 
                   connectorName={connectorName} 
                   isLoading={isLoading}
+                  setIsLoading={setIsLoading}
                   error={error}
                   isSuccess={isSuccess}
                   />
@@ -157,13 +165,15 @@ const App: React.FC = () => {
     connector_id: string;
     connection_id: string;
     auth_code?: string;
+    metadata?: string;
   }
 
   async function authorizeConnection(
       connectorId: string, 
       connectionId: string,
       publicKey: string,
-      authCode?: string
+      authCode?: string,
+      metadata?: any
       ) {
 
     const url = PSYCHIC_URL + '/add-oauth-connection';
@@ -175,6 +185,11 @@ const App: React.FC = () => {
     if (authCode) {
       payload.auth_code = authCode
     }
+    if (metadata) {
+      payload.metadata = metadata
+    }
+
+    console.log(payload)
 
     try {
       const response = await fetch(url, {

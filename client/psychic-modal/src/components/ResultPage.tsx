@@ -27,11 +27,13 @@ interface ResultPageProps {
   customerLogoUrl: string,
   connectorName: string,
   isLoading: boolean,
+  setIsLoading: Function,
   error: string,
-  isSuccess: boolean
+  isSuccess: boolean,
+
 }
   
-const ResultPage: React.FC<ResultPageProps> = ({selectedConnectorId, metadata, setMetadata, customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading, error, isSuccess}) => {
+const ResultPage: React.FC<ResultPageProps> = ({selectedConnectorId, metadata, setMetadata, customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading, setIsLoading, error, isSuccess}) => {
 
   const renderResult = () => {
     if (isSuccess) {
@@ -45,7 +47,7 @@ const ResultPage: React.FC<ResultPageProps> = ({selectedConnectorId, metadata, s
 
     if (selectedConnectorId == 'gdrive' && metadata == null) {
       return (
-        <MetadataForm selectedConnectorId="gdrive" setMetadata={setMetadata} />
+        <MetadataForm selectedConnectorId="gdrive" setMetadata={setMetadata} setIsLoading={setIsLoading} />
       )
     }
 

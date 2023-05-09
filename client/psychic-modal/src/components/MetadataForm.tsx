@@ -16,10 +16,11 @@ import ErrorIcon from "./icons/ErrorIcon";
 
 interface MetadataFormProps {
     selectedConnectorId: string,
+    setIsLoading: Function,
     setMetadata: Function,
 }
 
-const MetadataForm: React.FC<MetadataFormProps> = ({selectedConnectorId, setMetadata}) => {
+const MetadataForm: React.FC<MetadataFormProps> = ({selectedConnectorId, setIsLoading, setMetadata}) => {
 
     const [folderName, setFolderName] = useState('')
 
@@ -36,7 +37,11 @@ const MetadataForm: React.FC<MetadataFormProps> = ({selectedConnectorId, setMeta
                 helperText="Only files in this Google Drive folder will by synced. You can find the link to the folder in your Google Drive account."
             />
             <div className="flex justify-center">
-            <Button disabled={!folderName} size="xl" className="mb-6 mt-4 w-3/5 min-w-300 text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => setMetadata({'folder_name': folderName}) } >
+            <Button disabled={!folderName} size="xl" className="mb-6 mt-4 w-3/5 min-w-300 text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => 
+                {
+                    setIsLoading(true)
+                    setMetadata({'folder_url': folderName}) 
+                }} >
                 Set folder
             </Button>
             </div>
