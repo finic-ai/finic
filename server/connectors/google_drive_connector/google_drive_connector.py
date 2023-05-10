@@ -89,7 +89,15 @@ class GoogleDriveConnector(DataConnector):
         if not creds.valid and creds.refresh_token:
             creds.refresh(Request())
             creds_string = creds.to_json()
-            StateStore().save_credentials(self.config, creds_string, self)
+            StateStore().add_connection(
+                config=self.config,
+                credential=creds_string,
+                connector_id=self.connector_id,
+                connection_id=connection_id,
+                metadata={
+                    'folder_id': folder_id,
+                }
+            )
         service = build('drive', 'v3', credentials=creds)
 
 
