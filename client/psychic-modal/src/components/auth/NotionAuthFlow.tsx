@@ -10,10 +10,11 @@ import {
     HiEyeSlash
   } from "react-icons/hi2";
   import React from "react";
-  import { useState } from "react";
+  import { useState, useEffect, useRef} from "react";
   import { useModalContext } from "../../context/ModalContext";
   import SuccessIcon from "../icons/SuccessIcon";
 import ErrorIcon from "../icons/ErrorIcon";
+import { start } from "repl";
 
 type Metadata = {
   [key: string]: string | null;
@@ -22,6 +23,7 @@ type Metadata = {
 const NotionAuthFlow: React.FC = () => {
 
   const {
+    authCode,
     currentStep,
     setCurrentStep,
     selectedConnectorId,
@@ -34,7 +36,9 @@ const NotionAuthFlow: React.FC = () => {
     setIsLoading,
     isSuccess,
     setIsSuccess,
-    isLoading
+    isLoading,
+    setError,
+    authorizeConnection
   } = useModalContext()
 
   const renderResult = () => {
@@ -94,6 +98,12 @@ const NotionAuthFlow: React.FC = () => {
       </div>
     )
   }
+
+  useEffect(() => {
+    if (!authCode) {
+      // startConnectorAuthFlow(selectedConnectorId)
+    }
+  }, [])
 
   return (
     <div>

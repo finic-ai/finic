@@ -23,6 +23,7 @@ import GoogleDriveIcon from "./icons/GoogleDriveIcon";
 import ConfluenceIcon from "./icons/ConfluenceIcon";
 import ZendeskIcon from "./icons/ZendeskIcon";
 import GithubIcon from "./icons/GithubIcon";
+import { start } from "repl";
 
 // This should be set via a config file eventually so new connectors can be added declaratively without modifying this file
 const connectors = [
@@ -70,19 +71,24 @@ const connectors = [
   
 const ConnectorPage: React.FC = () => {
 
-  const { customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId } = useModalContext()
+  const { customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow } = useModalContext()
 
   const pickConnector = (connectorName: string, connectorId: string) => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
+    if (connectorId == 'notion') {
+      startConnectorAuthFlow(window, connectorId)
+    }
   }
 
   const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, connectorId: string, label: string|null, labelColor: string, active: boolean) => {
     return (
       <button
         className={active ? "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 hover:bg-gray-100 hover:shadow" : "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 pointer-events-none opacity-50"}
-        onClick={() => pickConnector(connectorName, connectorId)}
+        onClick={() =>  {
+          pickConnector(connectorName, connectorId)
+        }}
       >
         <ConnectorIcon/>
         <span className="ml-3 flex-1 whitespace-nowrap">
@@ -108,6 +114,7 @@ const ConnectorPage: React.FC = () => {
         <div className="space-y-6">
           <ul className="my-4 space-y-3">
             {connectors.map((connector) => {
+              
               return (<li>
                 {renderConnectorButton(connector.icon, connector.name, connector.id, connector.label, connector.labelColor, connector.active)}
               </li>)
