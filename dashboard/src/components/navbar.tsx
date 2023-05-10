@@ -3,7 +3,6 @@ import type { FC } from "react";
 import {
   DarkThemeToggle,
   Navbar,
-  Button
 } from "flowbite-react";
 import {
   HiMenuAlt1,
