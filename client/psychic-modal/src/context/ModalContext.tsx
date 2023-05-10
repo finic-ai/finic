@@ -43,7 +43,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
   const [connectorName, setConnectorName] = useState('');
   const [selectedConnectorId, setSelectedConnectorId] = useState('');
   const [newConnection, setNewConnection] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [metadata, setMetadata] = useState(null);
