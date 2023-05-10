@@ -10,7 +10,6 @@ import {
 } from "flowbite-react";
 import React from "react";
 import { useState } from "react";
-import { useModalContext } from "../context/ModalContext";
 
 import {
   HiOutlineArrowLeft
@@ -67,15 +66,23 @@ const connectors = [
     active: false
   },
 ]
+
+interface ConnectorPageProps {
+  customerName: string,
+  currentStep: number,
+  setCurrentStep: Function,
+  customerLogoUrl: string,
+  setConnectorName: Function,
+  setSelectedConnectorId: Function,
+  startConnectorAuthFlow: Function
+}
   
-const ConnectorPage: React.FC = () => {
-
-  const { customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId } = useModalContext()
-
+const ConnectorPage: React.FC<ConnectorPageProps> = ({customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow}) => {
   const pickConnector = (connectorName: string, connectorId: string) => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
+    startConnectorAuthFlow(connectorId)
   }
 
   const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, connectorId: string, label: string|null, labelColor: string, active: boolean) => {
