@@ -1,5 +1,8 @@
 import React, { useState, useRef, createContext, ReactNode, useContext } from 'react';
 
+const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
+
+
 interface ModalContextType {
   currentStep: number;
   setCurrentStep: (step: number) => void;
@@ -26,6 +29,15 @@ interface ModalContextType {
   authCodeHandled: React.MutableRefObject<boolean>;
   connectionId: string | null;
   publicKey: string | null;
+  authorizeConnection: Function;
+  startConnectorAuthFlow: Function;
+}
+
+type AuthPayload = {
+  connector_id: string;
+  connection_id: string;
+  auth_code?: string;
+  metadata?: string;
 }
 
 // Create a context
@@ -81,7 +93,78 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     authCodeHandled,
     connectionId,
     publicKey,
+    authorizeConnection,
+    startConnectorAuthFlow
   };
+
+  async function authorizeConnection(
+    connectorId: string, 
+    connectionId: string,
+    publicKey: string,
+    authCode?: string,
+    metadata?: any
+    ) {
+
+    const url = PSYCHIC_URL + '/add-oauth-connection';
+
+    var payload: AuthPayload = {
+      connection_id: connectionId,
+      connector_id: connectorId
+    }
+    if (authCode) {
+      payload.auth_code = authCode 
+    }
+    if (metadata) {
+      payload.metadata = metadata
+    }
+
+    console.log(payload)
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${publicKey}`},
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        setError('Something went wrong. Please try again.')
+        setIsSuccess(false)
+        setIsLoading(false)
+        throw new Error(`Authorization failed with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return data.result;
+    } catch (error) {
+      setError('Something went wrong. Please try again.')
+      setIsSuccess(false)
+      setIsLoading(false)
+      throw new Error(`Authorization failed with error: ${error}`);
+    }
+  }
+
+  async function startConnectorAuthFlow(window: any, connectorId: string) {
+    setIsLoading(true)
+    console.log("hello")
+    console.log(connectionId)
+    console.log(publicKey)
+    if (!connectionId || !publicKey) {
+      setError('Invalid connection_id or public_key')
+      setIsLoading(false)
+      return
+    }
+    
+    const result = await authorizeConnection(connectorId, connectionId, publicKey)
+    const auth_url = result.auth_url
+    console.log(result)
+    // Open the auth url in a new window and center it.
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const left = window.screenX
+    const top = window.screenY
+    window.open(auth_url, '_blank', `addressbar=no, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`)
+  }
 
   return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;
 };

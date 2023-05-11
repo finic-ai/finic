@@ -48,7 +48,7 @@ const ResultPage: React.FC = () => {
 
     if (selectedConnectorId == 'gdrive' && metadata == null) {
       return (
-        <MetadataForm selectedConnectorId="gdrive" setMetadata={setMetadata} setIsLoading={setIsLoading} />
+        <MetadataForm  />
       )
     }
 
