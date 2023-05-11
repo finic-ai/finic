@@ -10,7 +10,7 @@ import {
     HiEyeSlash
   } from "react-icons/hi2";
   import React from "react";
-  import { useState, useEffect, useRef} from "react";
+  import { useState, useEffect, useRef, useCallback} from "react";
   import { useModalContext } from "../../context/ModalContext";
   import SuccessIcon from "../icons/SuccessIcon";
 import ErrorIcon from "../icons/ErrorIcon";
@@ -24,6 +24,7 @@ const NotionAuthFlow: React.FC = () => {
 
   const {
     authCode,
+    setAuthCode,
     currentStep,
     setCurrentStep,
     selectedConnectorId,
@@ -38,8 +39,10 @@ const NotionAuthFlow: React.FC = () => {
     setIsSuccess,
     isLoading,
     setError,
-    authorizeConnection
+    authorizeConnection,
+    setNewConnection
   } = useModalContext()
+  const authCodeHandled = useRef(false)
 
   const renderResult = () => {
     if (isSuccess) {
@@ -99,11 +102,61 @@ const NotionAuthFlow: React.FC = () => {
     )
   }
 
-  useEffect(() => {
-    if (!authCode) {
-      // startConnectorAuthFlow(selectedConnectorId)
+  async function completeAuthWithCode(connectorId: string, authCode: string, metadata?: any) {
+    if (!connectionId || !publicKey) {
+      setError('Invalid connection_id or public_key')
+      setIsLoading(false)
+      return
     }
-  }, [])
+    const result = await authorizeConnection(
+        connectorId, 
+        connectionId, 
+        publicKey,
+        authCode,
+        metadata
+    )
+    if (!result) {
+      setError('Something went wrong. Please try again.')
+      setIsSuccess(false)
+      setIsLoading(false)
+      return
+    }
+    setNewConnection(result.connection.connection_id)
+    setIsSuccess(true)
+    setIsLoading(false)
+    // Notify opening window that auth is complete
+    if (window.opener) {
+      window.opener.postMessage({ connection_id: result.connection.connection_id }, '*')
+    }
+  }
+
+  const handleMessage = useCallback((event: MessageEvent) => {
+    // check if oigin is not http://localhost:5173 or link.psychic.dev
+    if (event.origin !== "http://localhost:3000" && event.origin !== "https://link.psychic.dev") {
+      return;
+    }
+    const data = event.data;
+    if (data && data.code && !authCodeHandled.current) {
+      authCodeHandled.current = true
+      setAuthCode(data.code)
+      
+    }
+  }, [selectedConnectorId])
+
+  useEffect(() => {
+    // Add event listeners to get auth codes
+    window.addEventListener('message', handleMessage, false);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [selectedConnectorId]);
+
+  useEffect(() => {
+    if (authCode) {
+        completeAuthWithCode(selectedConnectorId, authCode)
+    }
+  }, [authCode])
 
   return (
     <div>

@@ -8,20 +8,16 @@ import {
 } from "flowbite-react";
 import React from "react";
 import { useState } from "react";
-
+import { useModalContext } from "../context/ModalContext";
 import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
 
 import SuccessIcon from "./icons/SuccessIcon";
 import ErrorIcon from "./icons/ErrorIcon";
 
-interface MetadataFormProps {
-    selectedConnectorId: string,
-    setIsLoading: Function,
-    setMetadata: Function,
-}
 
-const MetadataForm: React.FC<MetadataFormProps> = ({selectedConnectorId, setIsLoading, setMetadata}) => {
 
+const MetadataForm: React.FC = () => {
+    const {selectedConnectorId, setIsLoading, setMetadata, startConnectorAuthFlow} = useModalContext()
     const [folderName, setFolderName] = useState('')
 
     return(
@@ -41,6 +37,7 @@ const MetadataForm: React.FC<MetadataFormProps> = ({selectedConnectorId, setIsLo
                 {
                     setIsLoading(true)
                     setMetadata({'folder_url': folderName}) 
+                    startConnectorAuthFlow(window, selectedConnectorId)
                 }} >
                 Set folder
             </Button>
