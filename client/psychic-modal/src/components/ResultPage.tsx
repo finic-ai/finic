@@ -12,28 +12,29 @@ import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
 import SuccessIcon from "./icons/SuccessIcon";
 import ErrorIcon from "./icons/ErrorIcon";
 import MetadataForm from './MetadataForm'
+import { useModalContext } from "../context/ModalContext";
 
 type Metadata = {
   [key: string]: string | null;
 };
-
-interface ResultPageProps {
-  selectedConnectorId: string,
-  metadata: Metadata | null,
-  setMetadata: Function,
-  customerName: string,
-  currentStep: number,
-  setCurrentStep: Function,
-  customerLogoUrl: string,
-  connectorName: string,
-  isLoading: boolean,
-  setIsLoading: Function,
-  error: string,
-  isSuccess: boolean,
-
-}
   
-const ResultPage: React.FC<ResultPageProps> = ({selectedConnectorId, metadata, setMetadata, customerName, customerLogoUrl, connectorName, currentStep, setCurrentStep, isLoading, setIsLoading, error, isSuccess}) => {
+const ResultPage: React.FC = () => {
+
+  const {
+    currentStep,
+    setCurrentStep,
+    selectedConnectorId,
+    connectorName,
+    customerLogoUrl,
+    connectionId,
+    publicKey,
+    metadata,
+    setMetadata,
+    setIsLoading,
+    isSuccess,
+    setIsSuccess,
+    isLoading
+  } = useModalContext()
 
   const renderResult = () => {
     if (isSuccess) {

@@ -9,14 +9,11 @@ import {
 } from "react-icons/hi2";
 import React from "react";
 import { useState } from "react";
+import { useModalContext } from "../context/ModalContext";
 
-interface StartPageProps {
-  customerName: string,
-  setCurrentStep: Function,
-  customerLogoUrl?: string
-}
-  
-const StartPage: React.FC<StartPageProps> = ({customerName, customerLogoUrl, setCurrentStep}) => {
+
+const StartPage: React.FC = () => {
+  const { customerName, customerLogoUrl, setCurrentStep } = useModalContext();
   const renderModalHeader = () => {
     return (
       <div>
