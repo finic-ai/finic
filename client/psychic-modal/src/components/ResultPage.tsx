@@ -7,11 +7,10 @@ import {
 import React from "react";
 import { useState } from "react";
 
-import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
 
 import SuccessIcon from "./icons/SuccessIcon";
 import ErrorIcon from "./icons/ErrorIcon";
-import MetadataForm from './MetadataForm'
+import MetadataForm from './auth/GDriveMetadataForm'
 import { useModalContext } from "../context/ModalContext";
 
 type Metadata = {
@@ -63,13 +62,6 @@ const ResultPage: React.FC = () => {
   )
   }
 
-  const renderModalHeader = () => {
-    return (
-      <ModalHeader customerLogoUrl={customerLogoUrl} currentStep={currentStep} setCurrentStep={setCurrentStep}/>
-    )
-
-  }
-
   const renderModalBody = () => {
     return (
       <div className="space-y-6 px-8">
@@ -103,7 +95,6 @@ const ResultPage: React.FC = () => {
 
   return (
     <div>
-      {renderModalHeader()}
       {renderModalBody()}
       {renderModalFooter()}
     </div>

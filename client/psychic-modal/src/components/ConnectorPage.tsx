@@ -9,14 +9,13 @@ import {
   TextInput,
 } from "flowbite-react";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useModalContext } from "../context/ModalContext";
 
 import {
   HiOutlineArrowLeft
 } from "react-icons/hi2";
 
-import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
 
 import NotionIcon from "./icons/NotionIcon";
 import GoogleDriveIcon from "./icons/GoogleDriveIcon";
@@ -55,9 +54,9 @@ const connectors = [
     name: "Zendesk",
     id: "zendesk",
     icon: ZendeskIcon,
-    label: "In Development",
+    label: null,
     labelColor: "warning",
-    active: false
+    active: true
   },
   {
     name: "Github",
@@ -71,7 +70,7 @@ const connectors = [
   
 const ConnectorPage: React.FC = () => {
 
-  const { customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow } = useModalContext()
+  const { customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow, setMetadata } = useModalContext()
 
   const pickConnector = (connectorName: string, connectorId: string) => {
     setCurrentStep(2)
@@ -99,14 +98,6 @@ const ConnectorPage: React.FC = () => {
     )
   }
 
-  const renderModalHeader = () => {
-    return (
-      <div>
-        <ModalHeader customerLogoUrl={customerLogoUrl} currentStep={currentStep} setCurrentStep={setCurrentStep}/>
-        <p className="font-normal">Choose the knowledge base you want to share with <span className="font-bold">{customerName}</span>.</p>
-      </div>
-    )
-  }
 
   const renderModalBody = () => {
     return (
@@ -134,9 +125,12 @@ const ConnectorPage: React.FC = () => {
     )
   }
 
+  useEffect(() => {
+    setMetadata(null)
+  }, [])
+
   return (
     <div>
-      {renderModalHeader()}
       {renderModalBody()}
     </div>
   );

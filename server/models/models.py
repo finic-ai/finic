@@ -7,6 +7,7 @@ from enum import Enum
 class ConnectorId(str, Enum):
     notion = "notion"
     gdrive = "gdrive"
+    zendesk = "zendesk"
 
 class Connection(BaseModel):
     connection_id: str
@@ -32,6 +33,10 @@ class DataConnector(BaseModel, ABC):
 
     @abstractmethod
     async def authorize(self, *args, **kwargs) -> AuthorizationResult:
+        pass
+
+    @abstractmethod
+    async def authorize_api_key(self, *args, **kwargs) -> AuthorizationResult:
         pass
 
     @abstractmethod

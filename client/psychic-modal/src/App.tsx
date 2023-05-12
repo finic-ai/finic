@@ -7,6 +7,8 @@ import ResultPage from './components/ResultPage'
 import { useModalContext } from './context/ModalContext'
 import NotionAuthFlow from './components/auth/NotionAuthFlow';
 import GDriveAuthFlow from './components/auth/GDriveAuthFlow';
+import ZendeskAuthFlow from './components/auth/ZendeskAuthFlow';
+import ModalHeader from './components/ModalHeader';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
 
@@ -22,6 +24,8 @@ const App: React.FC = () => {
     setSelectedConnectorId,
     connectionId,
     publicKey,
+    customerLogoUrl,
+    setCurrentStep
   } = useModalContext()
 
   const renderAppStep = () => {
@@ -35,6 +39,14 @@ const App: React.FC = () => {
           return <NotionAuthFlow />
         } else if (selectedConnectorId == "gdrive") {
           return <GDriveAuthFlow />
+        } else if (selectedConnectorId == "zendesk") {
+          return <ZendeskAuthFlow />
+        } else if (selectedConnectorId == "confluence") {
+          return <div>Confluence</div>
+        } else if (selectedConnectorId == "github") {
+          return <div>Github</div>
+        } else {
+          return <div>Unknown connector</div>
         }
       case 3:
         return <ResultPage />
@@ -46,6 +58,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
      <div>
+        <ModalHeader />
         {renderAppStep()}
       </div>
     </div>

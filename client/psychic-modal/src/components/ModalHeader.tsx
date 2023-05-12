@@ -14,14 +14,17 @@ import {
   } from "react-icons/hi2";
   import React from "react";
   import { useState } from "react";
+  import { useModalContext } from "../context/ModalContext";
 
-interface ModalHeaderProps {
-    customerLogoUrl: string,
-    currentStep: number,
-    setCurrentStep: Function
-}
+const ModalHeader: React.FC = () => {
 
-const ModalHeader: React.FC<ModalHeaderProps> = ({customerLogoUrl, currentStep, setCurrentStep}) => {
+  const {currentStep, setCurrentStep, customerLogoUrl} = useModalContext()
+    if (currentStep === 0) {
+      return (
+        <></> 
+      )
+    }
+    
     return (
       <div>
         <div className="flex w-full justify-between p-4">
@@ -48,10 +51,5 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({customerLogoUrl, currentStep, 
       </div>
     )
   }
-
-  // Workaround needed because Flowbite doesn't support forwarding props
-export const withModalHeaderProps = (Component: React.ComponentType<ModalHeaderProps>, additionalProps: ModalHeaderProps) => {
-    return (props: any) => <Component {...additionalProps} {...props} />;
-};
 
 export default ModalHeader

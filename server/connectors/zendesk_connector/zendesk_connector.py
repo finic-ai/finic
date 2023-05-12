@@ -1,4 +1,4 @@
-from models.models import Source, AppConfig, Document, DocumentMetadata, AuthorizationResult, DataConnector
+from models.models import AppConfig, Document, ConnectorId, AuthorizationResult, DataConnector
 from typing import List, Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -9,50 +9,42 @@ import os
 import uuid
 import json
 import importlib
-from typing import Any
+from typing import Dict
 import json
 import requests
 from bs4 import BeautifulSoup
 
 
 class ZendeskConnector(DataConnector):
-    source_type: Source = Source.zendesk
-    connector_id: int = 5
+    connector_id: ConnectorId = ConnectorId.zendesk
     config: AppConfig
-    folder_name: str
-    flow: Optional[Any] = None
 
-    def __init__(self, config: AppConfig, folder_name: str):
-        super().__init__(config=config, folder_name=folder_name)
-                        
+    def __init__(self, config: AppConfig):
+        super().__init__(config=config)
 
-    async def authorize(self, api_key: str, subdomain: str, email: str) -> AuthorizationResult:
-        creds = {
-            "api_key": api_key,
-            "subdomain": subdomain,
-            "email": email
-        }
-        base_url = f"https://{subdomain}.zendesk.com/api/v2/help_center/articles.json"
-        auth = (email + "/token", api_key)
-        try:
-            response = requests.get(base_url, auth=auth)
-            if response.status_code != 200:
-                print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
-                return AuthorizationResult(authorized=False)
-        except Exception as e:
-            print(e)
-            return AuthorizationResult(authorized=False)
+    async def authorize_api_key(self, connection_id: str, credential: Dict, metadata: Dict) -> AuthorizationResult:
+        credential_string = json.dumps(credential)
+        subdomain = metadata['subdomain']
 
-        creds_string = json.dumps(creds)
-        StateStore().save_credentials(self.config, creds_string, self)
-        return AuthorizationResult(authorized=True)
+        new_connection = StateStore().add_connection(
+            config=self.config,
+            credential=credential_string,
+            connector_id=self.connector_id,
+            connection_id=connection_id,
+            metadata={'subdomain': subdomain}
+        )
+
+        return AuthorizationResult(authorized=True, connection=new_connection)
+
+    async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
+        pass
 
     async def load(self, source_id: str) -> List[Document]:
         # initialize credentials
-        credential_string = StateStore().load_credentials(self.config, self)
-        credential_json = json.loads(credential_string)
+        connection = StateStore().load_credentials(self.config, self.connector_id, source_id)
+        credential_json = json.loads(connection.credential)
+        subdomain = connection.metadata['subdomain']
         api_key = credential_json["api_key"]
-        subdomain = credential_json["subdomain"]
         email = credential_json["email"]
 
         base_url = f"https://{subdomain}.zendesk.com/api/v2/help_center/articles.json"
@@ -75,14 +67,8 @@ class ZendeskConnector(DataConnector):
                 documents.append(
                         Document(
                         title=title,
-                        text=text,
-                        url=article_url,
-                        source_type=Source.zendesk,
-                        metadata=DocumentMetadata(
-                            document_id=str(uuid.uuid4()),
-                            source_id=source_id,
-                            tenant_id=self.config.tenant_id
-                        )
+                        content=text,
+                        uri=article_url
                     )
                 )
             base_url = data["next_page"]

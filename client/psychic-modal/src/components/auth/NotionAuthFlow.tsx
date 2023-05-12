@@ -3,7 +3,6 @@ import {
     Button,
     Spinner
   } from "flowbite-react";
-  import ModalHeader, { withModalHeaderProps } from "../ModalHeader";
 
   import {
     HiLockClosed,
@@ -63,12 +62,6 @@ const NotionAuthFlow: React.FC = () => {
       </div>
     </div>
   )
-  }
-
-  const renderModalHeader = () => {
-    return (
-      <ModalHeader customerLogoUrl={customerLogoUrl} currentStep={currentStep} setCurrentStep={setCurrentStep}/>
-    )
   }
 
   const renderModalBody = () => {
@@ -160,7 +153,6 @@ const NotionAuthFlow: React.FC = () => {
 
   return (
     <div>
-      {renderModalHeader()}
       {renderModalBody()}
       {renderModalFooter()}
     </div>

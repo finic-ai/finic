@@ -16,6 +16,7 @@ from models.api import (
     ConnectorStatusResponse,
     GetDocumentsRequest,
     GetDocumentsResponse,
+    AuthorizeApiKeyRequest
 )
 
 from appstatestore.statestore import StateStore
@@ -79,6 +80,28 @@ async def get_connector_status(
     connector_id = request.connector_id
     status = StateStore().get_connector_status(connector_id, config)
     return ConnectorStatusResponse(status=status)
+
+@app.post(
+    "/add-apikey-connection",
+    response_model=AuthorizationResponse,
+)
+async def add_apikey_connection(
+    request: AuthorizeApiKeyRequest = Body(...),
+    config: AppConfig = Depends(validate_public_key),
+):
+    connector_id = request.connector_id
+    connection_id = request.connection_id
+    credential = request.credential
+    metadata = request.metadata
+
+    connector = get_connector_for_id(connector_id, config)
+
+    print("connector", connector)
+
+    if connector is None:
+        raise HTTPException(status_code=404, detail="Connector not found")
+    result = await connector.authorize_api_key(connection_id, credential, metadata)
+    return AuthorizationResponse(result=result)
 
 
 @app.post(

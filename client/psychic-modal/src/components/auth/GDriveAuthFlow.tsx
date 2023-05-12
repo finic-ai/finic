@@ -3,7 +3,6 @@ import {
   Button,
   Spinner
 } from "flowbite-react";
-import ModalHeader, { withModalHeaderProps } from "../ModalHeader";
 
 import {
   HiLockClosed,
@@ -15,7 +14,7 @@ import { useModalContext } from "../../context/ModalContext";
 import SuccessIcon from "../icons/SuccessIcon";
 import ErrorIcon from "../icons/ErrorIcon";
 import { start } from "repl";
-import MetadataForm from "../MetadataForm";
+import GDriveMetadataForm from "./GDriveMetadataForm";
 
 type Metadata = {
 [key: string]: string | null;
@@ -49,7 +48,7 @@ const renderResult = () => {
   console.log('metadata', metadata)
   if (!metadata) {
     return (
-      <MetadataForm  />
+      <GDriveMetadataForm  />
     )
   }
 
@@ -71,12 +70,6 @@ return (
     </div>
   </div>
 )
-}
-
-const renderModalHeader = () => {
-  return (
-    <ModalHeader customerLogoUrl={customerLogoUrl} currentStep={currentStep} setCurrentStep={setCurrentStep}/>
-  )
 }
 
 const renderModalBody = () => {
@@ -168,7 +161,6 @@ useEffect(() => {
 
 return (
   <div>
-    {renderModalHeader()}
     {renderModalBody()}
     {renderModalFooter()}
   </div>

@@ -8,15 +8,14 @@ import {
 } from "flowbite-react";
 import React from "react";
 import { useState } from "react";
-import { useModalContext } from "../context/ModalContext";
-import ModalHeader, { withModalHeaderProps } from "./ModalHeader";
+import { useModalContext } from "../../context/ModalContext";
 
-import SuccessIcon from "./icons/SuccessIcon";
-import ErrorIcon from "./icons/ErrorIcon";
-
+import SuccessIcon from "../icons/SuccessIcon";
+import ErrorIcon from "../icons/ErrorIcon";
 
 
-const MetadataForm: React.FC = () => {
+
+const GDriveMetadataForm: React.FC = () => {
     const {selectedConnectorId, setIsLoading, setMetadata, startConnectorAuthFlow} = useModalContext()
     const [folderName, setFolderName] = useState('')
 
@@ -46,4 +45,4 @@ const MetadataForm: React.FC = () => {
     )
 }
 
-export default MetadataForm
+export default GDriveMetadataForm

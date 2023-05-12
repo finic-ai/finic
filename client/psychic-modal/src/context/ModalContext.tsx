@@ -26,6 +26,8 @@ interface ModalContextType {
   setMetadata: (metadata: any) => void;
   authCode: string;
   setAuthCode: (code: string) => void;
+  credential: any;
+  setCredential: (credential: any) => void;
   authCodeHandled: React.MutableRefObject<boolean>;
   connectionId: string | null;
   publicKey: string | null;
@@ -33,10 +35,21 @@ interface ModalContextType {
   startConnectorAuthFlow: Function;
 }
 
-type AuthPayload = {
+export enum AuthMethod {
+  OAUTH = 'oauth',
+  API_KEY = 'api_key'
+}
+type OauthPayload = {
   connector_id: string;
   connection_id: string;
   auth_code?: string;
+  metadata?: string;
+}
+
+type ApiKeyPayload = {
+  connector_id: string;
+  connection_id: string;
+  credential?: any;
   metadata?: string;
 }
 
@@ -60,6 +73,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [metadata, setMetadata] = useState(null);
   const [authCode, setAuthCode] = useState('');
+  const [credential, setCredential] = useState(null);
 
   const authCodeHandled = useRef(false);
 
@@ -94,7 +108,9 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     connectionId,
     publicKey,
     authorizeConnection,
-    startConnectorAuthFlow
+    startConnectorAuthFlow,
+    credential,
+    setCredential
   };
 
   async function authorizeConnection(
@@ -102,24 +118,33 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     connectionId: string,
     publicKey: string,
     authCode?: string,
-    metadata?: any
+    metadata?: any,
+    method?: AuthMethod,
+    credential?: any
     ) {
 
-    const url = PSYCHIC_URL + '/add-oauth-connection';
+    if (!method) {
+      method = AuthMethod.OAUTH
+    }
+    
+    const url = method == AuthMethod.OAUTH ? 
+      PSYCHIC_URL + '/add-oauth-connection' : PSYCHIC_URL + '/add-apikey-connection';
 
-    var payload: AuthPayload = {
+    var payload: any = {
       connection_id: connectionId,
       connector_id: connectorId
     }
-    if (authCode) {
-      payload.auth_code = authCode 
+    if (method == AuthMethod.OAUTH && authCode) {
+        payload.auth_code = authCode
+    } else if (method == AuthMethod.API_KEY && credential) {
+        payload.credential = credential
     }
     if (metadata) {
       payload.metadata = metadata
     }
 
     console.log(payload)
-
+    console.log(url)
     try {
       const response = await fetch(url, {
         method: 'POST',

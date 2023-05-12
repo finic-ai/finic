@@ -24,6 +24,12 @@ class AuthorizeOauthRequest(BaseModel):
     auth_code: Optional[str]
     metadata: Optional[Dict]
 
+class AuthorizeApiKeyRequest(BaseModel):
+    connector_id: ConnectorId
+    connection_id: str
+    credential: Dict
+    metadata: Optional[Dict]
+
 
 class AuthorizationResponse(BaseModel):
     result: AuthorizationResult
