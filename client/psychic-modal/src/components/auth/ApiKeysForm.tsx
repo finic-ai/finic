@@ -45,7 +45,7 @@ const ApiKeysForm: React.FC<SubdomainMetadataFormProps> = ({onSubmit}) => {
                 className="mt-1"
                 onChange={(e) => setApiKey(e.target.value.trim())}
                 value={apiKey}
-                helperText="The API key you generated in your Zendesk admin account"
+                helperText="The API key you generated in your Zendesk admin account. You can follow these instructions to do so: https://support.zendesk.com/hc/en-us/articles/4408889192858-Generating-a-new-API-token"
             />
 
             <div className="flex justify-center">
