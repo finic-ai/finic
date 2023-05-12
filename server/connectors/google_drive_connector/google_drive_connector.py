@@ -36,7 +36,9 @@ class GoogleDriveConnector(DataConnector):
 
     def __init__(self, config: AppConfig):
         super().__init__(config=config)
-                        
+
+    async def authorize_api_key(self) -> AuthorizationResult:
+        pass              
 
     async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
         client_secrets = StateStore().get_connector_credential(self.connector_id, self.config)
