@@ -200,7 +200,7 @@ class ConfluenceConnector(DataConnector):
                 for page in pages:
                     title = page["title"]
                     content = page["body"]["storage"]["value"]
-                    url = f"{confluence_url}{page['_links']['webui']}"
+                    url = f"{confluence_url}/wiki{page['_links']['webui']}"
 
                     content = BeautifulSoup(content, "html.parser").get_text()
                     
