@@ -91,14 +91,17 @@ class ConfluenceConnector(DataConnector):
 
     async def load(self, connection_id: str) -> List[Document]:
         # initialize credentials
+        connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
+        client_id = connector_credentials['client_id']
+        client_secret = connector_credentials['client_secret']
+
+
         connection = StateStore().load_credentials(self.config, self.connector_id, connection_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
 
         access_token = credential_json["access_token"]
         refresh_token = credential_json["refresh_token"]
-        client_id = credential_json["client_id"]
-        client_secret = credential_json["client_secret"]
 
         try:
             authorized_site = requests.get(
