@@ -11,7 +11,7 @@ import {
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
-import { SiC, SiConfluence } from "react-icons/si";
+import {  SiConfluence } from "react-icons/si";
 import {usePsychicLink} from "@psychicdev/link";
 
 
