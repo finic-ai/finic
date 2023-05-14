@@ -1,5 +1,5 @@
-from models.models import Source, AppConfig, Document, DocumentMetadata, AuthorizationResult, DataConnector
-from typing import List, Optional
+from models.models import ConnectorId, AppConfig, Document, AuthorizationResult, DataConnector
+from typing import List, Optional, Dict
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -13,89 +13,203 @@ from typing import Any
 import json
 import requests
 from bs4 import BeautifulSoup
-from atlassian import Confluence
+from atlassian.confluence import Confluence
 
 
 
 class ConfluenceConnector(DataConnector):
-    source_type: Source = Source.confluence
-    connector_id: int = 6
+    connector_id: ConnectorId = ConnectorId.confluence
     config: AppConfig
-    space: str
 
-    def __init__(self, config: AppConfig, space: str):
-        super().__init__(config=config, space=space)
+    def __init__(self, config: AppConfig):
+        super().__init__(config=config)
                         
 
-    async def authorize(self, api_key: str, subdomain: str, email: str) -> AuthorizationResult:
-        creds = {
-            "api_key": api_key,
-            "subdomain": subdomain,
-            "email": email
-        }
+    async def authorize_api_key(self) -> AuthorizationResult:
+        pass
 
-        confluence = Confluence(
-            url=f"https://{subdomain}.atlassian.net/wiki",
-            username=email,
-            password=api_key
-        )
+    async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Optional[Dict]) -> AuthorizationResult:
+        connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
+        try: 
+            client_id = connector_credentials['client_id']
+            client_secret = connector_credentials['client_secret']
+            authorization_url = connector_credentials['authorization_url']
+            redirect_uri = "https://link.psychic.dev/oauth/redirect"
+        except Exception as e:
+            raise Exception("Connector is not enabled")
+        
+        if not auth_code:
+            return AuthorizationResult(authorized=False, auth_url=authorization_url)
 
         try:
-            spaces = confluence.get_all_spaces()
-            print(spaces)
-            # confluence.get_all_pages_from_space(space="~63c44c031d7734b550c1259d",start=start_at, limit=limit)
+            # encode in base 64
+            headers = {
+                "Content-Type": "application/json", 
+            }
+
+            data = {
+                'code': auth_code,
+                'grant_type': 'authorization_code',
+                'redirect_uri': redirect_uri,
+                'client_id': client_id,
+                'client_secret': client_secret
+            }
+
+            response = requests.post("https://auth.atlassian.com/oauth/token", headers=headers, json=data)
+
+            creds = response.json()
+
+            print(creds)
+
+            creds_string = json.dumps(creds)
+
+            authorized_site = requests.get(
+                "https://api.atlassian.com/oauth/token/accessible-resources",
+                headers={
+                    'Authorization': 'Bearer ' + creds['access_token'],
+                    'Accept': 'application/json'
+                }
+            ).json()[0]
+            
+            
         except Exception as e:
             print(e)
-            return AuthorizationResult(authorized=False)
+            raise Exception("Unable to get access token with code")
+        
 
-        creds_string = json.dumps(creds)
-        StateStore().save_credentials(self.config, creds_string, self)
-        return AuthorizationResult(authorized=True)
 
-    async def load(self, source_id: str) -> List[Document]:
-        # initialize credentials
-        credential_string = StateStore().load_credentials(self.config, self)
-        credential_json = json.loads(credential_string)
-        api_key = credential_json["api_key"]
-        subdomain = credential_json["subdomain"]
-        email = credential_json["email"]
 
-        confluence = Confluence(
-            url=f"https://{subdomain}.atlassian.net/wiki",
-            username=email,
-            password=api_key
+        
+        new_connection = StateStore().add_connection(
+            config=self.config,
+            credential=creds_string,
+            connector_id=self.connector_id,
+            connection_id=connection_id,
+            metadata={'subdomain': authorized_site['url']}
         )
+        return AuthorizationResult(authorized=True, connection=new_connection)
+
+    async def load(self, connection_id: str) -> List[Document]:
+        # initialize credentials
+        connection = StateStore().load_credentials(self.config, self.connector_id, connection_id)
+        credential_string = connection.credential
+        credential_json = json.loads(credential_string)
+
+        access_token = credential_json["access_token"]
+        refresh_token = credential_json["refresh_token"]
+        client_id = credential_json["client_id"]
+        client_secret = credential_json["client_secret"]
+
+        try:
+            authorized_site = requests.get(
+                "https://api.atlassian.com/oauth/token/accessible-resources",
+                headers={
+                    'Authorization': 'Bearer ' + access_token,
+                    'Accept': 'application/json'
+                }
+            ).json()[0]
+
+        except Exception as e:
+            # Handle expired access token
+            print(e)
+
+            headers = {
+                "Content-Type": "application/json", 
+            }
+
+            data = {
+                'refresh_token': refresh_token,
+                'grant_type': 'refresh_token',
+                'client_id': client_id,
+                'client_secret': client_secret
+            }
+
+            response = requests.post("https://auth.atlassian.com/oauth/token", headers=headers, json=data)
+
+            creds = response.json()
+
+            access_token = creds["access_token"]
+
+            creds_string = json.dumps(creds)
+
+            StateStore().add_connection(
+                config=self.config,
+                credential=creds_string,
+                connector_id=self.connector_id,
+                connection_id=connection_id,
+                metadata={}
+            )
+
+            authorized_site = requests.get(
+                "https://api.atlassian.com/oauth/token/accessible-resources",
+                headers={
+                    'Authorization': 'Bearer ' + access_token,
+                    'Accept': 'application/json'
+                }
+            ).json()[0]
+
+
+
+        
+        print(authorized_site)
+
+
+        cloud_id = authorized_site['id']
+        confluence_url = authorized_site['url']
+
+        spaces = requests.get(
+            f'https://api.atlassian.com/ex/confluence/{cloud_id}/rest/api/space',
+            headers={
+                'Authorization': 'Bearer ' + access_token,
+                'Accept': 'application/json'
+            }
+        ).json()
+
+        print(spaces)
+
+        space = spaces['results'][0]['key']
 
         documents = []
 
-        start_at = 0
-        limit = 25
-        while True:
-            pages = confluence.get_all_pages_from_space(self.space, start=start_at, limit=limit, expand="body.storage")
+        for space in spaces['results']:
+            start_at = 0
+            limit = 25
+            space_key = space['key']
+            while True:
+                pages_response = requests.get(
+                    f'https://api.atlassian.com/ex/confluence/{cloud_id}/wiki/rest/api/content?spaceKey={space_key}&limit=25&start={start_at}&expand=body.storage&type=page',
+                    headers={
+                        'Authorization': 'Bearer ' + access_token,
+                        'Accept': 'application/json'
+                    }
+                )
+                print(pages_response)
+                print(pages_response.json())
 
-            if not pages:
-                break
+                pages = pages_response.json()['results']
 
-            for page in pages:
-                title = page["title"]
-                content = page["body"]["storage"]["value"]
-                url = f"{confluence.url}{page['_links']['webui']}"
-                
-                documents.append(
-                    Document(
-                        title=title,
-                        text=content,
-                        url=url,
-                        source_type=Source.confluence,
-                        metadata=DocumentMetadata(
-                            document_id=str(uuid.uuid4()),
-                            source_id=source_id,
-                            tenant_id=self.config.tenant_id
+
+                # pages = confluence.get_all_pages_from_space(space, start=start_at, limit=limit, expand="body.storage")
+
+                if not pages:
+                    break
+
+                for page in pages:
+                    title = page["title"]
+                    content = page["body"]["storage"]["value"]
+                    url = f"{confluence_url}{page['_links']['webui']}"
+
+                    content = BeautifulSoup(content, "html.parser").get_text()
+                    
+                    documents.append(
+                        Document(
+                            title=title,
+                            content=content,
+                            uri=url,
                         )
                     )
-                )
 
-            start_at += limit
+                start_at += limit
 
         return documents
 

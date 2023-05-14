@@ -20,27 +20,42 @@ interface SubdomainMetadataFormProps {
 }
 
 const SubdomainMetadataForm: React.FC<SubdomainMetadataFormProps> = ({onSubmit}) => {
-    const {selectedConnectorId, setIsLoading, setMetadata, metadata, startConnectorAuthFlow} = useModalContext()
+    const {connectorName, selectedConnectorId, setMetadata, metadata, startConnectorAuthFlow} = useModalContext()
     const initialValue = metadata ? metadata['subdomain'] : ''
     const [subdomain, setSubdomain] = useState(initialValue || '')
 
+    var helperText = ''
+    if (selectedConnectorId === 'zendesk') {
+        helperText = `Enter your ${connectorName} subdomain, e.g. 'mycompany' for 'mycompany.zendesk.com'`
+    } else if (selectedConnectorId === 'confluence') {
+        helperText = `Enter your ${connectorName} subdomain, e.g. 'mycompany' for 'mycompany.atlassian.net'`
+    }
+
+    function getSubdomainLabel() {
+        if (selectedConnectorId === 'zendesk') {
+            return `https://${subdomain}.zendesk.com`
+        } else if (selectedConnectorId === 'confluence') {
+            return `https://${subdomain}.atlassian.net`
+        }
+    }
+
     return(
         <div>
-            <Label htmlFor="apiKeys.label">Zendesk subdomain</Label>
+            <Label htmlFor="apiKeys.label">{connectorName} subdomain</Label>
             <TextInput
                 id="apiKeys.label"
                 name="apiKeys.label"
-                placeholder='Your zendesk subdomain'
+                placeholder={`Your ${connectorName} subdomain`}
                 className="mt-1"
                 onChange={(e) => setSubdomain(e.target.value.trim())}
                 value={subdomain}
-                helperText="Enter your zendesk subdomain, e.g. 'mycompany' for 'mycompany.zendesk.com'"
+                helperText={helperText}
             />
             <div>
                 {(subdomain && subdomain.length > 0) && (
                     <div className="flex justify-center">
                         {/* a label with the full subdomain url */}
-                        <Label htmlFor="apiKeys.label">Your subdomain: https://{subdomain}.zendesk.com</Label>
+                        <Label htmlFor="apiKeys.label">Your subdomain: {getSubdomainLabel()}</Label>
                     </div>
                 )}
             </div>

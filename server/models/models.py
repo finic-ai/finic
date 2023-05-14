@@ -8,6 +8,7 @@ class ConnectorId(str, Enum):
     notion = "notion"
     gdrive = "gdrive"
     zendesk = "zendesk"
+    confluence = "confluence"
 
 class Connection(BaseModel):
     connection_id: str

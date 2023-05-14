@@ -86,14 +86,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Zendesk
                   </Sidebar.Item>
-                  <Tooltip content="Coming Soon" trigger="hover">
-                    <Sidebar.Item
-                      href="/connectors/confluence"
-                      className="pointer-events-none text-gray-400"
-                    >
-                      Confluence
-                    </Sidebar.Item>
-                  </Tooltip>
+                  <Sidebar.Item
+                    href="/connectors/confluence"
+                    className={
+                      "/connectors/notion" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Confluence
+                  </Sidebar.Item>
                   <Tooltip content="Coming Soon" trigger="hover">
                     <Sidebar.Item
                       href="/connectors/website"

@@ -18,6 +18,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared'
 import  supabase  from "./lib/supabaseClient";
 import { useEffect } from "react";
 import useLocalStorage from "./useLocalStorage";
+import ConfluenceConnectorPage from "./pages/connectors/confluence";
 
 const container = document.getElementById("root");
 
@@ -80,6 +81,7 @@ function App() {
               <Route path="/connectors/notion" element={<NotionConnectorPage />} />
               <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
               <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
+              <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
               <Route path="/oauth/redirect" element={<RedirectPage />} />
             </Routes>
           </BrowserRouter>

@@ -8,6 +8,7 @@ import { useModalContext } from './context/ModalContext'
 import NotionAuthFlow from './components/auth/NotionAuthFlow';
 import GDriveAuthFlow from './components/auth/GDriveAuthFlow';
 import ZendeskAuthFlow from './components/auth/ZendeskAuthFlow';
+import ConfluenceAuthFlow from './components/auth/ConfluenceAuthFlow';
 import ModalHeader from './components/ModalHeader';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
@@ -42,7 +43,7 @@ const App: React.FC = () => {
         } else if (selectedConnectorId == "zendesk") {
           return <ZendeskAuthFlow />
         } else if (selectedConnectorId == "confluence") {
-          return <div>Confluence</div>
+          return <ConfluenceAuthFlow />
         } else if (selectedConnectorId == "github") {
           return <div>Github</div>
         } else {

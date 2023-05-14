@@ -46,16 +46,16 @@ const connectors = [
     name: "Confluence",
     id: "confluence",
     icon: ConfluenceIcon,
-    label: "In Development",
-    labelColor: "warning",
-    active: false
+    label: null,
+    labelColor: "info",
+    active: true
   },
   {
     name: "Zendesk",
     id: "zendesk",
     icon: ZendeskIcon,
     label: null,
-    labelColor: "warning",
+    labelColor: "info",
     active: true
   },
   {
@@ -76,7 +76,8 @@ const ConnectorPage: React.FC = () => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
-    if (connectorId == 'notion') {
+    if (connectorId == 'notion' || connectorId == 'confluence') {
+      console.log('hello')
       startConnectorAuthFlow(window, connectorId)
     }
   }
