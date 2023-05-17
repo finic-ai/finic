@@ -1,0 +1,9 @@
+README.md
+setup.py
+psychicapi/__init__.py
+psychicapi/psychic.py
+psychicapi.egg-info/PKG-INFO
+psychicapi.egg-info/SOURCES.txt
+psychicapi.egg-info/dependency_links.txt
+psychicapi.egg-info/requires.txt
+psychicapi.egg-info/top_level.txt

@@ -1,9 +1,0 @@
-README.md
-setup.py
-psychic-link/__init__.py
-psychic-link/psychic.py
-psychic_link.egg-info/PKG-INFO
-psychic_link.egg-info/SOURCES.txt
-psychic_link.egg-info/dependency_links.txt
-psychic_link.egg-info/requires.txt
-psychic_link.egg-info/top_level.txt
