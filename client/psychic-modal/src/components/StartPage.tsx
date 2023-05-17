@@ -13,11 +13,20 @@ import { useModalContext } from "../context/ModalContext";
 
 
 const StartPage: React.FC = () => {
-  const { customerName, customerLogoUrl, setCurrentStep } = useModalContext();
+  const { customerName, customerLogoUrl, setCurrentStep, logoLoading} = useModalContext();
   const renderModalHeader = () => {
     return (
       <div>
         <div className="flex flex-col items-center px-8">
+
+          {logoLoading ? (
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="w-24 h-24 bg-gray-200 rounded-full mb-4"></div>
+              <div className="w-24 h-6 bg-gray-200 rounded-full"></div>
+            </div>
+          ) : (
+
+          <>
           <Avatar.Group className="my-4">
             <Avatar
               img={customerLogoUrl}
@@ -33,6 +42,7 @@ const StartPage: React.FC = () => {
             />
           </Avatar.Group>
           <p className="font-normal text-center"><span className="font-bold">{customerName}</span> uses <span className="font-bold">Psychic.dev</span> to connect to your knowledge base applications.</p>
+          </>)}
         </div>
         <hr className="h-px my-8 mx-6 bg-gray-200 border-0" />
       </div>
@@ -58,7 +68,7 @@ const StartPage: React.FC = () => {
             Your organization’s controls are respected
           </h5>
           <p className="text-base leading-relaxed text-gray-500">
-          Psychic.dev ensures that access control lists (ACLs) set by your organization are preserved. Only those resources you have permission to view will be shared with Support Hero.
+          Psychic.dev ensures that access control lists (ACLs) set by your organization are preserved. Only those resources you have permission to view will be shared.
           </p>
         </div>
         <hr className="h-px my-8 bg-gray-200 border-0" />

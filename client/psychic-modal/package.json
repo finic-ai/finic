@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "private": false,
   "dependencies": {
+    "@supabase/supabase-js": "^2.22.0",
     "axios": "^1.4.0",
     "flowbite": "^1.6.5",
     "flowbite-react": "^0.4.4",

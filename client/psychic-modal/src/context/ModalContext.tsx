@@ -1,4 +1,5 @@
-import React, { useState, useRef, createContext, ReactNode, useContext } from 'react';
+import React, { useState, useEffect, useRef, createContext, ReactNode, useContext } from 'react';
+import supabase from '../lib/supabaseClient';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
 
@@ -31,6 +32,7 @@ interface ModalContextType {
   authCodeHandled: React.MutableRefObject<boolean>;
   connectionId: string | null;
   publicKey: string | null;
+  logoLoading: boolean;
   authorizeConnection: Function;
   startConnectorAuthFlow: Function;
 }
@@ -63,8 +65,8 @@ interface ModalProviderProps {
 // Custom provider component
 const ModalProvider = ({ children }: ModalProviderProps) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [customerName, setCustomerName] = useState('Support Hero');
-  const [customerLogoUrl, setCustomerLogoUrl] = useState('https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9f332d59bb5fbb0b60e3_Icon%20(3).png');
+  const [customerName, setCustomerName] = useState('');
+  const [customerLogoUrl, setCustomerLogoUrl] = useState('');
   const [connectorName, setConnectorName] = useState('');
   const [selectedConnectorId, setSelectedConnectorId] = useState('');
   const [newConnection, setNewConnection] = useState(null);
@@ -74,6 +76,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
   const [metadata, setMetadata] = useState(null);
   const [authCode, setAuthCode] = useState('');
   const [credential, setCredential] = useState(null);
+  const [logoLoading, setLogoLoading] = useState(true);
 
   const authCodeHandled = useRef(false);
 
@@ -107,11 +110,38 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     authCodeHandled,
     connectionId,
     publicKey,
+    logoLoading,
     authorizeConnection,
     startConnectorAuthFlow,
     credential,
     setCredential
   };
+
+  useEffect(() => {
+    if (connectionId && publicKey) {
+      // Get settings for public key and set the name and logo
+      supabase
+        .from('settings')
+        .select('name, logo')
+        .eq('app_id', publicKey)
+        .then(({ data, error }) => {
+          setLogoLoading(false);
+          if (error) {
+            setCustomerName('Support Hero');
+            setCustomerLogoUrl('https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9f332d59bb5fbb0b60e3_Icon%20(3).png');
+            console.log(error);
+            return;
+          }
+          if (data && data.length > 0) {
+            setCustomerName(data[0].name);
+            setCustomerLogoUrl(data[0].logo);
+          } else {
+            setCustomerName('Support Hero');
+            setCustomerLogoUrl('https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9f332d59bb5fbb0b60e3_Icon%20(3).png');
+          }
+        });
+    }
+  }, [connectionId, publicKey]);
 
   async function authorizeConnection(
     connectorId: string, 

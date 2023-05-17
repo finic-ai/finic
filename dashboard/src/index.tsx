@@ -19,6 +19,7 @@ import  supabase  from "./lib/supabaseClient";
 import { useEffect } from "react";
 import useLocalStorage from "./useLocalStorage";
 import ConfluenceConnectorPage from "./pages/connectors/confluence";
+import Settings from "./pages/settings";
 
 const container = document.getElementById("root");
 
@@ -83,6 +84,7 @@ function App() {
               <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
               <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
               <Route path="/oauth/redirect" element={<RedirectPage />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </BrowserRouter>
         </UserStateProvider>

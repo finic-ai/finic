@@ -8,6 +8,7 @@ import {
   HiLink,
   HiBeaker,
   HiQuestionMarkCircle,
+  HiCog
 } from "react-icons/hi";
 import {FaGithub, FaReadme} from "react-icons/fa"
 
@@ -149,12 +150,19 @@ const ExampleSidebar: FC = function () {
                 >
                   Docs
                 </Sidebar.Item>
+                
                 <Sidebar.Item
                   href="https://sidekick-ezml2kwdva-uc.a.run.app/docs"
                   icon={HiBeaker}
                   target="_blank"
                 >
                   API Testing
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="/settings"
+                  icon={HiCog}
+                >
+                  Settings
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="https://join.slack.com/t/sidekick-public/shared_invite/zt-1tfq2k2dw-Ri7udiTSLEe5d2V0mvSxxw"
