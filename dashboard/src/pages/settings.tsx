@@ -3,7 +3,6 @@ import {
     Breadcrumb,
     Button,
     Label,
-    Modal,
     Spinner,
     TextInput,
   } from "flowbite-react";
