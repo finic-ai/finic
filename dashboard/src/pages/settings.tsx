@@ -95,7 +95,7 @@ import { useUserStateContext } from "../context/UserStateContext";
         }
         const { data, error } = await supabase
         .from('settings')
-        .update({ name, logo: downloadUrl })
+        .upsert({ name, logo: downloadUrl })
         .eq('app_id', appId)
         .select()
         setLoading(false)
