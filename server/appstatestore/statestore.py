@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection
+from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter
 import os
 import uuid
 from supabase import create_client, Client
@@ -69,11 +69,39 @@ class StateStore:
             connections.append(
                 Connection(
                     connection_id=row['id'],
+                    connector_id=row['connector_id'],
                     metadata=row['metadata']
                 )
             )
         
         return ConnectorStatus(is_enabled=isEnabled, connections=connections)
+    
+    def get_connections(self, filter: ConnectionFilter, config: AppConfig) -> List[Connection]:
+        query = self.supabase.table('connections').select('*').filter(
+            'user_id',
+            'eq',
+            config.user_id
+        )
+
+        if filter.connector_id is not None:
+            query = query.filter('connector_id', 'eq', filter.connector_id)
+        
+        if filter.connection_id is not None:
+            query = query.filter('id', 'eq', filter.connection_id)
+
+        response = query.execute()
+
+        connections: List[Connection] = []
+        for row in response.data:
+            connections.append(
+                Connection(
+                    connection_id=row['id'],
+                    connector_id=row['connector_id'],
+                    metadata=row['metadata']
+                )
+            )
+        
+        return connections
     
     def get_connector_credential(self, connector_id: ConnectorId, config: AppConfig) -> Optional[Dict]:
         response = self.supabase.table('enabled_connectors').select('*').filter(
@@ -121,6 +149,7 @@ class StateStore:
 
         return Connection(
             connection_id=connection_id,
+            connector_id=connector_id,
             metadata=metadata
         )
 

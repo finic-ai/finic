@@ -2,7 +2,9 @@ from models.models import (
     Document,
     ConnectorId,
     ConnectorStatus,
-    AuthorizationResult
+    AuthorizationResult,
+    Connection,
+    ConnectionFilter
 )
 from pydantic import BaseModel
 from typing import List, Optional, Dict
@@ -13,6 +15,11 @@ class ConnectorStatusResponse(BaseModel):
 class ConnectorStatusRequest(BaseModel):
     connector_id: ConnectorId
 
+class GetConnectionsRequest(BaseModel):
+    filter: ConnectionFilter
+
+class GetConnectionsResponse(BaseModel):
+    connections: List[Connection]
 
 class EnableConnectorRequest(BaseModel):
     connector_id: ConnectorId

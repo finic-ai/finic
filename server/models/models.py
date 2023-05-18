@@ -12,6 +12,7 @@ class ConnectorId(str, Enum):
 
 class Connection(BaseModel):
     connection_id: str
+    connector_id: ConnectorId
     metadata: Dict
     credential: Optional[str]
     
@@ -48,3 +49,7 @@ class DataConnector(BaseModel, ABC):
 class AppConfig(BaseModel):
     app_id: str
     user_id: str
+
+class ConnectionFilter(BaseModel):
+    connector_id: Optional[ConnectorId] = None
+    connection_id: Optional[str] = None

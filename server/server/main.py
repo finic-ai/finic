@@ -16,7 +16,9 @@ from models.api import (
     ConnectorStatusResponse,
     GetDocumentsRequest,
     GetDocumentsResponse,
-    AuthorizeApiKeyRequest
+    AuthorizeApiKeyRequest,
+    GetConnectionsRequest,
+    GetConnectionsResponse,
 )
 
 from appstatestore.statestore import StateStore
@@ -80,6 +82,18 @@ async def get_connector_status(
     connector_id = request.connector_id
     status = StateStore().get_connector_status(connector_id, config)
     return ConnectorStatusResponse(status=status)
+
+@app.post(
+    "/get-connections",
+    response_model=GetConnectionsResponse,
+)
+async def get_connections(
+    request: GetConnectionsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    filter = request.filter
+    connections = StateStore().get_connections(filter, config)
+    return GetConnectionsResponse(connections=connections)
 
 @app.post(
     "/add-apikey-connection",
