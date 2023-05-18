@@ -1,5 +1,6 @@
 import requests
 from enum import Enum
+from typing import List, Optional, Dict
 
 class ConnectorId(Enum):
     notion = "notion"
@@ -29,3 +30,32 @@ class Psychic:
             return documents
         else:
             return None
+        
+    def get_connections(self, connector_id: Optional[ConnectorId] = None, connection_id: Optional[str] = None):
+        filter = {}
+
+        if connector_id is not None:
+            filter["connector_id"] = connector_id.value
+        if connection_id is not None:
+            filter["connection_id"] = connection_id
+
+        response = requests.post(
+            self.api_url + "get-connections",
+            json={
+                "filter": filter,
+            },
+            headers={
+                'Authorization': 'Bearer ' + self.secret_key,
+                'Accept': 'application/json'
+            }
+        )
+        print(response)
+        if response.status_code == 200:
+            documents = response.json()["connections"]
+            return documents
+        else:
+            return None
+        
+ps = Psychic("7ddb61c1-8b6a-4d31-a58e-30d1c9ea480e")
+print(ps.get_documents(connector_id=ConnectorId.gdrive, connection_id="google-test"))
+print(ps.get_connections(connection_id="google-test"))
