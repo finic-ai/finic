@@ -144,7 +144,7 @@ const ExampleSidebar: FC = function () {
                   GitHub
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="https://docs.getsidekick.ai/introduction"
+                  href="https://docs.psychic.dev"
                   target="_blank"
                   icon={FaReadme}
                 >
