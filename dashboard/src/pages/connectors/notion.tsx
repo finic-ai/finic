@@ -33,7 +33,7 @@ const NotionConnectorPage: FC = function () {
 
   async function authorize() {
     setAuthLoading(true)
-    const url = import.meta.env.VITE_SERVER_URL + '/enable-connector';
+    const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
     var payload = {
       connector_id: "notion",
       credential: {

@@ -57,7 +57,7 @@ def validate_public_key(credentials: HTTPAuthorizationCredentials = Depends(bear
 
 
 @app.post(
-    "/enable-connector",
+    "/set-custom-connector-credentials",
     response_model=ConnectorStatusResponse,
 )
 async def enable_connector(
