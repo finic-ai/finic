@@ -24,18 +24,18 @@
 </a>
 </p>
 
-[Sidekick](https://getsidekick.ai/) is a platform for integrating with your customer’s SaaS tools like Notion, Zendesk, Confluence, and Google Drive and syncing documents from these applications to your SQL or vector database. You can think of it like Plaid for unstructured data. Sidekick is easy to set up - you use it by importing the NPM package and configuring it with your Sidekick API key, which you can get from the [Sidekick dashboard](https://dashboard.getsidekick.ai/). When your users connect their applications, you can view these connections from the dashboard.
+[Psychic]([https://getsidekick.ai/](https://www.psychic.dev/)) is a platform for integrating with your customer’s SaaS tools like Notion, Zendesk, Confluence, and Google Drive and syncing documents from these applications to your SQL or vector database. You can think of it like Plaid for unstructured data. Psychic is easy to set up - you use it by importing the NPM package and configuring it with your Sidekick API key, which you can get from the [Psychic dashboard](https://dashboard.psychic.dev/). When your users connect their applications, you can view these connections from the dashboard.
 
-### <a href="https://docs.getsidekick.ai" target="_blank">Read the docs</a>
+### <a href="https://docs.psychic.dev" target="_blank">Read the docs</a>
 
 ## Demo
 [Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0).
-Get an API key to test out the cloud version by creating an account on the [Sidekick dashboard.](https://dashboard.getsidekick.ai/)
+Get an API key to test out the cloud version by creating an account on the [Psychic dashboard.](https://dashboard.psychic.dev/)
 
 If you have any questions on how to get started, [come join our Slack community!](https://sidekick-public.slack.com/).
 
 ## 💎 Features
-* [Dashboard](https://dashboard.getsidekick.ai/sign-in) to manage connections, handle auth, define data schemas, and run test queries
+* [Dashboard](https://dashboard.psychic.dev/sign-in) to manage connections, handle auth, define data schemas, and run test queries
 * API Connectors to Zendesk, Notion, Google Drive, Confluence
 * General purpose web scraper for all other content
 * Document normalization so you only need to write one parser that works with N sources
@@ -49,7 +49,7 @@ If you have any questions on how to get started, [come join our Slack community!
 * Webhook-based data synchronization, for APIs where webhooks are available
 
 ## Getting Started - 15 min
-Check out the [quickstart tutorial](https://docs.getsidekick.ai/quickstart) to get started.
+Check out the [quickstart tutorial](https://docs.psychic.dev/quickstart) to get started.
 
 ## Contributing
 See [CONTRIBUTING.md](https://github.com/ai-sidekick/sidekick/blob/main/CONTRIBUTING.md)
