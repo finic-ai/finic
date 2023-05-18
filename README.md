@@ -19,8 +19,8 @@
 <a href="https://github.com/psychicapi/psychic/issues?q=is%3Aissue+is%3Aclosed" target="_blank">
     <img src="https://img.shields.io/github/issues-closed/psychicapi/psychic?color=blue" alt="Issues">
 </a>
-  <a href="https://twitter.com/getsidekickai" target="_blank">
-    <img src="https://img.shields.io/twitter/follow/getsidekickai?style=social" alt="Twitter">
+  <a href="https://twitter.com/psychicapi" target="_blank">
+    <img src="https://img.shields.io/twitter/follow/psychicapi?style=social" alt="Twitter">
 </a>
 </p>
 
