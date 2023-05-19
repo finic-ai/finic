@@ -172,6 +172,7 @@ class StateStore:
             data = response.data[0]
             return Connection(
                 connection_id=connection_id,
+                connector_id=connector_id,
                 metadata=data['metadata'],
                 credential=data['credential']
             )
