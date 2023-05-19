@@ -16,7 +16,7 @@ import re
 from collections import deque
 
 
-SCOPES = ['https://www.googleapis.com/auth/drive']
+SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
 def download_pdf(service, file_id):
     request = service.files().get_media(fileId=file_id)
