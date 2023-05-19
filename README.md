@@ -6,7 +6,7 @@
   <p align="center">Unified APIs for ingesting unstructured data</p>
 </p>
 <p align="center">
-<a href="https://join.slack.com/t/sidekick-public/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg" target="_blank">
+<a href="https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg" target="_blank">
     <img src="https://img.shields.io/badge/slack-join-blue.svg?logo=slack" alt="Slack">
 </a>
 </a>
@@ -32,7 +32,7 @@
 [Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0).
 Get an API key to test out the cloud version by creating an account on the [Psychic dashboard.](https://dashboard.psychic.dev/)
 
-If you have any questions on how to get started, [come join our Slack community!](https://sidekick-public.slack.com/).
+If you have any questions on how to get started, [come join our Slack community!](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg).
 
 ## 💎 Features
 * [Dashboard](https://dashboard.psychic.dev/sign-in) to manage connections, handle auth, define data schemas, and run test queries

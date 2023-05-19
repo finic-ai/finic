@@ -144,7 +144,7 @@ const ExampleSidebar: FC = function () {
                   Playground
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="https://github.com/ai-sidekick/sidekick"
+                  href="https://github.com/psychicapi/psychic"
                   target="_blank"
                   icon={FaGithub}
                 >
@@ -172,7 +172,7 @@ const ExampleSidebar: FC = function () {
                   Settings
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="https://join.slack.com/t/sidekick-public/shared_invite/zt-1tfq2k2dw-Ri7udiTSLEe5d2V0mvSxxw"
+                  href="https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg"
                   icon={HiQuestionMarkCircle}
                   target="_blank"
                 >
