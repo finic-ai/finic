@@ -49,13 +49,8 @@ class Psychic:
                 'Accept': 'application/json'
             }
         )
-        print(response)
         if response.status_code == 200:
             documents = response.json()["connections"]
             return documents
         else:
             return None
-        
-ps = Psychic("7ddb61c1-8b6a-4d31-a58e-30d1c9ea480e")
-# print(ps.get_documents(connector_id=ConnectorId.gdrive, connection_id="google-test"))
-print(ps.get_connections(connection_id="google-test"))
