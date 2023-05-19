@@ -8,7 +8,8 @@ import {
   HiLink,
   HiBeaker,
   HiQuestionMarkCircle,
-  HiCog
+  HiCog,
+  HiPlay
 } from "react-icons/hi";
 import {FaGithub, FaReadme} from "react-icons/fa"
 
@@ -70,7 +71,7 @@ const ExampleSidebar: FC = function () {
                   <Sidebar.Item
                     href="/connectors/google-drive"
                     className={
-                      "/connectors/notion" === currentPage
+                      "/connectors/google-drive" === currentPage
                         ? "bg-gray-100 dark:bg-gray-700"
                         : ""
                     }
@@ -80,7 +81,7 @@ const ExampleSidebar: FC = function () {
                   <Sidebar.Item
                     href="/connectors/zendesk"
                     className={
-                      "/connectors/notion" === currentPage
+                      "/connectors/zendesk" === currentPage
                         ? "bg-gray-100 dark:bg-gray-700"
                         : ""
                     }
@@ -90,7 +91,7 @@ const ExampleSidebar: FC = function () {
                   <Sidebar.Item
                     href="/connectors/confluence"
                     className={
-                      "/connectors/notion" === currentPage
+                      "/connectors/confluence" === currentPage
                         ? "bg-gray-100 dark:bg-gray-700"
                         : ""
                     }
@@ -135,6 +136,12 @@ const ExampleSidebar: FC = function () {
                   icon={HiKey}
                 >
                   API Key
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="/playground"
+                  icon={HiPlay}
+                >
+                  Playground
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="https://github.com/ai-sidekick/sidekick"

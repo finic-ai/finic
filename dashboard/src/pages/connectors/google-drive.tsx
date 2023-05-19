@@ -11,8 +11,7 @@ import {
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
-import { SiGoogledrive } from "react-icons/si";
-import {usePsychicLink} from "@psychicdev/link";
+// import { SiGoogledrive } from "react-icons/si";
 
 
 import {
@@ -21,13 +20,22 @@ import {
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import { useUserStateContext } from "../../context/UserStateContext";
 
+
+const GoogleDriveIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="20px" height="20px">
+        <path fill="#FFC107" d="M17 6L31 6 45 30 31 30z"/><path fill="#1976D2" d="M9.875 42L16.938 30 45 30 38 42z"/><path fill="#4CAF50" d="M3 30.125L9.875 42 24 18 17 6z"/>
+    </svg>
+  );
+};
+
 const GoogleDriveConnectorPage: FC = function () {
   const [authorized, setAuthorized] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [clientSecret, setClientSecret] = useState('');
   const [connections, setConnections] = useState([] as any[])
 
-  const {bearer, appId} = useUserStateContext()
+  const {bearer} = useUserStateContext()
 
   async function authorize() {
     setAuthLoading(true)
@@ -106,9 +114,9 @@ const GoogleDriveConnectorPage: FC = function () {
               <Breadcrumb.Item>Connectors</Breadcrumb.Item>
               <Breadcrumb.Item>Google Drive</Breadcrumb.Item>
             </Breadcrumb>
-            <div className="flex items-center">
-              <SiGoogledrive className="mr-2 text-xl" />
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+            <div className="flex items-center ">
+             <GoogleDriveIcon />
+              <h1 className=" mx-2 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
                 Google Drive
               </h1>
             </div>
@@ -116,6 +124,18 @@ const GoogleDriveConnectorPage: FC = function () {
         </div>
       </div>
       <Tabs.Group>
+      <Tabs.Item active={true} title="Active Connections">
+          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+            <div className="mb-1 w-full">
+              <div className="mb-4">
+                <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
+                  Active connections 
+                </h2>
+                <ConnectionsTable connections={connections} />
+              </div>
+            </div>
+          </div>
+        </Tabs.Item>
         <Tabs.Item active={true} title="Configuration">
           <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
             <div className="mb-1 w-full">
@@ -133,27 +153,6 @@ const GoogleDriveConnectorPage: FC = function () {
                     </div>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
-        </Tabs.Item>
-        <Tabs.Item active={true} title="Active Connections">
-          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
-            <div className="mb-1 w-full">
-              <div className="mb-4">
-                <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
-                  Active connections 
-                </h2>
-                <ConnectionsTable connections={connections} />
-              </div>
-            </div>
-          </div>
-        </Tabs.Item>
-        <Tabs.Item title="Playground">
-          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
-            <div className="mb-1 w-full">
-              <div className="mb-4">
-                 <ConnectorPlayground bearer={appId} />
               </div>
             </div>
           </div>
@@ -249,44 +248,5 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: Con
   );
 };
 
-interface ConnectorPlaygroundProps {
-  bearer: string;
-}
-
-const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: ConnectorPlaygroundProps) {
-  const [connectionId, setConnectionId] = useState<string>('');
-  const [newConnection, setNewConnection] = useState<string | null>(null);
-
-  const publicKey = bearer
-
-  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: string) => setNewConnection(newConnection))
-
-  return (
-    <>
-      <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
-        Playground
-      </h2>
-      <p className="mb-6">See how users will experience using Psychic Link to connect their Google Drive workspace.</p>
-      <Label htmlFor="apiKeys.label">Connection ID</Label>
-      <TextInput
-        value={connectionId}
-        onChange={(e) => setConnectionId(e.target.value)}
-        placeholder="The unique identifier for this connection."
-        helperText="This ID will appear in your Active Connections list if the test is successful." 
-        className="mt-1"
-      />
-      <Button disabled={!isReady} color="primary" className="mt-6"  onClick={() => {
-          open(connectionId)
-      }} >
-        {isLoading ? <Spinner className="mr-3 text-sm" /> : <>
-        <SiGoogledrive className="mr-3 text-sm" />
-        Connect to GDrive
-        </>}
-      </Button>
-      {newConnection && <div className="text-green-500 ml-3 mt-6">New connection successfully established: {newConnection}</div>}
-      {error && <div className="text-red-500 ml-3 mt-6">{error}</div>}
-    </>
-  );
-};
 
 export default GoogleDriveConnectorPage;
