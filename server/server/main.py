@@ -162,11 +162,15 @@ async def get_documents(
     result = await connector.load(connection_id)
     return GetDocumentsResponse(documents=result)
 
-
-# @app.on_event("startup")
-# async def startup():
-#     global datastore
-#     datastore = get_datastore()
+@app.post(
+    "/run-sync",
+    response_model=GetDocumentsResponse,
+)
+async def run_sync(
+    request: GetDocumentsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    return GetDocumentsResponse(documents=[])
     
 
 
