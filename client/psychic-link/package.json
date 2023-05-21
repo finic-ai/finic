@@ -1,6 +1,6 @@
 {
-  "name": "@psychicdev/link",
-  "version": "1.0.1",
+  "name": "@psychic-api/link",
+  "version": "1.0.2",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

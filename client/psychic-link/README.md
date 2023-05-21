@@ -1,6 +1,6 @@
 # Psychic Link
 
-`@psychicdev/link` is a React library that provides a hook for easy authentication with popular SaaS applications such as Notion, Google Drive, and more. Find us at https://psychic.dev
+`@psychic-api/link` is a React library that provides a hook for easy authentication with popular SaaS applications such as Notion, Google Drive, and more. Find us at https://psychic.dev
 
 ## Table of Contents
 
@@ -13,7 +13,7 @@
 Install the library using npm:
 
 ```sh
-npm install @psychicdev/link
+npm install @psychic-api/link
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ Here's an example of how to use the library:
 
 ```javascript
 import React, { useEffect, useState } from 'react';
-import { usePsychicLink } from '@psychicdev/link';
+import { usePsychicLink } from '@psychic-api/link';
 
 const App = () => {
   const [newConnection, setNewConnection] = useState(null);
