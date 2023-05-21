@@ -95,7 +95,7 @@ import { AuthMethod } from "../../context/ModalContext";
               <ErrorIcon />
               <div>
                 <p className="text-gray-600">We couldn't connect to <span className="font-bold">{connectorName}</span>.</p>
-                <p className="mt-1 text-sm text-gray-600">Try it one more time? If it still doesn’t work, contact Psychic.dev support <a href="mailto:support@getsidekick.ai" className="underline text-blue-500 hover:text-blue-600">here</a> and we’ll fix it.</p>
+                <p className="mt-1 text-sm text-gray-600">Try it one more time? If it still doesn’t work, contact Psychic support <a href="mailto:support@psychic.dev" className="underline text-blue-500 hover:text-blue-600">here</a> and we’ll fix it.</p>
               </div>
             </div>}
           </>

@@ -40,12 +40,12 @@ const ExampleNavbar: FC = function () {
               <img
                 alt=""
                 src="/images/Horizontal_Logo_light.svg"
-                className="dark:hidden mr-3 h-6 sm:h-6"
+                className="dark:hidden mr-3 h-8"
               />
               <img
                 alt=""
                 src="/images/Horizontal_Logo_dark.svg"
-                className="hidden dark:block mr-3 h-6 sm:h-6"
+                className="hidden dark:block mr-3 h-8"
               />
             </Navbar.Brand>
             {/* <form className="ml-16 hidden md:block">

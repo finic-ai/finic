@@ -51,7 +51,7 @@ export default App;
 ```
 
 ## Troubleshooting
-For assistance, join the Psychic community Slack [here](https://join.slack.com/t/sidekick-public/shared_invite/zt-1tfq2k2dw-Ri7udiTSLEe5d2V0mvSxxw)
+For assistance, join the Psychic community Slack [here](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg)
 
 ### Invalid Hook Call Warning
 
