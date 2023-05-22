@@ -133,7 +133,7 @@ import {
                     <TextInput
                       id="apiKeys.label"
                       name="apiKeys.label"
-                      placeholder='Path to the folder you want to sync with Sidekick'
+                      placeholder='Path to the folder you want to sync with Psychic'
                       className="mt-1"
                       onChange={(e) => setFolderName(e.target.value.trim())}
                       value={folderName}

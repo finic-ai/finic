@@ -24,29 +24,31 @@
 </a>
 </p>
 
-[Psychic]([https://psychic.dev/](https://www.psychic.dev/)) is a platform for integrating with your customer’s SaaS tools like Notion, Zendesk, Confluence, and Google Drive and syncing documents from these applications to your SQL or vector database. You can think of it like Plaid for unstructured data. Psychic is easy to set up - you use it by importing the NPM package and configuring it with your Psychic API key, which you can get from the [Psychic dashboard](https://dashboard.psychic.dev/). When your users connect their applications, you can view these connections from the dashboard.
+[Psychic](https://psychic.dev/) is an open source integration platform to extract and transform unstructured data from SaaS applications like Notion, Slack, Zendesk, Confluence, and Google Drive. Instead of building one integration for each data sources, you can build one integration that works for all data sources, and manage each connection from a GUI. **Psychic is designed for startups that use LLMs and vector databases.**
+
+There are 4 parts of the platform
+* 🪄 **Psychic Link:** A modal that lets end users to connect their data sources with a point and click interface, using OAuth when available. Available as an NPM package for React projects, or as a magic link.
+* 🪢 **Psychic Connectors:** Server-side code that makes API calls and handles token management. New integrations are added by implementing a new `DataConnector` in the server-side code.
+* 💃 **Psychic Models:** Universal data models that make it possible to transform unstructured data from disparate data sources into a consistent schema before you receive it. Currently `Document` and `Conversation` models are supported.
+* 🎩 **Psychic Dashboard:** A front-end for the Psychic platform that makes it easy to manage connections and connect data sources without having to add Link to an existing app.
 
 ### <a href="https://docs.psychic.dev" target="_blank">Read the docs</a>
 
 ## Demo
-[Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0).
+Using Psychic to connect data from a Notion workspace with a LangChain question and answer app.
+
+https://github.com/psychic-api/psychic/assets/14931371/00008f3d-8c9e-4b64-821a-733b0fcd47b0
+
+
 Get an API key to test out the cloud version by creating an account on the [Psychic dashboard.](https://dashboard.psychic.dev/)
 
 If you have any questions on how to get started, [come join our Slack community!](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg).
 
-## 💎 Features
-* [Dashboard](https://dashboard.psychic.dev/sign-in) to manage connections, handle auth, define data schemas, and run test queries
-* API Connectors to Zendesk, Notion, Google Drive, Confluence
-* General purpose web scraper for all other content
-* Document normalization so you only need to write one parser that works with N sources
-* Set the destination to be an API endpoint you control, or upload directly to a Weaviate/Pinecone vector database
-
-## 🚧 Upcoming
-* Support for Milvus, and Qdrant vector stores
-* Slack Connector
-* DropBox Connector
-* Scheduled data synchronization
-* Webhook-based data synchronization, for APIs where webhooks are available
+## Roadmap
+* ✅ [LangChain DataLoader](https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/psychic.html?highlight=psychic)
+* 🚧 CRM integrations (Salesforce, HubSpot, etc)
+* 🚧 Webhook support to notify when source documents/conversations have been updated
+* 🚧 Support for write scopes for each connector, in addition to read scopes
 
 ## Getting Started - 15 min
 Check out the [quickstart tutorial](https://docs.psychic.dev/quickstart) to get started.
