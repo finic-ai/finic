@@ -36,6 +36,7 @@ There are 4 parts of the platform
 
 ## Demo
 Using Psychic to connect data from a Notion workspace with a LangChain question and answer app.
+
 https://github.com/psychic-api/psychic/assets/14931371/00008f3d-8c9e-4b64-821a-733b0fcd47b0
 
 
