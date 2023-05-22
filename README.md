@@ -35,7 +35,10 @@ There are 4 parts of the platform
 ### <a href="https://docs.psychic.dev" target="_blank">Read the docs</a>
 
 ## Demo
-[Demo Video with the Zendesk connector](https://youtu.be/hH09kWi6Si0).
+Using Psychic to connect data from a Notion workspace with a LangChain question and answer app.
+https://github.com/psychic-api/psychic/assets/14931371/00008f3d-8c9e-4b64-821a-733b0fcd47b0
+
+
 Get an API key to test out the cloud version by creating an account on the [Psychic dashboard.](https://dashboard.psychic.dev/)
 
 If you have any questions on how to get started, [come join our Slack community!](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg).
