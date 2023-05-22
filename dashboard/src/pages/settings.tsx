@@ -51,12 +51,15 @@ import { useUserStateContext } from "../context/UserStateContext";
   };
   
   const ProductsTable: FC = function () {
-    const {appId} = useUserStateContext()
+    const {appId, userId} = useUserStateContext()
 
     const [name, setName] = useState('')
     const [logoUrl, setLogoUrl] = useState('')
     const [loading, setLoading] = useState(true)
     const [saved, setSaved] = useState(false)
+    const [webhookUrl, setWebhookUrl] = useState('')
+    const [webhookSaved, setWebhookSaved] = useState(false)
+    const [webhookLoading, setWebhookLoading] = useState(true)
 
 
     useEffect(() => {
@@ -72,8 +75,20 @@ import { useUserStateContext } from "../context/UserStateContext";
             }
             setLoading(false)
         }
+        async function getSyncs() {
+            const { data, error } = await supabase
+            .from('syncs')
+            .select('*')
+            .eq('app_id', appId)
+            if (error) console.log(error)
+            if (data && data[0]) {
+                setWebhookUrl(data[0].webhook_url)
+            }
+            setWebhookLoading(false)
+        }
         if (appId) {
             getSettings()
+            getSyncs()
         }
         
     }, [appId])
@@ -95,7 +110,7 @@ import { useUserStateContext } from "../context/UserStateContext";
         }
         const { data, error } = await supabase
         .from('settings')
-        .upsert({ name, logo: downloadUrl })
+        .upsert({ name, logo: downloadUrl, app_id: appId })
         .eq('app_id', appId)
         .select()
         setLoading(false)
@@ -106,11 +121,30 @@ import { useUserStateContext } from "../context/UserStateContext";
         }
     }
 
+    async function updateSync() {
+      setWebhookLoading(true)
+      setWebhookSaved(false)
+      const { data, error } = await supabase
+      .from('syncs')
+      .upsert({ app_id: appId, user_id: userId, webhook_url: webhookUrl })
+      .eq('app_id', appId)
+      .select()
+      setWebhookLoading(false)
+      if (error) console.log(error)
+      if (data) {
+          console.log(data)
+          setWebhookSaved(true)
+      }
+    }
+
 
     return (
         <div className="bg-white">
         <form className=" m-6 p-6 rounded">
   <div className="grid grid-cols-1 gap-6 w-1/2">
+    <h3 className="font-semibold text-gray-900 dark:text-white sm:text-xl">
+      Modal Options 
+    </h3>
     <div>
       <Label htmlFor="apiKeys.label">Name</Label>
       <TextInput
@@ -143,7 +177,29 @@ import { useUserStateContext } from "../context/UserStateContext";
     </div>
     {/* Success message text */}
     {saved && <div className="text-green-500 text-sm ml-2 mt-1">Saved!</div>}
+
+    <h3 className="font-semibold text-gray-900 dark:text-white sm:text-xl">
+      24-hr Sync Options
+    </h3>
+    <div>
+      <Label htmlFor="apiKeys.newKey">Webhook URL</Label>
+      <TextInput
+        id="apiKeys.newKey"
+        name="apiKeys.newKey"
+        className="mt-1"
+        value={webhookUrl}
+        onChange={(e) => setWebhookUrl(e.target.value)}
+        helperText="Webhook URL to send 24-hr sync data to. Psychic will send POST requests to this URL for each connector you have enabled."
+      />
+    </div>
+    <div className="flex justify-beginning">
+        <Button color="primary" onClick={updateSync}>
+            {webhookLoading && <Spinner className="mr-3" />}
+            Save
+        </Button>
+    </div>
   </div>
+  {webhookSaved && <div className="text-green-500 text-sm ml-2 mt-1">Saved!</div>}
 </form>
 </div>
 

@@ -10,6 +10,7 @@ interface UserStateContextProps {
   email: any;
   avatarUrl: any;
   fullName: any;
+  userId: any;
 }
 
 const UserStateContext = createContext<UserStateContextProps>(undefined!);
@@ -21,6 +22,7 @@ export function UserStateProvider({ children }: PropsWithChildren) {
   const [appId, setAppId] = useState(null)
   const [avatarUrl, setAvatarUrl] = useState(null)
   const [fullName, setFullName] = useState(null)
+  const [userId, setUserId] = useState("")
 
   const fetchData = async () => {
     // TODO #1: Replace with your JWT template name
@@ -33,10 +35,10 @@ export function UserStateProvider({ children }: PropsWithChildren) {
       let metadata = user!.user_metadata
       console.log(metadata)
       const email = metadata.email
-      const userId = user!.id
+      const id = user!.id
       console.log(userId)
       // Select the row corresponding to this userId
-      const { data } = await supabase.from('users').select().eq('id', userId)
+      const { data } = await supabase.from('users').select().eq('id', id)
       console.log(data)
 
       if (data && data[0]) {
@@ -45,12 +47,13 @@ export function UserStateProvider({ children }: PropsWithChildren) {
         setEmail(email)
         setAvatarUrl(metadata.avatar_url)
         setFullName(metadata.full_name)
+        setUserId(id)
 
       } else {
         // Create the user row if it doesn't exist
 
         const response = await supabase.from('users').insert({
-          id: userId,
+          id: id,
           secret_key: uuidv4(),
           app_id: uuidv4(),
           email: email
@@ -64,6 +67,7 @@ export function UserStateProvider({ children }: PropsWithChildren) {
           setEmail(email)
           setAvatarUrl(metadata.avatar_url)
           setFullName(metadata.full_name)
+          setUserId(id)
         } 
       }
     } catch (error) {
@@ -82,7 +86,8 @@ export function UserStateProvider({ children }: PropsWithChildren) {
         appId: appId,
         email: email,
         avatarUrl: avatarUrl,
-        fullName: fullName
+        fullName: fullName,
+        userId: userId
       }}
     >
       {children}
