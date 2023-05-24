@@ -39,9 +39,9 @@ class ZendeskConnector(DataConnector):
     async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
         pass
 
-    async def load(self, source_id: str) -> List[Document]:
+    async def load(self, connection_id: str) -> List[Document]:
         # initialize credentials
-        connection = StateStore().load_credentials(self.config, self.connector_id, source_id)
+        connection = StateStore().load_credentials(self.config, self.connector_id, connection_id)
         credential_json = json.loads(connection.credential)
         subdomain = connection.metadata['subdomain']
         api_key = credential_json["api_key"]

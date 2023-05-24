@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import useLocalStorage from "./useLocalStorage";
 import ConfluenceConnectorPage from "./pages/connectors/confluence";
 import Settings from "./pages/settings";
+import Syncs from "./pages/syncs";
 import Playground from "./pages/playground";
 
 const container = document.getElementById("root");
@@ -61,7 +62,7 @@ function App() {
           <Route path="*" element={
             <div className="min-h-screen bg-gray-100 flex items-center justify-center">
               <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
-                <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+                <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} providers={['google']} />
               </div>
             </div>
           } />
@@ -86,6 +87,7 @@ function App() {
               <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
               <Route path="/oauth/redirect" element={<RedirectPage />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/syncs" element={<Syncs />} />
               <Route path="/playground" element={<Playground />} />
             </Routes>
           </BrowserRouter>

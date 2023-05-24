@@ -136,7 +136,7 @@ class ConfluenceConnector(DataConnector):
             creds_string = json.dumps(creds)
 
             StateStore().add_connection(
-                config=self.config,
+                config=connection.config,
                 credential=creds_string,
                 connector_id=self.connector_id,
                 connection_id=connection_id,

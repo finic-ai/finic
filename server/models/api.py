@@ -47,3 +47,9 @@ class GetDocumentsRequest(BaseModel):
 
 class GetDocumentsResponse(BaseModel):
     documents: List[Document]
+
+class RunSyncRequest(BaseModel):
+    sync_all: bool
+
+class RunSyncResponse(BaseModel):
+    success: List[bool]

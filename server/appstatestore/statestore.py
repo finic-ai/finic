@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter
+from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults
 import os
 import uuid
 from supabase import create_client, Client
@@ -31,6 +31,7 @@ class StateStore:
     def enable_connector(self, connector_id: ConnectorId, credential: Dict, config: AppConfig) -> ConnectorStatus:
         # Upsert the credential into enabled_connectors
         insert_data = {
+            'app_id': config.app_id,
             'user_id': config.user_id,
             'connector_id': connector_id,
             'credential': json.dumps(credential)
@@ -40,9 +41,9 @@ class StateStore:
 
     def get_connector_status(self, connector_id: ConnectorId, config: AppConfig) -> ConnectorStatus:
         response = self.supabase.table('enabled_connectors').select('*').filter(
-            'user_id', 
+            'app_id', 
             'eq', 
-            config.user_id
+            config.app_id
         ).filter(
             'connector_id', 
             'eq', 
@@ -78,9 +79,9 @@ class StateStore:
     
     def get_connections(self, filter: ConnectionFilter, config: AppConfig) -> List[Connection]:
         query = self.supabase.table('connections').select('*').filter(
-            'user_id',
+            'app_id',
             'eq',
-            config.user_id
+            config.app_id
         )
 
         if filter.connector_id is not None:
@@ -105,9 +106,9 @@ class StateStore:
     
     def get_connector_credential(self, connector_id: ConnectorId, config: AppConfig) -> Optional[Dict]:
         response = self.supabase.table('enabled_connectors').select('*').filter(
-            'user_id', 
+            'app_id', 
             'eq', 
-            config.user_id
+            config.app_id
         ).filter(
             'connector_id', 
             'eq', 
@@ -155,9 +156,9 @@ class StateStore:
 
     def load_credentials(self, config: AppConfig, connector_id: ConnectorId, connection_id: str) -> Optional[Connection]:
         response = self.supabase.table('connections').select('*').filter(
-            'user_id', 
+            'app_id', 
             'eq', 
-            config.user_id
+            config.app_id
         ).filter(
             'connector_id', 
             'eq', 
@@ -174,10 +175,35 @@ class StateStore:
                 connection_id=connection_id,
                 connector_id=connector_id,
                 metadata=data['metadata'],
-                credential=data['credential']
-            )
+                credential=data['credential'],
+                config=AppConfig(app_id=data['app_id'], user_id=data['user_id'])
+            )   
         return None
     
+    def get_syncs(self, app_id_filter: Optional[str]) -> List[Sync]:
+        query = self.supabase.table('syncs').select('*')
+
+        if app_id_filter is not None:
+            query = query.filter('app_id', 'eq', app_id_filter)
+
+        response = query.execute()
+        syncs: List[Sync] = []
+        for row in response.data:
+            syncs.append(
+                Sync(
+                    app_id=row['app_id'],
+                    webhook_url=row['webhook_url'],
+                )
+            )
+        return syncs
+
+    def save_sync_results(self, sync: Sync, results: SyncResults):
+
+        self.supabase.table('syncs').update({'results': results.dict()}).filter(
+            'app_id',
+            'eq',
+            sync.app_id
+        ).execute()
   
         
 

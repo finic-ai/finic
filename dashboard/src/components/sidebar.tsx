@@ -9,7 +9,8 @@ import {
   HiBeaker,
   HiQuestionMarkCircle,
   HiCog,
-  HiPlay
+  HiPlay,
+  HiCloudDownload,
 } from "react-icons/hi";
 import {FaGithub, FaReadme} from "react-icons/fa"
 
@@ -142,6 +143,12 @@ const ExampleSidebar: FC = function () {
                   icon={HiPlay}
                 >
                   Playground
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="/syncs"
+                  icon={HiCloudDownload}
+                >
+                  Syncs
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="https://github.com/psychicapi/psychic"

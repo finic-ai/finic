@@ -7,6 +7,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
+from services.sync_service import SyncService
 
 from models.api import (
     AuthorizationResponse,
@@ -19,6 +20,8 @@ from models.api import (
     AuthorizeApiKeyRequest,
     GetConnectionsRequest,
     GetConnectionsResponse,
+    RunSyncRequest,
+    RunSyncResponse,
 )
 
 from appstatestore.statestore import StateStore
@@ -164,13 +167,15 @@ async def get_documents(
 
 @app.post(
     "/run-sync",
-    response_model=GetDocumentsResponse,
+    response_model=RunSyncResponse,
 )
 async def run_sync(
-    request: GetDocumentsRequest = Body(...),
+    request: RunSyncRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
-    return GetDocumentsResponse(documents=[])
+    sync_all = request.sync_all
+    success = await SyncService(config).run(sync_all=sync_all)
+    return RunSyncResponse(success=success)
     
 
 

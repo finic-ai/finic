@@ -92,7 +92,7 @@ class GoogleDriveConnector(DataConnector):
             creds.refresh(Request())
             creds_string = creds.to_json()
             StateStore().add_connection(
-                config=self.config,
+                config=connection.config,
                 credential=creds_string,
                 connector_id=self.connector_id,
                 connection_id=connection_id,
