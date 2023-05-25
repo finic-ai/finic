@@ -2,52 +2,55 @@ import os
 import posthog
 from typing import Optional, Dict, Any
 from enum import Enum
+from pydantic import BaseModel
 from models.models import AppConfig
+from models.api import (
+    AuthorizationResponse,
+    AuthorizeOauthRequest,
+    EnableConnectorRequest,
+    ConnectorStatusRequest,
+    ConnectorStatusResponse,
+    GetDocumentsRequest,
+    GetDocumentsResponse,
+    AuthorizeApiKeyRequest,
+    GetConnectionsRequest,
+    GetConnectionsResponse,
+    RunSyncRequest,
+    RunSyncResponse,
+)
 
 # Enum of logging events
 class Event(str, Enum):
-    ask_llm = "ask_llm"
-    query = "query"
-    upsert_data = "upsert_data"
+    set_custom_connector_credentials = "set_custom_connector_credentials"
+    get_connector_status = "get_connector_status"
+    get_connections = "log_get_connections"
+    add_apikey_connection = "log_add_apikey_connection"
+    add_oauth_connection = "add_oauth_connection"
+    get_documents = "get_documents"
+    run_sync = "run_sync"
 
 class Logger:
     posthog_client: Optional[posthog.Client] = None
 
-    def __init__(self, app_config: AppConfig):
+    def __init__(self):
         # set up posthog logger
         self.posthog_client = posthog.Client(
             api_key=os.environ.get('POSTHOG_API_KEY'),
             host=os.environ.get('POSTHOG_HOST')
         )
-        self.app_id = app_config.app_id
 
-    def log(self, event: str, properties: Dict[str, Any]):
+    def log(self, app_config: AppConfig, event: str, properties: Dict[str, Any]):
         if self.posthog_client is not None:
-            self.posthog_client.capture(distinct_id=self.app_id, event=event, properties=properties)
+            print("logging event: ", event, " with properties: ", properties)
+            self.posthog_client.capture(distinct_id=app_config.user_id, event=event, properties=properties)
 
-    def log_ask_llm(self, query: str, response: str, error: bool):
+    def log_api_call(self, app_config: AppConfig, event: str, request: BaseModel, response: BaseModel, error: bool):
+        if event not in Event.__members__.values():
+            raise Exception("Invalid event type")
         properties = {
-            'app_id': self.app_id,
-            'query': query,
-            'response': response,
+            'app_id': app_config.app_id,
+            'request': request.dict(),
+            'response': response.dict(),
             'error': error
         }
-        self.log(event=Event.ask_llm, properties=properties)
-
-    def log_query(self, query: str, response: str, error: bool):
-        properties = {
-            'app_id': self.app_id,
-            'query': query,
-            'response': response,
-            'error': error
-        }
-        self.log(event=Event.query, properties=properties)
-
-    def log_upsert_data(self, connector: int, chunks: int, error: bool):
-        properties = {
-            'app_id': self.app_id,
-            'connector': connector,
-            'chunks': chunks,
-            'error': error
-        }
-        self.log(event=Event.upsert_data, properties=properties)
+        self.log(app_config=app_config, event="server_" + event, properties=properties)
