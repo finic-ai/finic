@@ -1,5 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import posthog from 'posthog-js';
+import { PostHogProvider} from 'posthog-js/react'
 
 import "./index.css";
 import theme from "./flowbite-theme";
@@ -27,6 +29,15 @@ const container = document.getElementById("root");
 
 if (typeof (window as any).global === 'undefined') {
   (window as any).global = window;
+}
+
+if (!window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
+  posthog.init(
+    import.meta.env.VITE_PUBLIC_POSTHOG_KEY,
+    {
+      api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+    }
+  )
 }
 
 
@@ -74,25 +85,27 @@ function App() {
   }
   else {
     return (
-      <Flowbite theme={{ theme }}>
-        <UserStateProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<ApiKeysPage />} index />
-              <Route path="/api-keys" element={<ApiKeysPage />} />
-              <Route path="/connections" element={<ConnectionsPage />} />
-              <Route path="/connectors/notion" element={<NotionConnectorPage />} />
-              <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
-              <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
-              <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
-              <Route path="/oauth/redirect" element={<RedirectPage />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/syncs" element={<Syncs />} />
-              <Route path="/playground" element={<Playground />} />
-            </Routes>
-          </BrowserRouter>
-        </UserStateProvider>
-      </Flowbite>
+      <PostHogProvider client={posthog}>
+        <Flowbite theme={{ theme }}>
+          <UserStateProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<ApiKeysPage />} index />
+                <Route path="/api-keys" element={<ApiKeysPage />} />
+                <Route path="/connections" element={<ConnectionsPage />} />
+                <Route path="/connectors/notion" element={<NotionConnectorPage />} />
+                <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
+                <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
+                <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
+                <Route path="/oauth/redirect" element={<RedirectPage />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/syncs" element={<Syncs />} />
+                <Route path="/playground" element={<Playground />} />
+              </Routes>
+            </BrowserRouter>
+          </UserStateProvider>
+        </Flowbite>
+      </PostHogProvider>
     )
   }
 }
