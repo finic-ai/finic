@@ -55,7 +55,6 @@ export function UserStateProvider({ children }: PropsWithChildren) {
           email: email,
           app_id: data[0]['app_id']
         })
-        console.log('found user')
       } else {
         // Create the user row if it doesn't exist
 
@@ -79,7 +78,6 @@ export function UserStateProvider({ children }: PropsWithChildren) {
             email: email,
             app_id: data['app_id']
           })
-          console.log('new user')
         } 
       }
     } catch (error) {
