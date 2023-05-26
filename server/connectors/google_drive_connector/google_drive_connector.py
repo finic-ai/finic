@@ -1,4 +1,4 @@
-from models.models import AppConfig, Document, ConnectorId, DataConnector, AuthorizationResult
+from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult
 from typing import List, Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -30,7 +30,7 @@ def extract_pdf_text(pdf_file):
         text += reader.pages[page_num].extract_text()
     return text
 
-class GoogleDriveConnector(DataConnector):
+class GoogleDriveConnector(DocumentConnector):
     connector_id: ConnectorId = ConnectorId.gdrive
     config: AppConfig
 

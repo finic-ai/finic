@@ -1,5 +1,6 @@
 from models.models import (
     Document,
+    Message,
     ConnectorId,
     ConnectorStatus,
     AuthorizationResult,
@@ -47,6 +48,14 @@ class GetDocumentsRequest(BaseModel):
 
 class GetDocumentsResponse(BaseModel):
     documents: List[Document]
+
+class GetConversationsRequest(BaseModel):
+    connector_id: ConnectorId
+    connection_id: str
+    oldest_timestamp: Optional[str] = None
+
+class GetConversationsResponse(BaseModel):
+    conversations: List[Message]
 
 class RunSyncRequest(BaseModel):
     sync_all: bool

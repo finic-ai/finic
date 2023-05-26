@@ -1,6 +1,6 @@
 from models.models import AppConfig, Sync, ConnectionFilter, SyncResults, SyncResult
 from appstatestore.statestore import StateStore
-from connectors.connector_utils import get_connector_for_id
+from connectors.connector_utils import get_document_connector_for_id
 import requests
 from typing import List, Optional, Dict
 import time
@@ -49,7 +49,7 @@ class SyncService:
         )
         for connection in connections:
             try:
-                connector = get_connector_for_id(connection.connector_id, config)
+                connector = get_document_connector_for_id(connection.connector_id, config)
 
                 print(connector.connector_id)
 

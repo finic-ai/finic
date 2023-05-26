@@ -39,6 +39,7 @@ python-docx = "^0.8.11"
 stripe = "^5.4.0"
 pygithub = "^1.58.1"
 markdown = "^3.4.3"
+slack-sdk = "^3.21.3"
 
 [tool.poetry.scripts]
 start = "server.main:start"

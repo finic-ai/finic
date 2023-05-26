@@ -17,6 +17,8 @@ from models.api import (
     ConnectorStatusResponse,
     GetDocumentsRequest,
     GetDocumentsResponse,
+    GetConversationsRequest,
+    GetConversationsResponse,
     AuthorizeApiKeyRequest,
     GetConnectionsRequest,
     GetConnectionsResponse,
@@ -29,7 +31,7 @@ from models.models import (
     AppConfig,
     DataConnector,
 )
-from connectors.connector_utils import get_connector_for_id
+from connectors.connector_utils import get_connector_for_id, get_document_connector_for_id, get_conversation_connector_for_id
 import uuid
 from logger import Logger
 
@@ -155,7 +157,7 @@ async def get_documents(
     connector_id = request.connector_id
     connection_id = request.connection_id
 
-    connector = get_connector_for_id(connector_id, config)
+    connector = get_document_connector_for_id(connector_id, config)
 
     print("connector", connector)
 
@@ -164,6 +166,28 @@ async def get_documents(
 
     result = await connector.load(connection_id)
     return GetDocumentsResponse(documents=result)
+
+@app.post(
+    "/get-conversations",
+    response_model=GetConversationsResponse,
+)
+async def get_conversations(
+    request: GetConversationsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    connector_id = request.connector_id
+    connection_id = request.connection_id
+    oldest_timestamp = request.oldest_timestamp
+
+    connector = get_conversation_connector_for_id(connector_id, config)
+
+    print("connector", connector)
+
+    if connector is None:
+        raise HTTPException(status_code=404, detail="Connector not found")
+
+    result = await connector.load(connection_id=connection_id, oldest_message_time=oldest_timestamp)
+    return GetConversationsResponse(conversations=result)
 
 @app.post(
     "/run-sync",

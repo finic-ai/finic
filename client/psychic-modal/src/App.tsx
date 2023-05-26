@@ -9,6 +9,7 @@ import NotionAuthFlow from './components/auth/NotionAuthFlow';
 import GDriveAuthFlow from './components/auth/GDriveAuthFlow';
 import ZendeskAuthFlow from './components/auth/ZendeskAuthFlow';
 import ConfluenceAuthFlow from './components/auth/ConfluenceAuthFlow';
+import SlackAuthFlow from './components/auth/SlackAuthFlow';
 import ModalHeader from './components/ModalHeader';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
@@ -46,6 +47,8 @@ const App: React.FC = () => {
           return <ConfluenceAuthFlow />
         } else if (selectedConnectorId == "github") {
           return <div>Github</div>
+        } else if (selectedConnectorId == "slack") {
+          return <SlackAuthFlow />
         } else {
           return <div>Unknown connector</div>
         }

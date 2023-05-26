@@ -10,6 +10,7 @@ class ConnectorId(str, Enum):
     gdrive = "gdrive"
     zendesk = "zendesk"
     confluence = "confluence"
+    slack = "slack"
 
 class AppConfig(BaseModel):
     app_id: str
@@ -31,6 +32,25 @@ class Document(BaseModel):
     content: str
     uri: Optional[str] = None
 
+class MessageSender(BaseModel):
+    name: str
+    id: str
+
+class MessageChannel(BaseModel):
+    name: str
+    id: str
+
+class Message(BaseModel):
+    id: str
+    channel: MessageChannel
+    sender: MessageSender
+    content: str
+    timestamp: str
+    replies: List["Message"] = []
+    uri: Optional[str] = None
+
+Message.update_forward_refs()
+
 class AuthorizationResult(BaseModel):
     auth_url: Optional[str] = None
     authorized: bool = False
@@ -47,11 +67,16 @@ class DataConnector(BaseModel, ABC):
     async def authorize_api_key(self, *args, **kwargs) -> AuthorizationResult:
         pass
 
+
+class DocumentConnector(DataConnector):
     @abstractmethod
     async def load(self, connection_id: str) -> List[Document]:
         pass
 
-
+class ConversationConnector(DataConnector):
+    @abstractmethod
+    async def load(self, connection_id: str, oldest_message_time: Optional[str]) -> List[Message]:
+        pass
 
 class ConnectionFilter(BaseModel):
     connector_id: Optional[ConnectorId] = None

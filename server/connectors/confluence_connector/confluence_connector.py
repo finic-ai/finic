@@ -1,4 +1,4 @@
-from models.models import ConnectorId, AppConfig, Document, AuthorizationResult, DataConnector
+from models.models import ConnectorId, AppConfig, Document, AuthorizationResult, DocumentConnector
 from typing import List, Optional, Dict
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -17,7 +17,7 @@ from atlassian.confluence import Confluence
 
 
 
-class ConfluenceConnector(DataConnector):
+class ConfluenceConnector(DocumentConnector):
     connector_id: ConnectorId = ConnectorId.confluence
     config: AppConfig
 

@@ -2,14 +2,14 @@ import requests
 import os
 import json
 from typing import Dict, List, Optional
-from models.models import AppConfig, Document, ConnectorId, DataConnector, AuthorizationResult
+from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult
 from appstatestore.statestore import StateStore
 import base64
 
 BASE_URL = "https://api.notion.com"
 
 
-class NotionConnector(DataConnector):
+class NotionConnector(DocumentConnector):
     connector_id: ConnectorId = ConnectorId.notion
     config: AppConfig
     headers: Dict = {}

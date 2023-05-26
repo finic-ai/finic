@@ -22,6 +22,7 @@ import GoogleDriveIcon from "./icons/GoogleDriveIcon";
 import ConfluenceIcon from "./icons/ConfluenceIcon";
 import ZendeskIcon from "./icons/ZendeskIcon";
 import GithubIcon from "./icons/GithubIcon";
+import SlackIcon from "./icons/SlackIcon";
 import { start } from "repl";
 
 // This should be set via a config file eventually so new connectors can be added declaratively without modifying this file
@@ -59,6 +60,14 @@ const connectors = [
     active: true
   },
   {
+    name: "Slack",
+    id: "slack",
+    icon: SlackIcon,
+    label: null,
+    labelColor: "info",
+    active: true
+  },
+  {
     name: "Github",
     id: "github",
     icon: GithubIcon,
@@ -76,7 +85,7 @@ const ConnectorPage: React.FC = () => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
-    if (connectorId == 'notion' || connectorId == 'confluence') {
+    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack') {
       console.log('hello')
       startConnectorAuthFlow(window, connectorId)
     }

@@ -99,6 +99,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Confluence
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/slack"
+                    className={
+                      "/connectors/slack" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Slack
+                  </Sidebar.Item>
                   <Tooltip content="Coming Soon" trigger="hover">
                     <Sidebar.Item
                       href="/connectors/website"

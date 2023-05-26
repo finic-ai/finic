@@ -12,6 +12,7 @@ import { UserStateProvider } from "./context/UserStateContext";
 import NotionConnectorPage from "./pages/connectors/notion";
 import GoogleDriveConnectorPage from "./pages/connectors/google-drive"
 import ZendeskConnectorPage from "./pages/connectors/zendesk"
+import SlackConnectorPage from "./pages/connectors/slack";
 import { RedirectPage } from "./pages/oauth/redirect";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
@@ -85,6 +86,7 @@ function App() {
               <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
               <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
               <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
+              <Route path="/connectors/slack" element={<SlackConnectorPage />} />
               <Route path="/oauth/redirect" element={<RedirectPage />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/syncs" element={<Syncs />} />
