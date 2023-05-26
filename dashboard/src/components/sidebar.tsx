@@ -128,6 +128,12 @@ const ExampleSidebar: FC = function () {
                     Website
                   </Sidebar.Item> */}
                 </Sidebar.Collapse>
+                <Sidebar.Item
+                  href="/playground"
+                  icon={HiPlay}
+                >
+                  Playground
+                </Sidebar.Item>
                 {/* <Sidebar.Item
                   href="/vectorstore"
                   icon={HiDatabase}
@@ -147,12 +153,6 @@ const ExampleSidebar: FC = function () {
                   icon={HiKey}
                 >
                   API Key
-                </Sidebar.Item>
-                <Sidebar.Item
-                  href="/playground"
-                  icon={HiPlay}
-                >
-                  Playground
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="/syncs"
