@@ -74,18 +74,18 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: Co
   return (
     <>
       <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
-        Playground
+        Create new connections
       </h2>
-      <p className="mb-6">See how users will experience using Psychic Link to connect their SaaS apps.</p>
+      <p className="mb-6">{"Connect data from your applications here. You can then view them under Connectors > Active Connections."}</p>
       <Label htmlFor="apiKeys.label">Connection ID</Label>
       <TextInput
         value={connectionId}
         onChange={(e) => setConnectionId(e.target.value)}
+        required
         placeholder="The unique identifier for this connection."
-        helperText="This ID will appear in your Active Connections list if the test is successful." 
         className="mt-1"
       />
-      <Button disabled={!isReady} color="primary" className="mt-6"  onClick={() => {
+      <Button type="submit" disabled={!isReady || connectionId.length < 1} color="primary" className="mt-6"  onClick={() => {
           open(connectionId)
       }} >
         {isLoading ? <Spinner className="mr-3 text-sm" /> : <>
