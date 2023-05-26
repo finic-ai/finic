@@ -28,6 +28,7 @@ class Event(str, Enum):
     add_oauth_connection = "add_oauth_connection"
     get_documents = "get_documents"
     run_sync = "run_sync"
+    get_conversations = "get_conversations"
 
 class Logger:
     posthog_client: Optional[posthog.Client] = None
