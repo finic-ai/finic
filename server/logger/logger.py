@@ -23,7 +23,7 @@ from models.api import (
 class Event(str, Enum):
     set_custom_connector_credentials = "set_custom_connector_credentials"
     get_connector_status = "get_connector_status"
-    get_connections = "log_get_connections"
+    get_connections = "get_connections"
     add_apikey_connection = "log_add_apikey_connection"
     add_oauth_connection = "add_oauth_connection"
     get_documents = "get_documents"

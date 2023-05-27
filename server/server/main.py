@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
 from services.sync_service import SyncService
-from logger import Logger
+from logger import Logger, Event
 
 from models.api import (
     AuthorizationResponse,
@@ -18,8 +18,6 @@ from models.api import (
     ConnectorStatusResponse,
     GetDocumentsRequest,
     GetDocumentsResponse,
-    GetConversationsRequest,
-    GetConversationsResponse,
     AuthorizeApiKeyRequest,
     GetConnectionsRequest,
     GetConnectionsResponse,
@@ -32,7 +30,7 @@ from models.models import (
     AppConfig,
     DataConnector,
 )
-from connectors.connector_utils import get_connector_for_id, get_document_connector_for_id, get_conversation_connector_for_id
+from connectors.connector_utils import get_connector_for_id
 import uuid
 from logger import Logger
 logger = Logger()
@@ -77,10 +75,10 @@ async def enable_connector(
         credential = request.credential
         status = StateStore().enable_connector(connector_id, credential, config)
         response = ConnectorStatusResponse(status=status)
-        logger.log_api_call(config, 'set_custom_connector_credentials', request, response, False)
+        logger.log_api_call(config, Event.set_custom_connector_credentials, request, response, False)
         return response
     except Exception as e:
-        logger.log_api_call(config, 'set_custom_connector_credentials', request, e, True)
+        logger.log_api_call(config, Event.set_custom_connector_credentials, request, e, True)
         raise e
 
 @app.post(
@@ -95,10 +93,10 @@ async def get_connector_status(
         connector_id = request.connector_id
         status = StateStore().get_connector_status(connector_id, config)
         response = ConnectorStatusResponse(status=status)
-        logger.log_api_call(config, 'get_connector_status', request, response, False)
+        logger.log_api_call(config, Event.get_connector_status, request, response, False)
         return response
     except Exception as e:
-        logger.log_api_call(config, 'get_connector_status', request, e, True)
+        logger.log_api_call(config, Event.get_connector_status, request, e, True)
         raise e
 
 @app.post(
@@ -113,10 +111,10 @@ async def get_connections(
         filter = request.filter
         connections = StateStore().get_connections(filter, config)
         response = GetConnectionsResponse(connections=connections)
-        logger.log_api_call(config, 'get_connections', request, response, False)
+        logger.log_api_call(config, Event.get_connections, request, response, False)
         return response
     except Exception as e:
-        logger.log_api_call(config, 'get_connections', request, e, True)
+        logger.log_api_call(config, Event.get_connections, request, e, True)
         raise e
 
 @app.post(
@@ -139,10 +137,10 @@ async def add_apikey_connection(
             raise HTTPException(status_code=404, detail="Connector not found")
         result = await connector.authorize_api_key(connection_id, credential, metadata)
         response = AuthorizationResponse(result=result)
-        logger.log_api_call(config, 'add_apikey_connection', request, response, False)
+        logger.log_api_call(config, Event.add_apikey_connection, request, response, False)
         return response
     except Exception as e:
-        logger.log_api_call(config, 'add_apikey_connection', request, e, True)
+        logger.log_api_call(config, Event.add_apikey_connection, request, e, True)
         raise e
 
 
@@ -169,10 +167,10 @@ async def add_oauth_connection(
 
         result = await connector.authorize(connection_id, auth_code, metadata)
         response = AuthorizationResponse(result=result)
-        logger.log_api_call(config, 'add_oauth_connection', request, response, False)
+        logger.log_api_call(config, Event.add_oauth_connection, request, response, False)
         return response
     except Exception as e:
-        logger.log_api_call(config, 'add_oauth_connection', request, e, True)
+        logger.log_api_call(config, Event.add_oauth_connection, request, e, True)
         raise e
 
 @app.post(
@@ -187,7 +185,7 @@ async def get_documents(
         connector_id = request.connector_id
         connection_id = request.connection_id
 
-        connector = get_document_connector_for_id(connector_id, config)
+        connector = get_connector_for_id(connector_id, config)
 
         print("connector", connector)
 
@@ -196,38 +194,10 @@ async def get_documents(
 
         result = await connector.load(connection_id)
         response = GetDocumentsResponse(documents=result)
-        logger.log_api_call(config, 'get_documents', request, response, False)
+        logger.log_api_call(config, Event.get_documents, request, response, False)
         return response
     except Exception as e:
-        logger.log_api_call(config, 'get_documents', request, e, True)
-        raise e
-
-@app.post(
-    "/get-conversations",
-    response_model=GetConversationsResponse,
-)
-async def get_conversations(
-    request: GetConversationsRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        connector_id = request.connector_id
-        connection_id = request.connection_id
-        oldest_timestamp = request.oldest_timestamp
-
-        connector = get_conversation_connector_for_id(connector_id, config)
-
-        print("connector", connector)
-
-        if connector is None:
-            raise HTTPException(status_code=404, detail="Connector not found")
-
-        result = await connector.load(connection_id=connection_id, oldest_message_time=oldest_timestamp)
-        response = GetConversationsResponse(conversations=result)
-        logger.log_api_call(config, 'get_conversations', request, response, False)
-        return response
-    except Exception as e:
-        logger.log_api_call(config, 'get_conversations', request, e, True)
+        logger.log_api_call(config, Event.get_documents, request, e, True)
         raise e
 
 @app.post(
@@ -242,10 +212,10 @@ async def run_sync(
         sync_all = request.sync_all
         success = await SyncService(config).run(sync_all=sync_all)
         response = RunSyncResponse(success=success)
-        logger.log_api_call(config, 'run_sync', request, response, False)
+        logger.log_api_call(config, Event.run_sync, request, response, False)
         return response
     except Exception as e:
-        logger.log_api_call(config, 'run_sync', request, e, True)
+        logger.log_api_call(config, Event.run_sync, request, e, True)
         raise e
 
 def start():
