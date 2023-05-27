@@ -4,20 +4,6 @@ from typing import Optional, Dict, Any
 from enum import Enum
 from pydantic import BaseModel
 from models.models import AppConfig
-from models.api import (
-    AuthorizationResponse,
-    AuthorizeOauthRequest,
-    EnableConnectorRequest,
-    ConnectorStatusRequest,
-    ConnectorStatusResponse,
-    GetDocumentsRequest,
-    GetDocumentsResponse,
-    AuthorizeApiKeyRequest,
-    GetConnectionsRequest,
-    GetConnectionsResponse,
-    RunSyncRequest,
-    RunSyncResponse,
-)
 
 # Enum of logging events
 class Event(str, Enum):
