@@ -29,15 +29,15 @@ const App = () => {
   // Your Psychic.dev public API key
   const publicKey = '5c362fda-bb72-4a6c-b930-71f33ad45f79';
   
-  // Unique ID for this connection
-  const connectionId = '2cbaa840-0b21-4d8e-924c-e418a08ce53f';
+  // Unique ID for the account that is requesting this connection
+  const accountId = '2cbaa840-0b21-4d8e-924c-e418a08ce53f';
 
   // usePsychicLink accepts a callback that handles your application logic once a new connection is established
-  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: string) => setNewConnection(newConnection));
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: {accountId: string, connectorId: string}) => setNewConnection(newConnection));
 
   useEffect(() => {
     // Shows the Psychic Link modal to the user
-    open(connectionId);
+    open(accountId);
   }, []);
 
   return (
