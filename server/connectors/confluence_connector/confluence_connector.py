@@ -28,7 +28,7 @@ class ConfluenceConnector(DocumentConnector):
     async def authorize_api_key(self) -> AuthorizationResult:
         pass
 
-    async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Optional[Dict]) -> AuthorizationResult:
+    async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Optional[Dict]) -> AuthorizationResult:
         connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
         try: 
             client_id = connector_credentials['client_id']
@@ -84,19 +84,19 @@ class ConfluenceConnector(DocumentConnector):
             config=self.config,
             credential=creds_string,
             connector_id=self.connector_id,
-            connection_id=connection_id,
+            account_id=account_id,
             metadata={'subdomain': authorized_site['url']}
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
 
-    async def load(self, connection_id: str) -> List[Document]:
+    async def load(self, account_id: str) -> List[Document]:
         # initialize credentials
         connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
         client_id = connector_credentials['client_id']
         client_secret = connector_credentials['client_secret']
 
 
-        connection = StateStore().load_credentials(self.config, self.connector_id, connection_id)
+        connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
 
@@ -139,7 +139,7 @@ class ConfluenceConnector(DocumentConnector):
                 config=connection.config,
                 credential=creds_string,
                 connector_id=self.connector_id,
-                connection_id=connection_id,
+                account_id=account_id,
                 metadata={}
             )
 

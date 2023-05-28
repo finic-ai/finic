@@ -38,7 +38,7 @@ class SyncService:
         connections = StateStore().get_connections(
             filter=ConnectionFilter(
                 connector_id=None,
-                connection_id=None
+                account_id=None
             ),
             config=config
         )
@@ -53,19 +53,19 @@ class SyncService:
 
                 print(connector.connector_id)
 
-                documents = await connector.load(connection_id=connection.connection_id)
+                documents = await connector.load(account_id=connection.account_id)
 
                 requests.post(
                     webhook_url, 
                     json={
-                        'connection_id': connection.connection_id,
+                        'account_id': connection.account_id,
                         'connector_id': connection.connector_id,
                         'documents': [doc.dict() for doc in documents]
                     }
                 )
                 results.results.append(
                     SyncResult(
-                        connection_id=connection.connection_id,
+                        account_id=connection.account_id,
                         connector_id=connection.connector_id,
                         success=True,
                         docs_synced=len(documents)
@@ -76,7 +76,7 @@ class SyncService:
                 print(e)
                 results.results.append(
                     SyncResult(
-                        connection_id=connection.connection_id,
+                        account_id=connection.account_id,
                         connector_id=connection.connector_id,
                         success=False,
                         docs_synced=0,

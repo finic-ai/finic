@@ -96,6 +96,8 @@ async def get_connector_status(
         logger.log_api_call(config, Event.get_connector_status, request, response, False)
         return response
     except Exception as e:
+        print('printing exception')
+        print(e)
         logger.log_api_call(config, Event.get_connector_status, request, e, True)
         raise e
 
@@ -127,7 +129,7 @@ async def add_apikey_connection(
 ):
     try:
         connector_id = request.connector_id
-        connection_id = request.connection_id
+        account_id = request.account_id
         credential = request.credential
         metadata = request.metadata
 
@@ -135,7 +137,7 @@ async def add_apikey_connection(
 
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
-        result = await connector.authorize_api_key(connection_id, credential, metadata)
+        result = await connector.authorize_api_key(account_id, credential, metadata)
         response = AuthorizationResponse(result=result)
         logger.log_api_call(config, Event.add_apikey_connection, request, response, False)
         return response
@@ -155,7 +157,7 @@ async def add_oauth_connection(
     try:
         auth_code = request.auth_code or None
         connector_id = request.connector_id
-        connection_id = request.connection_id
+        account_id = request.account_id
         metadata = request.metadata
 
         connector = get_connector_for_id(connector_id, config)
@@ -165,7 +167,7 @@ async def add_oauth_connection(
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
 
-        result = await connector.authorize(connection_id, auth_code, metadata)
+        result = await connector.authorize(account_id, auth_code, metadata)
         response = AuthorizationResponse(result=result)
         logger.log_api_call(config, Event.add_oauth_connection, request, response, False)
         return response
@@ -183,7 +185,7 @@ async def get_documents(
 ):
     try:
         connector_id = request.connector_id
-        connection_id = request.connection_id
+        account_id = request.account_id
 
         connector = get_connector_for_id(connector_id, config)
 
@@ -192,7 +194,7 @@ async def get_documents(
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
 
-        result = await connector.load(connection_id)
+        result = await connector.load(account_id)
         response = GetDocumentsResponse(documents=result)
         logger.log_api_call(config, Event.get_documents, request, response, False)
         return response

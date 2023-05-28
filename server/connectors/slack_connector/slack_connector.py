@@ -23,7 +23,7 @@ class SlackConnector(ConversationConnector):
     async def authorize_api_key(self) -> AuthorizationResult:
         pass
 
-    async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Optional[Dict]) -> AuthorizationResult:
+    async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Optional[Dict]) -> AuthorizationResult:
         connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
         try: 
             client_id = connector_credentials['client_id']
@@ -68,15 +68,15 @@ class SlackConnector(ConversationConnector):
             config=self.config,
             credential=creds_string,
             connector_id=self.connector_id,
-            connection_id=connection_id,
+            account_id=account_id,
             metadata={
                 'team_name': team_name,
             }
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
 
-    async def load(self, connection_id: str, oldest_message_time: Optional[str] = None) -> List[Message]:
-        connection = StateStore().load_credentials(self.config, self.connector_id, connection_id)
+    async def load(self, account_id: str, oldest_message_time: Optional[str] = None) -> List[Message]:
+        connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
         access_token = credential_json["access_token"]

@@ -40,7 +40,7 @@ class GoogleDriveConnector(DocumentConnector):
     async def authorize_api_key(self) -> AuthorizationResult:
         pass              
 
-    async def authorize(self, connection_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
+    async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
         client_secrets = StateStore().get_connector_credential(self.connector_id, self.config)
 
         flow = InstalledAppFlow.from_client_config(
@@ -64,7 +64,7 @@ class GoogleDriveConnector(DocumentConnector):
             config=self.config,
             credential=creds_string,
             connector_id=self.connector_id,
-            connection_id=connection_id,
+            account_id=account_id,
             metadata={
                 'folder_id': folder_id,
             }
@@ -72,12 +72,12 @@ class GoogleDriveConnector(DocumentConnector):
         return AuthorizationResult(authorized=True, connection=new_connection)
 
 
-    async def load(self, connection_id: str) -> List[Document]:
+    async def load(self, account_id: str) -> List[Document]:
         # initialize credentials
         connection = StateStore().load_credentials(
             self.config, 
             self.connector_id,
-            connection_id 
+            account_id 
         )
 
         credential_string = connection.credential
@@ -95,7 +95,7 @@ class GoogleDriveConnector(DocumentConnector):
                 config=connection.config,
                 credential=creds_string,
                 connector_id=self.connector_id,
-                connection_id=connection_id,
+                account_id=account_id,
                 metadata={
                     'folder_id': folder_id,
                 }

@@ -28,13 +28,13 @@ class EnableConnectorRequest(BaseModel):
 
 class AuthorizeOauthRequest(BaseModel):
     connector_id: ConnectorId
-    connection_id: str
+    account_id: str
     auth_code: Optional[str]
     metadata: Optional[Dict]
 
 class AuthorizeApiKeyRequest(BaseModel):
     connector_id: ConnectorId
-    connection_id: str
+    account_id: str
     credential: Dict
     metadata: Optional[Dict]
 
@@ -44,14 +44,14 @@ class AuthorizationResponse(BaseModel):
 
 class GetDocumentsRequest(BaseModel):
     connector_id: ConnectorId
-    connection_id: str
+    account_id: str
 
 class GetDocumentsResponse(BaseModel):
     documents: List[Document]
 
 class GetConversationsRequest(BaseModel):
     connector_id: ConnectorId
-    connection_id: str
+    account_id: str
     oldest_timestamp: Optional[str] = None
 
 class GetConversationsResponse(BaseModel):

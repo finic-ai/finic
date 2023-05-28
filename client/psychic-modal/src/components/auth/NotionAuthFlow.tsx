@@ -29,7 +29,7 @@ const NotionAuthFlow: React.FC = () => {
     selectedConnectorId,
     connectorName,
     customerLogoUrl,
-    connectionId,
+    accountId,
     publicKey,
     metadata,
     setMetadata,
@@ -96,14 +96,14 @@ const NotionAuthFlow: React.FC = () => {
   }
 
   async function completeAuthWithCode(connectorId: string, authCode: string, metadata?: any) {
-    if (!connectionId || !publicKey) {
-      setError('Invalid connection_id or public_key')
+    if (!accountId || !publicKey) {
+      setError('Invalid account_id or public_key')
       setIsLoading(false)
       return
     }
     const result = await authorizeConnection(
         connectorId, 
-        connectionId, 
+        accountId, 
         publicKey,
         authCode,
         metadata
@@ -114,12 +114,12 @@ const NotionAuthFlow: React.FC = () => {
       setIsLoading(false)
       return
     }
-    setNewConnection(result.connection.connection_id)
+    setNewConnection(result.connection)
     setIsSuccess(true)
     setIsLoading(false)
     // Notify opening window that auth is complete
     if (window.opener) {
-      window.opener.postMessage({ connection_id: result.connection.connection_id }, '*')
+      window.opener.postMessage(result.connection, '*')
     }
   }
 

@@ -69,7 +69,7 @@ class StateStore:
         for row in response.data:
             connections.append(
                 Connection(
-                    connection_id=row['id'],
+                    account_id=row['account_id'],
                     connector_id=row['connector_id'],
                     metadata=row['metadata']
                 )
@@ -87,8 +87,8 @@ class StateStore:
         if filter.connector_id is not None:
             query = query.filter('connector_id', 'eq', filter.connector_id)
         
-        if filter.connection_id is not None:
-            query = query.filter('id', 'eq', filter.connection_id)
+        if filter.account_id is not None:
+            query = query.filter('account_id', 'eq', filter.account_id)
 
         response = query.execute()
 
@@ -96,7 +96,7 @@ class StateStore:
         for row in response.data:
             connections.append(
                 Connection(
-                    connection_id=row['id'],
+                    account_id=row['account_id'],
                     connector_id=row['connector_id'],
                     metadata=row['metadata']
                 )
@@ -135,10 +135,10 @@ class StateStore:
                        config: AppConfig, 
                        credential: str, 
                        connector_id: ConnectorId, 
-                       connection_id: str, 
+                       account_id: str, 
                        metadata: Dict) -> Connection:
         insert_data = {
-            'id': connection_id,
+            'account_id': account_id,
             'user_id': config.user_id,
             'app_id': config.app_id,
             'connector_id': connector_id,
@@ -149,12 +149,12 @@ class StateStore:
         self.supabase.table("connections").upsert(insert_data).execute()
 
         return Connection(
-            connection_id=connection_id,
+            account_id=account_id,
             connector_id=connector_id,
             metadata=metadata
         )
 
-    def load_credentials(self, config: AppConfig, connector_id: ConnectorId, connection_id: str) -> Optional[Connection]:
+    def load_credentials(self, config: AppConfig, connector_id: ConnectorId, account_id: str) -> Optional[Connection]:
         response = self.supabase.table('connections').select('*').filter(
             'app_id', 
             'eq', 
@@ -164,15 +164,15 @@ class StateStore:
             'eq', 
             connector_id
         ).filter(
-            'id',
+            'account_id',
             'eq',
-            connection_id
+            account_id
         ).execute()
 
         if len(response.data) > 0:
             data = response.data[0]
             return Connection(
-                connection_id=connection_id,
+                account_id=account_id,
                 connector_id=connector_id,
                 metadata=data['metadata'],
                 credential=data['credential'],

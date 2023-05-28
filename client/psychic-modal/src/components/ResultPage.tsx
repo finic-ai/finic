@@ -25,7 +25,7 @@ const ResultPage: React.FC = () => {
     selectedConnectorId,
     connectorName,
     customerLogoUrl,
-    connectionId,
+    accountId,
     publicKey,
     metadata,
     setMetadata,

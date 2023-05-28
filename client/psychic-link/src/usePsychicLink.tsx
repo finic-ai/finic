@@ -10,10 +10,10 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
 
   let windowObjectReference: Window | null = null;
 
-  async function open(connectionId: string) {
+  async function open(accountId: string) {
     setIsLoading(true)
     // Open the Psychic Link modal
-    const url = `${PSYCHIC_URL}?public_key=${public_key}&connection_id=${connectionId}`
+    const url = `${PSYCHIC_URL}?public_key=${public_key}&account_id=${accountId}`
 
     if (windowObjectReference === null || windowObjectReference.closed) {
       const width = 600;
@@ -32,9 +32,9 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
       return;
     }
     const data = event.data;
-    if (data && data.connection_id) {
+    if (data && data.account_id) {
       setIsLoading(false)
-      onSuccessCallback(data.connection_id)
+      onSuccessCallback({accountId: data.account_id, connectorId: data.connector_id})
     } else {
       setError("Connection failed. Please try again later.")
     }

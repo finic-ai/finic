@@ -17,7 +17,7 @@ class AppConfig(BaseModel):
     user_id: str
 
 class Connection(BaseModel):
-    connection_id: str
+    account_id: str
     connector_id: ConnectorId
     metadata: Dict
     credential: Optional[str]
@@ -70,24 +70,24 @@ class DataConnector(BaseModel, ABC):
 
 class DocumentConnector(DataConnector):
     @abstractmethod
-    async def load(self, connection_id: str) -> List[Document]:
+    async def load(self, account_id: str) -> List[Document]:
         pass
 
 class ConversationConnector(DataConnector):
     @abstractmethod
-    async def load(self, connection_id: str, oldest_message_time: Optional[str]) -> List[Message]:
+    async def load(self, account_id: str, oldest_message_time: Optional[str]) -> List[Message]:
         pass
 
 class ConnectionFilter(BaseModel):
     connector_id: Optional[ConnectorId] = None
-    connection_id: Optional[str] = None
+    account_id: Optional[str] = None
 
 class Sync(BaseModel):
     app_id: str
     webhook_url: str
 
 class SyncResult(BaseModel):
-    connection_id: str
+    account_id: str
     connector_id: str
     success: bool
     docs_synced: int

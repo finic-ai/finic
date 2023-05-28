@@ -24,7 +24,7 @@ const App: React.FC = () => {
     currentStep, 
     selectedConnectorId, 
     setSelectedConnectorId,
-    connectionId,
+    accountId,
     publicKey,
     customerLogoUrl,
     setCurrentStep

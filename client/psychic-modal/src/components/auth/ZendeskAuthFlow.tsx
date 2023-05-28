@@ -33,7 +33,7 @@ import { AuthMethod } from "../../context/ModalContext";
     selectedConnectorId,
     connectorName,
     customerLogoUrl,
-    connectionId,
+    accountId,
     publicKey,
     metadata,
     setMetadata,
@@ -148,14 +148,14 @@ import { AuthMethod } from "../../context/ModalContext";
   }
   
   async function completeAuthWithCode(connectorId: string, email: string, apiKey: string) {
-    if (!connectionId || !publicKey) {
-      setError('Invalid connection_id or public_key')
+    if (!accountId || !publicKey) {
+      setError('Invalid account_id or public_key')
       setIsLoading(false)
       return
     }
     const result = await authorizeConnection(
         connectorId, 
-        connectionId, 
+        accountId, 
         publicKey,
         undefined, 
         metadata,
@@ -168,12 +168,12 @@ import { AuthMethod } from "../../context/ModalContext";
       setIsLoading(false)
       return
     }
-    setNewConnection(result.connection.connection_id)
+    setNewConnection(result.connection)
     setIsLoading(false)
     setIsSuccess(true)
     // Notify opening window that auth is complete
     if (window.opener) {
-      window.opener.postMessage({ connection_id: result.connection.connection_id }, '*')
+      window.opener.postMessage(result.connection, '*')
     }
     setAuthFlowStep(authFlowStep + 1)
   }
