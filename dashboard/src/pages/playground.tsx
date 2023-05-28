@@ -8,7 +8,7 @@ import {
   } from "flowbite-react";
 import { FC } from "react";
 import { useState } from "react";
-import {usePsychicLink} from "@psychicdev/link";
+import {usePsychicLink} from "@psychic-api/link";
 import { usePostHog } from 'posthog-js/react'
 
 import {

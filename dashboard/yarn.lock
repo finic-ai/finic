@@ -469,10 +469,10 @@
   "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.11.6.tgz"
   "version" "2.11.6"
 
-"@psychicdev/link@^1.0.1":
-  "integrity" "sha512-Vj10g7uv0KiYwitDch4J16DfslFnunhwT8Y2lgqAPIWuaDoASbLrhMlaWJY6Ks8xL6VBzKz2AJ/m08FlnBdt1Q=="
-  "resolved" "https://registry.npmjs.org/@psychicdev/link/-/link-1.0.1.tgz"
-  "version" "1.0.1"
+"@psychic-api/link@^1.0.4":
+  "integrity" "sha512-NiG7OP7vPaMBDv+Kh7NvpuL4BuavFd8Z5717RNhmD89D8dZ/2G8iwi8XmZG+cSSuZ9WpyF+u1tsLIx4Tj7ecEw=="
+  "resolved" "https://registry.npmjs.org/@psychic-api/link/-/link-1.0.4.tgz"
+  "version" "1.0.4"
 
 "@remix-run/router@1.0.5":
   "integrity" "sha512-my0Mycd+jruq/1lQuO5LBB6WTlL/e8DTCYWp44DfMTDcXz8DcTlgF0ISaLsGewt+ctHN+yA8xMq3q/N7uWJPug=="
