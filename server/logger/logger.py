@@ -21,10 +21,13 @@ class Logger:
 
     def __init__(self):
         # set up posthog logger
-        self.posthog_client = posthog.Client(
-            api_key=os.environ.get('POSTHOG_API_KEY'),
-            host=os.environ.get('POSTHOG_HOST')
-        )
+        api_key = os.environ.get('POSTHOG_API_KEY')
+        host = os.environ.get('POSTHOG_HOST')
+        if api_key is not None and host is not None: 
+            self.posthog_client = posthog.Client(
+                api_key=os.environ.get('POSTHOG_API_KEY'),
+                host=os.environ.get('POSTHOG_HOST')
+            )
 
     def log(self, app_config: AppConfig, event: str, properties: Dict[str, Any]):
         if self.posthog_client is not None:
@@ -32,6 +35,8 @@ class Logger:
             self.posthog_client.capture(distinct_id=app_config.user_id, event=event, properties=properties)
 
     def log_api_call(self, app_config: AppConfig, event: str, request: BaseModel, response: BaseModel, error: bool):
+        if self.posthog_client is None:
+            return
         if event not in Event.__members__.values():
             raise Exception("Invalid event type")
         properties = {

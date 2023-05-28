@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult
 from appstatestore.statestore import StateStore
 import base64
+from .notion_parser import NotionParser
 
 BASE_URL = "https://api.notion.com"
 
@@ -72,14 +73,6 @@ class NotionConnector(DocumentConnector):
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
 
-    def notion_get_blocks(self, page_id: str):
-        res = requests.get(f"{BASE_URL}/v1/blocks/{page_id}/children?page_size=100", headers=self.headers)
-        return res.json()
-
-    def notion_search(self, query: Dict):
-        res = requests.post(f"{BASE_URL}/v1/search", headers=self.headers, data=query)
-        return res.json()
-
     def get_page_text(self, page_id: str):
         page_text = []
         blocks = self.notion_get_blocks(page_id)
@@ -90,6 +83,8 @@ class NotionConnector(DocumentConnector):
                 for text in content.get('rich_text'):
                     plain_text = text.get('plain_text')
                     page_text.append(plain_text)
+        print(json.dumps(blocks))
+        print(page_text)
         return page_text
 
     async def load(self, connection_id: str) -> List[Document]:
@@ -97,49 +92,36 @@ class NotionConnector(DocumentConnector):
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
         access_token = credential_json["access_token"]
-        self.headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json",
-                        "Notion-Version": "2022-06-28"}
+
+        parser = NotionParser(access_token)
+
+        all_notion_documents = parser.notion_search({})
 
         documents: List[Document] = []
-        all_notion_documents = self.notion_search({})
-        items = all_notion_documents.get('results')
-        if not items:
-            return documents
-        
-        for item in items:
+        for item in all_notion_documents:
             object_type = item.get('object')
             object_id = item.get('id')
             url = item.get('url')
             title = ""
-            page_text = []
-
-            print(item)
 
             if object_type == 'page':
-                title_content = item.get('properties').get('title')
-                if title_content:
-                    if len(title_content.get('title')) > 0:
-                        title = title_content.get('title')[0].get('text').get('content')
-                elif item.get("properties").get('Projects'):
-                    if len(item.get("properties").get('Projects').get('title')) > 0:
-                        title = item.get("properties").get('Projects').get('title')[0].get('text').get('content')
-                elif item.get('properties').get('Name'):
-                    if len(item.get('properties').get('Name').get('title')) > 0:
-                        title = item.get('properties').get('Name').get('title')[0].get('text').get('content')
-
-                page_text.append([title])
-                page_content = self.get_page_text(object_id)
-                page_text.append(page_content)
-
-                flat_list = [item for sublist in page_text for item in sublist]
-                text_per_page = ". ".join(flat_list)
-                if len(text_per_page) > 0:
-                    documents.append(
-                        Document(
-                            title=title,
-                            content=text_per_page,
-                            uri=url
-                        )
+                title = parser.parse_title(item)
+                blocks = parser.notion_get_blocks(object_id)
+                html = parser.parse_notion_blocks(blocks)
+                html = f"<div><h1>{title}</h1>{html}</div>"
+                documents.append(
+                    Document(
+                        title=title,
+                        content=html,
+                        uri=url
                     )
-
+                )
         return documents
+
+
+
+
+
+            
+
+    
