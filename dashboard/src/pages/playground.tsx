@@ -68,6 +68,7 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: Co
 
   const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: {accountId: string, connectorId: string}) => {
     setNewConnection(newConnection)
+    console.log(newConnection)
     posthog?.capture('connector_playground_connection_created', {connection: newConnection})
   })
 

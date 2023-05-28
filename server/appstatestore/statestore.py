@@ -88,7 +88,7 @@ class StateStore:
             query = query.filter('connector_id', 'eq', filter.connector_id)
         
         if filter.account_id is not None:
-            query = query.filter('id', 'eq', filter.account_id)
+            query = query.filter('account_id', 'eq', filter.account_id)
 
         response = query.execute()
 
@@ -164,7 +164,7 @@ class StateStore:
             'eq', 
             connector_id
         ).filter(
-            'id',
+            'account_id',
             'eq',
             account_id
         ).execute()

@@ -34,7 +34,7 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
     const data = event.data;
     if (data && data.account_id) {
       setIsLoading(false)
-      onSuccessCallback(data.account_id)
+      onSuccessCallback({accountId: data.account_id, connectorId: data.connector_id})
     } else {
       setError("Connection failed. Please try again later.")
     }

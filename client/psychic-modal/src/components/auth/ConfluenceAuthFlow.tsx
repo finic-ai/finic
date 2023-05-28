@@ -153,12 +153,12 @@ import OAuthListenerForm from "./OAuthListenerForm";
       setIsLoading(false)
       return
     }
-    setNewConnection(result.connection.account_id)
+    setNewConnection(result.connection)
     setIsLoading(false)
     setIsSuccess(true)
     // Notify opening window that auth is complete
     if (window.opener) {
-      window.opener.postMessage({ account_id: result.connection.account_id }, '*')
+      window.opener.postMessage(result.connection, '*')
     }
     setAuthFlowStep(authFlowStep + 1)
   }

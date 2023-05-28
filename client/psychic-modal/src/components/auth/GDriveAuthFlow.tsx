@@ -122,12 +122,12 @@ async function completeAuthWithCode(connectorId: string, authCode: string, metad
     setIsLoading(false)
     return
   }
-  setNewConnection(result.connection.account_id)
+  setNewConnection(result.connection)
   setIsSuccess(true)
   setIsLoading(false)
   // Notify opening window that auth is complete
   if (window.opener) {
-    window.opener.postMessage({ account_id: result.connection.account_id }, '*')
+    window.opener.postMessage(result.connection, '*')
   }
 }
 
