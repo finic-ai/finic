@@ -3,7 +3,7 @@
 </h2>
 
 <p align="center">
-  <p align="center">Unified APIs for ingesting unstructured data</p>
+  <p align="center">Universal API for unstructured data</p>
 </p>
 <p align="center">
 <a href="https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg" target="_blank">
@@ -24,12 +24,11 @@
 </a>
 </p>
 
-[Psychic](https://psychic.dev/) is an open source integration platform to extract and transform unstructured data from SaaS applications like Notion, Slack, Zendesk, Confluence, and Google Drive. Instead of building one integration for each data sources, you can build one integration that works for all data sources, and manage each connection from a GUI. **Psychic is designed for startups that use LLMs and vector databases.**
+[Psychic](https://psychic.dev/) is an open source integration platform to extract and transform unstructured data from SaaS applications like Notion, Slack, Zendesk, Confluence, and Google Drive. Instead of building one integration for each data sources, you can build one integration that works for all data sources. **Psychic is designed for startups that use LLMs and need to retrieve documents to use as context**. 
 
-There are 4 parts of the platform
-* 🪄 **Psychic Link:** A modal that lets end users to connect their data sources with a point and click interface, using OAuth when available. Available as an NPM package for React projects, or as a magic link.
-* 🪢 **Psychic Connectors:** Server-side code that makes API calls and handles token management. New integrations are added by implementing a new `DataConnector` in the server-side code.
-* 💃 **Psychic Models:** Universal data models that make it possible to transform unstructured data from disparate data sources into a consistent schema before you receive it. Currently `Document` and `Conversation` models are supported.
+There are 3 parts of the platform
+* 🪄 **Psychic Link:** A modal that lets end users to connect their data sources with a point and click interface, using OAuth. Available as an NPM package for React projects, or as a magic link.
+* 🪢 **Universal API:** Abstractions to make it easy to ingest Document and Conversation data from any connected source through a single API endpoint. Filter based on `connector_id` and `account_id`. New integrations can be added by implementing a new `DataConnector` in the server-side code.
 * 🎩 **Psychic Dashboard:** A front-end for the Psychic platform that makes it easy to manage connections and connect data sources without having to add Link to an existing app.
 
 ### <a href="https://docs.psychic.dev" target="_blank">Read the docs</a>
@@ -46,8 +45,8 @@ If you have any questions on how to get started, [come join our Slack community!
 
 ## Roadmap
 * ✅ [LangChain DataLoader](https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/psychic.html?highlight=psychic)
+* ✅ Webhook support to push data to an endpoint at predetermined intervals
 * 🚧 CRM integrations (Salesforce, HubSpot, etc)
-* 🚧 Webhook support to notify when source documents/conversations have been updated
 * 🚧 Support for write scopes for each connector, in addition to read scopes
 
 ## Getting Started - 15 min
