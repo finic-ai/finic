@@ -24,12 +24,12 @@ psychic = Psychic(secret_key="secret-key")
 ### Get active connections
 
 ```
-# Get all active connections and optionally filter by connector id and/or connection id
-connections = psychic.get_connections(connector_id=ConnectorId.notion, connection_id=None)
+# Get all active connections and optionally filter by connector id and/or account id
+connections = psychic.get_connections(connector_id=ConnectorId.notion, account_id=None)
 ```
 
 ### Retrieve documents from a connection
 
 ```
-docs = psychic.get_documents(ConnectorId.zendesk, "connection-id")
+docs = psychic.get_documents(ConnectorId.zendesk, "account_id")
 ```

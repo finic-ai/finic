@@ -34,7 +34,7 @@ import OAuthListenerForm from "./OAuthListenerForm";
     selectedConnectorId,
     connectorName,
     customerLogoUrl,
-    connectionId,
+    accountId,
     publicKey,
     metadata,
     setMetadata,
@@ -134,14 +134,14 @@ import OAuthListenerForm from "./OAuthListenerForm";
   }
   
   async function completeAuthWithCode(connectorId: string, code: string) {
-    if (!connectionId || !publicKey) {
-      setError('Invalid connection_id or public_key')
+    if (!accountId || !publicKey) {
+      setError('Invalid account_id or public_key')
       setIsLoading(false)
       return
     }
     const result = await authorizeConnection(
         connectorId, 
-        connectionId, 
+        accountId, 
         publicKey,
         code,
         metadata
@@ -153,12 +153,12 @@ import OAuthListenerForm from "./OAuthListenerForm";
       setIsLoading(false)
       return
     }
-    setNewConnection(result.connection.connection_id)
+    setNewConnection(result.connection.account_id)
     setIsLoading(false)
     setIsSuccess(true)
     // Notify opening window that auth is complete
     if (window.opener) {
-      window.opener.postMessage({ connection_id: result.connection.connection_id }, '*')
+      window.opener.postMessage({ account_id: result.connection.account_id }, '*')
     }
     setAuthFlowStep(authFlowStep + 1)
   }

@@ -30,7 +30,7 @@ interface ModalContextType {
   credential: any;
   setCredential: (credential: any) => void;
   authCodeHandled: React.MutableRefObject<boolean>;
-  connectionId: string | null;
+  accountId: string | null;
   publicKey: string | null;
   logoLoading: boolean;
   authorizeConnection: Function;
@@ -43,14 +43,14 @@ export enum AuthMethod {
 }
 type OauthPayload = {
   connector_id: string;
-  connection_id: string;
+  account_id: string;
   auth_code?: string;
   metadata?: string;
 }
 
 type ApiKeyPayload = {
   connector_id: string;
-  connection_id: string;
+  account_id: string;
   credential?: any;
   metadata?: string;
 }
@@ -81,7 +81,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
   const authCodeHandled = useRef(false);
 
   const urlParams = new URLSearchParams(window.location.search);
-  const connectionId = urlParams.get('connection_id');
+  const accountId = urlParams.get('account_id');
   const publicKey = urlParams.get('public_key');
 
   const value: ModalContextType = {
@@ -108,7 +108,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     authCode,
     setAuthCode,
     authCodeHandled,
-    connectionId,
+    accountId,
     publicKey,
     logoLoading,
     authorizeConnection,
@@ -118,7 +118,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
   };
 
   useEffect(() => {
-    if (connectionId && publicKey) {
+    if (accountId && publicKey) {
       // Get settings for public key and set the name and logo
       supabase
         .from('settings')
@@ -141,11 +141,11 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
           }
         });
     }
-  }, [connectionId, publicKey]);
+  }, [accountId, publicKey]);
 
   async function authorizeConnection(
     connectorId: string, 
-    connectionId: string,
+    accountId: string,
     publicKey: string,
     authCode?: string,
     metadata?: any,
@@ -161,7 +161,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
       PSYCHIC_URL + '/add-oauth-connection' : PSYCHIC_URL + '/add-apikey-connection';
 
     var payload: any = {
-      connection_id: connectionId,
+      account_id: accountId,
       connector_id: connectorId
     }
     if (method == AuthMethod.OAUTH && authCode) {
@@ -202,15 +202,15 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
   async function startConnectorAuthFlow(window: any, connectorId: string) {
     setIsLoading(true)
     console.log("hello")
-    console.log(connectionId)
+    console.log(accountId)
     console.log(publicKey)
-    if (!connectionId || !publicKey) {
-      setError('Invalid connection_id or public_key')
+    if (!accountId || !publicKey) {
+      setError('Invalid account_id or public_key')
       setIsLoading(false)
       return
     }
     
-    const result = await authorizeConnection(connectorId, connectionId, publicKey)
+    const result = await authorizeConnection(connectorId, accountId, publicKey)
     const auth_url = result.auth_url
     console.log(result)
     // Open the auth url in a new window and center it.

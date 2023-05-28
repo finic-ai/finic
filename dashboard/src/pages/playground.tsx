@@ -60,15 +60,15 @@ interface ConnectorPlaygroundProps {
 }
 
 const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: ConnectorPlaygroundProps) {
-  const [connectionId, setConnectionId] = useState<string>('');
-  const [newConnection, setNewConnection] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<string>('');
+  const [newConnection, setNewConnection] = useState<any>(null);
 
   const publicKey = bearer
   const posthog = usePostHog()
 
-  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: string) => {
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: {accountId: string, connectorId: string}) => {
     setNewConnection(newConnection)
-    posthog?.capture('connector_playground_connection_created', {connectionId: newConnection})
+    posthog?.capture('connector_playground_connection_created', {connection: newConnection})
   })
 
   return (
@@ -79,20 +79,20 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: Co
       <p className="mb-6">{"Connect data from your applications here. You can then view them under Connectors > Active Connections."}</p>
       <Label htmlFor="apiKeys.label">Connection ID</Label>
       <TextInput
-        value={connectionId}
-        onChange={(e) => setConnectionId(e.target.value)}
+        value={accountId}
+        onChange={(e) => setAccountId(e.target.value)}
         required
         placeholder="The unique identifier for this connection."
         className="mt-1"
       />
-      <Button type="submit" disabled={!isReady || connectionId.length < 1} color="primary" className="mt-6"  onClick={() => {
-          open(connectionId)
+      <Button type="submit" disabled={!isReady || accountId.length < 1} color="primary" className="mt-6"  onClick={() => {
+          open(accountId)
       }} >
         {isLoading ? <Spinner className="mr-3 text-sm" /> : <>
         Connect
         </>}
       </Button>
-      {newConnection && <div className="text-green-500 ml-3 mt-6">New connection successfully established: {newConnection}</div>}
+      {newConnection && <div className="text-green-500 ml-3 mt-6">New connection successfully established for account {newConnection.accountId} with {newConnection.connectorId}</div>}
       {error && <div className="text-red-500 ml-3 mt-6">{error}</div>}
     </>
   );

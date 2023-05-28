@@ -232,7 +232,7 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: Con
           <Table.Row key={i} className="hover:bg-gray-100 dark:hover:bg-gray-700">
               <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
                   <div className="text-base font-semibold text-gray-900 dark:text-white">
-                      {item.connection_id}
+                      {item.account_id}
                   </div>
               </Table.Cell>
               <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
