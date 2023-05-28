@@ -78,7 +78,7 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: Co
         Create new connections
       </h2>
       <p className="mb-6">{"Connect data from your applications here. You can then view them under Connectors > Active Connections."}</p>
-      <Label htmlFor="apiKeys.label">Connection ID</Label>
+      <Label htmlFor="apiKeys.label">Account ID</Label>
       <TextInput
         value={accountId}
         onChange={(e) => setAccountId(e.target.value)}

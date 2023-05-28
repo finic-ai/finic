@@ -193,7 +193,7 @@ import { useUserStateContext } from "../context/UserStateContext";
                 </p>
                 <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
                     <Table.Head className="bg-gray-100 dark:bg-gray-700">
-                        <Table.HeadCell>Connection ID</Table.HeadCell>
+                        <Table.HeadCell>Account ID</Table.HeadCell>
                         <Table.HeadCell>Connector ID</Table.HeadCell>
                         <Table.HeadCell>Status</Table.HeadCell>
                         <Table.HeadCell>Docs Synced</Table.HeadCell>

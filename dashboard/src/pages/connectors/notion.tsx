@@ -117,6 +117,7 @@ const NotionConnectorPage: FC = function () {
                 Notion
               </h1>
             </div>
+            <span>View your active connections and configure the Notion connector here. You can create a new connection from the <a href="/playground" className="text-blue-400">Playground</a>.</span>
           </div>
         </div>
       </div>
@@ -247,7 +248,7 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: Con
     <>
     <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
       <Table.Head className="bg-gray-100 dark:bg-gray-700">
-        <Table.HeadCell>Connection ID</Table.HeadCell>
+        <Table.HeadCell>Account ID</Table.HeadCell>
         <Table.HeadCell>Workspace Name</Table.HeadCell>
       </Table.Head>
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
