@@ -75,10 +75,10 @@ async def enable_connector(
         credential = request.credential
         status = StateStore().enable_connector(connector_id, credential, config)
         response = ConnectorStatusResponse(status=status)
-        logger.log_api_call(config, Event.set_custom_connector_credentials, request, response, False)
+        logger.log_api_call(config, Event.set_custom_connector_credentials, request, response, None)
         return response
     except Exception as e:
-        logger.log_api_call(config, Event.set_custom_connector_credentials, request, e, True)
+        logger.log_api_call(config, Event.set_custom_connector_credentials, request, None, e)
         raise e
 
 @app.post(
@@ -93,12 +93,10 @@ async def get_connector_status(
         connector_id = request.connector_id
         status = StateStore().get_connector_status(connector_id, config)
         response = ConnectorStatusResponse(status=status)
-        logger.log_api_call(config, Event.get_connector_status, request, response, False)
+        logger.log_api_call(config, Event.get_connector_status, request, response, None)
         return response
     except Exception as e:
-        print('printing exception')
-        print(e)
-        logger.log_api_call(config, Event.get_connector_status, request, e, True)
+        logger.log_api_call(config, Event.get_connector_status, request, None, e)
         raise e
 
 @app.post(
@@ -113,10 +111,10 @@ async def get_connections(
         filter = request.filter
         connections = StateStore().get_connections(filter, config)
         response = GetConnectionsResponse(connections=connections)
-        logger.log_api_call(config, Event.get_connections, request, response, False)
+        logger.log_api_call(config, Event.get_connections, request, response, None)
         return response
     except Exception as e:
-        logger.log_api_call(config, Event.get_connections, request, e, True)
+        logger.log_api_call(config, Event.get_connections, request, None, e)
         raise e
 
 @app.post(
@@ -139,10 +137,10 @@ async def add_apikey_connection(
             raise HTTPException(status_code=404, detail="Connector not found")
         result = await connector.authorize_api_key(account_id, credential, metadata)
         response = AuthorizationResponse(result=result)
-        logger.log_api_call(config, Event.add_apikey_connection, request, response, False)
+        logger.log_api_call(config, Event.add_apikey_connection, request, response, None)
         return response
     except Exception as e:
-        logger.log_api_call(config, Event.add_apikey_connection, request, e, True)
+        logger.log_api_call(config, Event.add_apikey_connection, request, None, e)
         raise e
 
 
@@ -169,10 +167,10 @@ async def add_oauth_connection(
 
         result = await connector.authorize(account_id, auth_code, metadata)
         response = AuthorizationResponse(result=result)
-        logger.log_api_call(config, Event.add_oauth_connection, request, response, False)
+        logger.log_api_call(config, Event.add_oauth_connection, request, response, None)
         return response
     except Exception as e:
-        logger.log_api_call(config, Event.add_oauth_connection, request, e, True)
+        logger.log_api_call(config, Event.add_oauth_connection, request, None, e)
         raise e
 
 @app.post(
@@ -193,13 +191,15 @@ async def get_documents(
 
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
+        if account_id is None:
+            raise HTTPException(status_code=400, detail="Account ID is required")
 
         result = await connector.load(account_id)
         response = GetDocumentsResponse(documents=result)
-        logger.log_api_call(config, Event.get_documents, request, response, False)
+        logger.log_api_call(config, Event.get_documents, request, response, None)
         return response
     except Exception as e:
-        logger.log_api_call(config, Event.get_documents, request, e, True)
+        logger.log_api_call(config, Event.get_documents, request, None, e)
         raise e
 
 @app.post(
@@ -214,10 +214,10 @@ async def run_sync(
         sync_all = request.sync_all
         success = await SyncService(config).run(sync_all=sync_all)
         response = RunSyncResponse(success=success)
-        logger.log_api_call(config, Event.run_sync, request, response, False)
+        logger.log_api_call(config, Event.run_sync, request, response, None)
         return response
     except Exception as e:
-        logger.log_api_call(config, Event.run_sync, request, e, True)
+        logger.log_api_call(config, Event.run_sync, request, None, e)
         raise e
 
 def start():

@@ -178,7 +178,7 @@ class StateStore:
                 credential=data['credential'],
                 config=AppConfig(app_id=data['app_id'], user_id=data['user_id'])
             )   
-        return None
+        raise Exception("No credentials found for connector_id: " + connector_id + " and account_id: " + account_id)
     
     def get_syncs(self, app_id_filter: Optional[str]) -> List[Sync]:
         query = self.supabase.table('syncs').select('*')
