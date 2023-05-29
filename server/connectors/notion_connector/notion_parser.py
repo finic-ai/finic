@@ -27,73 +27,74 @@ class NotionParser:
         return []
     
     def parse_property(self, property):
+        result = ""
         if property.get('type') == 'date':
             date = property.get('date')
             if date:
-                return date.get('start')
+                result = date.get('start')
         elif property.get('type') == 'rich_text':
             rich_text = property.get('rich_text')
             if rich_text:
-                return self.parse_rich_text(rich_text)
+                result = self.parse_rich_text(rich_text)
         elif property.get('type') == 'select':
             select = property.get('select')
             if select:
-                return select.get('name')
+                result = select.get('name')
         elif property.get('type') == 'multi_select':
             multi_select = property.get('multi_select')
             if multi_select:
-                return ', '.join([item.get('name') for item in multi_select])
+                result = ', '.join([item.get('name') for item in multi_select if item.get('name')])
         elif property.get('type') == 'number':
             number = property.get('number')
             if number:
-                return number
+                result = number
         elif property.get('type') == 'title':
             title = property.get('title')
             if title:
-                return self.parse_rich_text(title)
+                result = self.parse_rich_text(title)
         elif property.get('type') == 'email':
             email = property.get('email')
             if email:
-                return email
+                result = email
         elif property.get('type') == 'phone_number':
             phone_number = property.get('phone_number')
             if phone_number:
-                return phone_number
+                result = phone_number
         elif property.get('type') == 'url':
             url = property.get('url')
             if url:
-                return url
+                result = url
         elif property.get('type') == 'checkbox':
             checkbox = property.get('checkbox')
             if checkbox:
-                return checkbox
-        elif property.get('type') == 'relation':
-            relation = property.get('relation')
-            if relation:
-                return ', '.join([item.get('name') for item in relation])
+                result = checkbox
         elif property.get('type') == 'created_time':
             created_time = property.get('created_time')
             if created_time:
-                return created_time
+                result = created_time
         elif property.get('type') == 'created_by':
             created_by = property.get('created_by')
             if created_by:
-                return created_by.get('name')
+                result = created_by.get('name')
         elif property.get('type') == 'last_edited_time':
             last_edited_time = property.get('last_edited_time')
             if last_edited_time:
-                return last_edited_time
+                result = last_edited_time
         elif property.get('type') == 'last_edited_by':
             last_edited_by = property.get('last_edited_by')
             if last_edited_by:
-                return last_edited_by.get('name')
+                result = last_edited_by.get('name')
         elif property.get('type') == 'formula':
             formula = property.get('formula')
             if formula:
-                return formula.get('string')
+                result = formula.get('string')
         else:
             print(f"Property type {property.get('type')} not supported")
             return ""
+        
+        if result:
+            return result
+        return ""
     
     def parse_properties(self, page):
         html = ""
@@ -123,22 +124,21 @@ class NotionParser:
     
     def parse_title(self, page):
         title = ""
-        title_content = page.get('properties').get('title')
+        properties = page.get('properties')
+        if not properties:
+            return title
+        
+        title_content = properties.get('title')
         if title_content:
             if len(title_content.get('title')) > 0:
                 title = title_content.get('title')[0].get('text').get('content')
         else:
             # page is in a database
-            properties = page.get('properties')
-            if properties:
-                #loop through properties to find the title
-                for key in properties:
-                    if properties[key].get('title'):
-                        title_array = properties[key].get('title')
-                        if len(title_array) > 0:
-                            for text in title_array:
-                                title += text.get('text').get('content') + ' '
-                        title = title.strip()
+            #loop through properties to find the title
+            for key in properties:
+                if properties[key].get('title'):
+                    rich_text = properties[key].get('title')
+                    title = self.parse_rich_text(rich_text)
         return title
     
     def parse_notion_blocks(self, blocks) -> str:
@@ -285,5 +285,12 @@ class NotionParser:
                 else:
                     item_html = content
                 result.append(item_html)
+            elif item.get("type") == "mention" and item.get("mention"): 
+                mention = item.get("mention")
+                if mention.get("type") == "date":
+                    date = mention.get("date")
+                    if date:
+                        result.append(date.get("start"))
+
         return " ".join(result)
     
