@@ -108,7 +108,8 @@ class NotionConnector(DocumentConnector):
                 title = parser.parse_title(item)
                 blocks = parser.notion_get_blocks(object_id)
                 html = parser.parse_notion_blocks(blocks)
-                html = f"<div><h1>{title}</h1>{html}</div>"
+                properties_html = parser.parse_properties(item)
+                html = f"<div><h1>{title}</h1>{properties_html}{html}</div>"
                 documents.append(
                     Document(
                         title=title,
