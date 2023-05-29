@@ -191,8 +191,6 @@ async def get_documents(
 
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
-        if account_id is None:
-            raise HTTPException(status_code=400, detail="Account ID is required")
 
         result = await connector.load(account_id)
         response = GetDocumentsResponse(documents=result)
