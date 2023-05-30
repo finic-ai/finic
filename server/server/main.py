@@ -187,7 +187,7 @@ async def get_documents(
         connector_id = request.connector_id
         account_id = request.account_id
 
-        connector = get_conversation_connector_for_id(connector_id, config)
+        connector = get_connector_for_id(connector_id, config)
 
         print("connector", connector)
 
