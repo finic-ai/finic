@@ -55,7 +55,7 @@ class GetConversationsRequest(BaseModel):
     oldest_timestamp: Optional[str] = None
 
 class GetConversationsResponse(BaseModel):
-    conversations: List[Message]
+    messages: List[Message]
 
 class RunSyncRequest(BaseModel):
     sync_all: bool

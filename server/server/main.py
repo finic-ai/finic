@@ -21,6 +21,8 @@ from models.api import (
     AuthorizeApiKeyRequest,
     GetConnectionsRequest,
     GetConnectionsResponse,
+    GetConversationsRequest,
+    GetConversationsResponse,
     RunSyncRequest,
     RunSyncResponse,
 )
@@ -30,7 +32,7 @@ from models.models import (
     AppConfig,
     DataConnector,
 )
-from connectors.connector_utils import get_connector_for_id
+from connectors.connector_utils import get_connector_for_id, get_conversation_connector_for_id, get_document_connector_for_id
 import uuid
 from logger import Logger
 logger = Logger()
@@ -185,7 +187,7 @@ async def get_documents(
         connector_id = request.connector_id
         account_id = request.account_id
 
-        connector = get_connector_for_id(connector_id, config)
+        connector = get_conversation_connector_for_id(connector_id, config)
 
         print("connector", connector)
 
@@ -198,6 +200,34 @@ async def get_documents(
         return response
     except Exception as e:
         logger.log_api_call(config, Event.get_documents, request, None, e)
+        raise e
+    
+@app.post(
+    "/get-conversations",
+    response_model=GetConversationsResponse,
+)
+async def get_conversations(
+    request: GetConversationsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        connector_id = request.connector_id
+        account_id = request.account_id
+        oldest_timestamp = request.oldest_timestamp
+
+        connector = get_conversation_connector_for_id(connector_id, config)
+
+        print("connector", connector)
+
+        if connector is None:
+            raise HTTPException(status_code=404, detail="Connector not found")
+
+        result = await connector.load(account_id, oldest_message_time=oldest_timestamp)
+        response = GetConversationsResponse(messages=result)
+        logger.log_api_call(config, Event.get_conversations, request, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.get_conversations, request, None, e)
         raise e
 
 @app.post(

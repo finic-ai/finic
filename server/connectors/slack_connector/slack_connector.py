@@ -7,6 +7,7 @@ from appstatestore.statestore import StateStore
 import base64
 from slack_sdk.web import WebClient
 import time
+from .slack_parser import SlackParser
 
 
 BASE_URL = "https://api.notion.com"
@@ -81,7 +82,7 @@ class SlackConnector(ConversationConnector):
         credential_json = json.loads(credential_string)
         access_token = credential_json["access_token"]
         resulting_messages: List[Message] = []
-
+        parser = SlackParser(access_token=access_token)
         client = WebClient(token=access_token)
 
         if not oldest_message_time:
@@ -123,58 +124,8 @@ class SlackConnector(ConversationConnector):
                         break
 
                 for message in messages:
-                    link = client.chat_getPermalink(
-                        channel=channel["id"],
-                        message_ts=message["ts"]
-                    )
-                    user_response = client.users_info(user=message["user"])
-                    user = user_response["user"]
-                    msg = Message(
-                        id=message["ts"],
-                        channel=MessageChannel(
-                            id=channel["id"],
-                            name=channel["name"]
-                        ),
-                        sender=MessageSender(
-                            id=message["user"],
-                            name=user["name"]
-                        ),
-                        content=message["text"],
-                        timestamp=message["ts"],
-                        replies=[],
-                        uri=link["permalink"]
-                    )
-                    # If this message started a thread, fetch the replies
-                    if "thread_ts" in message:
-                        response = client.conversations_replies(
-                            channel=channel["id"], 
-                            ts=message["thread_ts"]
-                        )
-                        replies = response["messages"]
-                        for reply in replies:
-                            if reply["ts"] == message["ts"]:
-                                continue
-                            link = client.chat_getPermalink(
-                                channel=channel["id"],
-                                message_ts=reply["ts"]
-                            )
-                            user_response = client.users_info(user=message["user"])
-                            user = user_response["user"]
-                            msg.replies.append(Message(
-                                id=reply["ts"],
-                                channel=MessageChannel(
-                                    id=channel["id"],
-                                    name=channel["name"]
-                                ),
-                                sender=MessageSender(
-                                    id=reply["user"],
-                                    name=user["name"]
-                                ),
-                                content=reply["text"],
-                                timestamp=reply["ts"],
-                                replies=[],
-                                uri=link["permalink"]
-                            ))
+
+                    msg = parser.parse_message(message, channel)
                     resulting_messages.append(msg)
             return resulting_messages
 
