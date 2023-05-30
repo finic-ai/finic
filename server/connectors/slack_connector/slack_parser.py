@@ -6,17 +6,36 @@ from slack_sdk.web import WebClient
 
 class SlackParser:
 
+
+
     def __init__(self, access_token: str):
         self.client = WebClient(token=access_token)
+        self.users_cache = {}
+        self.slack_workspace_base_url = None
+
+    def get_slack_permalink(self, channel_id: str, message_id: str) -> str:
+        if not self.slack_workspace_base_url:
+            link = self.client.chat_getPermalink(
+                channel=channel_id,
+                message_ts=message_id
+            )
+            # base url is everything before /archives
+            self.slack_workspace_base_url = link["permalink"].split("/archives")[0]
+            return link["permalink"]
+        else:
+            return self.slack_workspace_base_url + "/archives/" + channel_id + "/p" + message_id.replace(".", "")
 
     def parse_message(self, message: Dict, channel: Dict) -> Message:
 
-        link = self.client.chat_getPermalink(
-            channel=channel["id"],
-            message_ts=message["ts"]
-        )
-        user_response = self.client.users_info(user=message["user"])
-        user = user_response["user"]
+        link = self.get_slack_permalink(channel["id"], message["ts"])
+        user_id = message["user"]
+        if user_id in self.users_cache:
+            user_name = self.users_cache[user_id]
+        else:
+            user_response = self.client.users_info(user=user_id)
+            user = user_response["user"]
+            user_name = user["name"]
+            self.users_cache[user_id] = user_name
 
         msg = Message(
             id=message["ts"],
@@ -26,12 +45,12 @@ class SlackParser:
             ),
             sender=MessageSender(
                 id=message["user"],
-                name=user["name"]
+                name=user_name
             ),
             content=self.parse_message_content(message),
             timestamp=message["ts"],
             replies=[],
-            uri=link["permalink"]
+            uri=link
         )
 
         # If this message started a thread, fetch the replies
@@ -44,10 +63,7 @@ class SlackParser:
             for reply in replies:
                 if reply["ts"] == message["ts"]:
                     continue
-                link = self.client.chat_getPermalink(
-                    channel=channel["id"],
-                    message_ts=reply["ts"]
-                )
+                link = self.get_slack_permalink(channel["id"], reply["ts"])
                 user_response = self.client.users_info(user=message["user"])
                 user = user_response["user"]
                 msg.replies.append(Message(
@@ -63,7 +79,7 @@ class SlackParser:
                     content=self.parse_message_content(reply),
                     timestamp=reply["ts"],
                     replies=[],
-                    uri=link["permalink"]
+                    uri=link
                 ))
 
         return msg
