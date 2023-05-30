@@ -75,7 +75,6 @@ class SlackParser:
             return html + "</div>"
         
         for block in blocks:
-            print(blocks)
             type = block.get("type")
             if type == "rich_text":
                 elements = block.get("elements")
@@ -90,7 +89,6 @@ class SlackParser:
         html = ""
         i = 0
         while i < (len(elements)):
-            print(i)
             element = elements[i]
             if element["type"] == "rich_text_section":
                 nested_elements = element.get("elements")
@@ -100,7 +98,11 @@ class SlackParser:
                 html += element["text"]
                 i +=1 
             elif element["type"] == "link":
-                html += "<a href='" + element["url"] + "'>" + element["text"] + "</a>"
+                link_text = element.get("text")
+                if link_text:
+                    html += "<a href='" + element["url"] + "'>" + link_text + "</a>"
+                else:
+                    html += "<a href='" + element["url"] + "'>" + element["url"] + "</a>"
                 i += 1
             elif element["type"] == "rich_text_list":
                 list_html, i = self.parse_rich_text_list(elements, i)
