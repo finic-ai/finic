@@ -8,12 +8,12 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='psychicapi',
-    version='0.4',
-    description='Psychic.dev is an open-source universal data connector for knowledgebases.',
+    version='0.6',
+    description='Psychic.dev is an open-source data integration platform for LLMs. This is the Python client for Psychic',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Ayan Bandyopadhyay',
-    author_email='ayan@getsidekick.ai',
+    author_email='ayan@psychic.dev',
     packages=['psychicapi'],
     install_requires=[
         'requests',
