@@ -11,6 +11,7 @@ class ConnectorId(str, Enum):
     zendesk = "zendesk"
     confluence = "confluence"
     slack = "slack"
+    dropbox = "dropbox"
 
 class AppConfig(BaseModel):
     app_id: str

@@ -10,6 +10,7 @@ import GDriveAuthFlow from './components/auth/GDriveAuthFlow';
 import ZendeskAuthFlow from './components/auth/ZendeskAuthFlow';
 import ConfluenceAuthFlow from './components/auth/ConfluenceAuthFlow';
 import SlackAuthFlow from './components/auth/SlackAuthFlow';
+import DropboxAuthFlow from './components/auth/DropboxAuthFlow';
 import ModalHeader from './components/ModalHeader';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
@@ -49,6 +50,8 @@ const App: React.FC = () => {
           return <div>Github</div>
         } else if (selectedConnectorId == "slack") {
           return <SlackAuthFlow />
+        } else if (selectedConnectorId == "dropbox") {
+          return <DropboxAuthFlow />
         } else {
           return <div>Unknown connector</div>
         }

@@ -1,27 +1,29 @@
 import requests
 import json
 from typing import Dict, List, Optional
-from models.models import Source, AppConfig, Document, DocumentMetadata, DataConnector, AuthorizationResult
+from models.models import AppConfig, Document, ConnectorId, DataConnector, AuthorizationResult
+from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
 from appstatestore.statestore import StateStore
 from io import BytesIO
 from PyPDF2 import PdfReader
 import docx
-import uuid
-import os
+from enum import Enum
+
 
 BASE_URL = "https://api.dropboxapi.com"
-APP_KEY = os.environ.get("DROPBOX_APP_KEY")
-APP_SECRET = os.environ.get("DROPBOX_APP_SECRET")
+
+class DropboxError(str, Enum):
+    expired_access_token = "expired_access_token"
+    unknown_error = "unknown_error"
+
 
 
 class DropboxConnector(DataConnector):
-    source_type: Source = Source.dropbox
-    connector_id: int = 7
+    connector_id: ConnectorId = ConnectorId.dropbox
     config: AppConfig
-    folder_name: str
 
-    def __init__(self, config: AppConfig, folder_name: str):
-        super().__init__(config=config, folder_name=folder_name)
+    def __init__(self, config: AppConfig):
+        super().__init__(config=config)
 
     def check_valid_access_token(self, access_token: str) -> bool:
         headers = {
@@ -37,39 +39,79 @@ class DropboxConnector(DataConnector):
             return True
         else:
             return False
+        
+    async def authorize_api_key(self) -> AuthorizationResult:
+        pass
 
-    async def authorize(self, redirect_uri: str, auth_code: Optional[str]) -> str | None:
-        if APP_KEY and APP_SECRET and auth_code:
+    async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
+        connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
+        try: 
+            client_id = connector_credentials['client_id']
+            client_secret = connector_credentials['client_secret']
+            redirect_uri = "https://link.psychic.dev/oauth/redirect"
+        except Exception as e:
+            raise Exception("Connector is not enabled")
+        
+        if not auth_code:
+            auth_url = "https://www.dropbox.com/oauth2/authorize"
+            scopes = "account_info.read files.metadata.read files.content.read"
+            params = {
+                'response_type': 'code',
+                'redirect_uri': redirect_uri,
+                'client_id': client_id,
+                'scope': scopes,
+                'token_access_type': 'offline'
+            }
+            encoded_params = urlencode(params)
+            url_parts = urlparse(auth_url)
+            auth_url = ParseResult(
+                scheme=url_parts.scheme,
+                netloc=url_parts.netloc,
+                path=url_parts.path,
+                params=url_parts.params,
+                query=encoded_params,
+                fragment=url_parts.fragment
+            ).geturl()
+            return AuthorizationResult(authorized=False, auth_url=auth_url)
+    
+
+        try: 
             data = {
                 'code': auth_code,
                 'grant_type': 'authorization_code',
-                'client_id': APP_KEY,
-                'client_secret': APP_SECRET,
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'redirect_uri': redirect_uri,
             }
 
+
             response = requests.post('https://api.dropbox.com/oauth2/token', data=data)
-            if response.status_code == 200:
-                response_data = response.json()
-                refresh_token = response_data.get('refresh_token')
+            response_data = response.json()
+            refresh_token = response_data.get('refresh_token')
 
-                creds = {
-                    "refresh_token": refresh_token
-                }
+            creds_string = json.dumps(response_data)
+            new_connection = StateStore().add_connection(
+                config=self.config,
+                credential=creds_string,
+                connector_id=self.connector_id,
+                account_id=account_id,
+                metadata={}
+            )
+            return AuthorizationResult(authorized=True, connection=new_connection)
+        except Exception as e:
+            print(e)
+            raise Exception("Unable to get access token with code")
 
-                creds_string = json.dumps(creds)
-                StateStore().save_credentials(self.config, creds_string, self)
-        else:
-            if APP_KEY:
-                auth_url = f"https://www.dropbox.com/oauth2/authorize?client_id={APP_KEY}&token_access_type=offline&response_type=code"
-                return auth_url
 
-
-    def get_new_access_token(self, app_key: str, app_secret: str, refresh_token: str):
+    def get_new_access_token(self, refresh_token: str):
+        connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
+        client_id = connector_credentials['client_id']
+        client_secret = connector_credentials['client_secret']
         data = {
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
-            'client_id': app_key,
-            'client_secret': app_secret,
+            'client_id': client_id,
+            'client_secret': client_secret,
         }
 
         response = requests.post('https://api.dropbox.com/oauth2/token', data=data)
@@ -79,7 +121,7 @@ class DropboxConnector(DataConnector):
         else:
             return None
 
-    def get_all_files_under_folder(self, access_token: str, folder_name: str):
+    def get_all_files_under_folder(self, access_token: str):
         headers = {
             'Authorization': f"Bearer {access_token}",
             'Content-Type': 'application/json',
@@ -91,12 +133,20 @@ class DropboxConnector(DataConnector):
             'include_media_info': False,
             'include_mounted_folders': True,
             'include_non_downloadable_files': True,
-            'path': f"/{folder_name}",
+            'path': f"",
             'recursive': True,
         }
 
         res = requests.post(f'{BASE_URL}/2/files/list_folder', headers=headers, json=json_data)
         data = res.json()
+
+        if 'error' in data:
+            error = data.get('error')
+            if error.get('.tag') == DropboxError.expired_access_token:
+                return {'error': DropboxError.expired_access_token}
+            else:
+                return {'error': DropboxError.unknown_error}
+        
         files = data.get('entries')
 
         file_metadata = []
@@ -108,7 +158,7 @@ class DropboxConnector(DataConnector):
                     document_path = doc.get('path_lower')
                     file_metadata.append((document_name, document_path, file_type))
 
-        return file_metadata
+        return {'results': file_metadata }
 
     def extract_text_from_document(self, access_token: str, document_path: str, file_type: str):
         path = {"path": document_path}
@@ -144,26 +194,27 @@ class DropboxConnector(DataConnector):
 
 
 
-    async def load(self, source_id: str) -> List[Document]:
-        credential_string = StateStore().load_credentials(self.config, self)
-        credential_json = json.loads(credential_string)
+    async def load(self, account_id: str) -> List[Document]:
+        connection = StateStore().load_credentials(self.config, self.connector_id, account_id=account_id)
+        credential_json = json.loads(connection.credential)
 
         documents: List[Document] = []
 
-        # app_key = credential_json.get('app_key')
-        # app_secret = credential_json.get('app_secret')
-        # refresh_token = credential_json.get('refresh_token')
-
-        app_key = APP_KEY
-        app_secret = APP_SECRET
+        access_token = credential_json.get('access_token')
         refresh_token = credential_json.get('refresh_token')
 
-        access_token = self.get_new_access_token(app_key, app_secret, refresh_token)
+        try: 
+            result = self.get_all_files_under_folder(access_token)
+            if 'error' in result:
+                if result.get('error') == DropboxError.expired_access_token:
+                    access_token = self.get_new_access_token(refresh_token)
+                    result = self.get_all_files_under_folder(access_token)
+                else:
+                    raise Exception("Error in getting files")
+            files = result.get('results')
+        except Exception as e:
+            raise e
 
-        if not access_token:
-            return documents
-
-        files = self.get_all_files_under_folder(access_token, self.folder_name)
 
         for file_name, file_path, file_type in files:
             text = self.extract_text_from_document(access_token, file_path, file_type)
@@ -171,14 +222,8 @@ class DropboxConnector(DataConnector):
                 documents.append(
                     Document(
                         title=file_name,
-                        text=text,
-                        url=file_path,
-                        source_type=Source.dropbox,
-                        metadata=DocumentMetadata(
-                            document_id=str(uuid.uuid4()),
-                            source_id=source_id,
-                            tenant_id=self.config.tenant_id
-                        )
+                        content=text,
+                        uri=file_path
                     )
                 )
 
