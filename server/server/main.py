@@ -162,8 +162,6 @@ async def add_oauth_connection(
 
         connector = get_connector_for_id(connector_id, config)
 
-        print("connector", connector)
-
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
 
@@ -188,8 +186,6 @@ async def get_documents(
         account_id = request.account_id
 
         connector = get_connector_for_id(connector_id, config)
-
-        print("connector", connector)
 
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
@@ -216,8 +212,6 @@ async def get_conversations(
         oldest_timestamp = request.oldest_timestamp
 
         connector = get_conversation_connector_for_id(connector_id, config)
-
-        print("connector", connector)
 
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")

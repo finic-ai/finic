@@ -109,6 +109,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Slack
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/dropbox"
+                    className={
+                      "/connectors/dropbox" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Dropbox
+                  </Sidebar.Item>
                   <Tooltip content="Coming Soon" trigger="hover">
                     <Sidebar.Item
                       href="/connectors/website"

@@ -87,15 +87,17 @@ class DropboxConnector(DataConnector):
 
             response = requests.post('https://api.dropbox.com/oauth2/token', data=data)
             response_data = response.json()
-            refresh_token = response_data.get('refresh_token')
 
             creds_string = json.dumps(response_data)
+            metadata = {
+                "dropbox_account_id": response_data['account_id'],
+            }
             new_connection = StateStore().add_connection(
                 config=self.config,
                 credential=creds_string,
                 connector_id=self.connector_id,
                 account_id=account_id,
-                metadata={}
+                metadata=metadata
             )
             return AuthorizationResult(authorized=True, connection=new_connection)
         except Exception as e:
