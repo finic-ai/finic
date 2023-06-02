@@ -35,6 +35,7 @@ from models.models import (
 from connectors.connector_utils import get_connector_for_id, get_conversation_connector_for_id, get_document_connector_for_id
 import uuid
 from logger import Logger
+from chunker.chunker import DocumentChunker
 logger = Logger()
 
 
@@ -184,6 +185,9 @@ async def get_documents(
     try:
         connector_id = request.connector_id
         account_id = request.account_id
+        pre_chunked = request.pre_chunked
+        min_chunk_size = request.min_chunk_size
+        max_chunk_size = request.max_chunk_size
 
         connector = get_connector_for_id(connector_id, config)
 
@@ -191,6 +195,9 @@ async def get_documents(
             raise HTTPException(status_code=404, detail="Connector not found")
 
         result = await connector.load(account_id)
+        if pre_chunked:
+            chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
+            result = chunker.chunk(result)
         response = GetDocumentsResponse(documents=result)
         logger.log_api_call(config, Event.get_documents, request, response, None)
         return response

@@ -45,6 +45,10 @@ class AuthorizationResponse(BaseModel):
 class GetDocumentsRequest(BaseModel):
     connector_id: ConnectorId
     account_id: str
+    pre_chunked: Optional[bool] = False
+    min_chunk_size: Optional[int] = 500
+    max_chunk_size: Optional[int] = 1500
+
 
 class GetDocumentsResponse(BaseModel):
     documents: List[Document]
