@@ -43,7 +43,7 @@ class AuthorizationResponse(BaseModel):
     result: AuthorizationResult
 
 class GetDocumentsRequest(BaseModel):
-    connector_id: ConnectorId
+    connector_id: Optional[ConnectorId] = None
     account_id: str
 
 class GetDocumentsResponse(BaseModel):

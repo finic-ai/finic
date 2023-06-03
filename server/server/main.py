@@ -16,6 +16,7 @@ from models.api import (
     EnableConnectorRequest,
     ConnectorStatusRequest,
     ConnectorStatusResponse,
+    ConnectionFilter,
     GetDocumentsRequest,
     GetDocumentsResponse,
     AuthorizeApiKeyRequest,
@@ -184,17 +185,29 @@ async def get_documents(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        connector_id = request.connector_id
         account_id = request.account_id
 
-        connector = get_connector_for_id(connector_id, config)
+        # If connector_id is not provided, we return documents for all connectors
+        if request.connector_id is None:
+            connections = StateStore().get_connections(ConnectionFilter(account_id=account_id), config)
+            documents = []
+            processed_connectors = []
+            for connection in connections:
+                if connection.connector_id in processed_connectors:
+                    continue
+                connector = get_connector_for_id(connection.connector_id, config)
+                print("processing connector", connector)
+                documents += await connector.load(request.account_id)
+                processed_connectors.append(connection.connector_id)
+            result = documents
+        else:
+            connector_id = request.connector_id
+            connector = get_connector_for_id(connector_id, config)
+            print("processing connector", connector)
+            if connector is None:
+                raise HTTPException(status_code=404, detail="Connector not found")
 
-        print("connector", connector)
-
-        if connector is None:
-            raise HTTPException(status_code=404, detail="Connector not found")
-
-        result = await connector.load(account_id)
+            result = await connector.load(account_id)
         response = GetDocumentsResponse(documents=result)
         logger.log_api_call(config, Event.get_documents, request, response, None)
         return response
