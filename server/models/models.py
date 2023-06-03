@@ -97,3 +97,7 @@ class SyncResult(BaseModel):
 class SyncResults(BaseModel):
     last_updated: int
     results: List[SyncResult] = []
+
+class AskQuestionResult(BaseModel):
+    answer: str
+    sources: List[str]
