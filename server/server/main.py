@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
 from services.sync_service import SyncService
+from services.question_service import QuestionService
 from logger import Logger, Event
 
 from models.api import (
@@ -25,12 +26,14 @@ from models.api import (
     GetConversationsResponse,
     RunSyncRequest,
     RunSyncResponse,
+    AskQuestionRequest,
+    AskQuestionResponse
 )
 
 from appstatestore.statestore import StateStore
 from models.models import (
     AppConfig,
-    DataConnector,
+    ConnectionFilter
 )
 from connectors.connector_utils import get_connector_for_id, get_conversation_connector_for_id, get_document_connector_for_id
 import uuid
@@ -182,6 +185,7 @@ async def get_documents(
     request: GetDocumentsRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    # TODO: Add limits to documents returned
     try:
         connector_id = request.connector_id
         account_id = request.account_id
@@ -213,6 +217,7 @@ async def get_conversations(
     request: GetConversationsRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    # TODO: Add limits to conversations returned
     try:
         connector_id = request.connector_id
         account_id = request.account_id
@@ -247,6 +252,35 @@ async def run_sync(
         return response
     except Exception as e:
         logger.log_api_call(config, Event.run_sync, request, None, e)
+        raise e
+
+@app.post(
+    "/ask-question",
+    response_model=AskQuestionResponse,
+)
+async def run_sync(
+    request: AskQuestionRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        # If connector_id is empty, we will use documents from all connectors
+        if not request.connector_ids:
+            connections = StateStore().get_connections(ConnectionFilter(account_id=request.account_id), config)
+        else:
+            connections = []
+            for connector_id in request.connector_ids:
+                connections.extend(StateStore().get_connections(ConnectionFilter(
+                    connector_id=connector_id, 
+                    account_id=request.account_id
+                    ), config)
+                )
+        
+        result = await QuestionService(config, request.openai_api_key).ask(request.question, connections)
+        response = AskQuestionResponse(answer=result.answer, sources=result.sources)
+        logger.log_api_call(config, Event.ask_question, request, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.ask_question, request, None, e)
         raise e
 
 def start():

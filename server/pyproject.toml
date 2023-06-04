@@ -41,6 +41,7 @@ pygithub = "^1.58.1"
 markdown = "^3.4.3"
 slack-sdk = "^3.21.3"
 html2text = "^2020.1.16"
+chromadb = "^0.3.25"
 
 [tool.poetry.scripts]
 start = "server.main:start"
