@@ -69,7 +69,7 @@ class RunSyncResponse(BaseModel):
 
 class AskQuestionRequest(BaseModel):
     question: str
-    connector_ids: List[ConnectorId]
+    connector_ids: Optional[List[ConnectorId]]
     account_id: str
     openai_api_key: str
 
