@@ -3,6 +3,7 @@ from appstatestore.statestore import StateStore
 from connectors.connector_utils import get_document_connector_for_id
 from models.api import GetDocumentsRequest
 from typing import List
+import pdb
 
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -36,4 +37,12 @@ class QuestionService:
         vdb = Chroma.from_documents(documents[0:1000], embeddings)
         chain = RetrievalQAWithSourcesChain.from_chain_type(OpenAI(openai_api_key=self.openai_api_key, temperature=0), chain_type="stuff", retriever=vdb.as_retriever())
         answer = chain({"question": question}, return_only_outputs=True)
-        return AskQuestionResult(answer=answer["answer"], sources=answer["sources"].split(", "))
+        # Chain returns sources as a string, with inconsistent delimiters. Try to split on comma or newline
+        delimiters = [", ", "\n"]
+        sources = []
+        for delimiter in delimiters:
+            if delimiter in answer["sources"]:
+                sources = answer["sources"].split(delimiter)
+                break
+            sources = [answer["sources"]]
+        return AskQuestionResult(answer=answer["answer"], sources=sources)

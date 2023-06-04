@@ -185,6 +185,7 @@ async def get_documents(
     request: GetDocumentsRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    # TODO: Add limits to documents returned
     try:
         connector_id = request.connector_id
         account_id = request.account_id
@@ -216,6 +217,7 @@ async def get_conversations(
     request: GetConversationsRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
+    # TODO: Add limits to conversations returned
     try:
         connector_id = request.connector_id
         account_id = request.account_id
