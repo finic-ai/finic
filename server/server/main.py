@@ -187,8 +187,17 @@ async def get_documents(
 ):
     # TODO: Add limits to documents returned
     try:
-        connector_id = request.connector_id
         account_id = request.account_id
+        # If connector_id is not provided, return documents from the most recently added connector for the Account
+        if not request.connector_id:
+            connections = StateStore().get_connections(
+                ConnectionFilter(account_id=account_id), config
+            )
+            if len(connections) == 0:
+                raise HTTPException(status_code=404, detail="No connections found for this Account")
+            connector_id = connections[0].connector_id
+        else:
+            connector_id = request.connector_id
         pre_chunked = request.pre_chunked
         min_chunk_size = request.min_chunk_size
         max_chunk_size = request.max_chunk_size

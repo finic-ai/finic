@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional
 from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults
 import os
+from dateutil.parser import parse
 import uuid
 from supabase import create_client, Client
 from google.oauth2.credentials import Credentials
@@ -93,7 +94,8 @@ class StateStore:
         response = query.execute()
 
         connections: List[Connection] = []
-        for row in response.data:
+        # Sort connections by when they were created
+        for row in sorted(response.data, key=lambda x: parse(x['timestamp']), reverse=True):
             connections.append(
                 Connection(
                     account_id=row['account_id'],
