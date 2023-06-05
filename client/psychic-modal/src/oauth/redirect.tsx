@@ -13,7 +13,7 @@ const RedirectPage: React.FC = () => {
           if (code) {
             window.opener.postMessage({ code: code }, '*')
           }
-          // window.close()
+          window.close()
       }
   }, [])
   
