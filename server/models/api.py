@@ -43,7 +43,7 @@ class AuthorizationResponse(BaseModel):
     result: AuthorizationResult
 
 class GetDocumentsRequest(BaseModel):
-    connector_id: ConnectorId
+    connector_id: Optional[ConnectorId]
     account_id: str
     pre_chunked: Optional[bool] = False
     min_chunk_size: Optional[int] = 500
