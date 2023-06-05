@@ -11,6 +11,7 @@ import ZendeskAuthFlow from './components/auth/ZendeskAuthFlow';
 import ConfluenceAuthFlow from './components/auth/ConfluenceAuthFlow';
 import SlackAuthFlow from './components/auth/SlackAuthFlow';
 import DropboxAuthFlow from './components/auth/DropboxAuthFlow';
+import IntercomAuthFlow from './components/auth/IntercomAuthFlow';
 import ModalHeader from './components/ModalHeader';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
@@ -52,6 +53,8 @@ const App: React.FC = () => {
           return <SlackAuthFlow />
         } else if (selectedConnectorId == "dropbox") {
           return <DropboxAuthFlow />
+        } else if (selectedConnectorId == "intercom") {
+          return <IntercomAuthFlow />
         } else {
           return <div>Unknown connector</div>
         }

@@ -17,6 +17,7 @@ import {
   import MetadataForm from "./GDriveMetadataForm";
 import SubdomainMetadataForm from "./SubdomainMetadataForm";
 import ApiKeysForm from "./ApiKeysForm";
+import OAuthListenerForm from "./OAuthListenerForm";
 import { AuthMethod } from "../../context/ModalContext";
   
   type Metadata = {
@@ -46,23 +47,13 @@ import { AuthMethod } from "../../context/ModalContext";
     authorizeConnection,
     setNewConnection,
     credential,
-    setCredential
+    setCredential,
+    startConnectorAuthFlow
   } = useModalContext()
 
   const [authFlowStep, setAuthFlowStep] = useState(0)
   
   const renderModalBody = () => {
-
-    if (isLoading) {
-      return (
-        <div className="text-center">
-          <div className="text-center">
-            <Spinner size="xl"/>
-          </div>
-          <p className="mt-6">Authenticating with <span className="font-bold">{connectorName}</span>...</p>
-        </div>
-      )
-    }
 
     switch (authFlowStep) {
       case 0:
@@ -72,16 +63,24 @@ import { AuthMethod } from "../../context/ModalContext";
               setMetadata({'subdomain': subdomain}) 
               console.log( currentStep)
               setAuthFlowStep(authFlowStep + 1)
+              startConnectorAuthFlow(window, 'zendesk')
             }} />
             
           </>
         )
       case 1:
-        return <ApiKeysForm onSubmit={(email: string, apiKey: string) => {
+        return <OAuthListenerForm onSubmit={async (code: string) => {
           setIsLoading(true)
-          completeAuthWithCode(selectedConnectorId, email, apiKey)      
+          console.log('completing auth with code ', code)
+          await completeAuthWithCode(selectedConnectorId, code)      
           setAuthFlowStep(authFlowStep + 1)    
         }} />
+
+        // return <ApiKeysForm onSubmit={(email: string, apiKey: string) => {
+        //   setIsLoading(true)
+        //   completeAuthWithCode(selectedConnectorId, email, apiKey)      
+        //   setAuthFlowStep(authFlowStep + 1)    
+        // }} />
 
       case 2: 
         console.log('error', error)
@@ -101,6 +100,36 @@ import { AuthMethod } from "../../context/ModalContext";
           </>
           
         )
+    }
+
+    async function completeAuthWithCode(connectorId: string, code: string) {
+      if (!accountId || !publicKey) {
+        setError('Invalid account_id or public_key')
+        setIsLoading(false)
+        return
+      }
+      const result = await authorizeConnection(
+          connectorId, 
+          accountId, 
+          publicKey,
+          code,
+          metadata
+      )
+      console.log('result', result)
+      if (!result) {
+        setError('Something went wrong. Please try again.')
+        setIsSuccess(false)
+        setIsLoading(false)
+        return
+      }
+      setNewConnection(result.connection)
+      setIsLoading(false)
+      setIsSuccess(true)
+      // Notify opening window that auth is complete
+      if (window.opener) {
+        window.opener.postMessage(result.connection, '*')
+      }
+      // setAuthFlowStep(authFlowStep + 1)
     }
 
 
@@ -147,7 +176,7 @@ import { AuthMethod } from "../../context/ModalContext";
     }
   }
   
-  async function completeAuthWithCode(connectorId: string, email: string, apiKey: string) {
+  async function completeAuthWithApiKey(connectorId: string, email: string, apiKey: string) {
     if (!accountId || !publicKey) {
       setError('Invalid account_id or public_key')
       setIsLoading(false)

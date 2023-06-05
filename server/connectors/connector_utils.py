@@ -4,6 +4,7 @@ from .zendesk_connector import ZendeskConnector
 from .confluence_connector import ConfluenceConnector
 from .slack_connector import SlackConnector
 from .dropbox_connector import DropboxConnector
+from .intercom_connector import IntercomConnector
 from models.models import AppConfig, DocumentConnector, ConversationConnector, DataConnector, ConnectorId
 from typing import Optional
 
@@ -36,4 +37,6 @@ def get_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Option
         return SlackConnector(config)
     elif connector_id == ConnectorId.dropbox:
         return DropboxConnector(config)
+    elif connector_id == ConnectorId.intercom:
+        return IntercomConnector(config)
     return None

@@ -119,6 +119,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Dropbox
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/intercom"
+                    className={
+                      "/connectors/intercom" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Intercom
+                  </Sidebar.Item>
                   <Tooltip content="Coming Soon" trigger="hover">
                     <Sidebar.Item
                       href="/connectors/website"

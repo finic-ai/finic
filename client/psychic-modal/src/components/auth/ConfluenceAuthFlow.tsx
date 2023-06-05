@@ -160,7 +160,7 @@ import OAuthListenerForm from "./OAuthListenerForm";
     if (window.opener) {
       window.opener.postMessage(result.connection, '*')
     }
-    setAuthFlowStep(authFlowStep + 1)
+    // setAuthFlowStep(authFlowStep + 1)
   }
   
   return (

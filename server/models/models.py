@@ -12,6 +12,7 @@ class ConnectorId(str, Enum):
     confluence = "confluence"
     slack = "slack"
     dropbox = "dropbox"
+    intercom = "intercom"
 
 class AppConfig(BaseModel):
     app_id: str

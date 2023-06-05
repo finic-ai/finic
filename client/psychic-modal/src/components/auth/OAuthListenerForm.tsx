@@ -23,6 +23,7 @@ const OAuthListenerForm: React.FC<OAuthListenerFormProps> = ({onSubmit}) => {
     const {selectedConnectorId, connectorName, setMetadata, startConnectorAuthFlow} = useModalContext()
     const [authCode, setAuthCode] = useState(null)
     const authCodeHandled = useRef(false)
+    console.log("oauth listener form ")
 
     useEffect(() => {
         // Add event listeners to get auth codes

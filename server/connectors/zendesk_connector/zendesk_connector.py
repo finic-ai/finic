@@ -95,7 +95,7 @@ class ZendeskConnector(DataConnector):
             credential=creds_string,
             connector_id=self.connector_id,
             account_id=account_id,
-            metadata={}
+            metadata=metadata
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
 
