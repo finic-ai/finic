@@ -15,6 +15,7 @@ class Event(str, Enum):
     get_documents = "get_documents"
     run_sync = "run_sync"
     get_conversations = "get_conversations"
+    ask_question = "ask_question"
 
 class Logger:
     posthog_client: Optional[posthog.Client] = None

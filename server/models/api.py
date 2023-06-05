@@ -66,3 +66,13 @@ class RunSyncRequest(BaseModel):
 
 class RunSyncResponse(BaseModel):
     success: List[bool]
+
+class AskQuestionRequest(BaseModel):
+    question: str
+    connector_ids: Optional[List[ConnectorId]]
+    account_id: str
+    openai_api_key: str
+
+class AskQuestionResponse(BaseModel):
+    answer: str
+    sources: List[str]
