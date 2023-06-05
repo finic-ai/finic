@@ -63,7 +63,7 @@ import { AuthMethod } from "../../context/ModalContext";
               setMetadata({'subdomain': subdomain}) 
               console.log( currentStep)
               setAuthFlowStep(authFlowStep + 1)
-              startConnectorAuthFlow(window, 'zendesk')
+              startConnectorAuthFlow(window, 'zendesk', {subdomain: subdomain})
             }} />
             
           </>

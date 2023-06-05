@@ -13,6 +13,7 @@ class ConnectorId(str, Enum):
     slack = "slack"
     dropbox = "dropbox"
     intercom = "intercom"
+    hubspot = "hubspot"
 
 class AppConfig(BaseModel):
     app_id: str

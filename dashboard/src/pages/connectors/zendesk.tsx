@@ -32,7 +32,7 @@ const ZendeskConnectorPage: FC = function () {
     setAuthLoading(true)
     const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
     var payload = {
-      connector_id: "gdrive",
+      connector_id: "zendesk",
       credential: JSON.parse(clientSecret)
     }
 
@@ -63,7 +63,7 @@ const ZendeskConnectorPage: FC = function () {
       const url = import.meta.env.VITE_SERVER_URL + '/get-connector-status';
       console.log(url)
       var payload = {
-        connector_id: "gdrive",
+        connector_id: "zendesk",
       }
       try {
         const response = await fetch(url, {
@@ -177,7 +177,7 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
       </Button>
       <Modal onClose={() => setOpen(false)} show={isOpen}>
         <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-          <strong>Enable Custom Drive Connector</strong>
+          <strong>Enable Custom Zendesk Connector</strong>
         </Modal.Header>
         <Modal.Body>
           <form>

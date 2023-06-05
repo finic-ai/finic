@@ -199,7 +199,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     }
   }
 
-  async function startConnectorAuthFlow(window: any, connectorId: string) {
+  async function startConnectorAuthFlow(window: any, connectorId: string, metadata?: any) {
     setIsLoading(true)
     console.log("hello")
     console.log(accountId)
@@ -210,7 +210,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
       return
     }
     
-    const result = await authorizeConnection(connectorId, accountId, publicKey)
+    const result = await authorizeConnection(connectorId, accountId, publicKey, undefined, metadata, AuthMethod.OAUTH)
     const auth_url = result.auth_url
     console.log(result)
     // Open the auth url in a new window and center it.
