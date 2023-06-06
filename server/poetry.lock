@@ -1643,17 +1643,6 @@ http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (>=1.0.0,<2.0.0)"]
 
 [[package]]
-name = "hubspot"
-version = "0.1.14dev"
-description = "UNKNOWN"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "hubspot-0.1.14dev.tar.gz", hash = "sha256:84e4dacd4370f914be83793c61817677062e3970c26f14bf2d553f6049c578e5"},
-]
-
-[[package]]
 name = "hubspot-api-client"
 version = "7.5.0"
 description = "HubSpot API client"
