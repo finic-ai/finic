@@ -25,6 +25,8 @@ import GithubIcon from "./icons/GithubIcon";
 import SlackIcon from "./icons/SlackIcon";
 import DropboxIcon from "./icons/DropboxIcon";
 import IntercomIcon from "./icons/IntercomIcon";
+import HubspotIcon from "./icons/HubspotIcon";
+import SalesforceIcon from "./icons/SalesforceIcon";
 import { start } from "repl";
 
 // This should be set via a config file eventually so new connectors can be added declaratively without modifying this file
@@ -86,7 +88,15 @@ const connectors = [
     active: true
   },
   {
-    name: "Github",
+    name: "Hubspot",
+    id: "hubspot",
+    icon: HubspotIcon,
+    label: null,
+    labelColor: "info",
+    active: true
+  },
+  {
+    name: "Github Issues",
     id: "github",
     icon: GithubIcon,
     label: "In Development",
@@ -103,7 +113,7 @@ const ConnectorPage: React.FC = () => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
-    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack' || connectorId == 'dropbox' || connectorId == 'intercom') {
+    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack' || connectorId == 'dropbox' || connectorId == 'intercom' || connectorId == 'hubspot') {
       console.log('hello')
       startConnectorAuthFlow(window, connectorId)
     }

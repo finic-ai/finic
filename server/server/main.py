@@ -202,7 +202,7 @@ async def get_documents(
         min_chunk_size = request.min_chunk_size
         max_chunk_size = request.max_chunk_size
 
-        connector = get_connector_for_id(connector_id, config)
+        connector = get_document_connector_for_id(connector_id, config)
 
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")

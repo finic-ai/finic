@@ -17,6 +17,7 @@ import ZendeskConnectorPage from "./pages/connectors/zendesk"
 import SlackConnectorPage from "./pages/connectors/slack";
 import DropboxConnectorPage from "./pages/connectors/dropbox";
 import IntercomConnectorPage from "./pages/connectors/intercom";
+import HubspotConnectorPage from "./pages/connectors/hubspot";
 import { RedirectPage } from "./pages/oauth/redirect";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
@@ -103,6 +104,7 @@ function App() {
                 <Route path="/connectors/slack" element={<SlackConnectorPage />} />
                 <Route path="/connectors/dropbox" element={<DropboxConnectorPage />} />
                 <Route path="/connectors/intercom" element={<IntercomConnectorPage />} />
+                <Route path="/connectors/hubspot" element={<HubspotConnectorPage />} />
                 <Route path="/oauth/redirect" element={<RedirectPage />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/syncs" element={<Syncs />} />

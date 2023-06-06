@@ -129,6 +129,16 @@ const ExampleSidebar: FC = function () {
                   >
                     Intercom
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/hubspot"
+                    className={
+                      "/connectors/hubspot" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Hubspot
+                  </Sidebar.Item>
                   <Tooltip content="Coming Soon" trigger="hover">
                     <Sidebar.Item
                       href="/connectors/website"
