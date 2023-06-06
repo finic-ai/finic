@@ -48,6 +48,8 @@ class ZendeskConnector(DataConnector):
         if not auth_code:
             auth_url = f"https://{subdomain}.zendesk.com/oauth/authorizations/new"
             scopes = "hc:read tickets:read"
+            if self.config.app_id == "15edc3c2-ec0d-429a-ad1c-497aea3d7384":
+                scopes = "hc:read"
             params = {
                 'response_type': 'code',
                 'redirect_uri': redirect_uri,
