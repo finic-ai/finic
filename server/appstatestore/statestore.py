@@ -109,7 +109,7 @@ class StateStore:
 
         connections: List[Connection] = []
         # Sort connections by when they were created
-        for row in sorted(response.data, key=lambda x: parse(x['timestamp']), reverse=True):
+        for row in sorted(response.data, key=lambda x: parse(x['created_at']), reverse=True):
             connections.append(
                 Connection(
                     account_id=row['account_id'],
