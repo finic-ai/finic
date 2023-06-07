@@ -43,10 +43,12 @@ class GoogleDriveConnector(DocumentConnector):
     async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
         client_secrets = StateStore().get_connector_credential(self.connector_id, self.config)
 
+        redirect_uri = client_secrets['web']['redirect_uris'][0]
+
         flow = InstalledAppFlow.from_client_config(
             client_secrets,
             SCOPES, 
-            redirect_uri="https://link.psychic.dev/oauth/redirect"
+            redirect_uri=redirect_uri
         )
         
         if not auth_code:

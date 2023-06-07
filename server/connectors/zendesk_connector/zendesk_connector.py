@@ -41,7 +41,7 @@ class ZendeskConnector(DataConnector):
             client_secret = connector_credentials['client_secret']
             print('metadata', metadata)
             subdomain = metadata['subdomain']
-            redirect_uri = "https://link.psychic.dev/oauth/redirect"
+            redirect_uri = connector_credentials['redirect_uri']
         except Exception as e:
             raise Exception("Connector is not enabled")
         

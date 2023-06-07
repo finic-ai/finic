@@ -35,6 +35,7 @@ class Connection(BaseModel):
     
 class ConnectorStatus(BaseModel):
     is_enabled: bool
+    custom_credentials: Optional[Dict]
     connections: List[Connection] = []
 
 class Document(BaseModel):

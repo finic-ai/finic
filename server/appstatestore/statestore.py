@@ -65,9 +65,11 @@ class StateStore:
             connector_id
         ).execute()
 
-        isEnabled = False
+        custom_credentials = None
+        is_enabled = False
         if len(response.data) > 0:
-            isEnabled = True
+            is_enabled = True
+            custom_credentials = json.loads(response.data[0]['credential'])
         
         # check the connections table for all connections with the given connector_id and app_id
         response = self.supabase.table('connections').select('*').filter(
@@ -90,7 +92,7 @@ class StateStore:
                 )
             )
         
-        return ConnectorStatus(is_enabled=isEnabled, connections=connections)
+        return ConnectorStatus(is_enabled=is_enabled, custom_credentials=custom_credentials, connections=connections)
     
     def get_connections(self, filter: ConnectionFilter, config: AppConfig) -> List[Connection]:
         query = self.supabase.table('connections').select('*').filter(
