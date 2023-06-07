@@ -6,7 +6,7 @@ import {
 import { FC } from "react";
 import { useState } from "react";
 import {usePsychicLink} from "@psychic-api/link";
-import { usePostHog } from 'posthog-js/react'
+import replitShowFiles from "../../public/images/illustrations/replit-show-files.png";
 
 import {
   HiHome,
@@ -48,11 +48,18 @@ const OnboardingPage: FC = function () {
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                     Step 2: Load documents from your data source
                 </h2>
-                <p>Ask questions the data source you just connected using a LLM</p>
-                <p>Your Psychic secret key (keep this private): </p>
+                <p className="my-4">Your Psychic secret key (keep this private): </p>
                 <Tabs.Group style="underline">
                     <Tabs.Item active title="Using LangChain">
-
+                        <div className="flex-col space-y-4">
+                        <p>This Repl shows how to use Psychic's <a className="text-blue-400" href="https://docs.psychic.dev/python-sdk">Python SDK</a> with LangChain to ask questions over data you just connected.</p>
+                        <span className="flex flex-row items-center space-x-2">
+                            <p>To view the source code, click</p>
+                            <img className="h-8" src={replitShowFiles} />
+                            <p>below.</p>
+                        </span>
+                        <iframe height="400px" className="w-full lg:w-2/3" src="https://replit.com/@JasonFan6/Connect-SaaS-data-to-ChatGPT-using-Psychic-and-LangChain?embed=true" />
+                        </div>
                     </Tabs.Item>
                     <Tabs.Item active title="Using LlamaIndex">
 
