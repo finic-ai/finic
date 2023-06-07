@@ -113,7 +113,7 @@ class GoogleDriveConnector(DocumentConnector):
         if len(items) == 0:
             raise Exception("Folder is empty")
         
-        return get_documents_from_folder(service, folder_id)
+        return get_documents_from_folder(service, folder_id, self.connector_id, account_id)
 
 def list_files_in_folder(service, folder_id):
     query = f"'{folder_id}' in parents"
@@ -121,7 +121,7 @@ def list_files_in_folder(service, folder_id):
     items = results.get("files", [])
     return items
 
-def get_documents_from_folder(service, folder_id) -> List[Document]:
+def get_documents_from_folder(service, folder_id, connector_id, account_id) -> List[Document]:
     documents: List[Document] = []
     folders_to_process = deque([folder_id])
 
@@ -150,6 +150,8 @@ def get_documents_from_folder(service, folder_id) -> List[Document]:
                     Document(
                         title=item["name"],
                         content=content,
+                        connector_id=connector_id,
+                        account_id=account_id,
                         uri=item["webViewLink"],
                     )
                 )

@@ -114,6 +114,8 @@ class NotionConnector(DocumentConnector):
                     Document(
                         title=title,
                         content=html,
+                        connector_id=self.connector_id,
+                        account_id=account_id,
                         uri=url
                     )
                 )

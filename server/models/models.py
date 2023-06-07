@@ -41,6 +41,8 @@ class ConnectorStatus(BaseModel):
 class Document(BaseModel):
     title: str
     content: str
+    connector_id: ConnectorId
+    account_id: str
     uri: Optional[str] = None
 
 class MessageSender(BaseModel):

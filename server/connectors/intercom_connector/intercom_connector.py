@@ -85,11 +85,13 @@ class IntercomConnector(DocumentConnector):
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
 
-        documents: List[Document] = [{
-            'title': 'Test',
-            'content': 'This is an example help article. You can edit it by clicking the edit button in the top right corner. You can also add new articles by clicking the "Add Article" button in the top left corner.',
-            'uri': 'https://www.intercom.com/Help-Article-Example-1d1b1b1b1b1b4c4c4c4c4c4c4c4c4c4c',
-        }]
+        documents: List[Document] = [Document(
+            connector_id=self.connector_id,
+            account_id=account_id,
+            title= 'Test',
+            content= 'This is an example help article. You can edit it by clicking the edit button in the top right corner. You can also add new articles by clicking the "Add Article" button in the top left corner.',
+            uri= 'https://www.intercom.com/Help-Article-Example-1d1b1b1b1b1b4c4c4c4c4c4c4c4c4c4c',
+        )]
 
         return documents
 
