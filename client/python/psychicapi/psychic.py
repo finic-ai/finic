@@ -11,7 +11,7 @@ class ConnectorId(Enum):
 
 class Psychic:
     def __init__(self, secret_key: str):
-        self.api_url = "http://localhost:8080/"
+        self.api_url = "https://api.psychic.dev/"
         self.secret_key = secret_key
 
     def get_documents(self, *, account_id: str, connector_id: Optional[ConnectorId] = None):
