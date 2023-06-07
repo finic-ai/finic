@@ -18,18 +18,27 @@ import {
 
 const ModalHeader: React.FC = () => {
 
-  const {currentStep, setCurrentStep, customerLogoUrl} = useModalContext()
+
+  const {currentStep, setCurrentStep, customerLogoUrl, whitelabel} = useModalContext()
     if (currentStep === 0) {
       return (
         <></> 
       )
     }
+
+    const shouldHide = (whitelabel && currentStep == 1) ? true : false
     
     return (
       <div>
         <div className="flex w-full justify-between p-4">
-          <button onClick={() => setCurrentStep(currentStep - 1)} className="items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900">
-            <HiOutlineArrowLeft className="h-5 w-5 text-gray-400"/>
+
+          <button onClick={() => {
+            if (!shouldHide) {
+              setCurrentStep(currentStep - 1)
+            }
+            }} className="items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900">
+            {shouldHide ? <></>:  <HiOutlineArrowLeft className="h-5 w-5 text-gray-400"/>}
+            
           </button>
           <Avatar.Group>
             <Avatar
@@ -38,12 +47,12 @@ const ModalHeader: React.FC = () => {
               stacked={true}
               size="sm"
             />
-            <Avatar
+            {/* <Avatar
               img="https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9fa48bde357e0426aee7_dark_icon.png"
               rounded={true}
               stacked={true}
               size="sm"
-            />
+            /> */}
           </Avatar.Group>
           <div/>
         </div>

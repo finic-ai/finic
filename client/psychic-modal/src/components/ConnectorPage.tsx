@@ -107,7 +107,7 @@ const connectors = [
   
 const ConnectorPage: React.FC = () => {
 
-  const { customerName, customerLogoUrl, currentStep, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow, setMetadata } = useModalContext()
+  const { enabledConnectors, whitelabel, customerName, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow, setMetadata } = useModalContext()
 
   const pickConnector = (connectorName: string, connectorId: string) => {
     setCurrentStep(2)
@@ -143,6 +143,10 @@ const ConnectorPage: React.FC = () => {
         <div className="space-y-6">
           <ul className="my-4 space-y-3">
             {connectors.map((connector) => {
+
+              if (enabledConnectors && enabledConnectors.length > 0 && !enabledConnectors.includes(connector.id)) {
+                return null
+              }
               
               return (<li>
                 {renderConnectorButton(connector.icon, connector.name, connector.id, connector.label, connector.labelColor, connector.active)}
@@ -150,13 +154,13 @@ const ConnectorPage: React.FC = () => {
             })}
           </ul>
           <div className="text-xs font-normal text-gray-500">
-            {"When you connect an application, your data in the application will be shared with Support Hero. The specific resources shared will depend on your permissions in the application, as well as the scopes configured by Support Hero. "}
-            <a
+            {`When you connect an application, your data in the application will be shared with ${customerName}. The specific resources shared will depend on your permissions in the application, as well as the scopes configured by ${customerName}. `}
+            {/* <a
               href="#"
               className="underline text-blue-500 hover:text-blue-600"
             >
             Click here to learn more.
-            </a>
+            </a> */}
           </div>
         </div>
       </div>

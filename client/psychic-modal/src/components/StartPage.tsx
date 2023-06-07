@@ -19,13 +19,6 @@ const StartPage: React.FC = () => {
       <div>
         <div className="flex flex-col items-center px-8">
 
-          {logoLoading ? (
-            <div className="animate-pulse flex flex-col items-center">
-              <div className="w-24 h-24 bg-gray-200 rounded-full mb-4"></div>
-              <div className="w-24 h-6 bg-gray-200 rounded-full"></div>
-            </div>
-          ) : (
-
           <>
           <Avatar.Group className="my-4">
             <Avatar
@@ -42,7 +35,7 @@ const StartPage: React.FC = () => {
             />
           </Avatar.Group>
           <p className="font-normal text-center"><span className="font-bold">{customerName}</span> uses <span className="font-bold">Psychic</span> to connect to your knowledge base applications.</p>
-          </>)}
+          </>
         </div>
         <hr className="h-px my-8 mx-6 bg-gray-200 border-0" />
       </div>
@@ -90,10 +83,23 @@ const StartPage: React.FC = () => {
   }
 
   return (
+    
     <div>
+      {logoLoading ? (
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-24 h-24 bg-gray-200 rounded-full mb-4"></div>
+          {/* Rounded full width rectangles with margins */}
+          <div className="w-3/4 h-8 bg-gray-200 rounded-full mb-2"></div>
+          <div className="w-3/4 h-8 bg-gray-200 rounded-full mb-2"></div>
+          <div className="w-3/4 h-8 bg-gray-200 rounded-full mb-2"></div>
+          <div className="w-3/4 h-8 bg-gray-200 rounded-full mb-2"></div>
+        </div>
+
+      ) : (<>
       {renderModalHeader()}
       {renderModalBody()}
       {renderModalFooter()}
+      </>)}
     </div>
   );
 }
