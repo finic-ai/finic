@@ -18,7 +18,7 @@ class DocumentChunker:
             html_chunks = self.html_to_chunks(html, self.min_chunk_size, self.max_chunk_size)
             markdown_chunks = self.chunks_to_markdown(html_chunks)
             for chunk in markdown_chunks:
-                chunks.append(Document(title=document.title, content=chunk, uri=document.uri))
+                chunks.append(Document(title=document.title, content=chunk, uri=document.uri, connector_id=document.connector_id, account_id=document.account_id))
         return chunks
     
     def html_to_chunks(self, html, min_size=500, max_size=1500):
