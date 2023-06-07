@@ -196,7 +196,7 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
 
   return (
     <>
-          <strong>Enable Notion Connector</strong>
+          <strong>Set Custom Credentials</strong>
           <form>
             <div className="lg:col-span-2">
               <div>

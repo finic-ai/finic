@@ -181,7 +181,7 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
 
   return (
     <>
-          <strong>Enable Custom Drive Connector</strong>
+          <strong>Set Custom Credentials</strong>
 
           <form>
             <div className="lg:col-span-2">
