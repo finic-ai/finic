@@ -5,7 +5,6 @@ import {
   Label,
   TextInput,
   Spinner,
-  Modal,
   Tabs,
   Table
 } from "flowbite-react";
@@ -26,6 +25,7 @@ const NotionConnectorPage: FC = function () {
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [authorizationUrl, setAuthorizationUrl] = useState('');
+  const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
 
   const {bearer} = useUserStateContext()
@@ -39,6 +39,7 @@ const NotionConnectorPage: FC = function () {
         client_id: clientId,
         client_secret: clientSecret,
         authorization_url: authorizationUrl,
+        redirect_uri: redirectUri,
       }
     }
 
@@ -83,6 +84,13 @@ const NotionConnectorPage: FC = function () {
         const jsonData = await response.json();
         const isAuthorized = jsonData.status.is_enabled
         const connections = jsonData.status.connections
+        const customCredentials = jsonData.status.custom_credentials
+        if (customCredentials) {
+          setClientId(customCredentials.client_id)
+          setClientSecret(customCredentials.client_secret)
+          setAuthorizationUrl(customCredentials.authorization_url)
+          setRedirectUri(customCredentials.redirect_uri)
+        }
         setAuthorized(isAuthorized)
         setConnections(connections)
         setAuthLoading(false)
@@ -151,6 +159,8 @@ const NotionConnectorPage: FC = function () {
                         setClientSecret={setClientSecret}
                         authorizationUrl={authorizationUrl}
                         setAuthorizationUrl={setAuthorizationUrl}
+                        redirectUri={redirectUri}
+                        setRedirectUri={setRedirectUri}
                       />
                     </div>
                   </div>
@@ -175,25 +185,18 @@ interface AuthorizeModalProps {
   setClientSecret: (clientSecret: string) => void;
   authorizationUrl: string;
   setAuthorizationUrl: (authorizationUrl: string) => void;
+  redirectUri: string;
+  setRedirectUri: (redirectUri: string) => void;
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading
+  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading, redirectUri, setRedirectUri
 }: AuthorizeModalProps) {
-  const [isOpen, setOpen] = useState(false);
+  console.log(authorized)
 
   return (
     <>
-      <Button color="primary" className="mb-6"  onClick={() => setOpen(true) } >
-        {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
-        {authorized ?  'Update Credentials'  : 'Enable Connector'}
-        </>}
-      </Button>
-      <Modal onClose={() => setOpen(false)} show={isOpen}>
-        <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
           <strong>Enable Notion Connector</strong>
-        </Modal.Header>
-        <Modal.Body>
           <form>
             <div className="lg:col-span-2">
               <div>
@@ -223,18 +226,23 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
                   className="mt-1"
                 />
               </div>
+              <div>
+                <Label htmlFor="apiKeys.label">Redirect URI</Label>
+                <TextInput
+                  value={redirectUri}
+                  onChange={(e) => setRedirectUri(e.target.value)}
+                  placeholder='Notion redirect URI'
+                  className="mt-1"
+                />
+              </div>
             </div>
           </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button color="primary" onClick={() => {
+
+          <Button className="mt-4" color="primary" onClick={() => {
             authorize()
-            setOpen(false)
           }}>
-            Save
+            {authLoading ? <Spinner /> : 'Save'}
           </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 };
