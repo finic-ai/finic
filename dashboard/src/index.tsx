@@ -8,6 +8,7 @@ import theme from "./flowbite-theme";
 import { Flowbite } from "flowbite-react";
 import { Routes, Route } from "react-router";
 import { BrowserRouter } from "react-router-dom";
+import OnboardingPage from "./pages/onboarding";
 import ApiKeysPage from "./pages/api-keys";
 import ConnectionsPage from "./pages/connections";
 import { UserStateProvider } from "./context/UserStateContext";
@@ -95,6 +96,7 @@ function App() {
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<ApiKeysPage />} index />
+                <Route path="/onboarding" element={<OnboardingPage />} />
                 <Route path="/api-keys" element={<ApiKeysPage />} />
                 <Route path="/connections" element={<ConnectionsPage />} />
                 <Route path="/connectors/notion" element={<NotionConnectorPage />} />
