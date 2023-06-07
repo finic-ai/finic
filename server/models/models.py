@@ -15,6 +15,13 @@ class ConnectorId(str, Enum):
     intercom = "intercom"
     hubspot = "hubspot"
 
+class Settings(BaseModel):
+    name: str
+    logo: Optional[str]
+    whitelabel: bool
+    custom_auth_url: Optional[str]
+    enabled_connectors: List[ConnectorId]
+
 class AppConfig(BaseModel):
     app_id: str
     user_id: str
@@ -28,11 +35,14 @@ class Connection(BaseModel):
     
 class ConnectorStatus(BaseModel):
     is_enabled: bool
+    custom_credentials: Optional[Dict]
     connections: List[Connection] = []
 
 class Document(BaseModel):
     title: str
     content: str
+    connector_id: ConnectorId
+    account_id: str
     uri: Optional[str] = None
 
 class MessageSender(BaseModel):

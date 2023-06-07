@@ -11,16 +11,18 @@ class ConnectorId(Enum):
 
 class Psychic:
     def __init__(self, secret_key: str):
-        self.api_url = "https://sidekick-ezml2kwdva-uc.a.run.app/"
+        self.api_url = "https://api.psychic.dev/"
         self.secret_key = secret_key
 
-    def get_documents(self, connector_id: ConnectorId, account_id: str):
+    def get_documents(self, *, account_id: str, connector_id: Optional[ConnectorId] = None):
+        body = {
+            "account_id": account_id
+        }
+        if connector_id is not None:
+            body["connector_id"] = connector_id.value
         response = requests.post(
             self.api_url + "get-documents",
-            json={
-                "connector_id": connector_id.value,
-                "account_id": account_id,
-            },
+            json=body,
             headers={
                 'Authorization': 'Bearer ' + self.secret_key,
                 'Accept': 'application/json'
@@ -32,7 +34,7 @@ class Psychic:
         else:
             return None
         
-    def get_connections(self, connector_id: Optional[ConnectorId] = None, account_id: Optional[str] = None):
+    def get_connections(self, *, connector_id: Optional[ConnectorId] = None, account_id: Optional[str] = None):
         filter = {}
 
         if connector_id is not None:
@@ -56,7 +58,7 @@ class Psychic:
         else:
             return None
         
-    def get_conversations(self, connector_id: ConnectorId, account_id: str, oldest_timestamp: Optional[int] = None):
+    def get_conversations(self, *, account_id: str, connector_id: ConnectorId, oldest_timestamp: Optional[int] = None):
         body = {
             "connector_id": connector_id.value,
             "account_id": account_id,

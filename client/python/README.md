@@ -9,7 +9,7 @@ Psychic is a platform for integrating with your customer’s SaaS tools like Not
 ## Quick start
 
 1. Create an account in the [dashboard](https://dashboard.psychic.dev/).
-2. Use the [react library](https://docs.psychic.dev/psychic-link) to add the Psychic link modal to your frontend react app. Users will use this to connect their SaaS apps.
+2. Use the [react library](https://docs.psychic.dev/psychic-link) to add the Psychic link modal to your frontend react app. Users will use this to connect their SaaS apps. Or, use the [playground](https://dashboard.psychic.dev/playground) to connect your own data sources.
 3. Use `psychicapi` to retrieve documents from your active connections.
 
 ## Usage 
@@ -25,11 +25,11 @@ psychic = Psychic(secret_key="secret-key")
 
 ```
 # Get all active connections and optionally filter by connector id and/or account id
-connections = psychic.get_connections(connector_id=ConnectorId.notion, account_id=None)
+connections = psychic.get_connections(account_id="account_id")
 ```
 
 ### Retrieve documents from a connection
 
 ```
-docs = psychic.get_documents(ConnectorId.zendesk, "account_id")
+docs = psychic.get_documents(account_id="account_id")
 ```

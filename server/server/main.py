@@ -27,7 +27,8 @@ from models.api import (
     RunSyncRequest,
     RunSyncResponse,
     AskQuestionRequest,
-    AskQuestionResponse
+    AskQuestionResponse,
+    GetLinkSettingsResponse
 )
 
 from appstatestore.statestore import StateStore
@@ -103,6 +104,22 @@ async def get_connector_status(
         return response
     except Exception as e:
         logger.log_api_call(config, Event.get_connector_status, request, None, e)
+        raise e
+    
+@app.get(
+    "/get-link-settings",
+    response_model=GetLinkSettingsResponse,
+)
+async def get_link_settings(
+    config: AppConfig = Depends(validate_public_key),
+):
+    try:
+        settings = StateStore().get_link_settings(config)
+        response = GetLinkSettingsResponse(settings=settings)
+        logger.log_api_call(config, Event.get_link_settings, None, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.get_connector_status, None, None, e)
         raise e
 
 @app.post(
@@ -188,30 +205,35 @@ async def get_documents(
     # TODO: Add limits to documents returned
     try:
         account_id = request.account_id
-        # If connector_id is not provided, return documents from the most recently added connector for the Account
+        # If connector_id is not provided, return documents from all connectors
         if not request.connector_id:
             connections = StateStore().get_connections(
                 ConnectionFilter(account_id=account_id), config
             )
             if len(connections) == 0:
                 raise HTTPException(status_code=404, detail="No connections found for this Account")
-            connector_id = connections[0].connector_id
+            connector_ids = [connection.connector_id for connection in connections]
         else:
-            connector_id = request.connector_id
+            connector_ids = [request.connector_id]
+
         pre_chunked = request.pre_chunked
         min_chunk_size = request.min_chunk_size
         max_chunk_size = request.max_chunk_size
 
-        connector = get_document_connector_for_id(connector_id, config)
+        documents = []
 
-        if connector is None:
-            raise HTTPException(status_code=404, detail="Connector not found")
+        for connector_id in connector_ids:
 
-        result = await connector.load(account_id)
-        if pre_chunked:
-            chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
-            result = chunker.chunk(result)
-        response = GetDocumentsResponse(documents=result)
+            connector = get_document_connector_for_id(connector_id, config)
+            if connector is None:
+                raise HTTPException(status_code=404, detail="Connector not found")
+
+            result = await connector.load(account_id)
+            if pre_chunked:
+                chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
+                result = chunker.chunk(result)
+            documents.extend(result)
+        response = GetDocumentsResponse(documents=documents)
         logger.log_api_call(config, Event.get_documents, request, response, None)
         return response
     except Exception as e:

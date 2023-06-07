@@ -33,6 +33,9 @@ interface ModalContextType {
   accountId: string | null;
   publicKey: string | null;
   logoLoading: boolean;
+  enabledConnectors: string[];
+  whitelabel: boolean;
+
   authorizeConnection: Function;
   startConnectorAuthFlow: Function;
 }
@@ -77,6 +80,8 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
   const [authCode, setAuthCode] = useState('');
   const [credential, setCredential] = useState(null);
   const [logoLoading, setLogoLoading] = useState(true);
+  const [enabledConnectors, setEnabledConnectors] = useState<string[]>([]);
+  const [whitelabel, setWhitelabel] = useState(false);
 
   const authCodeHandled = useRef(false);
 
@@ -114,7 +119,9 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     authorizeConnection,
     startConnectorAuthFlow,
     credential,
-    setCredential
+    setCredential,
+    enabledConnectors,
+    whitelabel
   };
 
   useEffect(() => {
@@ -122,22 +129,31 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
       // Get settings for public key and set the name and logo
       supabase
         .from('settings')
-        .select('name, logo')
+        .select('name, logo, whitelabel, enabled_connectors')
         .eq('app_id', publicKey)
         .then(({ data, error }) => {
           setLogoLoading(false);
           if (error) {
             setCustomerName('Support Hero');
             setCustomerLogoUrl('https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9f332d59bb5fbb0b60e3_Icon%20(3).png');
+            setWhitelabel(false);
+            setEnabledConnectors([]);
             console.log(error);
             return;
           }
           if (data && data.length > 0) {
             setCustomerName(data[0].name);
             setCustomerLogoUrl(data[0].logo);
+            setWhitelabel(data[0].whitelabel);
+            setEnabledConnectors(data[0].enabled_connectors);
+            if (data[0].whitelabel) {
+              setCurrentStep(1);
+            }
           } else {
             setCustomerName('Support Hero');
             setCustomerLogoUrl('https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9f332d59bb5fbb0b60e3_Icon%20(3).png');
+            setWhitelabel(false);
+            setEnabledConnectors([]);
           }
         });
     }

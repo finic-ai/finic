@@ -41,7 +41,7 @@ class ZendeskConnector(DataConnector):
             client_secret = connector_credentials['client_secret']
             print('metadata', metadata)
             subdomain = metadata['subdomain']
-            redirect_uri = "https://link.psychic.dev/oauth/redirect"
+            redirect_uri = connector_credentials['redirect_uri']
         except Exception as e:
             raise Exception("Connector is not enabled")
         
@@ -135,14 +135,17 @@ class ZendeskConnector(DataConnector):
                 title=article['title']
                 article_url = article["html_url"]
                 body = article['body']
-                text = BeautifulSoup(body, "html.parser").get_text()
-                documents.append(
-                        Document(
-                        title=title,
-                        content=text,
-                        uri=article_url
+                # text = BeautifulSoup(body, "html.parser").get_text()
+                if body and title and article_url:
+                    documents.append(
+                            Document(
+                            title=title,
+                            content=body,
+                            connector_id=self.connector_id,
+                            account_id=account_id,
+                            uri=article_url
+                        )
                     )
-                )
             base_url = data["next_page"]
 
         return documents

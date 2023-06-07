@@ -225,6 +225,8 @@ class DropboxConnector(DataConnector):
                     Document(
                         title=file_name,
                         content=text,
+                        connector_id=self.connector_id,
+                        account_id=account_id,
                         uri=file_path
                     )
                 )

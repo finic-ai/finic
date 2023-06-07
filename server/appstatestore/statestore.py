@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults
+from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults, Settings
 import os
 from dateutil.parser import parse
 import uuid
@@ -15,6 +15,7 @@ class StateStore:
         supabase_key = os.environ.get('SUPABASE_KEY')
         self.supabase = create_client(supabase_url, supabase_key)
 
+
     def get_config(self, bearer_token: str) -> Optional[AppConfig]:
         response = self.supabase.table('users').select('*').filter('secret_key', 'eq', bearer_token).execute()
         if len(response.data) > 0:
@@ -27,6 +28,19 @@ class StateStore:
         if len(response.data) > 0:
             row = response.data[0]
             return AppConfig(app_id=row['app_id'], user_id=row['id'])
+        return None
+    
+    def get_link_settings(self, config: AppConfig) -> Optional[Settings]:
+        response = self.supabase.table('settings').select('*').filter('app_id', 'eq', config.app_id).execute()
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Settings(
+                name=row['name'],
+                logo=row['logo'],
+                whitelabel=row['whitelabel'],
+                custom_auth_url=row['custom_auth_url'],
+                enabled_connectors=row['enabled_connectors']
+            )
         return None
     
     def enable_connector(self, connector_id: ConnectorId, credential: Dict, config: AppConfig) -> ConnectorStatus:
@@ -51,9 +65,11 @@ class StateStore:
             connector_id
         ).execute()
 
-        isEnabled = False
+        custom_credentials = None
+        is_enabled = False
         if len(response.data) > 0:
-            isEnabled = True
+            is_enabled = True
+            custom_credentials = json.loads(response.data[0]['credential'])
         
         # check the connections table for all connections with the given connector_id and app_id
         response = self.supabase.table('connections').select('*').filter(
@@ -76,7 +92,7 @@ class StateStore:
                 )
             )
         
-        return ConnectorStatus(is_enabled=isEnabled, connections=connections)
+        return ConnectorStatus(is_enabled=is_enabled, custom_credentials=custom_credentials, connections=connections)
     
     def get_connections(self, filter: ConnectionFilter, config: AppConfig) -> List[Connection]:
         query = self.supabase.table('connections').select('*').filter(
@@ -95,7 +111,7 @@ class StateStore:
 
         connections: List[Connection] = []
         # Sort connections by when they were created
-        for row in sorted(response.data, key=lambda x: parse(x['timestamp']), reverse=True):
+        for row in sorted(response.data, key=lambda x: parse(x['created_at']), reverse=True):
             connections.append(
                 Connection(
                     account_id=row['account_id'],

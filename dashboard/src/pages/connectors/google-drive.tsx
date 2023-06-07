@@ -5,7 +5,6 @@ import {
   Label,
   TextInput,
   Spinner,
-  Modal,
   Tabs,
   Table
 } from "flowbite-react";
@@ -85,7 +84,11 @@ const GoogleDriveConnectorPage: FC = function () {
         }
         const jsonData = await response.json();
         const isAuthorized = jsonData.status.is_enabled
+        const customCredentials = jsonData.status.custom_credentials
         const connections = jsonData.status.connections
+        if (customCredentials) {
+          setClientSecret(JSON.stringify(customCredentials))
+        }
         setAuthorized(isAuthorized)
         setConnections(connections)
         setAuthLoading(false)
@@ -174,20 +177,12 @@ interface AuthorizeModalProps {
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
   authorize, clientSecret, setClientSecret, authorized, authLoading
 }: AuthorizeModalProps) {
-  const [isOpen, setOpen] = useState(false);
+  console.log(authorized)
 
   return (
     <>
-      <Button color="primary" className="mb-6"  onClick={() => setOpen(true) } >
-        {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
-        {authorized ?  'Update Credentials'  : 'Custom Credentials'}
-        </>}
-      </Button>
-      <Modal onClose={() => setOpen(false)} show={isOpen}>
-        <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-          <strong>Enable Custom Drive Connector</strong>
-        </Modal.Header>
-        <Modal.Body>
+          <strong>Set Custom Credentials</strong>
+
           <form>
             <div className="lg:col-span-2">
               <div>
@@ -201,18 +196,14 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
               </div>
             </div>
           </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button color="primary" onClick={() => {
+
+          <Button className="mt-4" color="primary" onClick={() => {
             authorize()
-            setOpen(false)
           }}>
-            Save
+            {authLoading ? <Spinner /> : 'Save'}
           </Button>
-        </Modal.Footer>
-      </Modal>
     </>
-  );
+  )
 };
 
 interface ConnectionsTableProps {

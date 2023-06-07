@@ -27,7 +27,7 @@ class NotionConnector(DocumentConnector):
             client_id = connector_credentials['client_id']
             client_secret = connector_credentials['client_secret']
             authorization_url = connector_credentials['authorization_url']
-            redirect_uri = "https://link.psychic.dev/oauth/redirect"
+            redirect_uri = connector_credentials["redirect_uri"] 
         except Exception as e:
             raise Exception("Connector is not enabled")
         
@@ -114,6 +114,8 @@ class NotionConnector(DocumentConnector):
                     Document(
                         title=title,
                         content=html,
+                        connector_id=self.connector_id,
+                        account_id=account_id,
                         uri=url
                     )
                 )

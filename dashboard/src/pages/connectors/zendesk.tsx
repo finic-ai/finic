@@ -5,7 +5,6 @@ import {
   Label,
   TextInput,
   Spinner,
-  Modal,
   Tabs,
   Table
 } from "flowbite-react";
@@ -24,6 +23,8 @@ const ZendeskConnectorPage: FC = function () {
   const [authorized, setAuthorized] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [clientSecret, setClientSecret] = useState('');
+  const [clientId, setClientId] = useState('');
+  const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
 
   const {bearer} = useUserStateContext()
@@ -33,7 +34,11 @@ const ZendeskConnectorPage: FC = function () {
     const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
     var payload = {
       connector_id: "zendesk",
-      credential: JSON.parse(clientSecret)
+      credential: {
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+      }
     }
 
     try {
@@ -76,8 +81,14 @@ const ZendeskConnectorPage: FC = function () {
         }
         const jsonData = await response.json();
         const isAuthorized = jsonData.status.is_enabled
+        const customCredentials = jsonData.status.custom_credentials
         const connections = jsonData.status.connections
         setAuthorized(isAuthorized)
+        if (customCredentials) {
+          setClientId(customCredentials.client_id)
+          setClientSecret(customCredentials.client_secret)
+          setRedirectUri(customCredentials.redirect_uri)
+        }
         setConnections(connections)
         setAuthLoading(false)
       } catch (error) {
@@ -141,6 +152,11 @@ const ZendeskConnectorPage: FC = function () {
                         authorized={authorized} 
                         clientSecret={clientSecret}
                         setClientSecret={setClientSecret}
+                        clientId={clientId}
+                        setClientId={setClientId}
+                        redirectUri={redirectUri}
+                        setRedirectUri={setRedirectUri}
+
                       />
                     </div>
                   </div>
@@ -160,49 +176,64 @@ interface AuthorizeModalProps {
   authorized: boolean;
   authLoading: boolean;
   clientSecret: string;
+  clientId: string; 
+  setClientId: (clientId: string) => void; 
+  redirectUri: string; 
+  setRedirectUri: (redirectUri: string) => void;
   setClientSecret: (clientSecret: string) => void;
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientSecret, setClientSecret, authorized, authLoading
+  authorize, clientSecret, setClientSecret, clientId, setClientId, redirectUri, setRedirectUri, authorized, authLoading
 }: AuthorizeModalProps) {
-  const [isOpen, setOpen] = useState(false);
-
+  console.log(authorized)
   return (
     <>
-      <Button disabled={true} color="primary" className="mb-6"  onClick={() => setOpen(true) } >
-        {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
-        {authorized ?  'Update Credentials'  : 'Custom Credentials'}
-        </>}
-      </Button>
-      <Modal onClose={() => setOpen(false)} show={isOpen}>
-        <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-          <strong>Enable Custom Zendesk Connector</strong>
-        </Modal.Header>
-        <Modal.Body>
+          <strong>Custom Zendesk OAuth credentials</strong>
           <form>
             <div className="lg:col-span-2">
               <div>
-                <Label htmlFor="apiKeys.label">Client Secret JSON</Label>
+                <Label htmlFor="apiKeys.label">Client ID</Label>
+                <TextInput
+                  value={clientId}
+                  disabled={authLoading}
+                  onChange={(e) => setClientId(e.target.value)}
+                  placeholder='Client ID'
+                  className="mt-1"
+                />
+              </div>
+            </div>
+            <div className="lg:col-span-2">
+              <div>
+                <Label htmlFor="apiKeys.label">Client Secret</Label>
                 <TextInput
                   value={clientSecret}
+                  disabled={authLoading}
                   onChange={(e) => setClientSecret(e.target.value)}
                   placeholder='Client Secret'
                   className="mt-1"
                 />
               </div>
             </div>
+            <div className="lg:col-span-2">
+              <div>
+                <Label htmlFor="apiKeys.label">Redirect URI</Label>
+                <TextInput
+                  value={redirectUri}
+                  disabled={authLoading}
+                  onChange={(e) => setRedirectUri(e.target.value)}
+                  placeholder='Redirect URI'
+                  className="mt-1"
+                />
+              </div>
+            </div>
           </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button color="primary" onClick={() => {
+          <Button  className="mt-4" color="primary" onClick={() => {
             authorize()
-            setOpen(false)
           }}>
-            Save
+            {authLoading ? <Spinner /> : 'Save'}
+            
           </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 };
