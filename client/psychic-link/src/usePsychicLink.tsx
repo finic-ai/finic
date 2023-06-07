@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 
 const PSYCHIC_URL = 'https://link.psychic.dev';
+// const PSYCHIC_API_URL = 'http://localhost:8080'
+const PSYCHIC_API_URL = 'https://sidekick-ezml2kwdva-uc.a.run.app';
 
 export function usePsychicLink(public_key: string, onSuccessCallback: Function) {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -10,10 +12,39 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
 
   let windowObjectReference: Window | null = null;
 
+  async function getCustomAuthUrl(public_key: string) {
+    try {
+      // Use the public key as the bearer
+      const response = await fetch(`${PSYCHIC_API_URL}/get-link-settings`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${public_key}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      if (data && data.settings && data.settings.custom_auth_url) {
+        return data.settings.custom_auth_url;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
+
   async function open(accountId: string) {
     setIsLoading(true)
-    // Open the Psychic Link modal
-    const url = `${PSYCHIC_URL}?public_key=${public_key}&account_id=${accountId}`
+
+    // Call the get-link-settings endpoint to get any custom settings
+    const customUrl = await getCustomAuthUrl(public_key);
+    var url = ""
+    if (customUrl) {
+      url = `${customUrl}?public_key=${public_key}&account_id=${accountId}`
+    } else {
+      url = `${PSYCHIC_URL}?public_key=${public_key}&account_id=${accountId}`
+    }
 
     if (windowObjectReference === null || windowObjectReference.closed) {
       const width = 600;

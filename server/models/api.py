@@ -5,11 +5,15 @@ from models.models import (
     ConnectorStatus,
     AuthorizationResult,
     Connection,
-    ConnectionFilter
+    ConnectionFilter,
+    Settings
 )
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 
+class GetLinkSettingsResponse(BaseModel):
+    settings: Optional[Settings]
+    
 class ConnectorStatusResponse(BaseModel):
     status: ConnectorStatus
 

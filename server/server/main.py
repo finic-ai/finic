@@ -27,7 +27,8 @@ from models.api import (
     RunSyncRequest,
     RunSyncResponse,
     AskQuestionRequest,
-    AskQuestionResponse
+    AskQuestionResponse,
+    GetLinkSettingsResponse
 )
 
 from appstatestore.statestore import StateStore
@@ -103,6 +104,22 @@ async def get_connector_status(
         return response
     except Exception as e:
         logger.log_api_call(config, Event.get_connector_status, request, None, e)
+        raise e
+    
+@app.get(
+    "/get-link-settings",
+    response_model=GetLinkSettingsResponse,
+)
+async def get_link_settings(
+    config: AppConfig = Depends(validate_public_key),
+):
+    try:
+        settings = StateStore().get_link_settings(config)
+        response = GetLinkSettingsResponse(settings=settings)
+        logger.log_api_call(config, Event.get_link_settings, None, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.get_connector_status, None, None, e)
         raise e
 
 @app.post(

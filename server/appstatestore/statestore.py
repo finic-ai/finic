@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults
+from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults, Settings
 import os
 from dateutil.parser import parse
 import uuid
@@ -15,6 +15,7 @@ class StateStore:
         supabase_key = os.environ.get('SUPABASE_KEY')
         self.supabase = create_client(supabase_url, supabase_key)
 
+
     def get_config(self, bearer_token: str) -> Optional[AppConfig]:
         response = self.supabase.table('users').select('*').filter('secret_key', 'eq', bearer_token).execute()
         if len(response.data) > 0:
@@ -27,6 +28,19 @@ class StateStore:
         if len(response.data) > 0:
             row = response.data[0]
             return AppConfig(app_id=row['app_id'], user_id=row['id'])
+        return None
+    
+    def get_link_settings(self, config: AppConfig) -> Optional[Settings]:
+        response = self.supabase.table('settings').select('*').filter('app_id', 'eq', config.app_id).execute()
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Settings(
+                name=row['name'],
+                logo=row['logo'],
+                whitelabel=row['whitelabel'],
+                custom_auth_url=row['custom_auth_url'],
+                enabled_connectors=row['enabled_connectors']
+            )
         return None
     
     def enable_connector(self, connector_id: ConnectorId, credential: Dict, config: AppConfig) -> ConnectorStatus:
