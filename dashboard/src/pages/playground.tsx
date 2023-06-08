@@ -47,6 +47,9 @@ const PlaygroundPage: FC = function () {
           <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
             <div className="mb-1 w-full">
               <div className="mb-4">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
+                Create new connections
+              </h2>
                 <ConnectorPlayground bearer={appId} />
               </div>
             </div>
@@ -59,7 +62,7 @@ interface ConnectorPlaygroundProps {
   bearer: string;
 }
 
-const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: ConnectorPlaygroundProps) {
+export const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: ConnectorPlaygroundProps) {
   const [accountId, setAccountId] = useState<string>('');
   const [newConnection, setNewConnection] = useState<any>(null);
 
@@ -74,10 +77,7 @@ const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: Co
 
   return (
     <>
-      <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
-        Create new connections
-      </h2>
-      <p className="mb-6">{"Connect data from your applications here. You can then view them under Connectors > Active Connections."}</p>
+      <p className="mb-6">{"Connect data from your applications. You can then view them under Connectors > Active Connections."}</p>
       <Label htmlFor="apiKeys.label">Account ID</Label>
       <TextInput
         value={accountId}

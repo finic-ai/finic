@@ -37,7 +37,7 @@ import { useUserStateContext } from "../context/UserStateContext";
             </div>
             <div className="block items-center sm:flex">
               <div className="flex w-full items-center sm:justify-end">
-                <AddProductModal />
+                <AddAPIKeyModal />
               </div>
             </div>
           </div>
@@ -46,7 +46,7 @@ import { useUserStateContext } from "../context/UserStateContext";
           <div className="overflow-x-auto">
             <div className="inline-block min-w-full align-middle">
               <div className="overflow-hidden shadow">
-                <ProductsTable />
+                <APIKeyTable />
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@ import { useUserStateContext } from "../context/UserStateContext";
     );
   };
   
-  const AddProductModal: FC = function () {
+  const AddAPIKeyModal: FC = function () {
     const [isOpen, setOpen] = useState(false);
   
     return (
@@ -105,7 +105,7 @@ import { useUserStateContext } from "../context/UserStateContext";
     );
   };
   
-  const ProductsTable: FC = function () {
+  const APIKeyTable: FC = function () {
     const {bearer, appId} = useUserStateContext()
     const testAPIKeys = [
       {

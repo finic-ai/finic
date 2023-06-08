@@ -53,7 +53,7 @@ export function SidebarProvider({ children }: PropsWithChildren) {
     <SidebarContext.Provider
       value={{
         isOpenOnSmallScreens: isOpen,
-        isPageWithSidebar: true,
+        isPageWithSidebar: !window.location.pathname.includes("/onboarding"),
         setOpenOnSmallScreens: setOpen,
       }}
     >
