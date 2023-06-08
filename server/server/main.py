@@ -205,6 +205,7 @@ async def get_documents(
     # TODO: Add limits to documents returned
     try:
         account_id = request.account_id
+        uris = request.uris
         # If connector_id is not provided, return documents from all connectors
         if not request.connector_id:
             connections = StateStore().get_connections(
@@ -228,7 +229,7 @@ async def get_documents(
             if connector is None:
                 raise HTTPException(status_code=404, detail="Connector not found")
 
-            result = await connector.load(account_id)
+            result = await connector.load(account_id, uris=uris)
             if pre_chunked:
                 chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
                 result = chunker.chunk(result)

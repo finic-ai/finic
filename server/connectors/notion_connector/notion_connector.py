@@ -87,7 +87,7 @@ class NotionConnector(DocumentConnector):
         print(page_text)
         return page_text
 
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
@@ -95,7 +95,13 @@ class NotionConnector(DocumentConnector):
 
         parser = NotionParser(access_token)
 
-        all_notion_documents = parser.notion_search({})
+        all_notion_documents = []
+        if uris:
+            for uri in uris:
+                page = parser.notion_get_page(uri)
+                all_notion_documents.append(page)
+        else:
+            all_notion_documents = parser.notion_search({})
 
         documents: List[Document] = []
         for item in all_notion_documents:

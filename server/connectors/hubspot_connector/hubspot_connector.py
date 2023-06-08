@@ -69,7 +69,7 @@ class HubspotConnector(DocumentConnector):
         return AuthorizationResult(authorized=True, connection=new_connection)
 
 
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)

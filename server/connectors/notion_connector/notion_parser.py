@@ -18,6 +18,17 @@ class NotionParser:
             return blocks
         return []
 
+    def notion_get_page(self, url: str):
+        # ID is the last part of the url
+        page_id = url.split('/')[-1]
+        # If there is a title then the id is the last part separated by dashes
+        if '-' in page_id:
+            page_id = page_id.split('-')[-1]
+        res = requests.get(f"{BASE_URL}/v1/pages/{page_id}", headers=self.headers)
+        res_json = res.json()
+        return res_json
+
+
     def notion_search(self, query: Dict):
         res = requests.post(f"{BASE_URL}/v1/search", headers=self.headers, data=query)
         res_json = res.json()
