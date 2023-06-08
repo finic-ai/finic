@@ -11,6 +11,7 @@ from typing import Dict
 import json
 import requests
 from bs4 import BeautifulSoup
+from .zendesk_parser import ZendeskParser
 
 
 class ZendeskConnector(DataConnector):
@@ -102,51 +103,36 @@ class ZendeskConnector(DataConnector):
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
 
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
         # initialize credentials
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_json = json.loads(connection.credential)
 
         subdomain = connection.metadata['subdomain']
 
-        is_oauth = False
-        if "api_key" in credential_json:
-            api_key = credential_json["api_key"]
-            email = credential_json["email"]
-        else:
-            is_oauth = True
-            access_token = credential_json["access_token"]
-
-        base_url = f"https://{subdomain}.zendesk.com/api/v2/help_center/articles.json"
-
         documents = []
+        parser = ZendeskParser(subdomain, credential_json)
 
-        while base_url:
-            if is_oauth:
-                response = self.call_zendesk_api_oauth(base_url, access_token)
-            else:
-                response = self.call_zendesk_api(base_url, api_key, email)
-            if response.status_code != 200:
-                print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
-                return []
+        if uris:
+            articles = parser.get_articles_by_uris(uris)
+        else:
+            articles = parser.get_all_articles()
 
-            data = response.json()
-            for article in data["articles"]:
-                title=article['title']
-                article_url = article["html_url"]
-                body = article['body']
-                # text = BeautifulSoup(body, "html.parser").get_text()
-                if body and title and article_url:
-                    documents.append(
-                            Document(
-                            title=title,
-                            content=body,
-                            connector_id=self.connector_id,
-                            account_id=account_id,
-                            uri=article_url
-                        )
+        for article in articles:
+            title=article['title']
+            article_url = article["html_url"]
+            body = article['body']
+            # text = BeautifulSoup(body, "html.parser").get_text()
+            if body and title and article_url:
+                documents.append(
+                        Document(
+                        title=title,
+                        content=body,
+                        connector_id=self.connector_id,
+                        account_id=account_id,
+                        uri=article_url
                     )
-            base_url = data["next_page"]
+                )
 
         return documents
     
