@@ -14,6 +14,7 @@ import io
 from PyPDF2 import PdfReader
 import re
 from collections import deque
+from .google_drive_parser import GoogleDriveParser
 
 
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
@@ -106,59 +107,43 @@ class GoogleDriveConnector(DocumentConnector):
 
 
         # List the files in the specified folder
-        results = service.files().list(q=f"'{folder_id}' in parents and trashed = false",
-                                    fields="nextPageToken, files(id, name, webViewLink)").execute()
-        items = results.get('files', [])
+        # results = service.files().list(q=f"'{folder_id}' in parents and trashed = false",
+        #                             fields="nextPageToken, files(id, name, webViewLink)").execute()
+        # items = results.get('files', [])
 
-        if len(items) == 0:
-            raise Exception("Folder is empty")
         
-        return get_documents_from_folder(service, folder_id, self.connector_id, account_id)
+        
+        parser = GoogleDriveParser(service, folder_id=folder_id)
 
-def list_files_in_folder(service, folder_id):
-    query = f"'{folder_id}' in parents"
-    results = service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
-    items = results.get("files", [])
-    return items
+        folder_contents = parser.list_files_in_folder(folder_id)
+        if len(folder_contents) == 0:
+            raise Exception("Folder is empty")
 
-def get_documents_from_folder(service, folder_id, connector_id, account_id) -> List[Document]:
-    documents: List[Document] = []
-    folders_to_process = deque([folder_id])
+        if uris:
+            files = parser.get_files_by_uris(uris)
+        else:
+            files = parser.get_all_files()
 
-    while folders_to_process:
-        current_folder = folders_to_process.popleft()
-        items = list_files_in_folder(service, current_folder)
-
-        for item in items:
+        documents = []
+        for item in files:
             mime_type = item.get("mimeType", "")
-
-            if mime_type == "application/vnd.google-apps.folder":
-                folders_to_process.append(item["id"])
-            elif mime_type in ["application/vnd.google-apps.document", "application/pdf"]:
-                # Retrieve the full metadata for the file
-                file_metadata = service.files().get(fileId=item["id"]).execute()
-                mime_type = file_metadata.get("mimeType", "")
-
-                if mime_type == "application/vnd.google-apps.document":
-                    doc = service.files().export(fileId=item["id"], mimeType="text/plain").execute()
-                    content = doc.decode("utf-8")
-                elif mime_type == "application/pdf":
-                    pdf_file = download_pdf(service, item["id"])
-                    content = extract_pdf_text(pdf_file)
-
-                documents.append(
-                    Document(
-                        title=item["name"],
-                        content=content,
-                        connector_id=connector_id,
-                        account_id=account_id,
-                        uri=item["webViewLink"],
-                    )
+            if mime_type == "application/vnd.google-apps.document":
+                doc = service.files().export(fileId=item["id"], mimeType="text/plain").execute()
+                content = doc.decode("utf-8")
+            elif mime_type == "application/pdf":
+                pdf_file = download_pdf(service, item["id"])
+                content = extract_pdf_text(pdf_file)
+            print(item)
+            documents.append(
+                Document(
+                    title=item["name"],
+                    content=content,
+                    connector_id=self.connector_id,
+                    account_id=account_id,
+                    uri=item["webViewLink"],
                 )
-            else:
-                print(f"Unsupported file type: {mime_type}")
-
-    return documents
+            )
+        return documents
 
 def get_id_from_folder_name(folder_name: str, service) -> str:
     print("loading documents")
