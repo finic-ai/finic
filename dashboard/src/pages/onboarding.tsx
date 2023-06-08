@@ -6,8 +6,6 @@ import {
     TextInput
   } from "flowbite-react";
 import { FC } from "react";
-import { useState } from "react";
-import {usePsychicLink} from "@psychic-api/link";
 import replitShowFiles from "../../public/images/illustrations/replit-show-files.png";
 
 import {
