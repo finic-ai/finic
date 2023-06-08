@@ -3,7 +3,7 @@
 </h2>
 
 <p align="center">
-  <p align="center">Universal API for unstructured data</p>
+  <p align="center">Data integration platform for LLMs</p>
 </p>
 <p align="center">
 <a href="https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg" target="_blank">
