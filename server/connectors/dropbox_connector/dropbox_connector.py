@@ -196,7 +196,7 @@ class DropboxConnector(DataConnector):
 
 
 
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id=account_id)
         credential_json = json.loads(connection.credential)
 

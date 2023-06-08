@@ -89,7 +89,7 @@ class ConfluenceConnector(DocumentConnector):
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
 
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
         # initialize credentials
         connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
         client_id = connector_credentials['client_id']

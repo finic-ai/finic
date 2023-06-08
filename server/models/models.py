@@ -83,7 +83,7 @@ class DataConnector(BaseModel, ABC):
 
 class DocumentConnector(DataConnector):
     @abstractmethod
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
         pass
 
 class ConversationConnector(DataConnector):

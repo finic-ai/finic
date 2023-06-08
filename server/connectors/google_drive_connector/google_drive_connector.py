@@ -74,7 +74,7 @@ class GoogleDriveConnector(DocumentConnector):
         return AuthorizationResult(authorized=True, connection=new_connection)
 
 
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
         # initialize credentials
         connection = StateStore().load_credentials(
             self.config, 
