@@ -135,11 +135,3 @@ class ZendeskConnector(DataConnector):
                 )
 
         return documents
-    
-    def call_zendesk_api_oauth(self, url, access_token):
-        response = requests.get(url, headers={"Authorization": f"Bearer {access_token}"})
-        return response 
-    
-    def call_zendesk_api(self, url, api_key, email):
-        response = requests.get(url, auth=(email + "/token", api_key))
-        return response

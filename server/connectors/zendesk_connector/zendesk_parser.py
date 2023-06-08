@@ -62,7 +62,10 @@ class ZendeskParser:
         if self.is_oauth:
             response = requests.get(url, headers={"Authorization": f"Bearer {self.access_token}"})
         else:
-            response = requests.get(url, auth=(self.email + "/token", self.api_key))
+            if self.email and self.api_key:
+                response = requests.get(url, auth=(self.email + "/token", self.api_key))
+            else:
+                response = requests.get(url, headers= {"Authorization": f"Basic {self.access_token}"})
 
         return response
 
