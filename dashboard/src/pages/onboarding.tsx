@@ -1,7 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import {
     Breadcrumb,
-    Tabs
+    Button,
+    Tabs,
+    TextInput
   } from "flowbite-react";
 import { FC } from "react";
 import { useState } from "react";
@@ -17,7 +19,7 @@ import { ConnectorPlayground } from "./playground";
 
 const OnboardingPage: FC = function () {
 
-  const {appId} = useUserStateContext()
+  const {bearer} = useUserStateContext()
       
 
   return (
@@ -42,39 +44,52 @@ const OnboardingPage: FC = function () {
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                     Step 1: Connect a data source
                 </h2>
-                <ConnectorPlayground bearer={appId} />
+                <ConnectorPlayground bearer={bearer} />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Step 2: Load documents from your data source
+                <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+                    Step 2: Load documents from your data source and ask it questions
                 </h2>
-                <p className="my-4">Your Psychic secret key (keep this private): </p>
+                <p className="mb-4">You'll need the <span className="font-bold">Account ID</span> you used and your Psychic <span className="font-bold">Secret Key</span> for this step.</p>
+                <div className="flex flex-row items-center space-x-4">                  
+                  <p>Your Secret Key:</p>
+                  <TextInput className="w-[310px]" readOnly value={bearer}/>
+                </div>
                 <Tabs.Group style="underline">
                     <Tabs.Item active title="Using LangChain">
                         <div className="flex-col space-y-4">
-                        <p>This Repl shows how to use Psychic's <a className="text-blue-400" href="https://docs.psychic.dev/python-sdk">Python SDK</a> with LangChain to ask questions over data you just connected.</p>
-                        <span className="flex flex-row items-center space-x-2">
-                            <p>To view the source code, click</p>
-                            <img className="h-8" src={replitShowFiles} />
-                            <p>below.</p>
-                        </span>
-                        <iframe height="400px" className="w-full lg:w-2/3" src="https://replit.com/@JasonFan6/Connect-SaaS-data-to-ChatGPT-using-Psychic-and-LangChain?embed=true" />
+                            <p>This Repl shows how to use Psychic's <a className="text-blue-400" href="https://docs.psychic.dev/python-sdk">Python SDK</a> with LangChain to ask questions over data you just connected.</p>
+                            <span className="flex flex-row items-center space-x-2">
+                                <p>To view the source code, click</p>
+                                <img className="h-8" src={replitShowFiles} />
+                                <p>below.</p>
+                            </span>
+                            <iframe height="400px" className="w-full" src="https://replit.com/@JasonFan6/Connect-SaaS-data-to-ChatGPT-using-Psychic-and-LangChain?embed=true" />
                         </div>
                     </Tabs.Item>
-                    <Tabs.Item active title="Using LlamaIndex">
-
-                    </Tabs.Item>
                     <Tabs.Item active title="Using the API">
-
+                        <div className="flex-col space-y-4">
+                            <p>This Repl shows how to use Psychic's <a className="text-blue-400" href="https://docs.psychic.dev/api-reference/endpoint/ask-question">API</a> to ask questions over data you just connected.</p>
+                            <p>The "/ask-question" endpoint is meant for POCs and should not be used in production applications. To use Psychic in production, use the <a className="text-blue-400" href="https://docs.psychic.dev/python-sdk">Python SDK</a> or the <a className="text-blue-400" href="https://docs.psychic.dev/api-reference/endpoint/get-documents">Get Documents </a>endpoint to retrieve documents and load them into a vector database.</p>
+                            <span className="flex flex-row items-center space-x-2">
+                                <p>To view the source code, click</p>
+                                <img className="h-8" src={replitShowFiles} />
+                                <p>below.</p>
+                            </span>
+                            <iframe height="400px" className="w-full" src="https://replit.com/@JasonFan6/Connect-SaaS-data-to-ChatGPT-using-Psychic-APIs?embed=true" />
+                        </div>
                     </Tabs.Item>
                 </Tabs.Group>
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
                     Step 3: Connect more data sources with Psychic Link
                 </h2>
-                <p>Psychic Link can be added to any React application to let your users connect their own data sources.</p>
-                <p>You can then load these documents just like you did with your own documents.</p>
+                <p><a className="text-blue-400" href="https://docs.psychic.dev/psychic-link">Psychic Link</a> can be added to any React application to let your users connect their own data sources.</p>
+                <p>You can then load these documents and use them with LLM chains just like you did with your own documents.</p>
+              </div>
+              <div>
+                <Button className="w-full md:w-1/5" href="/playground">✨ Finish</Button>
               </div>
             </div>
           </div>
