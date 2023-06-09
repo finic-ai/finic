@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { FC, StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import posthog from 'posthog-js';
 import { PostHogProvider} from 'posthog-js/react'
@@ -29,6 +29,7 @@ import ConfluenceConnectorPage from "./pages/connectors/confluence";
 import Settings from "./pages/settings";
 import Syncs from "./pages/syncs";
 import Playground from "./pages/playground";
+import { useUserStateContext } from "./context/UserStateContext";
 
 const container = document.getElementById("root");
 
@@ -95,7 +96,7 @@ function App() {
           <UserStateProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<ApiKeysPage />} index />
+                <Route path="/" element={<RootPage />}/>
                 <Route path="/onboarding" element={<OnboardingPage />} />
                 <Route path="/api-keys" element={<ApiKeysPage />} />
                 <Route path="/connections" element={<ConnectionsPage />} />
@@ -118,6 +119,22 @@ function App() {
       </PostHogProvider>
     )
   }
+}
+
+const RootPage: FC = () => {
+  const [showOnboardingPage, setShowOnboardingPage] = useLocalStorage('showOnboardingPage', false);
+  const { completedOnboarding } = useUserStateContext();
+
+  useEffect (() => {
+    if (completedOnboarding != showOnboardingPage) {
+      setShowOnboardingPage(completedOnboarding)
+    }
+  }, [])
+
+  if (showOnboardingPage) {
+    return <OnboardingPage />
+  }
+  return <Playground />
 }
 
 root.render(

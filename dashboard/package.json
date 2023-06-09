@@ -41,6 +41,7 @@
     "react-icons": "^4.7.1",
     "react-markdown": "^8.0.7",
     "react-sortablejs": "^6.1.4",
+    "react-syntax-highlighter": "^15.5.0",
     "remark-gfm": "^3.0.1",
     "sortablejs": "^1.15.0",
     "svgmap": "^2.10.1",
