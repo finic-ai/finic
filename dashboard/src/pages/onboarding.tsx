@@ -6,7 +6,9 @@ import {
     TextInput
   } from "flowbite-react";
 import { FC } from "react";
-import replitShowFiles from "../../public/images/illustrations/replit-show-files.png";
+import replitShowFiles from "../assets/replit-show-files.png";
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import {
   HiHome,
@@ -84,7 +86,31 @@ const OnboardingPage: FC = function () {
                     Step 3: Connect more data sources with Psychic Link
                 </h2>
                 <p><a className="text-blue-400" href="https://docs.psychic.dev/psychic-link">Psychic Link</a> can be added to any React application to let your users connect their own data sources.</p>
-                <p>You can then load these documents and use them with LLM chains just like you did with your own documents.</p>
+                <p className="mb-4">You can then load these documents and use them with LLM chains just like you did with your own documents.</p>
+                <SyntaxHighlighter language="javascript" style={dracula}>
+                  {
+`import React, { useState } from 'react';
+import { usePsychicLink } from '@psychic-api/link';
+
+const PsychicDemo: React.FC = () => {
+  const [connection, setConnection] = useState(null)
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, psychicCallback) // publicKey is your Psychic public key
+  const accountId = getUserId() // Psychic Account IDs should map to the unique ID of the user creating this connection
+  
+  const psychicCallback = (newConnection) => {
+    setConnection(newConnection)
+    fetchDocumentsFromServer(newConnection.accountId, newConnection.connectorId) // Send a request to your backend to fetch documents using the Psychic API endpoints or Python library.
+  }
+  return (
+    <button onClick={() => {
+      open(accountId)
+    }} >
+      Connect
+    </button>
+  )
+}`
+                  }
+                </SyntaxHighlighter>
               </div>
               <div>
                 <Button className="w-full md:w-1/5" href="/playground">✨ Finish</Button>

@@ -65,6 +65,12 @@ const DashboardSidebar: FC = function () {
                 >
                   First Steps
                 </Sidebar.Item>
+                <Sidebar.Item
+                  href="/playground"
+                  icon={HiPlay}
+                >
+                  Playground
+                </Sidebar.Item>
                 <Sidebar.Collapse
                   icon={HiLink}
                   label="Connectors"
@@ -169,12 +175,6 @@ const DashboardSidebar: FC = function () {
                     Website
                   </Sidebar.Item> */}
                 </Sidebar.Collapse>
-                <Sidebar.Item
-                  href="/playground"
-                  icon={HiPlay}
-                >
-                  Playground
-                </Sidebar.Item>
                 {/* <Sidebar.Item
                   href="/vectorstore"
                   icon={HiDatabase}
