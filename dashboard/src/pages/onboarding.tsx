@@ -1,0 +1,127 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import {
+    Breadcrumb,
+    Button,
+    Tabs,
+    TextInput
+  } from "flowbite-react";
+import { FC } from "react";
+import replitShowFiles from "../assets/replit-show-files.png";
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+import {
+  HiHome,
+} from "react-icons/hi";
+import NavbarSidebarLayout from "../layouts/navbar-sidebar";
+import { useUserStateContext } from "../context/UserStateContext";
+import { ConnectorPlayground } from "./playground";
+
+const OnboardingPage: FC = function () {
+
+  const {bearer} = useUserStateContext()
+      
+
+  return (
+    <NavbarSidebarLayout isFooter={false}>
+      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+        <div className="mb-1 w-full">
+          <div className="mb-4">
+            <Breadcrumb className="mb-4">
+              <Breadcrumb.Item href="/">
+                <div className="flex items-center gap-x-3">
+                  <HiHome className="text-xl" />
+                  <span className="dark:text-white">Home</span>
+                </div>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>First Steps</Breadcrumb.Item>
+            </Breadcrumb>
+            <div className="flex-col items-center space-y-6">
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+                First Steps
+              </h1>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Step 1: Connect a data source
+                </h2>
+                <ConnectorPlayground bearer={bearer} />
+              </div>
+              <div>
+                <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+                    Step 2: Load documents from your data source and ask it questions
+                </h2>
+                <p className="mb-4">You'll need the <span className="font-bold">Account ID</span> you used and your Psychic <span className="font-bold">Secret Key</span> for this step.</p>
+                <div className="flex flex-row items-center space-x-4">                  
+                  <p>Your Secret Key:</p>
+                  <TextInput className="w-[310px]" readOnly value={bearer}/>
+                </div>
+                <Tabs.Group style="underline">
+                    <Tabs.Item active title="Using LangChain">
+                        <div className="flex-col space-y-4">
+                            <p>This Repl shows how to use Psychic's <a className="text-blue-400" href="https://docs.psychic.dev/python-sdk">Python SDK</a> with LangChain to ask questions over data you just connected.</p>
+                            <span className="flex flex-row items-center space-x-2">
+                                <p>To view the source code, click</p>
+                                <img className="h-8" src={replitShowFiles} />
+                                <p>below.</p>
+                            </span>
+                            <iframe height="400px" className="w-full" src="https://replit.com/@JasonFan6/Connect-SaaS-data-to-ChatGPT-using-Psychic-and-LangChain?embed=true" />
+                        </div>
+                    </Tabs.Item>
+                    <Tabs.Item active title="Using the API">
+                        <div className="flex-col space-y-4">
+                            <p>This Repl shows how to use Psychic's <a className="text-blue-400" href="https://docs.psychic.dev/api-reference/endpoint/ask-question">API</a> to ask questions over data you just connected.</p>
+                            <p>The "/ask-question" endpoint is meant for POCs and should not be used in production applications. To use Psychic in production, use the <a className="text-blue-400" href="https://docs.psychic.dev/python-sdk">Python SDK</a> or the <a className="text-blue-400" href="https://docs.psychic.dev/api-reference/endpoint/get-documents">Get Documents </a>endpoint to retrieve documents and load them into a vector database.</p>
+                            <span className="flex flex-row items-center space-x-2">
+                                <p>To view the source code, click</p>
+                                <img className="h-8" src={replitShowFiles} />
+                                <p>below.</p>
+                            </span>
+                            <iframe height="400px" className="w-full" src="https://replit.com/@JasonFan6/Connect-SaaS-data-to-ChatGPT-using-Psychic-APIs?embed=true" />
+                        </div>
+                    </Tabs.Item>
+                </Tabs.Group>
+              </div>
+              <div>
+                <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+                    Step 3: Connect more data sources with Psychic Link
+                </h2>
+                <p><a className="text-blue-400" href="https://docs.psychic.dev/psychic-link">Psychic Link</a> can be added to any React application to let your users connect their own data sources.</p>
+                <p className="mb-4">You can then load these documents and use them with LLM chains just like you did with your own documents.</p>
+                <SyntaxHighlighter language="javascript" style={dracula}>
+                  {
+`import React, { useState } from 'react';
+import { usePsychicLink } from '@psychic-api/link';
+
+const PsychicDemo: React.FC = () => {
+  const [connection, setConnection] = useState(null)
+  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, psychicCallback) // publicKey is your Psychic public key
+  const accountId = getUserId() // Psychic Account IDs should map to the unique ID of the user creating this connection
+  
+  const psychicCallback = (newConnection) => {
+    setConnection(newConnection)
+    fetchDocumentsFromServer(newConnection.accountId, newConnection.connectorId) // Send a request to your backend to fetch documents using the Psychic API endpoints or Python library.
+  }
+  return (
+    <button onClick={() => {
+      open(accountId)
+    }} >
+      Connect
+    </button>
+  )
+}`
+                  }
+                </SyntaxHighlighter>
+              </div>
+              <div>
+                <Button className="w-full md:w-1/5" href="/playground">✨ Finish</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </NavbarSidebarLayout>
+  );
+};
+
+export default OnboardingPage;
+  

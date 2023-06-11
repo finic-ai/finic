@@ -52,7 +52,7 @@ class GetDocumentsRequest(BaseModel):
     section_filter: Optional[str]
     uris: Optional[List[str]]
     account_id: str
-    pre_chunked: Optional[bool] = False
+    chunked: Optional[bool] = False
     min_chunk_size: Optional[int] = 500
     max_chunk_size: Optional[int] = 1500
 

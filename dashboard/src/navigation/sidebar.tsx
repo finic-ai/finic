@@ -11,14 +11,15 @@ import {
   HiCog,
   HiPlay,
   HiCloudDownload,
+  HiSparkles
 } from "react-icons/hi";
 import {FaGithub, FaReadme} from "react-icons/fa"
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 
-const ExampleSidebar: FC = function () {
-  const { isOpenOnSmallScreens: isSidebarOpenOnSmallScreens } =
+const DashboardSidebar: FC = function () {
+  const { isOpenOnSmallScreens: isSidebarOpenOnSmallScreens, isPageWithSidebar} =
     useSidebarContext();
 
   const [currentPage, setCurrentPage] = useState("");
@@ -31,6 +32,10 @@ const ExampleSidebar: FC = function () {
     setEcommerceOpen(newPage.includes("/connectors/"));
   }, [setCurrentPage, setEcommerceOpen]);
 
+  if (!isPageWithSidebar) {
+    return null;
+  }
+  
   return (
     <div
       className={classNames("lg:!block", {
@@ -54,6 +59,18 @@ const ExampleSidebar: FC = function () {
             </form> */}
             <Sidebar.Items>
               <Sidebar.ItemGroup>
+                <Sidebar.Item
+                  href="/onboarding"
+                  icon={HiSparkles}
+                >
+                  First Steps
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="/playground"
+                  icon={HiPlay}
+                >
+                  Playground
+                </Sidebar.Item>
                 <Sidebar.Collapse
                   icon={HiLink}
                   label="Connectors"
@@ -158,12 +175,6 @@ const ExampleSidebar: FC = function () {
                     Website
                   </Sidebar.Item> */}
                 </Sidebar.Collapse>
-                <Sidebar.Item
-                  href="/playground"
-                  icon={HiPlay}
-                >
-                  Playground
-                </Sidebar.Item>
                 {/* <Sidebar.Item
                   href="/vectorstore"
                   icon={HiDatabase}
@@ -260,4 +271,4 @@ const BottomMenu: FC = function () {
   );
 };
 
-export default ExampleSidebar;
+export default DashboardSidebar;
