@@ -217,7 +217,7 @@ async def get_documents(
         else:
             connector_ids = [request.connector_id]
 
-        pre_chunked = request.pre_chunked
+        chunked = request.chunked
         min_chunk_size = request.min_chunk_size
         max_chunk_size = request.max_chunk_size
 
@@ -230,7 +230,7 @@ async def get_documents(
                 raise HTTPException(status_code=404, detail="Connector not found")
 
             result = await connector.load(account_id, uris=uris)
-            if pre_chunked:
+            if chunked:
                 chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
                 result = chunker.chunk(result)
             documents.extend(result)

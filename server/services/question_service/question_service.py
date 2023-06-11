@@ -26,7 +26,7 @@ class QuestionService:
                 request=GetDocumentsRequest(
                     connector_id=connection.connector_id,
                     account_id=connection.account_id,
-                    pre_chunked=True), 
+                    chunked=True), 
                 config=self.config)).documents)
         documents = [
             Document(page_content=doc.content, metadata={"title": doc.title, "source": doc.uri})
