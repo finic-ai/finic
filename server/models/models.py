@@ -26,10 +26,20 @@ class AppConfig(BaseModel):
     app_id: str
     user_id: str
 
+class Section(BaseModel):
+    id: str
+    name: str
+
+class SectionFilter(BaseModel):
+    id: str
+    sections: List[Section]
+
 class Connection(BaseModel):
     account_id: str
     connector_id: ConnectorId
     metadata: Dict
+    section_filters: List[SectionFilter] = []
+    sections: Optional[List[Section]] = None
     credential: Optional[str]
     config: Optional[AppConfig]
     
@@ -80,10 +90,13 @@ class DataConnector(BaseModel, ABC):
     async def authorize_api_key(self, *args, **kwargs) -> AuthorizationResult:
         pass
 
+    @abstractmethod
+    async def get_sections(self, *args, **kwargs) -> List[Section]:
+        pass
 
 class DocumentConnector(DataConnector):
     @abstractmethod
-    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
+    async def load(self, account_id: str, uris: Optional[List[str]], section_filter: Optional[str]) -> List[Document]:
         pass
 
 class ConversationConnector(DataConnector):
@@ -94,6 +107,8 @@ class ConversationConnector(DataConnector):
 class ConnectionFilter(BaseModel):
     connector_id: Optional[ConnectorId] = None
     account_id: Optional[str] = None
+    uris: Optional[List[str]] = None
+    section_filter_id: Optional[str] = None
 
 class Sync(BaseModel):
     app_id: str
@@ -113,3 +128,4 @@ class SyncResults(BaseModel):
 class AskQuestionResult(BaseModel):
     answer: str
     sources: List[str]
+

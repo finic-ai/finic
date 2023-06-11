@@ -67,6 +67,9 @@ class SalesforceConnector(DocumentConnector):
             }
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
+    
+    async def get_sections(self) -> List[str]:
+        pass
 
 
     async def load(self, account_id: str) -> List[Document]:

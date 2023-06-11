@@ -1,5 +1,7 @@
 from typing import Dict, List, Optional
-from models.models import AppConfig, DataConnector, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults, Settings
+from models.models import (
+    AppConfig, SectionFilter, ConnectorId, ConnectorStatus, Connection, ConnectionFilter, Sync, SyncResults, Settings
+)
 import os
 from dateutil.parser import parse
 import uuid
@@ -116,7 +118,8 @@ class StateStore:
                 Connection(
                     account_id=row['account_id'],
                     connector_id=row['connector_id'],
-                    metadata=row['metadata']
+                    metadata=row['metadata'],
+                    section_filters=row['section_filters']
                 )
             )
         
@@ -222,6 +225,24 @@ class StateStore:
             'eq',
             sync.app_id
         ).execute()
+
+    def update_section_filters(
+            self, 
+            config: AppConfig, 
+            connector_id: ConnectorId, 
+            account_id: str, 
+            filters: List[SectionFilter]
+        ):
+        # Get the existing filters
+
+        insert_data = {
+            'account_id': account_id,
+            'app_id': config.app_id,
+            'connector_id': connector_id,
+            'section_filters': [filter.dict() for filter in filters]
+        }
+        self.supabase.table("connections").upsert(insert_data).execute()
+
   
         
 

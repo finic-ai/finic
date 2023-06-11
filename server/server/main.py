@@ -28,7 +28,9 @@ from models.api import (
     RunSyncResponse,
     AskQuestionRequest,
     AskQuestionResponse,
-    GetLinkSettingsResponse
+    GetLinkSettingsResponse,
+    AddSectionFilterRequest,
+    AddSectionFilterResponse
 )
 
 from appstatestore.statestore import StateStore
@@ -133,12 +135,50 @@ async def get_connections(
     try:
         filter = request.filter
         connections = StateStore().get_connections(filter, config)
+        for connection in connections:
+            connection.sections = []
+            connector = get_connector_for_id(connection.connector_id, config)
+            if connector is not None:
+                connection.sections = await connector.get_sections(connection.account_id)
+            
         response = GetConnectionsResponse(connections=connections)
         logger.log_api_call(config, Event.get_connections, request, response, None)
         return response
     except Exception as e:
         logger.log_api_call(config, Event.get_connections, request, None, e)
         raise e
+    
+@app.post(
+    "/add-section-filter",
+    response_model=AddSectionFilterResponse,
+)
+async def add_section_filter(
+    request: AddSectionFilterRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        connector_id = request.connector_id
+        account_id = request.account_id
+        filter = request.section_filter
+        connections = StateStore().get_connections(ConnectionFilter(connector_id=connector_id, account_id=account_id), config)
+        if len(connections) == 0:
+            raise HTTPException(status_code=404, detail="Connection not found")
+        connection = connections[0]
+        section_filters = connection.section_filters
+        for i in range(len(section_filters)):
+            existing_filter = section_filters[i]
+            if existing_filter.id == filter.id:
+                # remove existing filter
+                section_filters.remove(existing_filter)
+        section_filters.append(filter)
+        StateStore().update_section_filters(config, connector_id=connector_id, account_id=account_id, filters=section_filters)
+        response = AddSectionFilterResponse(success=True, section_filter=filter)
+        logger.log_api_call(config, Event.add_section_filter, request, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.add_section_filter, request, None, e)
+        raise e
+
 
 @app.post(
     "/add-apikey-connection",
@@ -229,7 +269,14 @@ async def get_documents(
             if connector is None:
                 raise HTTPException(status_code=404, detail="Connector not found")
 
-            result = await connector.load(account_id, uris=uris)
+            result = await connector.load(
+                ConnectionFilter(
+                    connector_id=connector_id, 
+                    account_id=account_id, 
+                    uris=uris, 
+                    section_filter_id=request.section_filter
+                )
+            ) 
             if pre_chunked:
                 chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
                 result = chunker.chunk(result)

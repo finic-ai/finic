@@ -83,16 +83,16 @@ const connectors = [
     name: "Intercom",
     id: "intercom",
     icon: IntercomIcon,
-    label: null,
-    labelColor: "info",
+    label: "Beta",
+    labelColor: "warning",
     active: true
   },
   {
     name: "Hubspot",
     id: "hubspot",
     icon: HubspotIcon,
-    label: null,
-    labelColor: "info",
+    label: "Beta",
+    labelColor: "warning",
     active: true
   },
   {

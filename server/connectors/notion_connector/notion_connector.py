@@ -2,7 +2,7 @@ import requests
 import os
 import json
 from typing import Dict, List, Optional
-from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult
+from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, Section, ConnectionFilter
 from appstatestore.statestore import StateStore
 import base64
 from .notion_parser import NotionParser
@@ -72,22 +72,30 @@ class NotionConnector(DocumentConnector):
             }
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
+    
+    async def get_sections(self, account_id: str) -> List[Section]:
+        connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
+        credential_string = connection.credential
+        credential_json = json.loads(credential_string)
+        access_token = credential_json["access_token"]
+        parser = NotionParser(access_token)
+        all_pages = parser.notion_search({})
 
-    def get_page_text(self, page_id: str):
-        page_text = []
-        blocks = self.notion_get_blocks(page_id)
-        for item in blocks['results']:
-            item_type = item.get('type')
-            content = item.get(item_type)
-            if content.get('rich_text'):
-                for text in content.get('rich_text'):
-                    plain_text = text.get('plain_text')
-                    page_text.append(plain_text)
-        print(json.dumps(blocks))
-        print(page_text)
-        return page_text
+        top_level_pages = []
+        remaining_pages = []
+        for item in all_pages:
+            if item['parent']['type'] == 'workspace':
+                top_level_pages.append(Section(id=item['id'], name=parser.parse_title(item)))
+            else:
+                remaining_pages.append(Section(id=item['id'], name=parser.parse_title(item)))
+        top_level_pages.extend(remaining_pages)
+        return top_level_pages
 
-    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+        account_id = connection_filter.account_id
+        uris = connection_filter.uris
+        section_filter = connection_filter.section_filter_id
+
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
@@ -100,6 +108,33 @@ class NotionConnector(DocumentConnector):
             for uri in uris:
                 page = parser.notion_get_page(uri)
                 all_notion_documents.append(page)
+        elif section_filter:
+            # retrieve the SectionFilter based on the section_filter id
+            connection_filter = ConnectionFilter(connector_id=self.connector_id, account_id=account_id)
+            connections = StateStore().get_connections(
+                filter=connection_filter,
+                config=self.config,
+            )
+            connection = connections[0]
+            filters = connection.section_filters
+            # get the filter with the right id
+            sections = []
+            for filter in filters:
+                if filter.id == section_filter:
+                    sections = filter.sections
+
+            for section in sections:
+                items = parser.get_documents_in_section(section.id)
+                for item in items:
+                    all_notion_documents.append(Document(
+                        title=item['title'], 
+                        content=item['content'],
+                        uri=item['uri'],
+                        connector_id=self.connector_id,
+                        account_id=account_id
+                    ))
+
+            return all_notion_documents
         else:
             all_notion_documents = parser.notion_search({})
 

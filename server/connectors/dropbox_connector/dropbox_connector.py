@@ -1,7 +1,7 @@
 import requests
 import json
 from typing import Dict, List, Optional
-from models.models import AppConfig, Document, ConnectorId, DataConnector, AuthorizationResult
+from models.models import AppConfig, Document, ConnectorId, DataConnector, AuthorizationResult, ConnectionFilter
 from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
 from appstatestore.statestore import StateStore
 from io import BytesIO
@@ -194,9 +194,13 @@ class DropboxConnector(DataConnector):
                 return text
         return None
 
+    async def get_sections(self) -> List[str]:
+        pass
 
-
-    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+        account_id = connection_filter.account_id
+        uris = connection_filter.uris
+        section_filter = connection_filter.section_filter_id
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id=account_id)
         credential_json = json.loads(connection.credential)
 

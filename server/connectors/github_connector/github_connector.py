@@ -61,6 +61,9 @@ class GithubConnector(DataConnector):
             print(e)
         return texts
 
+    async def get_sections(self) -> List[str]:
+        pass
+    
     async def load(self, source_id: str) -> List[Document]:
         credential_string = StateStore().load_credentials(self.config, self)
         credential_json = json.loads(credential_string)

@@ -1,5 +1,6 @@
 import requests
-from typing import Dict
+from models.models import Document, Section
+from typing import Dict, List, Optional, Tuple
 import json
 
 BASE_URL = "https://api.notion.com"
@@ -27,6 +28,63 @@ class NotionParser:
         res = requests.get(f"{BASE_URL}/v1/pages/{page_id}", headers=self.headers)
         res_json = res.json()
         return res_json
+
+    def get_documents_in_section(self, page_id) -> List[Dict]:
+        unprocessed_pages = [page_id]
+        processed_pages = set()
+        results: List[Dict] = []
+        all_pages = self.notion_search({})
+
+
+        if not all_pages:
+            return []
+
+        while unprocessed_pages:
+            # pop the first page
+            page_id = unprocessed_pages.pop(0)
+
+            database_ids = []
+            for page in all_pages:
+                # process the page and add the document to the results
+                if page.get('id') == page_id:
+                    doc, db_ids_in_page = self.process_page(page)
+                    database_ids.extend(db_ids_in_page)
+                    results.append(doc)
+                    processed_pages.add(page_id)
+
+                # check if the page is a child of page_id
+                if page['parent']['type'] == 'page' and page['parent']['page_id'] == page_id:
+                    if page.get('id') not in processed_pages and page.get('id') not in unprocessed_pages:
+                        unprocessed_pages.append(page['id'])
+                
+            for page in all_pages:
+                #check if the parent is a database and with an id in database_ids
+                if page['parent']['type'] == 'database_id' and page['parent']['database_id'] in database_ids:
+                    if page.get('id') not in processed_pages and page.get('id') not in unprocessed_pages:
+                        unprocessed_pages.append(page['id'])
+
+        return results
+    
+    def process_page(self, page) -> Tuple[Optional[Dict], List[str]]:
+        object_type = page.get('object')
+        object_id = page.get('id')
+        url = page.get('url')
+        title = ""
+
+        if object_type == 'page':
+            title = self.parse_title(page)
+            blocks = self.notion_get_blocks(object_id)
+            html = self.parse_notion_blocks(blocks)
+            properties_html = self.parse_properties(page)
+            database_ids = self.parse_database_ids(blocks)
+            html = f"<div><h1>{title}</h1>{properties_html}{html}</div>"
+            return tuple([{
+                    'title': title,
+                    'content': html,
+                    'uri': url
+                }, database_ids])
+            
+        return None
 
 
     def notion_search(self, query: Dict):
@@ -106,6 +164,17 @@ class NotionParser:
         if result:
             return result
         return ""
+    
+    def parse_database_ids(self, blocks):
+        database_ids = []
+
+        for block in blocks:
+            # check if type is child_database
+            if block.get('type') == 'child_database':
+                database_ids.append(block.get('id'))
+
+        return database_ids
+
     
     def parse_properties(self, page):
         html = ""

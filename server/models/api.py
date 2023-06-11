@@ -6,7 +6,8 @@ from models.models import (
     AuthorizationResult,
     Connection,
     ConnectionFilter,
-    Settings
+    Settings,
+    SectionFilter
 )
 from pydantic import BaseModel
 from typing import List, Optional, Dict
@@ -48,6 +49,7 @@ class AuthorizationResponse(BaseModel):
 
 class GetDocumentsRequest(BaseModel):
     connector_id: Optional[ConnectorId]
+    section_filter: Optional[str]
     uris: Optional[List[str]]
     account_id: str
     pre_chunked: Optional[bool] = False
@@ -81,3 +83,13 @@ class AskQuestionRequest(BaseModel):
 class AskQuestionResponse(BaseModel):
     answer: str
     sources: List[str]
+
+class AddSectionFilterRequest(BaseModel):
+    connector_id: ConnectorId
+    account_id: str
+    section_filter: SectionFilter
+
+class AddSectionFilterResponse(BaseModel):
+    success: bool
+    section_filter: Optional[SectionFilter]
+

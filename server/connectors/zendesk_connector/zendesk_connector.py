@@ -1,4 +1,4 @@
-from models.models import AppConfig, Document, ConnectorId, AuthorizationResult, DataConnector
+from models.models import AppConfig, Document, ConnectorId, AuthorizationResult, DataConnector, ConnectionFilter
 from typing import List, Optional
 from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
 from googleapiclient.discovery import build
@@ -102,8 +102,14 @@ class ZendeskConnector(DataConnector):
             metadata=metadata
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
+    
+    async def get_sections(self) -> List[str]:
+        pass
 
-    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+        account_id = connection_filter.account_id
+        uris = connection_filter.uris
+        section_filter = connection_filter.section_filter_id
         # initialize credentials
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_json = json.loads(connection.credential)

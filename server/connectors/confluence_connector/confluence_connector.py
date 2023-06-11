@@ -1,4 +1,4 @@
-from models.models import ConnectorId, AppConfig, Document, AuthorizationResult, DocumentConnector
+from models.models import ConnectorId, AppConfig, Document, AuthorizationResult, DocumentConnector, ConnectionFilter
 from typing import List, Optional, Dict
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -88,8 +88,14 @@ class ConfluenceConnector(DocumentConnector):
             metadata={'subdomain': authorized_site['url']}
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
+    
+    async def get_sections(self) -> List[str]:
+        pass
 
-    async def load(self, account_id: str, uris: Optional[List[str]]) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+        account_id = connection_filter.account_id
+        uris = connection_filter.uris
+        section_filter = connection_filter.section_filter_id
         # initialize credentials
         connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
         client_id = connector_credentials['client_id']

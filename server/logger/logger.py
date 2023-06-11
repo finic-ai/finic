@@ -17,6 +17,7 @@ class Event(str, Enum):
     get_conversations = "get_conversations"
     ask_question = "ask_question"
     get_link_settings = "get_link_settings"
+    add_section_filter = "add_section_filter"
 
 class Logger:
     posthog_client: Optional[posthog.Client] = None
