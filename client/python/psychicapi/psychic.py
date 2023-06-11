@@ -14,12 +14,18 @@ class Psychic:
         self.api_url = "https://api.psychic.dev/"
         self.secret_key = secret_key
 
-    def get_documents(self, *, account_id: str, connector_id: Optional[ConnectorId] = None):
+    def get_documents(self, *, account_id: str, connector_id: Optional[ConnectorId] = None, chunked: Optional[bool] = False, min_chunk_size: Optional[int] = None, max_chunk_size: Optional[int] = None):
         body = {
             "account_id": account_id
         }
         if connector_id is not None:
             body["connector_id"] = connector_id.value
+        if chunked is not None:
+            body["chunked"] = chunked
+        if min_chunk_size is not None:
+            body["min_chunk_size"] = min_chunk_size
+        if max_chunk_size is not None:
+            body["max_chunk_size"] = max_chunk_size
         response = requests.post(
             self.api_url + "get-documents",
             json=body,
