@@ -34,9 +34,9 @@ connections = psychic.get_connections(account_id="account_id")
 docs = psychic.get_documents(account_id="account_id")
 ```
 
-### Advanced Filtering
+## Advanced Filtering
 
-#### Filtering by section(s)
+### Filtering by section(s)
 
 Most file storage, CRM and helpdesk apps have documents organized in sections. Confluence calls them spaces, Zendesk calls them  sections, Google Drive calls them folders. Psychic allows you to define filters based on these sections using the `SectionFilter` class. You can define and query sections as follows:
 
@@ -64,7 +64,7 @@ client.add_section_filter(connector_id=ConnectorId.notion, account_id="test", se
 client.get_documents(account_id="test", connector_id=ConnectorId.notion, section_filter_id="index1")
 ```
 
-#### Filtering by uri
+### Filtering by uri
 
 Every document returned by Psychic has a uri. If you want to query a document by uri instead of retrieving all documents in a connection, you can use the optional `uris` parameter in `get_documents`
 
@@ -75,4 +75,11 @@ client.get_documents(
     connector_id=ConnectorId.notion, 
     uris=["https://docs.google.com/document/d/document-id-1/edit?usp=drivesdk", "https://drive.google.com/file/d/document-id-2/view?usp=drivesdk"]
 )
+```
+## Local development
+
+To run the python package locally, use the following command:
+
+```
+pip install -e /path/to/package
 ```
