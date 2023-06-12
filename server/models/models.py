@@ -38,7 +38,7 @@ class Connection(BaseModel):
     account_id: str
     connector_id: ConnectorId
     metadata: Dict
-    section_filters: List[SectionFilter] = []
+    section_filters: Optional[List[SectionFilter]] = []
     sections: Optional[List[Section]] = None
     credential: Optional[str]
     config: Optional[AppConfig]
@@ -106,7 +106,7 @@ class ConversationConnector(DataConnector):
 
 class ConnectionFilter(BaseModel):
     connector_id: Optional[ConnectorId] = None
-    account_id: Optional[str] = None
+    account_id: str
     uris: Optional[List[str]] = None
     section_filter_id: Optional[str] = None
 
