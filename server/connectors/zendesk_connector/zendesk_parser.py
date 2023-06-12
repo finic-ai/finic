@@ -36,7 +36,7 @@ class ZendeskParser:
         return articles
 
 
-    def get_all_articles(self, section_id: Optional[str]) -> list:
+    def get_all_articles(self, section_id: Optional[str] = None) -> list:
         articles = []
         if section_id:
             base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/sections/{section_id}/articles.json"
