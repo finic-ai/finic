@@ -1,4 +1,4 @@
-from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, ConnectionFilter
+from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, ConnectionFilter, Section
 from typing import List, Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -74,8 +74,27 @@ class GoogleDriveConnector(DocumentConnector):
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
     
-    async def get_sections(self) -> List[str]:
-        pass
+    async def get_sections(self, account_id: str) -> List[Section]:
+        connection = StateStore().load_credentials(
+            self.config, 
+            self.connector_id,
+            account_id 
+        )
+
+        credential_string = connection.credential
+        folder_id = connection.metadata['folder_id']
+
+        credential_json = json.loads(credential_string)
+        creds = Credentials.from_authorized_user_info(
+            credential_json
+        )
+        service = build('drive', 'v3', credentials=creds)
+        
+        parser = GoogleDriveParser(service, folder_id=folder_id)
+
+        sections = parser.list_all_subfolders()
+
+        return sections
 
 
     async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
@@ -110,14 +129,6 @@ class GoogleDriveConnector(DocumentConnector):
                 }
             )
         service = build('drive', 'v3', credentials=creds)
-
-
-        # List the files in the specified folder
-        # results = service.files().list(q=f"'{folder_id}' in parents and trashed = false",
-        #                             fields="nextPageToken, files(id, name, webViewLink)").execute()
-        # items = results.get('files', [])
-
-        
         
         parser = GoogleDriveParser(service, folder_id=folder_id)
 
@@ -125,10 +136,29 @@ class GoogleDriveConnector(DocumentConnector):
         if len(folder_contents) == 0:
             raise Exception("Folder is empty")
 
+        files = []
         if uris:
             files = parser.get_files_by_uris(uris)
+        elif section_filter:
+            # retrieve the SectionFilter based on the section_filter id
+            connection_filter = ConnectionFilter(connector_id=self.connector_id, account_id=account_id)
+            connections = StateStore().get_connections(
+                filter=connection_filter,
+                config=self.config,
+            )
+            connection = connections[0]
+            filters = connection.section_filters
+            # get the filter with the right id
+            sections = []
+            for filter in filters:
+                if filter.id == section_filter:
+                    sections = filter.sections
+
+            for section in sections:
+                files.extend(parser.get_all_files(section.id))
+
         else:
-            files = parser.get_all_files()
+            files = parser.get_all_files(folder_id)
 
         documents = []
         for item in files:

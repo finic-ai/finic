@@ -2,6 +2,7 @@ import requests
 from typing import Dict, Any, List
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+from models.models import Section
 import json
 from collections import deque
 import re
@@ -10,7 +11,6 @@ import re
 class GoogleDriveParser:
 
     def __init__(self, service: Any, folder_id: str):
-        self.folder_id = folder_id
         self.service = service
 
     def get_files_by_uris(self, uris: List[str]) -> list:
@@ -27,8 +27,26 @@ class GoogleDriveParser:
         items = results.get("files", [])
         return items
     
-    def get_all_files(self) -> list:
-        folders_to_process = deque([self.folder_id])
+    def list_all_subfolders(self, folder_id) -> List[Section]:
+        folders_to_process = deque([folder_id])
+        folders = []
+        while folders_to_process:
+            current_folder = folders_to_process.popleft()
+            items = self.list_files_in_folder(current_folder)
+
+            for item in items:
+                mime_type = item.get("mimeType", "")
+
+                if mime_type == "application/vnd.google-apps.folder":
+                    folders_to_process.append(item["id"])
+                    folders.append(Section(
+                        id=item["id"],
+                        name=item["name"],
+                    ))
+        return folders
+    
+    def get_all_files(self, folder_id) -> list:
+        folders_to_process = deque([folder_id])
         files = []
         while folders_to_process:
             current_folder = folders_to_process.popleft()

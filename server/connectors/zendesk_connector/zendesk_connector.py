@@ -103,8 +103,14 @@ class ZendeskConnector(DataConnector):
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
     
-    async def get_sections(self) -> List[str]:
-        pass
+    async def get_sections(self, account_id: str) -> List[str]:
+        connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
+        credential_json = json.loads(connection.credential)
+
+        subdomain = connection.metadata['subdomain']
+        parser = ZendeskParser(subdomain=subdomain, credential=credential_json)
+        sections = parser.list_sections()
+        return sections
 
     async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
         account_id = connection_filter.account_id
@@ -119,8 +125,28 @@ class ZendeskConnector(DataConnector):
         documents = []
         parser = ZendeskParser(subdomain, credential_json)
 
+        articles = []
         if uris:
             articles = parser.get_articles_by_uris(uris)
+        elif section_filter:
+            # retrieve the SectionFilter based on the section_filter id
+            connection_filter = ConnectionFilter(connector_id=self.connector_id, account_id=account_id)
+            connections = StateStore().get_connections(
+                filter=connection_filter,
+                config=self.config,
+            )
+            connection = connections[0]
+            filters = connection.section_filters
+            # get the filter with the right id
+            sections = []
+            for filter in filters:
+                if filter.id == section_filter:
+                    sections = filter.sections
+
+            for section in sections:
+                articles_in_section = parser.get_all_articles(section.id)
+                articles.extend(articles_in_section)
+
         else:
             articles = parser.get_all_articles()
 

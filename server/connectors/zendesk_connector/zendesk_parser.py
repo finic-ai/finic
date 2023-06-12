@@ -1,4 +1,5 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
+from models.models import Section
 import requests
 
 class ZendeskParser:
@@ -35,9 +36,12 @@ class ZendeskParser:
         return articles
 
 
-    def get_all_articles(self) -> list:
+    def get_all_articles(self, section_id: Optional[str]) -> list:
         articles = []
-        base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/articles.json"
+        if section_id:
+            base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/sections/{section_id}/articles.json"
+        else:
+            base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/articles.json"
 
         while base_url:
             response = self.call_zendesk_api(base_url)
@@ -50,6 +54,16 @@ class ZendeskParser:
             base_url = data["next_page"]
 
         return articles
+    
+    def list_sections(self) -> List[Section]:
+        base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/sections.json"
+        response = self.call_zendesk_api(base_url)
+        if response.status_code != 200:
+            print(f"Error: Unable to fetch sections. Status code: {response.status_code}")
+            return []
+        data = response.json()
+        return [Section(id=section["id"], name=section["name"]) for section in data["sections"]]
+
     
     def get_id_from_uri(self, uri: str) -> str:
         id = uri.split("/")[-1]
@@ -69,10 +83,6 @@ class ZendeskParser:
 
         return response
 
-
-
-        response = requests.get(url, headers={"Authorization": f"Bearer {access_token}"})
-        return response 
     
 
     
