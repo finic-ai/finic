@@ -33,3 +33,11 @@ connections = psychic.get_connections(account_id="account_id")
 ```
 docs = psychic.get_documents(account_id="account_id")
 ```
+
+## Local development
+
+To run the python package locally, use the following command:
+
+```
+pip install -e /path/to/package
+```
