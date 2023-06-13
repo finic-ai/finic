@@ -15,6 +15,7 @@ import {
   } from "react-icons/fa"
 import { useUserStateContext } from "../context/UserStateContext";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
+import Text from "../components/text";
   
   const QueryPage: FC = function () {
     
@@ -27,7 +28,7 @@ import NavbarSidebarLayout from "../layouts/navbar-sidebar";
                 <Breadcrumb.Item href="/">
                   <div className="flex items-center gap-x-3">
                     <HiHome className="text-xl" />
-                    <span className="dark:text-white">Home</span>
+                    <Text>Home</Text>
                   </div>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Query</Breadcrumb.Item>
@@ -192,7 +193,7 @@ import NavbarSidebarLayout from "../layouts/navbar-sidebar";
         {
           message.sources.map((source: any, index: any) => (
             <div className=" flex">
-              <p className="mr-2">{index + 1}.</p>
+              <Text className="mr-2">{index + 1}.</Text>
               <a target="_blank" className="underline text-blue-500" href={source.url}>{source.title}</a>
             </div>
           ))

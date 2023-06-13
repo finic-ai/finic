@@ -1,4 +1,4 @@
-import { FC, StrictMode, useState } from "react";
+import { FC, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import posthog from 'posthog-js';
 import { PostHogProvider} from 'posthog-js/react'

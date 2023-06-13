@@ -16,6 +16,7 @@ import {
 } from "react-icons/hi";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 import { useUserStateContext } from "../context/UserStateContext";
+import Text from "../components/text";
 
 const PlaygroundPage: FC = function () {
 
@@ -31,7 +32,7 @@ const PlaygroundPage: FC = function () {
               <Breadcrumb.Item href="/">
                 <div className="flex items-center gap-x-3">
                   <HiHome className="text-xl" />
-                  <span className="dark:text-white">Home</span>
+                  <Text>Home</Text>
                 </div>
               </Breadcrumb.Item>
               <Breadcrumb.Item>Playground</Breadcrumb.Item>
@@ -77,7 +78,7 @@ export const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bear
 
   return (
     <>
-      <p className="mb-6">{"Connect data from your applications. You can then view them under Connectors > Active Connections."}</p>
+      <Text className="mb-6">{"Connect data from your applications. You can then view them under Connectors > Active Connections."}</Text>
       <Label htmlFor="apiKeys.label">Account ID</Label>
       <TextInput
         value={accountId}

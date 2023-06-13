@@ -19,6 +19,7 @@ import {
   } from "react-icons/hi";
   import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
   import { useUserStateContext } from "../../context/UserStateContext";
+  import Text from "../../components/text";
   
   const DropboxConnectorPage: FC = function () {
     const [authorized, setAuthorized] = useState(false);
@@ -99,7 +100,7 @@ import {
                 <Breadcrumb.Item href="/">
                   <div className="flex items-center gap-x-3">
                     <HiHome className="text-xl" />
-                    <span className="dark:text-white">Home</span>
+                    <Text>Home</Text>
                   </div>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Connectors</Breadcrumb.Item>
@@ -111,7 +112,7 @@ import {
                   Dropbox
                 </h1>
               </div>
-              <span>View your active connections and configure the Dropbox connector here. You can create a new connection from the <a href="/playground" className="text-blue-400">Playground</a>.</span>
+              <Text>View your active connections and configure the Dropbox connector here. You can create a new connection from the <a href="/playground" className="text-blue-400">Playground</a>.</Text>
             </div>
           </div>
         </div>
