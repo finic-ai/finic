@@ -156,6 +156,16 @@ const DashboardSidebar: FC = function () {
                   >
                     Hubspot
                   </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/readme"
+                    className={
+                      "/connectors/readme" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Readme
+                  </Sidebar.Item>
                   <Tooltip content="Coming Soon" trigger="hover">
                     <Sidebar.Item
                       href="/connectors/website"

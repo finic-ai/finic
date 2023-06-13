@@ -30,6 +30,7 @@ import Settings from "./pages/settings";
 import Syncs from "./pages/syncs";
 import Playground from "./pages/playground";
 import { useUserStateContext } from "./context/UserStateContext";
+import ReadmeConnectorPage from "./pages/connectors/readme";
 
 const container = document.getElementById("root");
 
@@ -108,6 +109,7 @@ function App() {
                 <Route path="/connectors/dropbox" element={<DropboxConnectorPage />} />
                 <Route path="/connectors/intercom" element={<IntercomConnectorPage />} />
                 <Route path="/connectors/hubspot" element={<HubspotConnectorPage />} />
+                <Route path="/connectors/readme" element={<ReadmeConnectorPage />} />
                 <Route path="/oauth/redirect" element={<RedirectPage />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/syncs" element={<Syncs />} />
