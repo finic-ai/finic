@@ -6,6 +6,7 @@ import { MdFacebook } from "react-icons/md";
 import { FaDribbble, FaGithub, FaInstagram, FaTwitter } from "react-icons/fa";
 import { SidebarProvider, useSidebarContext } from "../context/SidebarContext";
 import classNames from "classnames";
+import Text from "../components/text";
 
 interface NavbarSidebarLayoutProps {
   isFooter?: boolean;
@@ -103,9 +104,9 @@ const MainContentFooter: FC = function () {
           </Footer.LinkGroup>
         </div>
       </Footer>
-      <p className="my-8 text-center text-sm text-gray-500 dark:text-gray-300">
+      <Text className="my-8 text-center text-sm text-gray-500 dark:text-gray-300">
         &copy; 2019-2022 Flowbite.com. All rights reserved.
-      </p>
+      </Text>
     </>
   );
 };

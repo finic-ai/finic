@@ -217,7 +217,7 @@ const DashboardSidebar: FC = function () {
                 </Sidebar.Item>
                 
                 <Sidebar.Item
-                  href="https://sidekick-ezml2kwdva-uc.a.run.app/docs"
+                  href="https://docs.psychic.dev/api-reference/endpoint/get-documents"
                   icon={HiBeaker}
                   target="_blank"
                 >

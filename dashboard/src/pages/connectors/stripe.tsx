@@ -17,6 +17,7 @@ import {
   } from "react-icons/hi";
   import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
   import { useUserStateContext } from "../../context/UserStateContext";
+  import Text from "../../components/text";
   
   const NotionConnectorPage: FC = function () {
     const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
@@ -103,7 +104,7 @@ import {
                 <Breadcrumb.Item href="/">
                   <div className="flex items-center gap-x-3">
                     <HiHome className="text-xl" />
-                    <span className="dark:text-white">Home</span>
+                    <Text>Home</Text>
                   </div>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Connectors</Breadcrumb.Item>
@@ -131,7 +132,7 @@ import {
                         </>}
                        
                       </Button>
-                      {upsertedChunks.length > 0 ? <p>{`Successfully upserted ${upsertedChunks.length} chunks`}</p> : null}
+                      {upsertedChunks.length > 0 ? <Text>{`Successfully upserted ${upsertedChunks.length} chunks`}</Text> : null}
                   </div>
                 </div>
               </form>

@@ -15,6 +15,7 @@ import {
 } from "react-icons/hi";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import { useUserStateContext } from "../../context/UserStateContext";
+import Text from "../../components/text";
 
 
 const WebsiteConnectorPage: FC = function () {
@@ -72,7 +73,7 @@ const WebsiteConnectorPage: FC = function () {
               <Breadcrumb.Item href="/">
                 <div className="flex items-center gap-x-3">
                   <HiHome className="text-xl" />
-                  <span className="dark:text-white">Home</span>
+                  <Text className="dark:text-white">Home</Text>
                 </div>
               </Breadcrumb.Item>
               <Breadcrumb.Item>Connectors</Breadcrumb.Item>
@@ -110,7 +111,7 @@ const WebsiteConnectorPage: FC = function () {
                     placeholder=".example-class"
                     onChange={(e) => setCssSelector(e.target.value.trim())}
                     value={cssSelector}
-                    helperText={<p>Only elements matching the <a className="text-blue-400" href="https://www.w3schools.com/cssref/css_selectors.php">CSS selector</a> will be ingested. Applies to all URLs provided.</p>}
+                    helperText={<Text>Only elements matching the <a className="text-blue-400" href="https://www.w3schools.com/cssref/css_selectors.php">CSS selector</a> will be ingested. Applies to all URLs provided.</Text>}
                   />
                 </div>
                 <div className="lg:col-span-2">
@@ -121,7 +122,7 @@ const WebsiteConnectorPage: FC = function () {
                       </>}
                       
                     </Button>
-                    {upsertedChunks.length > 0 ? <p>{`Successfully upserted ${upsertedChunks.length} chunks`}</p> : null}
+                    {upsertedChunks.length > 0 ? <Text>{`Successfully upserted ${upsertedChunks.length} chunks`}</Text> : null}
                 </div>
               </div>
             </form>
