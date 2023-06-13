@@ -22,7 +22,7 @@ const SyncsPage: FC = function () {
   
   return (
     <NavbarSidebarLayout isFooter={false}>
-      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+      <div className="block items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
         <div className="mb-1 w-full">
           <div className="mb-4">
             <Breadcrumb className="mb-4">
@@ -40,7 +40,7 @@ const SyncsPage: FC = function () {
           </div>
         </div>
       </div>
-      <div className="flex flex-col bg-white">
+      <div className="flex flex-col">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow">
@@ -142,7 +142,7 @@ const ProductsTable: FC = function () {
 
 
   return (
-      <div className="bg-white">
+      <div>
       <form className=" m-6 p-6 rounded">
       <div className="grid grid-cols-1 gap-6 w-1/2">
 
@@ -200,7 +200,7 @@ const ProductsTable: FC = function () {
                       <Table.HeadCell>Docs Synced</Table.HeadCell>
                       <Table.HeadCell>Error</Table.HeadCell>
                   </Table.Head>
-                  <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+                  <Table.Body className="divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
                       {syncResult?.results.map((item, i) => (
                       <Table.Row key={i} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                           <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">

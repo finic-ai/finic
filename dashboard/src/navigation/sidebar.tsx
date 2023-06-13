@@ -69,11 +69,11 @@ const DashboardSidebar: FC = function () {
                   href="/playground"
                   icon={HiPlay}
                 >
-                  Playground
+                  Create Connection
                 </Sidebar.Item>
                 <Sidebar.Collapse
                   icon={HiLink}
-                  label="Connectors"
+                  label="Connector Status"
                   open={isConnectorsOpen}
                 >
                   <Sidebar.Item
