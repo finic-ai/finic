@@ -6,6 +6,7 @@ from .slack_connector import SlackConnector
 from .dropbox_connector import DropboxConnector
 from .intercom_connector import IntercomConnector
 from .hubspot_connector import HubspotConnector
+from .readme_connector import ReadmeConnector
 from models.models import AppConfig, DocumentConnector, ConversationConnector, DataConnector, ConnectorId
 from typing import Optional
 
@@ -24,6 +25,8 @@ def get_document_connector_for_id(connector_id: ConnectorId, config: AppConfig) 
         return IntercomConnector(config)
     elif connector_id == ConnectorId.hubspot:
         return HubspotConnector(config)
+    elif connector_id == ConnectorId.readme:
+        return ReadmeConnector(config)
     return None
 
 def get_conversation_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[ConversationConnector]:
@@ -48,4 +51,6 @@ def get_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Option
         return IntercomConnector(config)
     elif connector_id == ConnectorId.hubspot:
         return HubspotConnector(config)
+    elif connector_id == ConnectorId.readme:
+        return ReadmeConnector(config)
     return None

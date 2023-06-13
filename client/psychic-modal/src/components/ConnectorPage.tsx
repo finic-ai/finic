@@ -26,6 +26,7 @@ import SlackIcon from "./icons/SlackIcon";
 import DropboxIcon from "./icons/DropboxIcon";
 import IntercomIcon from "./icons/IntercomIcon";
 import HubspotIcon from "./icons/HubspotIcon";
+import ReadmeIcon from "./icons/ReadmeIcon";
 import SalesforceIcon from "./icons/SalesforceIcon";
 import { start } from "repl";
 
@@ -80,6 +81,14 @@ const connectors = [
     active: true
   },
   {
+    name: "Readme",
+    id: "readme",
+    icon: ReadmeIcon,
+    label: null,
+    labelColor: "info",
+    active: true
+  },
+  {
     name: "Intercom",
     id: "intercom",
     icon: IntercomIcon,
@@ -103,6 +112,7 @@ const connectors = [
     labelColor: "warning",
     active: false
   },
+  
 ]
   
 const ConnectorPage: React.FC = () => {

@@ -14,6 +14,8 @@ class ConnectorId(str, Enum):
     dropbox = "dropbox"
     intercom = "intercom"
     hubspot = "hubspot"
+    readme = "readme"
+    salesforce = "salesforce"
 
 class Settings(BaseModel):
     name: str
