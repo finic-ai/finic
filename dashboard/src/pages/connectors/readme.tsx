@@ -11,7 +11,7 @@ import {
   } from "flowbite-react";
   import { FC, useEffect } from "react";
   import { useState } from "react";
-  import { SiReadme } from "react-icons/si";
+  import { SiBookstack } from "react-icons/si";
   
   
   import {
@@ -113,7 +113,7 @@ import {
                 <Breadcrumb.Item>Readme</Breadcrumb.Item>
               </Breadcrumb>
               <div className="flex items-center">
-                <SiReadme className="mr-2 text-xl" />
+                <SiBookstack className="mr-2 text-xl" />
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
                   Readme
                 </h1>
