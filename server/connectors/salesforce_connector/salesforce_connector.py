@@ -3,12 +3,16 @@ import os
 import json
 from typing import Dict, List, Optional
 from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult
+from requests_oauthlib import OAuth2Session
 from appstatestore.statestore import StateStore
 import base64
-from hubspot import HubSpot
+
+
+authorization_base_url = "https://login.salesforce.com/services/oauth2/authorize"
+token_url = "https://login.salesforce.com/services/oauth2/token"
 
 class SalesforceConnector(DocumentConnector):
-    connector_id: ConnectorId = ConnectorId.hubspot
+    connector_id: ConnectorId = ConnectorId.salesforce
     config: AppConfig
     headers: Dict = {}
 
@@ -24,10 +28,8 @@ class SalesforceConnector(DocumentConnector):
             client_id = connector_credentials['client_id']
             client_secret = connector_credentials['client_secret']
             redirect_uri = "https://link.psychic.dev/oauth/redirect"
-            scopes = "cms.knowledge_base.articles.read%20cms.knowledge_base.settings.read"
-            authorization_url = f"https://app.hubspot.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope={scopes}"
-
-            api_client = HubSpot()
+            sfdc = OAuth2Session(client_id, redirect_uri=redirect_uri)
+            authorization_url, _ = sfdc.authorization_url(authorization_base_url)
         except Exception as e:
             raise Exception("Connector is not enabled")
         
@@ -35,21 +37,10 @@ class SalesforceConnector(DocumentConnector):
             return AuthorizationResult(authorized=False, auth_url=authorization_url)
 
         try:
-            tokens = api_client.auth.oauth.tokens_api.create_token(
-                grant_type="authorization_code",
-                redirect_uri=redirect_uri,
-                client_id=client_id,
-                client_secret=client_secret,
-                code=auth_code
-            )
-            creds = {
-                'access_token': tokens.access_token,
-                'refresh_token': tokens.refresh_token,
-                'expires_in': tokens.expires_in,
-            }
-            creds_string = json.dumps(creds)
+            sfdc = OAuth2Session(client_id, redirect_uri=redirect_uri)
+            token = sfdc.fetch_token(token_url, client_secret=client_secret, authorization_response=auth_code)
 
-            workspace_name = ""
+            creds_string = json.dumps(token)
             
             
         except Exception as e:
@@ -62,9 +53,7 @@ class SalesforceConnector(DocumentConnector):
             credential=creds_string,
             connector_id=self.connector_id,
             account_id=account_id,
-            metadata={
-                'workspace_name': workspace_name,
-            }
+            metadata={}
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
     

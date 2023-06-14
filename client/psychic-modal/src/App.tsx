@@ -14,6 +14,7 @@ import DropboxAuthFlow from './components/auth/DropboxAuthFlow';
 import IntercomAuthFlow from './components/auth/IntercomAuthFlow';
 import HubspotAuthFlow from './components/auth/HubspotAuthFlow';
 import ReadmeAuthFlow from './components/auth/ReadmeAuthFlow';
+import SalesforceAuthFlow from './components/auth/SalesforceAuthFlow';
 import ModalHeader from './components/ModalHeader';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
@@ -61,6 +62,8 @@ const App: React.FC = () => {
           return <HubspotAuthFlow />
         } else if (selectedConnectorId == "readme") {
           return <ReadmeAuthFlow />
+        } else if (selectedConnectorId == "salesforce") {
+          return <SalesforceAuthFlow />
         }
          else {
           return <div>Unknown connector</div>

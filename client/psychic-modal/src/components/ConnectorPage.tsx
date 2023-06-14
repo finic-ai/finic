@@ -105,6 +105,14 @@ const connectors = [
     active: true
   },
   {
+    name: "Salesforce",
+    id: "salesforce",
+    icon: SalesforceIcon,
+    label: "Beta",
+    labelColor: "warning",
+    active: true
+  },
+  {
     name: "Github Issues",
     id: "github",
     icon: GithubIcon,
@@ -123,7 +131,7 @@ const ConnectorPage: React.FC = () => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
-    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack' || connectorId == 'dropbox' || connectorId == 'intercom' || connectorId == 'hubspot') {
+    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack' || connectorId == 'dropbox' || connectorId == 'intercom' || connectorId == 'hubspot' || connectorId == 'salesforce') {
       console.log('hello')
       startConnectorAuthFlow(window, connectorId)
     }
