@@ -92,7 +92,7 @@ class GoogleDriveConnector(DocumentConnector):
         
         parser = GoogleDriveParser(service, folder_id=folder_id)
 
-        sections = parser.list_all_subfolders()
+        sections = parser.list_all_subfolders(folder_id)
 
         return sections
 

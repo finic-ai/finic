@@ -21,13 +21,13 @@ class GoogleDriveParser:
             files.append(file)
         return files
     
-    def list_files_in_folder(self, folder_id) -> bool:
+    def list_files_in_folder(self, folder_id: str) -> bool:
         query = f"'{folder_id}' in parents"
         results = self.service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
         items = results.get("files", [])
         return items
     
-    def list_all_subfolders(self, folder_id) -> List[Section]:
+    def list_all_subfolders(self, folder_id: str) -> List[Section]:
         folders_to_process = deque([folder_id])
         folders = []
         while folders_to_process:
