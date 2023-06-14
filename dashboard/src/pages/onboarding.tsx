@@ -21,7 +21,7 @@ import Text from "../components/text";
 
 const OnboardingPage: FC = function () {
 
-  const {bearer} = useUserStateContext()
+  const {appId} = useUserStateContext()
       
 
   return (
@@ -46,7 +46,7 @@ const OnboardingPage: FC = function () {
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                     Step 1: Connect a data source
                 </h2>
-                <ConnectorPlayground bearer={bearer} />
+                <ConnectorPlayground publicKey={appId} />
               </div>
               <div>
                 <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
@@ -55,7 +55,7 @@ const OnboardingPage: FC = function () {
                 <Text className="mb-4">You'll need the <span className="font-bold">Account ID</span> you used and your Psychic <span className="font-bold">Secret Key</span> for this step.</Text>
                 <div className="flex flex-row items-center space-x-4">                  
                   <Text>Your Secret Key:</Text>
-                  <TextInput className="w-[310px]" readOnly value={bearer}/>
+                  <TextInput className="w-[310px]" readOnly value={appId}/>
                 </div>
                 <Tabs.Group style="underline">
                     <Tabs.Item active title="Using LangChain">

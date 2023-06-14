@@ -35,11 +35,11 @@ const PlaygroundPage: FC = function () {
                   <Text>Home</Text>
                 </div>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>Playground</Breadcrumb.Item>
+              <Breadcrumb.Item>Create Connection</Breadcrumb.Item>
             </Breadcrumb>
             <div className="flex items-center">
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-                Playground
+              Create Connection
               </h1>
             </div>
           </div>
@@ -48,10 +48,7 @@ const PlaygroundPage: FC = function () {
           <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
             <div className="mb-1 w-full">
               <div className="mb-4">
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
-                Create new connections
-              </h2>
-                <ConnectorPlayground bearer={appId} />
+                <ConnectorPlayground publicKey={appId} />
               </div>
             </div>
           </div>
@@ -60,14 +57,13 @@ const PlaygroundPage: FC = function () {
 };
 
 interface ConnectorPlaygroundProps {
-  bearer: string;
+  publicKey: string;
 }
 
-export const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bearer}: ConnectorPlaygroundProps) {
+export const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({publicKey}: ConnectorPlaygroundProps) {
   const [accountId, setAccountId] = useState<string>('');
   const [newConnection, setNewConnection] = useState<any>(null);
 
-  const publicKey = bearer
   const posthog = usePostHog()
 
   const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: {accountId: string, connectorId: string}) => {
@@ -78,7 +74,7 @@ export const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({bear
 
   return (
     <>
-      <Text className="mb-6">{"Connect data from your applications. You can then view them under Connectors > Active Connections."}</Text>
+      <Text className="mb-6">{"Click \"Connect\" to choose a data source. You can then view connections under Connector Status > Active Connections."}</Text>
       <Label htmlFor="apiKeys.label">Account ID</Label>
       <TextInput
         value={accountId}
