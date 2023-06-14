@@ -18,7 +18,7 @@ import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 import { useUserStateContext } from "../context/UserStateContext";
 import Text from "../components/text";
 
-const PlaygroundPage: FC = function () {
+const CreateConnectionPage: FC = function () {
 
   const {appId} = useUserStateContext()
       
@@ -45,13 +45,13 @@ const PlaygroundPage: FC = function () {
           </div>
         </div>
       </div>
-          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
-            <div className="mb-1 w-full">
-              <div className="mb-4">
-                <ConnectorPlayground publicKey={appId} />
-              </div>
-            </div>
+      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+        <div className="mb-1 w-full">
+          <div className="mb-4">
+            <ConnectorPlayground publicKey={appId} />
           </div>
+        </div>
+      </div>
     </NavbarSidebarLayout>
   );
 };
@@ -74,7 +74,7 @@ export const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({publ
 
   return (
     <>
-      <Text className="mb-6">{"Click \"Connect\" to choose a data source. You can then view connections under Connector Status > Active Connections."}</Text>
+      <Text className="mb-6">{"Click \"Connect\" to choose a data source to connect to using Psychic's OAuth app. You can then view connections under Connector Status > Active Connections."}</Text>
       <Label htmlFor="apiKeys.label">Account ID</Label>
       <TextInput
         value={accountId}
@@ -96,5 +96,5 @@ export const ConnectorPlayground: FC<ConnectorPlaygroundProps> = function ({publ
   );
 };
 
-export default PlaygroundPage;
+export default CreateConnectionPage;
   

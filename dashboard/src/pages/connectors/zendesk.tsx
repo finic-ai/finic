@@ -123,7 +123,7 @@ const ZendeskConnectorPage: FC = function () {
                 Zendesk
               </h1>
             </div>
-            <Text>View your active connections and configure the Zendesk connector here. You can create a new connection from the <a href="/playground" className="text-blue-400">Playground</a>.</Text>
+            <Text>View your active connections and configure the Zendesk connector here. You can create a new connection from the <a href="/create-connection" className="text-blue-400">Create Connection page</a>.</Text>
           </div>
         </div>
       </div>

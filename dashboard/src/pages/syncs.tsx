@@ -22,7 +22,7 @@ const SyncsPage: FC = function () {
   
   return (
     <NavbarSidebarLayout isFooter={false}>
-      <div className="block items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
         <div className="mb-1 w-full">
           <div className="mb-4">
             <Breadcrumb className="mb-4">
@@ -40,14 +40,8 @@ const SyncsPage: FC = function () {
           </div>
         </div>
       </div>
-      <div className="flex flex-col">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow">
-              <ProductsTable />
-            </div>
-          </div>
-        </div>
+      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+        <ProductsTable />
       </div>
     </NavbarSidebarLayout>
   );
@@ -143,7 +137,7 @@ const ProductsTable: FC = function () {
 
   return (
       <div>
-      <form className=" m-6 p-6 rounded">
+      <form>
       <div className="grid grid-cols-1 gap-6 w-1/2">
 
           <h3 className="font-semibold text-gray-900 dark:text-white sm:text-xl">

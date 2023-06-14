@@ -66,7 +66,7 @@ const DashboardSidebar: FC = function () {
                   First Steps
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="/playground"
+                  href="/create-connection"
                   icon={HiPlay}
                 >
                   Create Connection
@@ -191,6 +191,12 @@ const DashboardSidebar: FC = function () {
                 >
                   Vector Store
                 </Sidebar.Item> */}
+                <Sidebar.Item
+                  href="/syncs"
+                  icon={HiCloudDownload}
+                >
+                  Syncs
+                </Sidebar.Item>
               </Sidebar.ItemGroup>
               <Sidebar.ItemGroup>
                 {/* <Sidebar.Item
@@ -206,10 +212,10 @@ const DashboardSidebar: FC = function () {
                   API Key
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="/syncs"
-                  icon={HiCloudDownload}
+                  href="/settings"
+                  icon={HiCog}
                 >
-                  Syncs
+                  Settings
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="https://github.com/psychicapi/psychic"
@@ -231,13 +237,7 @@ const DashboardSidebar: FC = function () {
                   icon={HiBeaker}
                   target="_blank"
                 >
-                  API Testing
-                </Sidebar.Item>
-                <Sidebar.Item
-                  href="/settings"
-                  icon={HiCog}
-                >
-                  Settings
+                  API Playground
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg"
