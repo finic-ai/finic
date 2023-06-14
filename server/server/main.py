@@ -36,7 +36,8 @@ from models.api import (
 from appstatestore.statestore import StateStore
 from models.models import (
     AppConfig,
-    ConnectionFilter
+    ConnectionFilter,
+    ConnectorId
 )
 from connectors.connector_utils import get_connector_for_id, get_conversation_connector_for_id, get_document_connector_for_id
 import uuid
@@ -277,7 +278,7 @@ async def get_documents(
                     section_filter_id=request.section_filter
                 )
             ) 
-            if chunked:
+            if chunked and connector_id == ConnectorId.notion:
                 chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
                 result = chunker.chunk(result)
             documents.extend(result)
