@@ -8,10 +8,11 @@ const RedirectPage: React.FC = () => {
     console.log(window.opener)
       if (window.opener) {
           const urlParams = new URLSearchParams(window.location.search);
+          const url = window.location.href
           console.log(urlParams)
           const code = urlParams.get('code');
           if (code) {
-            window.opener.postMessage({ code: code }, '*')
+            window.opener.postMessage({ code: code, authorized_url: url }, '*')
           }
           window.close()
       }

@@ -38,7 +38,7 @@ class SalesforceConnector(DocumentConnector):
 
         try:
             sfdc = OAuth2Session(client_id, redirect_uri=redirect_uri)
-            token = sfdc.fetch_token(token_url, client_secret=client_secret, code=auth_code)
+            token = sfdc.fetch_token(token_url, client_secret=client_secret, authorization_response=auth_code)
 
             creds_string = json.dumps(token)
             
