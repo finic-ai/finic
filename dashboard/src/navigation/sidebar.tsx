@@ -157,6 +157,16 @@ const DashboardSidebar: FC = function () {
                     Hubspot
                   </Sidebar.Item>
                   <Sidebar.Item
+                    href="/connectors/salesforce"
+                    className={
+                      "/connectors/salesforce" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Salesforce
+                  </Sidebar.Item>
+                  <Sidebar.Item
                     href="/connectors/readme"
                     className={
                       "/connectors/readme" === currentPage
