@@ -56,6 +56,7 @@ const {
 
 const [authFlowStep, setAuthFlowStep] = useState(0)
 const [creds, setCreds] = useState(null)
+const [connection, setConnection] = useState(null)
 
 
 
@@ -73,6 +74,9 @@ const renderModalBody = () => {
     case 1:
       return <GDriveMetadataForm creds={creds} onSubmit={() => {
         setAuthFlowStep(authFlowStep + 1)
+        if (window.opener) {
+          window.opener.postMessage(connection, '*')
+        }
       }}/>
 
       // return <ApiKeysForm onSubmit={(email: string, apiKey: string) => {
@@ -123,12 +127,11 @@ const renderModalBody = () => {
     }
     setNewConnection(result.connection)
     setCreds(result.connection.credential)
+    setConnection(result.connection)
     setIsLoading(false)
     setIsSuccess(true)
     // Notify opening window that auth is complete
-    if (window.opener) {
-      window.opener.postMessage(result.connection, '*')
-    }
+    
     // setAuthFlowStep(authFlowStep + 1)
   }
 

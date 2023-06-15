@@ -23,7 +23,7 @@ interface GDriveMetadataFormProps {
 
 const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}) => {
     const {selectedConnectorId, setIsLoading, setMetadata, publicKey, accountId} = useModalContext()
-    const [folderName, setFolderName] = useState('')
+    const [folderName, setFolderName] = useState([])
 
     const [loading, setLoading] = useState(false)
 
@@ -38,12 +38,12 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
         openPicker({
           clientId: credsJson.client_id,
           developerKey: credsJson.developer_key,
-          viewId: "FOLDERS",
+          viewId: "DOCS",
           token: credsJson.access_token, // pass oauth token in case you already have one
           showUploadView: false,
           showUploadFolders: false,
           supportDrives: true,
-          multiselect: false,
+          multiselect: true,
           setSelectFolderEnabled: true,
           // customViews: customViewsArray, // custom view
           callbackFunction: (data: any) => {
@@ -51,8 +51,18 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
               console.log('User clicked cancel/close button')
             }
             if (data.action === 'picked') {
+                console.log(data.docs)
                 var folderId = data.docs[0].id
-                setFolderMetadata(folderId)
+                var sections = []
+                for (var i = 0; i < data.docs.length; i++) {
+                    var type = data.docs[i].type === 'folder' ? 'folder' : 'document'
+                    sections.push({
+                        name: data.docs[i].name,
+                        id: data.docs[i].id,
+                        type: type
+                    })
+                }
+                setFolderMetadata(sections)
             }
 
 
@@ -61,10 +71,10 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
         })
       }
 
-      async function setFolderMetadata(folderId: string) {
+      async function setFolderMetadata(sections: any) {
         // call /update-connection-metadata endpoint with folderId
         setLoading(true)
-        const response = await fetch(`${PSYCHIC_URL}/update-connection-metadata`, {
+        const response = await fetch(`${PSYCHIC_URL}/add-section-filter-public`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,8 +83,9 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
             body: JSON.stringify({
                 connector_id: selectedConnectorId,
                 account_id: accountId,
-                metadata: {
-                    folder_id: folderId
+                section_filter: {
+                    id: "__default__",
+                    sections: sections
                 }
             })
         })

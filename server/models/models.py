@@ -28,9 +28,15 @@ class AppConfig(BaseModel):
     app_id: str
     user_id: str
 
+
+class SectionType(str, Enum):
+    folder = "folder"
+    document = "document"
+
 class Section(BaseModel):
     id: str
     name: str
+    type: SectionType
 
 class SectionFilter(BaseModel):
     id: str

@@ -122,7 +122,6 @@ class GoogleDriveConnector(DocumentConnector):
         )
 
         credential_string = connection.credential
-        folder_id = connection.metadata['folder_id']
 
         credential_json = json.loads(credential_string)
         creds = Credentials.from_authorized_user_info(
@@ -138,29 +137,37 @@ class GoogleDriveConnector(DocumentConnector):
                 connector_id=self.connector_id,
                 account_id=account_id,
                 metadata={
-                    'folder_id': folder_id,
                 }
             )
         service = build('drive', 'v3', credentials=creds)
         
-        parser = GoogleDriveParser(service, folder_id=folder_id)
+        parser = GoogleDriveParser(service)
 
-        folder_contents = parser.list_files_in_folder(folder_id)
-        if len(folder_contents) == 0:
-            raise Exception("Folder is empty")
+        # folder_contents = parser.list_files_in_folder(folder_id)
+        # if len(folder_contents) == 0:
+        #     raise Exception("Folder is empty")
+        
+        connection_filter = ConnectionFilter(connector_id=self.connector_id, account_id=account_id)
+        connections = StateStore().get_connections(
+            filter=connection_filter,
+            config=self.config,
+        )
+        connection = connections[0]
+        filters = connection.section_filters
+        default_filter = None
+
+        if filters:
+            for filter in filters:
+                if filter.id == "__default__":
+                    default_filter = filter
+                    break
 
         files = []
         if uris:
             files = parser.get_files_by_uris(uris)
         elif section_filter:
             # retrieve the SectionFilter based on the section_filter id
-            connection_filter = ConnectionFilter(connector_id=self.connector_id, account_id=account_id)
-            connections = StateStore().get_connections(
-                filter=connection_filter,
-                config=self.config,
-            )
-            connection = connections[0]
-            filters = connection.section_filters
+            
             # get the filter with the right id
             sections = []
             for filter in filters:
@@ -168,10 +175,14 @@ class GoogleDriveConnector(DocumentConnector):
                     sections = filter.sections
 
             for section in sections:
-                files.extend(parser.get_all_files(section.id))
+                files.extend(parser.get_all_files(section))
 
         else:
-            files = parser.get_all_files(folder_id)
+            if default_filter:
+                for section in default_filter.sections:
+                    files.extend(parser.get_all_files(section))
+            else:
+                files = []
 
         documents = []
         for item in files:
