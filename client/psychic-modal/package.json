@@ -7,6 +7,7 @@
     "axios": "^1.4.0",
     "flowbite": "^1.6.5",
     "flowbite-react": "^0.4.4",
+    "react-google-drive-picker": "^1.2.2",
     "react-icons": "^4.8.0",
     "react-router": "^6.11.1",
     "react-router-dom": "^6.11.1",

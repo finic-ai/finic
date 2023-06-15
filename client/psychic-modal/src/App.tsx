@@ -3,7 +3,6 @@ import './App.css';
 
 import StartPage from './components/StartPage'
 import ConnectorPage from './components/ConnectorPage'
-import ResultPage from './components/ResultPage'
 import { useModalContext } from './context/ModalContext'
 import NotionAuthFlow from './components/auth/NotionAuthFlow';
 import GDriveAuthFlow from './components/auth/GDriveAuthFlow';
@@ -68,8 +67,6 @@ const App: React.FC = () => {
          else {
           return <div>Unknown connector</div>
         }
-      case 3:
-        return <ResultPage />
       default:
         return <StartPage />
     }

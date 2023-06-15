@@ -45,11 +45,11 @@ const ResultPage: React.FC = () => {
       )
     }
 
-    if (selectedConnectorId == 'gdrive' && metadata == null) {
-      return (
-        <MetadataForm  />
-      )
-    }
+    // if (selectedConnectorId == 'gdrive' && metadata == null) {
+    //   return (
+    //     <MetadataForm  />
+    //   )
+    // }
 
   return (
     <div className="flex flex-col mb-4 space-y-4 items-center text-center">

@@ -131,7 +131,7 @@ const ConnectorPage: React.FC = () => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
-    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack' || connectorId == 'dropbox' || connectorId == 'intercom' || connectorId == 'hubspot' || connectorId == 'salesforce') {
+    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack' || connectorId == 'dropbox' || connectorId == 'intercom' || connectorId == 'hubspot' || connectorId == 'salesforce' || connectorId == 'gdrive') {
       console.log('hello')
       startConnectorAuthFlow(window, connectorId)
     }

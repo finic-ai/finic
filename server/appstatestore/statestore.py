@@ -243,6 +243,23 @@ class StateStore:
         }
         self.supabase.table("connections").upsert(insert_data).execute()
 
+    def update_connection_metadata(self, config: AppConfig, connector_id: ConnectorId, account_id: str, metadata: Dict) -> Connection:
+        # Get the existing filters
+
+        insert_data = {
+            'account_id': account_id,
+            'app_id': config.app_id,
+            'connector_id': connector_id,
+            'metadata': metadata
+        }
+        self.supabase.table("connections").upsert(insert_data).execute()
+
+        return Connection(
+            account_id=account_id,
+            connector_id=connector_id,
+            metadata=metadata
+        )
+
   
         
 

@@ -30,7 +30,9 @@ from models.api import (
     AskQuestionResponse,
     GetLinkSettingsResponse,
     AddSectionFilterRequest,
-    AddSectionFilterResponse
+    AddSectionFilterResponse,
+    UpdateConnectionMetadataRequest,
+    UpdateConnectionMetadataResponse
 )
 
 from appstatestore.statestore import StateStore
@@ -233,6 +235,29 @@ async def add_oauth_connection(
         return response
     except Exception as e:
         logger.log_api_call(config, Event.add_oauth_connection, request, None, e)
+        raise e
+    
+@app.post(
+    "/update-connection-metadata",
+    response_model=UpdateConnectionMetadataResponse,
+)
+async def update_connection_metadata(
+    request: UpdateConnectionMetadataRequest = Body(...),
+    config: AppConfig = Depends(validate_public_key),
+):
+    try:
+        connector_id = request.connector_id
+        account_id = request.account_id
+        metadata = request.metadata
+
+        StateStore().update_connection_metadata(config, connector_id, account_id, metadata)
+
+        # await connector.update_metadata(account_id, metadata)
+        response = UpdateConnectionMetadataResponse(success=True)
+        logger.log_api_call(config, Event.update_connection_metadata, request, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.update_connection_metadata, request, None, e)
         raise e
 
 @app.post(

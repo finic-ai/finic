@@ -93,3 +93,10 @@ class AddSectionFilterResponse(BaseModel):
     success: bool
     section_filter: Optional[SectionFilter]
 
+class UpdateConnectionMetadataResponse(BaseModel):
+    success: bool
+
+class UpdateConnectionMetadataRequest(BaseModel):
+    connector_id: ConnectorId
+    account_id: str
+    metadata: Dict

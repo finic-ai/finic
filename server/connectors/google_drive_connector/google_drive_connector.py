@@ -42,7 +42,10 @@ class GoogleDriveConnector(DocumentConnector):
         pass              
 
     async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
-        client_secrets = StateStore().get_connector_credential(self.connector_id, self.config)
+        cred = StateStore().get_connector_credential(self.connector_id, self.config)
+        print(cred)
+        client_secrets = cred['client_secrets']
+        developer_key = cred['developer_key']
 
         redirect_uri = client_secrets['web']['redirect_uris'][0]
 
@@ -60,18 +63,28 @@ class GoogleDriveConnector(DocumentConnector):
         # Build the Google Drive API client with the credentials
         creds = flow.credentials
         creds_string = creds.to_json()
-        folder_url = metadata['folder_url']
-        folder_id = get_id_from_url(folder_url)
+
+        if metadata is None:
+            metadata = {}
+        else:
+            folder_url = metadata['folder_url']
+            folder_id = get_id_from_url(folder_url)
+            metadata = {
+                'folder_id': folder_id
+            }
 
         new_connection = StateStore().add_connection(
             config=self.config,
             credential=creds_string,
             connector_id=self.connector_id,
             account_id=account_id,
-            metadata={
-                'folder_id': folder_id,
-            }
+            metadata=metadata
         )
+        new_connection.credential = json.dumps({
+            "access_token": creds.token,
+            "client_id": creds.client_id,
+            "developer_key": developer_key
+        })
         return AuthorizationResult(authorized=True, connection=new_connection)
     
     async def get_sections(self, account_id: str) -> List[Section]:
