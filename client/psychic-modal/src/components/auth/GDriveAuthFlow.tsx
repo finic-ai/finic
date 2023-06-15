@@ -57,31 +57,6 @@ const {
 const [authFlowStep, setAuthFlowStep] = useState(0)
 const [creds, setCreds] = useState(null)
 
-const token = {"token": "ya29.a0AWY7CklAYNHzz8gEbfcvXrS4uW5qENePWBA_x1hwMQXYgLMdnGQf_UNaA2761gf9KN8R7mGKSzwsd8lCBgbDGZcZ6N19JFwir1xOdfG5hsLAb6TU1RbeX0olYu4UGcGXrYIa1gw4Ae3JQ_7pkGgVV9KWWrCGaCgYKAVsSARMSFQG1tDrpslzvNwtb6iOQJ_5jiTJbog0163", "refresh_token": "1//05Vfo66zpUhxBCgYIARAAGAUSNwF-L9IrMpxP7gMpdsxSbGhUJ-dT2rJ-hpU4l_a6AQSmozUBEhWRyrlSNX9EBSBlzWiqevq4DCU", "token_uri": "https://oauth2.googleapis.com/token", "client_id": "521298051240-ju1q0mcufpe1qq0sr4uuvr772b39al4k.apps.googleusercontent.com", "client_secret": "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", "scopes": ["https://www.googleapis.com/auth/drive.readonly"], "expiry": "2023-06-15T04:56:36.956209Z"}
-    const clientDetails = {"web":{"client_id":"521298051240-ju1q0mcufpe1qq0sr4uuvr772b39al4k.apps.googleusercontent.com","project_id":"spearmint-fbf84","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"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","redirect_uris":["https://link.psychic.dev/oauth/redirect","http://localhost:3000/oauth/redirect","https://app.getsidekick.ai/connectors/google-drive"]}}
-    const [openPicker, authResponse] = useDrivePicker(); 
-
-const handleOpenPicker = () => {
-  console.log('opening picker')
-  openPicker({
-    clientId: clientDetails.web.client_id,
-    developerKey: "AIzaSyAJqpLDJ2LLpM1oc_eAQuo2H3hCYJQ6UjU",
-    viewId: "FOLDERS",
-    token: token.token, // pass oauth token in case you already have one
-    showUploadView: false,
-    showUploadFolders: false,
-    supportDrives: true,
-    multiselect: false,
-    setSelectFolderEnabled: true,
-    // customViews: customViewsArray, // custom view
-    callbackFunction: (data: any) => {
-      if (data.action === 'cancel') {
-        console.log('User clicked cancel/close button')
-      }
-      console.log(data)
-    },
-  })
-}
 
 
 const renderModalBody = () => {
@@ -154,7 +129,6 @@ const renderModalBody = () => {
     if (window.opener) {
       window.opener.postMessage(result.connection, '*')
     }
-    handleOpenPicker()
     // setAuthFlowStep(authFlowStep + 1)
   }
 
@@ -167,7 +141,6 @@ const renderModalBody = () => {
           </div>
           <p className="mt-6">Authenticating with <span className="font-bold">{connectorName}</span>...</p>
         </div> 
-        <Button onClick={handleOpenPicker}>Open Picker</Button>
     </div>
   )
 }
