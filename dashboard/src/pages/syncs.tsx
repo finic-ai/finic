@@ -17,6 +17,8 @@ import supabase from "../lib/supabaseClient";
 import { useUserStateContext } from "../context/UserStateContext";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 import Text from "../components/text";
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
   
 const SyncsPage: FC = function () {
   
@@ -157,7 +159,7 @@ const ProductsTable: FC = function () {
               className="mt-1"
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
-              helperText="Webhook URL to send 24-hr sync data to. Psychic will send POST requests to this URL for each connector you have enabled."
+              helperText="Psychic will send POST requests to this URL for each connector you have enabled every 24 hours."
           />
           </div>
           <div className="flex justify-beginning">
@@ -167,7 +169,19 @@ const ProductsTable: FC = function () {
               </Button>
           </div>
           {webhookSaved && <div className="text-green-500 text-sm ml-2 mt-1">Saved!</div>}
-          
+          <Text>Requests will have a JSON body with the following format:</Text>
+          <SyntaxHighlighter language="javascript" style={dracula}>{
+            `{
+  'account_id': string,
+  'connector_id': string,
+  'documents': [{
+    'title': string
+    'content': string
+    'connector_id': string
+    'account_id': string
+    'uri' string (optional)
+  }]
+}`}</SyntaxHighlighter>
           <h3 className="font-semibold text-gray-900 dark:text-white sm:text-xl">
           Run manually
           </h3>
