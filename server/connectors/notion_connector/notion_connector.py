@@ -2,7 +2,7 @@ import requests
 import os
 import json
 from typing import Dict, List, Optional
-from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, Section, ConnectionFilter
+from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, Section, ConnectionFilter, SectionType
 from appstatestore.statestore import StateStore
 import base64
 from .notion_parser import NotionParser
@@ -81,6 +81,33 @@ class NotionConnector(DocumentConnector):
         parser = NotionParser(access_token)
         all_pages = parser.notion_search({})
 
+        id_to_section = {}
+        id_to_parent = {}
+        id_to_parent_type = {}
+
+        # Create all sections and store parent ids
+        for page in all_pages:
+            print(page)
+            id = page['id']
+            name = parser.parse_title(page)
+            parent_id = page['parent'].get('id')
+            parent_type = page['parent']['type']
+            id_to_section[id] = Section(id=id, name=name, type=SectionType.folder, children=[])
+            id_to_parent[id] = parent_id
+            id_to_parent_type[id] = parent_type
+
+        # Assign each section to its parent
+        for id, section in id_to_section.items():
+            parent_id = id_to_parent[id]
+            parent_type = id_to_parent_type[id]
+
+            # If parent is not a workspace, add this section to its parent's children
+            if parent_type != 'workspace' and parent_id in id_to_section:
+                id_to_section[parent_id].children.append(section)
+
+        # Return all sections whose parent is a workspace
+        return [section for id, section in id_to_section.items() if id_to_parent_type[id] == 'workspace']
+
         top_level_pages = []
         remaining_pages = []
         for item in all_pages:
@@ -90,6 +117,8 @@ class NotionConnector(DocumentConnector):
                 remaining_pages.append(Section(id=item['id'], name=parser.parse_title(item)))
         top_level_pages.extend(remaining_pages)
         return top_level_pages
+    
+
 
     async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
         account_id = connection_filter.account_id

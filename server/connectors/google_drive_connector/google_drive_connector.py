@@ -95,7 +95,6 @@ class GoogleDriveConnector(DocumentConnector):
         )
 
         credential_string = connection.credential
-        folder_id = connection.metadata['folder_id']
 
         credential_json = json.loads(credential_string)
         creds = Credentials.from_authorized_user_info(
@@ -103,9 +102,9 @@ class GoogleDriveConnector(DocumentConnector):
         )
         service = build('drive', 'v3', credentials=creds)
         
-        parser = GoogleDriveParser(service, folder_id=folder_id)
+        parser = GoogleDriveParser(service)
 
-        sections = parser.list_all_subfolders(folder_id)
+        sections = parser.list_all_subfolders()
 
         return sections
 

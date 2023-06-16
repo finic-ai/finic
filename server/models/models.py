@@ -37,6 +37,7 @@ class Section(BaseModel):
     id: str
     name: str
     type: SectionType
+    children: Optional[List["Section"]] = None
 
 class SectionFilter(BaseModel):
     id: str

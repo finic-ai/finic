@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from models.models import Section
+from models.models import Section, SectionType
 import requests
 
 class ZendeskParser:
@@ -62,7 +62,7 @@ class ZendeskParser:
             print(f"Error: Unable to fetch sections. Status code: {response.status_code}")
             return []
         data = response.json()
-        return [Section(id=section["id"], name=section["name"]) for section in data["sections"]]
+        return [Section(id=section["id"], name=section["name"], type=SectionType.folder, children=[]) for section in data["sections"]]
 
     
     def get_id_from_uri(self, uri: str) -> str:

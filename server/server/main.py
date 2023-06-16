@@ -163,6 +163,8 @@ async def add_section_filter(
         connector_id = request.connector_id
         account_id = request.account_id
         filter = request.section_filter
+        for section in filter.sections:
+            section.children = None
         connections = StateStore().get_connections(ConnectionFilter(connector_id=connector_id, account_id=account_id), config)
         if len(connections) == 0:
             raise HTTPException(status_code=404, detail="Connection not found")

@@ -1,5 +1,5 @@
 import requests
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from models.models import Section, SectionType
@@ -25,28 +25,64 @@ class GoogleDriveParser:
         file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
         return file
     
-    def list_files_in_folder(self, folder_id: str) -> bool:
-        query = f"'{folder_id}' in parents"
-        results = self.service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
+    def list_files_in_folder(self, folder_id: Optional[str]) -> bool:
+        if not folder_id:
+            results = self.service.files().list(fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
+        else:
+            query = f"'{folder_id}' in parents"
+            results = self.service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
         items = results.get("files", [])
         return items
     
-    def list_all_subfolders(self, folder_id: str) -> List[Section]:
-        folders_to_process = deque([folder_id])
+    def list_all_subfolders(self) -> List[Section]:
+        folders_to_process = deque([])
         folders = []
+
+        # get all top-level items 
+        items = self.list_files_in_folder(None)
+        for item in items:
+            if item.get("mimeType", "") == "application/vnd.google-apps.folder":
+                folder = Section(
+                    id=item["id"],
+                    name=item["name"],
+                    type=SectionType.folder,
+                    children=[],
+                )
+                folders_to_process.append(folder)
+                folders.append(folder)
+            elif item.get("mimeType", "") in ["application/vnd.google-apps.document", "application/pdf"]:
+                folders.append(Section(
+                    id=item["id"],
+                    name=item["name"],
+                    type=SectionType.document,
+                ))
+
+        
         while folders_to_process:
             current_folder = folders_to_process.popleft()
-            items = self.list_files_in_folder(current_folder)
+            items = self.list_files_in_folder(current_folder.id)
 
             for item in items:
                 mime_type = item.get("mimeType", "")
 
                 if mime_type == "application/vnd.google-apps.folder":
-                    folders_to_process.append(item["id"])
-                    folders.append(Section(
+                    folder = Section(
                         id=item["id"],
                         name=item["name"],
+                        type=SectionType.folder,
+                        children=[],
+                    )
+                    current_folder.children.append(folder)
+                    folders_to_process.append(folder)
+            
+                elif mime_type in ["application/vnd.google-apps.document", "application/pdf"]:
+                    current_folder.children.append(Section(
+                        id=item["id"],
+                        name=item["name"],
+                        type=SectionType.document,
                     ))
+                    
+
         return folders
     
     def get_all_files(self, section: Section) -> list:
