@@ -100,7 +100,7 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
     return(
         <div className="flex flex-col items-center"> 
         <Button  size="xl" className="w-3/5 min-w-300 mb-4" onClick={handleOpenPicker}>
-            {loading ? <Spinner className="mr-2" /> : 'Select Folder'}
+            {loading ? <Spinner className="mr-2" /> : 'Select Files or Folders'}
             
         </Button>
         </div>
