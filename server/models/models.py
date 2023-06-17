@@ -16,6 +16,7 @@ class ConnectorId(str, Enum):
     hubspot = "hubspot"
     readme = "readme"
     salesforce = "salesforce"
+    clickup = "clickup"
 
 class Settings(BaseModel):
     name: str
