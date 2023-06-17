@@ -88,8 +88,10 @@ class NotionParser:
 
 
     def notion_search(self, query: Dict):
-        res = requests.post(f"{BASE_URL}/v1/search", headers=self.headers, data=query)
+        print(query)
+        res = requests.post(f"{BASE_URL}/v1/search", headers=self.headers, json=query)
         res_json = res.json()
+        print(res_json)
         pages = res_json.get('results')
         next_cursor = res_json.get('next_cursor')
         if pages:
@@ -225,6 +227,7 @@ class NotionParser:
     def parse_notion_blocks(self, blocks) -> str:
         html = ""
         i = 0
+        print(blocks)
         while i < len(blocks):
             block = blocks[i]
             block_type = block.get('type')

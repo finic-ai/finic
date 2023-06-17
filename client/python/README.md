@@ -31,7 +31,17 @@ connections = psychic.get_connections(account_id="account_id")
 ### Retrieve documents from a connection
 
 ```
-docs = psychic.get_documents(account_id="account_id")
+page_cursor = None
+all_docs = []
+while True:
+    docs_response = psychic.get_documents(account_id="account_id", connector_id=ConnectorId.notion, page_cursor=page_cursor, page_size=100)
+    if docs_response is None:
+        break
+    all_docs.extend(docs_response.documents)
+    page_cursor = docs_response.next_page_cursor
+    if page_cursor is None:
+        break
+print(all_docs)
 ```
 
 ## Advanced Filtering

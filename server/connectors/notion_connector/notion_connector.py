@@ -158,9 +158,11 @@ class NotionConnector(DocumentConnector):
             search_params = {}
 
             if connection_filter.page_size is not None:
-                search_params['start_cursor'] = connection_filter.page_cursor
                 search_params['page_size'] = connection_filter.page_size
+            if connection_filter.page_cursor is not None:
+                search_params['start_cursor'] = connection_filter.page_cursor
             all_notion_documents, next_cursor = parser.notion_search(search_params)
+            print(all_notion_documents)
 
         documents: List[Document] = []
         for item in all_notion_documents:

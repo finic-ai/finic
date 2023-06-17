@@ -57,6 +57,14 @@ class Connection:
         self.credential = credential
         self.config = config
 
+class GetDocumentsResponse:
+    documents: List[Dict]
+    next_page_cursor: Optional[str] = None
+
+    def __init__(self, documents: List[Dict], next_page_cursor: Optional[str] = None) -> None:
+        self.documents = documents
+        self.next_page_cursor = next_page_cursor
+
 class ChunkingOptions:
     min_chunk_size: Optional[int] = None
     max_chunk_size: Optional[int] = None
@@ -66,7 +74,17 @@ class Psychic:
         self.api_url = "https://api.psychic.dev/"
         self.secret_key = secret_key
 
-    def get_documents(self, *, account_id: str, connector_id: Optional[ConnectorId] = None, section_filter_id: Optional[str] = None, uris: Optional[List[str]] = None, chunked: Optional[bool] = False, min_chunk_size: Optional[int] = None, max_chunk_size: Optional[int] = None):
+    def get_documents(self, 
+                      *, 
+                      account_id: str, 
+                      connector_id: Optional[ConnectorId] = None, 
+                      section_filter_id: Optional[str] = None, 
+                      uris: Optional[List[str]] = None, 
+                      chunked: Optional[bool] = False, 
+                      min_chunk_size: Optional[int] = None, 
+                      max_chunk_size: Optional[int] = None,
+                      page_cursor: Optional[str] = None,
+                      page_size: Optional[int] = 100):
         body = {
             "account_id": account_id,
             "connector_id": connector_id.value if connector_id is not None else None,
@@ -75,6 +93,8 @@ class Psychic:
             "chunked": chunked,
             "min_chunk_size": min_chunk_size,
             "max_chunk_size": max_chunk_size,
+            "page_cursor": page_cursor,
+            "page_size": page_size
         }
         response = requests.post(
             self.api_url + "get-documents",
@@ -85,8 +105,10 @@ class Psychic:
             }
         )
         if response.status_code == 200:
-            documents = response.json()["documents"]
-            return documents
+            data = response.json()
+            documents = data["documents"]
+            next_page_cursor = data["next_page_cursor"]
+            return GetDocumentsResponse(documents=documents, next_page_cursor=next_page_cursor)
         else:
             return None
         
