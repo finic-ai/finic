@@ -341,9 +341,9 @@ async def get_documents(
             ) 
             if chunked and connector_id == ConnectorId.notion:
                 chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
-                result = chunker.chunk(result)
+                result = GetDocumentsResponse(documents=chunker.chunk(result.documents), next_cursor=result.next_page_cursor)
             documents.extend(result)
-        response = GetDocumentsResponse(documents=documents)
+        response = result
         logger.log_api_call(config, Event.get_documents, request, response, None)
         return response
     except Exception as e:

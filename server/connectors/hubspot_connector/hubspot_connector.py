@@ -3,6 +3,7 @@ import os
 import json
 from typing import Dict, List, Optional
 from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, ConnectionFilter
+from models.api import GetDocumentsResponse
 from appstatestore.statestore import StateStore
 import base64
 from hubspot import HubSpot
@@ -72,7 +73,7 @@ class HubspotConnector(DocumentConnector):
         pass
 
 
-    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -88,7 +89,7 @@ class HubspotConnector(DocumentConnector):
             uri='https://www.intercom.com/Help-Article-Example-1d1b1b1b1b1b4c4c4c4c4c4c4c4c4c4c',
         )]
 
-        return documents
+        return GetDocumentsResponse(documents=documents)
 
 
 

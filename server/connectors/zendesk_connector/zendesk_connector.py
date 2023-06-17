@@ -1,4 +1,5 @@
 from models.models import AppConfig, Document, ConnectorId, AuthorizationResult, DataConnector, ConnectionFilter
+from models.api import GetDocumentsResponse
 from typing import List, Optional
 from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
 from googleapiclient.discovery import build
@@ -112,7 +113,7 @@ class ZendeskConnector(DataConnector):
         sections = parser.list_sections()
         return sections
 
-    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -166,4 +167,4 @@ class ZendeskConnector(DataConnector):
                     )
                 )
 
-        return documents
+        return GetDocumentsResponse(documents=documents)

@@ -1,4 +1,5 @@
 from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, ConnectionFilter, Section
+from models.api import GetDocumentsResponse
 from typing import List, Optional
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -109,7 +110,7 @@ class GoogleDriveConnector(DocumentConnector):
         return sections
 
 
-    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -192,7 +193,6 @@ class GoogleDriveConnector(DocumentConnector):
             elif mime_type == "application/pdf":
                 pdf_file = download_pdf(service, item["id"])
                 content = extract_pdf_text(pdf_file)
-            print(item)
             documents.append(
                 Document(
                     title=item["name"],
@@ -202,7 +202,7 @@ class GoogleDriveConnector(DocumentConnector):
                     uri=item["webViewLink"],
                 )
             )
-        return documents
+        return GetDocumentsResponse(documents=documents)
 
 def get_id_from_folder_name(folder_name: str, service) -> str:
     print("loading documents")

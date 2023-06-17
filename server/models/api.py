@@ -7,7 +7,8 @@ from models.models import (
     Connection,
     ConnectionFilter,
     Settings,
-    SectionFilter
+    SectionFilter,
+    GetDocumentsResponse
 )
 from pydantic import BaseModel
 from typing import List, Optional, Dict
@@ -55,10 +56,8 @@ class GetDocumentsRequest(BaseModel):
     chunked: Optional[bool] = False
     min_chunk_size: Optional[int] = 500
     max_chunk_size: Optional[int] = 1500
-
-
-class GetDocumentsResponse(BaseModel):
-    documents: List[Document]
+    page_cursor: Optional[str] = None
+    page_size: Optional[int] = 100
 
 class GetConversationsRequest(BaseModel):
     connector_id: ConnectorId

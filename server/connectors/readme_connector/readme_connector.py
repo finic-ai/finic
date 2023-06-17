@@ -3,6 +3,7 @@ import os
 import json
 from typing import Dict, List, Optional
 from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, Section, ConnectionFilter
+from models.api import GetDocumentsResponse
 from appstatestore.statestore import StateStore
 import base64
 from .readme_parser import ReadmeParser
@@ -37,7 +38,7 @@ class ReadmeConnector(DocumentConnector):
     async def get_sections(self, account_id: str) -> List[Section]:
         pass
 
-    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -52,7 +53,7 @@ class ReadmeConnector(DocumentConnector):
         all_docs = parser.get_all_docs()
 
         
-        return [
+        documents =  [
             Document(
                 title=doc['title'],
                 content=doc['content'],
@@ -62,6 +63,8 @@ class ReadmeConnector(DocumentConnector):
             )
             for doc in all_docs     
         ]
+
+        return GetDocumentsResponse(documents=documents)
 
 
 

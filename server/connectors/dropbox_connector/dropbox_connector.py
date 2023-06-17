@@ -2,6 +2,7 @@ import requests
 import json
 from typing import Dict, List, Optional
 from models.models import AppConfig, Document, ConnectorId, DataConnector, AuthorizationResult, ConnectionFilter
+from models.api import GetDocumentsRequest, GetDocumentsResponse
 from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
 from appstatestore.statestore import StateStore
 from io import BytesIO
@@ -197,7 +198,7 @@ class DropboxConnector(DataConnector):
     async def get_sections(self) -> List[str]:
         pass
 
-    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -235,4 +236,4 @@ class DropboxConnector(DataConnector):
                     )
                 )
 
-        return documents
+        return GetDocumentsResponse(documents=documents)

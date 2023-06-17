@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Dict
 from enum import Enum
 
-
-
 class ConnectorId(str, Enum):
     notion = "notion"
     gdrive = "gdrive"
@@ -16,6 +14,8 @@ class ConnectorId(str, Enum):
     hubspot = "hubspot"
     readme = "readme"
     salesforce = "salesforce"
+
+
 
 class Settings(BaseModel):
     name: str
@@ -38,6 +38,8 @@ class Section(BaseModel):
     name: str
     type: SectionType
     children: Optional[List["Section"]] = None
+
+Section.update_forward_refs()
 
 class SectionFilter(BaseModel):
     id: str
@@ -64,6 +66,10 @@ class Document(BaseModel):
     account_id: str
     uri: Optional[str] = None
 
+class GetDocumentsResponse(BaseModel):
+    documents: List[Document]
+    next_page_cursor: Optional[str] = None
+
 class MessageSender(BaseModel):
     name: str
     id: str
@@ -88,6 +94,14 @@ class AuthorizationResult(BaseModel):
     authorized: bool = False
     connection: Optional[Connection] = None
 
+class ConnectionFilter(BaseModel):
+    connector_id: Optional[ConnectorId] = None
+    account_id: str
+    uris: Optional[List[str]] = None
+    section_filter_id: Optional[str] = None
+    page_cursor: Optional[str] = None
+    page_size: Optional[int] = 100
+
 class DataConnector(BaseModel, ABC):
     connector_id: ConnectorId
 
@@ -105,7 +119,7 @@ class DataConnector(BaseModel, ABC):
 
 class DocumentConnector(DataConnector):
     @abstractmethod
-    async def load(self, account_id: str, uris: Optional[List[str]], section_filter: Optional[str]) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         pass
 
 class ConversationConnector(DataConnector):
@@ -113,11 +127,7 @@ class ConversationConnector(DataConnector):
     async def load(self, account_id: str, oldest_message_time: Optional[str]) -> List[Message]:
         pass
 
-class ConnectionFilter(BaseModel):
-    connector_id: Optional[ConnectorId] = None
-    account_id: str
-    uris: Optional[List[str]] = None
-    section_filter_id: Optional[str] = None
+
 
 class Sync(BaseModel):
     app_id: str

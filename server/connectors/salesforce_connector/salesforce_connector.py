@@ -3,6 +3,7 @@ import os
 import json
 from typing import Dict, List, Optional
 from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult
+from models.api import GetDocumentsResponse
 from requests_oauthlib import OAuth2Session
 from appstatestore.statestore import StateStore
 import base64
@@ -61,7 +62,7 @@ class SalesforceConnector(DocumentConnector):
         pass
 
 
-    async def load(self, account_id: str) -> List[Document]:
+    async def load(self, account_id: str) -> GetDocumentsResponse:
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
@@ -72,7 +73,7 @@ class SalesforceConnector(DocumentConnector):
             'uri': 'https://www.intercom.com/Help-Article-Example-1d1b1b1b1b1b4c4c4c4c4c4c4c4c4c4c',
         }]
 
-        return documents
+        return GetDocumentsResponse(documents=documents)
 
 
 

@@ -3,6 +3,7 @@ import os
 import json
 from typing import Dict, List, Optional
 from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, Section, ConnectionFilter, SectionType
+from models.api import GetDocumentsResponse
 from appstatestore.statestore import StateStore
 import base64
 from .notion_parser import NotionParser
@@ -79,7 +80,7 @@ class NotionConnector(DocumentConnector):
         credential_json = json.loads(credential_string)
         access_token = credential_json["access_token"]
         parser = NotionParser(access_token)
-        all_pages = parser.notion_search({})
+        all_pages, _ = parser.notion_search({})
 
         id_to_section = {}
         id_to_parent = {}
@@ -108,19 +109,7 @@ class NotionConnector(DocumentConnector):
         # Return all sections whose parent is a workspace
         return [section for id, section in id_to_section.items() if id_to_parent_type[id] == 'workspace']
 
-        top_level_pages = []
-        remaining_pages = []
-        for item in all_pages:
-            if item['parent']['type'] == 'workspace':
-                top_level_pages.append(Section(id=item['id'], name=parser.parse_title(item)))
-            else:
-                remaining_pages.append(Section(id=item['id'], name=parser.parse_title(item)))
-        top_level_pages.extend(remaining_pages)
-        return top_level_pages
-    
-
-
-    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -133,6 +122,7 @@ class NotionConnector(DocumentConnector):
         parser = NotionParser(access_token)
 
         all_notion_documents = []
+        next_cursor = None
         if uris:
             for uri in uris:
                 page = parser.notion_get_page(uri)
@@ -165,7 +155,12 @@ class NotionConnector(DocumentConnector):
 
             return all_notion_documents
         else:
-            all_notion_documents = parser.notion_search({})
+            search_params = {}
+
+            if connection_filter.page_cursor is not None and connection_filter.page_size is not None:
+                search_params['start_cursor'] = connection_filter.page_cursor
+                search_params['page_size'] = connection_filter.page_size
+            all_notion_documents, next_cursor = parser.notion_search({})
 
         documents: List[Document] = []
         for item in all_notion_documents:
@@ -189,7 +184,7 @@ class NotionConnector(DocumentConnector):
                         uri=url
                     )
                 )
-        return documents
+        return GetDocumentsResponse(documents=documents, next_page_cursor=next_cursor)
 
 
 

@@ -1,4 +1,5 @@
 from models.models import ConnectorId, AppConfig, Document, AuthorizationResult, DocumentConnector, ConnectionFilter
+from models.api import GetDocumentsResponse
 from typing import List, Optional, Dict
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -92,7 +93,7 @@ class ConfluenceConnector(DocumentConnector):
     async def get_sections(self) -> List[str]:
         pass
 
-    async def load(self, connection_filter: ConnectionFilter) -> List[Document]:
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -158,11 +159,6 @@ class ConfluenceConnector(DocumentConnector):
             ).json()[0]
 
 
-
-        
-        print(authorized_site)
-
-
         cloud_id = authorized_site['id']
         confluence_url = authorized_site['url']
 
@@ -173,8 +169,6 @@ class ConfluenceConnector(DocumentConnector):
                 'Accept': 'application/json'
             }
         ).json()
-
-        print(spaces)
 
         space = spaces['results'][0]['key']
 
@@ -192,8 +186,6 @@ class ConfluenceConnector(DocumentConnector):
                         'Accept': 'application/json'
                     }
                 )
-                print(pages_response)
-                print(pages_response.json())
 
                 pages = pages_response.json()['results']
 
@@ -222,6 +214,6 @@ class ConfluenceConnector(DocumentConnector):
 
                 start_at += limit
 
-        return documents
+        return GetDocumentsResponse(documents=documents)
 
        

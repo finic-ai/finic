@@ -9,13 +9,21 @@ class ConnectorId(Enum):
     gdrive = "gdrive"
     slack = "slack"
 
+class SectionType(str, Enum):
+    folder = "folder"
+    document = "document"
+
 class Section:
     id: str
     name: str
+    type: SectionType
+    children: Optional[List["Section"]] = None
 
-    def __init__(self, id: str, name: str) -> None:
+    def __init__(self, id: str, name: str, type: SectionType, children: Optional[List["Section"]] = None) -> None:
         self.id = id
         self.name = name
+        self.type = type
+        self.children = children
 
 class SectionFilter:
     id: str
@@ -125,7 +133,8 @@ class Psychic:
                 "sections": [
                     {
                         "id": section.id,
-                        "name": section.name
+                        "name": section.name,
+                        "type": section.type
                     }
                     for section in section_filter.sections
                 ]
