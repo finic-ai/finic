@@ -336,7 +336,9 @@ async def get_documents(
                     connector_id=connector_id, 
                     account_id=account_id, 
                     uris=uris, 
-                    section_filter_id=request.section_filter
+                    section_filter_id=request.section_filter,
+                    page_cursor=request.page_cursor,
+                    page_size=request.page_size,
                 )
             ) 
             if chunked and connector_id == ConnectorId.notion:
