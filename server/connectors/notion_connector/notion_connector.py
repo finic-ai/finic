@@ -7,6 +7,8 @@ from models.api import GetDocumentsResponse
 from appstatestore.statestore import StateStore
 import base64
 from .notion_parser import NotionParser
+from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
+
 
 BASE_URL = "https://api.notion.com"
 
@@ -27,8 +29,25 @@ class NotionConnector(DocumentConnector):
         try: 
             client_id = connector_credentials['client_id']
             client_secret = connector_credentials['client_secret']
-            authorization_url = connector_credentials['authorization_url']
+            
             redirect_uri = connector_credentials["redirect_uri"] 
+            authorization_url = f"https://api.notion.com/v1/oauth/authorize"
+            params = {
+                'response_type': 'code',
+                'redirect_uri': redirect_uri,
+                'client_id': client_id,
+                'owner': 'user'
+            }
+            encoded_params = urlencode(params)
+            url_parts = urlparse(authorization_url)
+            authorization_url = ParseResult(
+                scheme=url_parts.scheme,
+                netloc=url_parts.netloc,
+                path=url_parts.path,
+                params=url_parts.params,
+                query=encoded_params,
+                fragment=url_parts.fragment
+            ).geturl()
         except Exception as e:
             raise Exception("Connector is not enabled")
         
