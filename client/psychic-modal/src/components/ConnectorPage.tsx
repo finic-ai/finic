@@ -92,7 +92,7 @@ const connectors = [
     name: "Intercom",
     id: "intercom",
     icon: IntercomIcon,
-    label: "Beta",
+    label: "Alpha",
     labelColor: "warning",
     active: true
   },
@@ -100,7 +100,7 @@ const connectors = [
     name: "Hubspot",
     id: "hubspot",
     icon: HubspotIcon,
-    label: "Beta",
+    label: "Alpha",
     labelColor: "warning",
     active: true
   },
@@ -108,7 +108,7 @@ const connectors = [
     name: "Salesforce",
     id: "salesforce",
     icon: SalesforceIcon,
-    label: "Beta",
+    label: "Alpha",
     labelColor: "warning",
     active: true
   },
