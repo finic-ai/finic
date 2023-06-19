@@ -99,3 +99,10 @@ class UpdateConnectionMetadataRequest(BaseModel):
     connector_id: ConnectorId
     account_id: str
     metadata: Dict
+
+class DeleteConnectionRequest(BaseModel):
+    connector_id: ConnectorId
+    account_id: str
+
+class DeleteConnectionResponse(BaseModel):
+    success: bool
