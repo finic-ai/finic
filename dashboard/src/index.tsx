@@ -27,9 +27,9 @@ import  supabase  from "./lib/supabaseClient";
 import { useEffect } from "react";
 import useLocalStorage from "./useLocalStorage";
 import ConfluenceConnectorPage from "./pages/connectors/confluence";
-import Settings from "./pages/settings";
-import Syncs from "./pages/syncs";
-import Playground from "./pages/playground";
+import SettingsPage from "./pages/settings";
+import SyncsPage from "./pages/syncs";
+import CreateConnectionPage from "./pages/create-connection";
 import { useUserStateContext } from "./context/UserStateContext";
 import ReadmeConnectorPage from "./pages/connectors/readme";
 
@@ -113,9 +113,10 @@ function App() {
                 <Route path="/connectors/salesforce" element={<SalesforceConnectorPage />} />
                 <Route path="/connectors/readme" element={<ReadmeConnectorPage />} />
                 <Route path="/oauth/redirect" element={<RedirectPage />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/syncs" element={<Syncs />} />
-                <Route path="/playground" element={<Playground />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/syncs" element={<SyncsPage />} />
+                <Route path="/playground" element={<CreateConnectionPage />} />
+                <Route path="/create-connection" element={<CreateConnectionPage />} />
               </Routes>
             </BrowserRouter>
           </UserStateProvider>
@@ -138,7 +139,7 @@ const RootPage: FC = () => {
   if (showOnboardingPage) {
     return <OnboardingPage />
   }
-  return <Playground />
+  return <OnboardingPage />
 }
 
 root.render(
