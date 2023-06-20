@@ -119,6 +119,7 @@ import { AuthMethod } from "../../context/ModalContext";
       setIsSuccess(true)
       // Notify opening window that auth is complete
       if (window.opener) {
+        result.connection.psychic_link = true
         window.opener.postMessage(result.connection, '*')
       }
       setAuthFlowStep(authFlowStep + 1)
@@ -190,6 +191,7 @@ import { AuthMethod } from "../../context/ModalContext";
     setIsSuccess(true)
     // Notify opening window that auth is complete
     if (window.opener) {
+      result.connection.psychic_link = true
       window.opener.postMessage(result.connection, '*')
     }
     setAuthFlowStep(authFlowStep + 1)

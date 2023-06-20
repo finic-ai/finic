@@ -4,6 +4,7 @@ import {
   Button,
   Label,
   TextInput,
+  Select,
   Tooltip,
   Spinner,
   Tabs,
@@ -31,6 +32,7 @@ const NotionConnectorPage: FC = function () {
   const [authorizationUrl, setAuthorizationUrl] = useState('');
   const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
+  const [possibleRedirectUris, setPossibleRedirectUris] = useState(['https://link.psychic.dev/oauth/redirect'] as string[])
 
   const {bearer} = useUserStateContext()
 
@@ -94,6 +96,8 @@ const NotionConnectorPage: FC = function () {
           setClientSecret(customCredentials.client_secret)
           setAuthorizationUrl(customCredentials.authorization_url)
           setRedirectUri(customCredentials.redirect_uri)
+          setPossibleRedirectUris(jsonData.status.redirect_uris)
+          console.log(jsonData.status)
         }
         setAuthorized(isAuthorized)
         setConnections(connections)
@@ -190,6 +194,7 @@ const NotionConnectorPage: FC = function () {
                         setAuthorizationUrl={setAuthorizationUrl}
                         redirectUri={redirectUri}
                         setRedirectUri={setRedirectUri}
+                        possibleRedirectUris={possibleRedirectUris}
                       />
                     </div>
                   </div>
@@ -216,10 +221,11 @@ interface AuthorizeModalProps {
   setAuthorizationUrl: (authorizationUrl: string) => void;
   redirectUri: string;
   setRedirectUri: (redirectUri: string) => void;
+  possibleRedirectUris: string[];
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading, redirectUri, setRedirectUri
+  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading, possibleRedirectUris, redirectUri, setRedirectUri
 }: AuthorizeModalProps) {
   console.log(authorized)
 
@@ -257,12 +263,15 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
               </div>
               <div>
                 <Label htmlFor="apiKeys.label">Redirect URI</Label>
-                <TextInput
-                  value={redirectUri}
-                  onChange={(e) => setRedirectUri(e.target.value)}
-                  placeholder='Notion redirect URI'
-                  className="mt-1"
-                />
+                <Select value={redirectUri} onChange={e => setRedirectUri(e.target.value)} >
+                {possibleRedirectUris.map((uri) => {
+                  return (
+                    <option key={uri} value={uri}>
+                      {uri}
+                    </option>
+                  );
+                })}
+                </Select>
               </div>
             </div>
           </form>

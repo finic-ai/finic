@@ -7,7 +7,8 @@ import {
   Tooltip,
   Spinner,
   Tabs,
-  Table
+  Table,
+  Select
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
@@ -29,6 +30,7 @@ const ZendeskConnectorPage: FC = function () {
   const [clientId, setClientId] = useState('');
   const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
+  const [possibleRedirectUris, setPossibleRedirectUris] = useState(['https://link.psychic.dev/oauth/redirect'] as string[])
 
   const {bearer} = useUserStateContext()
 
@@ -91,6 +93,7 @@ const ZendeskConnectorPage: FC = function () {
           setClientId(customCredentials.client_id)
           setClientSecret(customCredentials.client_secret)
           setRedirectUri(customCredentials.redirect_uri)
+          setPossibleRedirectUris(jsonData.status.redirect_uris)
         }
         setConnections(connections)
         setAuthLoading(false)
@@ -184,7 +187,7 @@ const ZendeskConnectorPage: FC = function () {
                         setClientId={setClientId}
                         redirectUri={redirectUri}
                         setRedirectUri={setRedirectUri}
-
+                        possibleRedirectUris={possibleRedirectUris}
                       />
                     </div>
                   </div>
@@ -207,12 +210,13 @@ interface AuthorizeModalProps {
   clientId: string; 
   setClientId: (clientId: string) => void; 
   redirectUri: string; 
+  possibleRedirectUris: string[];
   setRedirectUri: (redirectUri: string) => void;
   setClientSecret: (clientSecret: string) => void;
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientSecret, setClientSecret, clientId, setClientId, redirectUri, setRedirectUri, authorized, authLoading
+  authorize, clientSecret, setClientSecret, clientId, setClientId, redirectUri, setRedirectUri, authorized, authLoading, possibleRedirectUris
 }: AuthorizeModalProps) {
   console.log(authorized)
   return (
@@ -246,13 +250,15 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
             <div className="lg:col-span-2">
               <div>
                 <Label htmlFor="apiKeys.label">Redirect URI</Label>
-                <TextInput
-                  value={redirectUri}
-                  disabled={authLoading}
-                  onChange={(e) => setRedirectUri(e.target.value)}
-                  placeholder='Redirect URI'
-                  className="mt-1"
-                />
+                <Select value={redirectUri} onChange={e => setRedirectUri(e.target.value)} >
+                {possibleRedirectUris.map((uri) => {
+                  return (
+                    <option key={uri} value={uri}>
+                      {uri}
+                    </option>
+                  );
+                })}
+                </Select>
               </div>
             </div>
           </form>

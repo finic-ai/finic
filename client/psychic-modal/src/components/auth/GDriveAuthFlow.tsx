@@ -56,7 +56,7 @@ const {
 
 const [authFlowStep, setAuthFlowStep] = useState(0)
 const [creds, setCreds] = useState(null)
-const [connection, setConnection] = useState(null)
+const [connection, setConnection] = useState<any>(null)
 
 
 
@@ -75,7 +75,9 @@ const renderModalBody = () => {
       return <GDriveMetadataForm creds={creds} onSubmit={() => {
         setAuthFlowStep(authFlowStep + 1)
         if (window.opener) {
-          window.opener.postMessage(connection, '*')
+          var connection_with_label = connection
+          connection_with_label['psychic_link'] = true
+          window.opener.postMessage(connection_with_label, '*')
         }
       }}/>
 

@@ -12,7 +12,7 @@ const RedirectPage: React.FC = () => {
           console.log(urlParams)
           const code = urlParams.get('code');
           if (code) {
-            window.opener.postMessage({ code: code, authorized_url: url }, '*')
+            window.opener.postMessage({ code: code, authorized_url: url, psychic_link: true }, '*')
           }
           window.close()
       }

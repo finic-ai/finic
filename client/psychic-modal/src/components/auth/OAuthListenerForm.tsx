@@ -38,11 +38,8 @@ const OAuthListenerForm: React.FC<OAuthListenerFormProps> = ({onSubmit}) => {
     const handleMessage = (event: MessageEvent) => {
         // check if oigin is not http://localhost:5173 or link.psychic.dev
         console.log(event.origin)
-        if (event.origin !== "http://localhost:3000" && event.origin !== "https://link.psychic.dev") {
-            return;
-        }
         const data = event.data;
-        if (data && data.code && !authCodeHandled.current) {
+        if (data && data.psychic_link && data.code && !authCodeHandled.current) {
             authCodeHandled.current = true
             onSubmit(data.code)
             

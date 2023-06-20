@@ -119,17 +119,14 @@ const DropboxAuthFlow: React.FC = () => {
     setIsLoading(false)
     // Notify opening window that auth is complete
     if (window.opener) {
+      result.connection.psychic_link = true
       window.opener.postMessage(result.connection, '*')
     }
   }
 
   const handleMessage = useCallback((event: MessageEvent) => {
-    // check if oigin is not http://localhost:5173 or link.psychic.dev
-    if (event.origin !== "http://localhost:3000" && event.origin !== "https://link.psychic.dev") {
-      return;
-    }
     const data = event.data;
-    if (data && data.code && !authCodeHandled.current) {
+    if (data && data.psychic_link &&  data.code && !authCodeHandled.current) {
       authCodeHandled.current = true
       setAuthCode(data.code)
       

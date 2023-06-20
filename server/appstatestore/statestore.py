@@ -104,9 +104,9 @@ class StateStore:
         if len(response.data) > 0:
             custom_auth_url = response.data[0]['custom_auth_url']
 
-        redirect_uris = ["https://link.psychic.dev/oauth/callback"]
+        redirect_uris = ["https://link.psychic.dev/oauth/redirect"]
         if custom_auth_url is not None:
-            redirect_uris.append(f"{custom_auth_url}oauth/callback")
+            redirect_uris.append(f"{custom_auth_url}oauth/redirect")
         
         return ConnectorStatus(is_enabled=is_enabled, custom_credentials=custom_credentials, connections=connections, redirect_uris=redirect_uris)
     

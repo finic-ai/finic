@@ -157,7 +157,9 @@ import OAuthListenerForm from "./OAuthListenerForm";
     setIsLoading(false)
     setIsSuccess(true)
     // Notify opening window that auth is complete
+    
     if (window.opener) {
+      result.connection.psychic_link = true
       window.opener.postMessage(result.connection, '*')
     }
     // setAuthFlowStep(authFlowStep + 1)

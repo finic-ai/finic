@@ -58,12 +58,8 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
   }
 
   const handleMessage = useCallback((event: MessageEvent) => {
-    // check if oigin is not http://localhost:3000 or link.psychic.dev
-    if (event.origin !== "http://localhost:3000" && event.origin !== "https://link.psychic.dev") {
-      return;
-    }
     const data = event.data;
-    if (data && data.account_id) {
+    if (data && data.psychic_link && data.account_id) {
       setIsLoading(false)
       onSuccessCallback({accountId: data.account_id, connectorId: data.connector_id})
     } else {
