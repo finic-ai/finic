@@ -1,7 +1,8 @@
-import { FC, StrictMode } from "react";
+import { FC, StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import posthog from 'posthog-js';
 import { PostHogProvider} from 'posthog-js/react'
+import { Helmet } from 'react-helmet';
 
 import "./index.css";
 import theme from "./flowbite-theme";
@@ -57,11 +58,22 @@ const root = createRoot(container);
 
 function App() {
   const [session, setSession] = useLocalStorage('session', null);
-  console.log(session)
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: any) => {
       setSession(session)
+      if (scriptLoaded && (window as any).Intercom) {
+        const name = session.user.identities.length > 0 ? session.user.identities[0].identity_data.name : null;
+
+        (window as any).Intercom("boot", {
+          api_base: "https://api-iam.intercom.io",
+          app_id: "tdxqbjpq",
+          name: name, // Full name
+          email: session.user.email, // Email address
+          created_at: session.user.created_at // Signup date as a Unix timestamp
+        })
+      }
     })
 
     const {
@@ -71,7 +83,13 @@ function App() {
     })
     
     return () => subscription.unsubscribe()
-  }, [])
+  }, [scriptLoaded])
+
+  const handleScriptInject = (tags: any) => {
+    if (tags.scriptTags.length > 0) {
+      setScriptLoaded(true)
+    }
+  }
 
   if (!session) {
     return (
@@ -95,31 +113,36 @@ function App() {
     return (
       <PostHogProvider client={posthog}>
         <Flowbite theme={{ theme }}>
+          <Helmet onChangeClientState={(newState) => handleScriptInject(newState)}>
+            <script>
+              {`(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/tdxqbjpq';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();`}
+            </script>
+          </Helmet>
           <UserStateProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<RootPage />}/>
-                <Route path="/onboarding" element={<OnboardingPage />} />
-                <Route path="/api-keys" element={<ApiKeysPage />} />
-                <Route path="/connections" element={<ConnectionsPage />} />
-                <Route path="/connectors/notion" element={<NotionConnectorPage />} />
-                <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
-                <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
-                <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
-                <Route path="/connectors/slack" element={<SlackConnectorPage />} />
-                <Route path="/connectors/dropbox" element={<DropboxConnectorPage />} />
-                <Route path="/connectors/intercom" element={<IntercomConnectorPage />} />
-                <Route path="/connectors/hubspot" element={<HubspotConnectorPage />} />
-                <Route path="/connectors/salesforce" element={<SalesforceConnectorPage />} />
-                <Route path="/connectors/readme" element={<ReadmeConnectorPage />} />
-                <Route path="/oauth/redirect" element={<RedirectPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/syncs" element={<SyncsPage />} />
-                <Route path="/playground" element={<CreateConnectionPage />} />
-                <Route path="/create-connection" element={<CreateConnectionPage />} />
-              </Routes>
-            </BrowserRouter>
-          </UserStateProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<RootPage />}/>
+                  <Route path="/onboarding" element={<OnboardingPage />} />
+                  <Route path="/api-keys" element={<ApiKeysPage />} />
+                  <Route path="/connections" element={<ConnectionsPage />} />
+                  <Route path="/connectors/notion" element={<NotionConnectorPage />} />
+                  <Route path="/connectors/google-drive" element={<GoogleDriveConnectorPage />} />
+                  <Route path="/connectors/zendesk" element={<ZendeskConnectorPage />} />
+                  <Route path="/connectors/confluence" element={<ConfluenceConnectorPage />} />
+                  <Route path="/connectors/slack" element={<SlackConnectorPage />} />
+                  <Route path="/connectors/dropbox" element={<DropboxConnectorPage />} />
+                  <Route path="/connectors/intercom" element={<IntercomConnectorPage />} />
+                  <Route path="/connectors/hubspot" element={<HubspotConnectorPage />} />
+                  <Route path="/connectors/salesforce" element={<SalesforceConnectorPage />} />
+                  <Route path="/connectors/readme" element={<ReadmeConnectorPage />} />
+                  <Route path="/oauth/redirect" element={<RedirectPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/syncs" element={<SyncsPage />} />
+                  <Route path="/playground" element={<CreateConnectionPage />} />
+                  <Route path="/create-connection" element={<CreateConnectionPage />} />
+                </Routes>
+              </BrowserRouter>
+            </UserStateProvider>
         </Flowbite>
       </PostHogProvider>
     )

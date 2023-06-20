@@ -41,7 +41,6 @@ export function UserStateProvider({ children }: PropsWithChildren) {
       console.log(metadata)
       const email = metadata.email
       const id = user!.id
-      console.log(userId)
       // Select the row corresponding to this userId
       const { data } = await supabase.from('users').select().eq('id', id)
       console.log(data)
@@ -67,7 +66,6 @@ export function UserStateProvider({ children }: PropsWithChildren) {
           app_id: uuidv4(),
           email: email
         }).select()
-        console.log(response)
 
         if (response.data && response.data[0]) {
           const data = response.data[0]
