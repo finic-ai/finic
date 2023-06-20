@@ -4,6 +4,7 @@ import {
     Button,
     Label,
     TextInput,
+    Tooltip,
     Spinner,
     Modal,
     Tabs,
@@ -12,6 +13,7 @@ import {
   import { FC, useEffect } from "react";
   import { useState } from "react";
   import { SiHubspot } from "react-icons/si";
+  import { HiOutlineTrash } from "react-icons/hi";
   
   
   import {
@@ -24,6 +26,7 @@ import {
   const HubspotConnectorPage: FC = function () {
     const [authorized, setAuthorized] = useState(false);
     const [authLoading, setAuthLoading] = useState(true);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const [clientId, setClientId] = useState('');
     const [clientSecret, setClientSecret] = useState('');
     const [authorizationUrl, setAuthorizationUrl] = useState('');
@@ -95,6 +98,31 @@ import {
         getConnectorStatus()
       }
     }, [bearer])
+
+    const deleteConnection = async (accountId: string, i: number) => {
+      setDeleteLoading(true)
+      const url = import.meta.env.VITE_SERVER_URL + '/delete-connection';
+      var payload = {
+        connector_id: "hubspot",
+        account_id: accountId
+      }
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        setDeleteLoading(false)
+        let newConnections = [...connections]
+        newConnections.splice(i, 1)
+        setConnections(newConnections)
+      } catch (error) {
+        setDeleteLoading(false)
+      }
+    }
         
   
     return (
@@ -118,7 +146,7 @@ import {
                   Hubspot
                 </h1>
               </div>
-              <Text>View your active connections and configure the Hubspot connector here. You can create a new connection from the <a href="/playground" className="text-blue-400">Playground</a>.</Text>
+              <Text>View your active connections and configure the Hubspot connector here. You can create a new connection from the <a href="/create-connection" className="text-blue-400">Create Connection page</a>.</Text>
             </div>
           </div>
         </div>
@@ -130,7 +158,7 @@ import {
                   <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
                     Active connections 
                   </h2>
-                  <ConnectionsTable connections={connections} />
+                  <ConnectionsTable connections={connections} isLoading={deleteLoading} deleteConnection={deleteConnection}/>
                 </div>
               </div>
             </div>
@@ -241,16 +269,26 @@ import {
   };
   
   interface ConnectionsTableProps {
-    connections: any[]
+    connections: any[];
+    isLoading: boolean;
+    deleteConnection: (accountId: string, i: number) => void;
   }
   
-  const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections}: ConnectionsTableProps) {
+  const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections, isLoading, deleteConnection}: ConnectionsTableProps) {
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+  
+    const handleDelete = (accountId: string, i: number) => {
+      setSelectedIndex(i);
+      deleteConnection(accountId, i);
+    };
+    
     return (
       <>
       <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
         <Table.Head className="bg-gray-100 dark:bg-gray-700">
           <Table.HeadCell>Account ID</Table.HeadCell>
           <Table.HeadCell>Workspace Name</Table.HeadCell>
+          <Table.HeadCell></Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
             {connections.map((item, i) => (
@@ -264,6 +302,13 @@ import {
                     <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
                         {item.metadata.workspace_name}
                     </div>
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <Tooltip content="Delete">
+                    <Button color="failure" onClick={() => handleDelete(item.account_id, i)} disabled={isLoading}>
+                      {isLoading && selectedIndex == i ? <Spinner className="h-4 w-4" /> : <HiOutlineTrash className="h-4 w-4" />}
+                    </Button>
+                  </Tooltip>
                 </Table.Cell>
             </Table.Row>
             ))}

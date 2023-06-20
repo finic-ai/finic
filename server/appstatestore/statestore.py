@@ -188,6 +188,19 @@ class StateStore:
             connector_id=connector_id,
             metadata=metadata
         )
+    
+    def delete_connection(self, 
+                       config: AppConfig, 
+                       connector_id: ConnectorId, 
+                       account_id: str) -> Connection:
+        result = (self.supabase.table("connections")
+         .delete()
+         .filter("connector_id", "eq", connector_id)
+         .filter("app_id", "eq", config.app_id)
+         .filter("account_id", "eq", account_id)
+         .execute())
+
+        return result
 
     def load_credentials(self, config: AppConfig, connector_id: ConnectorId, account_id: str) -> Optional[Connection]:
         response = self.supabase.table('connections').select('*').filter(

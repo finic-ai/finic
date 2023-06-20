@@ -32,7 +32,9 @@ from models.api import (
     AddSectionFilterRequest,
     AddSectionFilterResponse,
     UpdateConnectionMetadataRequest,
-    UpdateConnectionMetadataResponse
+    UpdateConnectionMetadataResponse,
+    DeleteConnectionRequest,
+    DeleteConnectionResponse
 )
 
 from appstatestore.statestore import StateStore
@@ -151,6 +153,27 @@ async def get_connections(
         logger.log_api_call(config, Event.get_connections, request, None, e)
         raise e
     
+@app.post(
+    "/delete-connection",
+    response_model=DeleteConnectionResponse,
+)
+async def get_connections(
+    request: DeleteConnectionRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        result = StateStore().delete_connection(config, request.connector_id, request.account_id)
+        print(result)
+        if len(result.data) > 0:
+            response = DeleteConnectionResponse(success=True)
+        else:
+            raise HTTPException(status_code=404, detail="No connection found with this connector_id and account_id")
+        logger.log_api_call(config, Event.delete_connection, request, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.delete_connection, request, None, e)
+        raise e
+        
 @app.post(
     "/add-section-filter",
     response_model=AddSectionFilterResponse,
