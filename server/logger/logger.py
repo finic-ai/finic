@@ -46,10 +46,10 @@ class Logger:
             raise Exception("Invalid event type")
         properties = {
             'app_id': app_config.app_id,
-            'request': request.dict(),
+            'request': request.dict() if request is not None else None,
         }
         if not error:
-            properties['response'] = response.dict() if response else None
+            properties['response'] = response.dict()
         else:
             properties['error'] = str(error)
         self.log(app_config=app_config, event="server_" + event, properties=properties)

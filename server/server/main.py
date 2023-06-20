@@ -126,7 +126,7 @@ async def get_link_settings(
         logger.log_api_call(config, Event.get_link_settings, None, response, None)
         return response
     except Exception as e:
-        logger.log_api_call(config, Event.get_connector_status, None, None, e)
+        logger.log_api_call(config, Event.get_link_settings, None, None, e)
         raise e
 
 @app.post(
