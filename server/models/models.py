@@ -22,7 +22,7 @@ class Settings(BaseModel):
     logo: Optional[str]
     whitelabel: bool
     custom_auth_url: Optional[str]
-    enabled_connectors: List[ConnectorId]
+    enabled_connectors: Optional[List[ConnectorId]] = []
 
 class AppConfig(BaseModel):
     app_id: str
@@ -58,6 +58,7 @@ class ConnectorStatus(BaseModel):
     is_enabled: bool
     custom_credentials: Optional[Dict]
     connections: List[Connection] = []
+    redirect_uris: Optional[List[str]] = []
 
 class Document(BaseModel):
     title: str

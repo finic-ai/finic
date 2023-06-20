@@ -93,8 +93,22 @@ class StateStore:
                     metadata=row['metadata']
                 )
             )
+
+        # check the settings table to check for any custom auth url
+        response = self.supabase.table('settings').select('*').filter(
+            'app_id',
+            'eq',
+            config.app_id
+        ).execute()
+        custom_auth_url = None
+        if len(response.data) > 0:
+            custom_auth_url = response.data[0]['custom_auth_url']
+
+        redirect_uris = ["https://link.psychic.dev/oauth/callback"]
+        if custom_auth_url is not None:
+            redirect_uris.append(f"{custom_auth_url}oauth/callback")
         
-        return ConnectorStatus(is_enabled=is_enabled, custom_credentials=custom_credentials, connections=connections)
+        return ConnectorStatus(is_enabled=is_enabled, custom_credentials=custom_credentials, connections=connections, redirect_uris=redirect_uris)
     
     def get_connections(self, filter: ConnectionFilter, config: AppConfig) -> List[Connection]:
         query = self.supabase.table('connections').select('*').filter(

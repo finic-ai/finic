@@ -38,7 +38,7 @@ class Logger:
             print("logging event: ", event, " with properties: ", properties)
             self.posthog_client.capture(distinct_id=app_config.user_id, event=event, properties=properties)
 
-    def log_api_call(self, app_config: AppConfig, event: str, request: BaseModel, response: BaseModel, error: Exception):
+    def log_api_call(self, app_config: AppConfig, event: str, request: Optional[BaseModel], response: BaseModel, error: Exception):
         if self.posthog_client is None:
             return
         if event not in Event.__members__.values():
@@ -48,7 +48,7 @@ class Logger:
             'request': request.dict(),
         }
         if not error:
-            properties['response'] = response.dict()
+            properties['response'] = response.dict() if response else None
         else:
             properties['error'] = str(error)
         self.log(app_config=app_config, event="server_" + event, properties=properties)
