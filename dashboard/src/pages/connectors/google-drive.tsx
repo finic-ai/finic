@@ -7,7 +7,8 @@ import {
   Tooltip,
   Spinner,
   Tabs,
-  Table
+  Table,
+  Select
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
@@ -36,6 +37,9 @@ const GoogleDriveConnectorPage: FC = function () {
   const [authLoading, setAuthLoading] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
+  const [developerKey, setDeveloperKey] = useState('');
+  const [redirectUri, setRedirectUri] = useState('');
+  const [possibleRedirectUris, setPossibleRedirectUris] = useState(['https://link.psychic.dev/oauth/redirect'] as string[])
   const [connections, setConnections] = useState([] as any[])
 
   const {bearer} = useUserStateContext()
@@ -43,9 +47,14 @@ const GoogleDriveConnectorPage: FC = function () {
   async function authorize() {
     setAuthLoading(true)
     const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
+    const clientSecretJson = JSON.parse(clientSecret)
     var payload = {
       connector_id: "gdrive",
-      credential: JSON.parse(clientSecret)
+      credential: {
+        "developer_key": developerKey,
+        "client_secrets": clientSecretJson,
+        "redirect_uri": redirectUri
+      }
     }
 
     try {
@@ -91,8 +100,12 @@ const GoogleDriveConnectorPage: FC = function () {
         const customCredentials = jsonData.status.custom_credentials
         const connections = jsonData.status.connections
         if (customCredentials) {
-          setClientSecret(JSON.stringify(customCredentials))
+          setClientSecret(JSON.stringify(customCredentials.client_secrets))
+          setDeveloperKey(customCredentials.developer_key)
+          setRedirectUri(customCredentials.redirect_uri)
+          
         }
+        setPossibleRedirectUris(jsonData.status.redirect_uris)
         setAuthorized(isAuthorized)
         setConnections(connections)
         setAuthLoading(false)
@@ -182,6 +195,12 @@ const GoogleDriveConnectorPage: FC = function () {
                         authorized={authorized} 
                         clientSecret={clientSecret}
                         setClientSecret={setClientSecret}
+                        redirectUri={redirectUri}
+                        setRedirectUri={setRedirectUri}
+                        developerKey={developerKey}
+                        setDeveloperKey={setDeveloperKey}
+                        possibleRedirectUris={possibleRedirectUris}
+
                       />
                     </div>
                   </div>
@@ -201,17 +220,24 @@ interface AuthorizeModalProps {
   authLoading: boolean;
   clientSecret: string;
   setClientSecret: (clientSecret: string) => void;
+  redirectUri: string;
+  setRedirectUri: (redirectUri: string) => void;
+  developerKey: string;
+  setDeveloperKey: (developerKey: string) => void;
+  possibleRedirectUris: string[];
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientSecret, setClientSecret, authorized, authLoading
+  authorize, clientSecret, setClientSecret, authorized, authLoading, redirectUri, setRedirectUri, developerKey, setDeveloperKey, possibleRedirectUris
 }: AuthorizeModalProps) {
   console.log(authorized)
 
   return (
     <>
           <Text className="font-bold">Set Custom Credentials</Text>
-
+          <div className="mb-4">
+            <Text>For a step-by-step guide on how to set up custom credentials see the <a href="https://docs.psychic.dev/connectors/gdrive#configuration" className="text-blue-400">docs</a></Text>
+          </div>
           <form>
             <div className="lg:col-span-2">
               <div>
@@ -222,6 +248,31 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
                   placeholder='Client Secret'
                   className="mt-1"
                 />
+              </div>
+              <div className="lg:col-span-2">
+                <div>
+                  <Label htmlFor="apiKeys.label">Developer Key</Label>
+                  <TextInput
+                    value={developerKey}
+                    onChange={(e) => setDeveloperKey(e.target.value)}
+                    placeholder='Client Secret'
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+              <div className="lg:col-span-2">
+                <div>
+                  <Label htmlFor="apiKeys.label">Redirect URI</Label>
+                  <Select value={redirectUri} onChange={e => setRedirectUri(e.target.value)} >
+                  {possibleRedirectUris.map((uri) => {
+                    return (
+                      <option key={uri} value={uri}>
+                        {uri}
+                      </option>
+                    );
+                  })}
+                  </Select>
+                </div>
               </div>
             </div>
           </form>

@@ -93,8 +93,9 @@ const ZendeskConnectorPage: FC = function () {
           setClientId(customCredentials.client_id)
           setClientSecret(customCredentials.client_secret)
           setRedirectUri(customCredentials.redirect_uri)
-          setPossibleRedirectUris(jsonData.status.redirect_uris)
+          
         }
+        setPossibleRedirectUris(jsonData.status.redirect_uris)
         setConnections(connections)
         setAuthLoading(false)
       } catch (error) {
@@ -222,6 +223,9 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
   return (
     <>
           <strong>Custom Zendesk OAuth credentials</strong>
+          <div className="mb-4">
+            <Text>For a step-by-step guide on how to set up custom credentials see the <a href="https://docs.psychic.dev/connectors/zendesk#custom-oauth-credentials" className="text-blue-400">docs</a></Text>
+          </div>
           <form>
             <div className="lg:col-span-2">
               <div>
@@ -292,7 +296,7 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections, isLo
     <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
       <Table.Head className="bg-gray-100 dark:bg-gray-700">
         <Table.HeadCell>Account ID</Table.HeadCell>
-        <Table.HeadCell>Folder ID</Table.HeadCell>
+        <Table.HeadCell>Subdomain</Table.HeadCell>
         <Table.HeadCell></Table.HeadCell>
       </Table.Head>
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
@@ -305,7 +309,7 @@ const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections, isLo
               </Table.Cell>
               <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
                   <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                      {item.metadata.folder_id}
+                      {item.metadata.subdomain}
                   </div>
               </Table.Cell>
               <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">

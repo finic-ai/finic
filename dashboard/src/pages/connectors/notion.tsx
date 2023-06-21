@@ -29,7 +29,6 @@ const NotionConnectorPage: FC = function () {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
-  const [authorizationUrl, setAuthorizationUrl] = useState('');
   const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
   const [possibleRedirectUris, setPossibleRedirectUris] = useState(['https://link.psychic.dev/oauth/redirect'] as string[])
@@ -44,7 +43,6 @@ const NotionConnectorPage: FC = function () {
       credential: {
         client_id: clientId,
         client_secret: clientSecret,
-        authorization_url: authorizationUrl,
         redirect_uri: redirectUri,
       }
     }
@@ -94,11 +92,9 @@ const NotionConnectorPage: FC = function () {
         if (customCredentials) {
           setClientId(customCredentials.client_id)
           setClientSecret(customCredentials.client_secret)
-          setAuthorizationUrl(customCredentials.authorization_url)
           setRedirectUri(customCredentials.redirect_uri)
-          setPossibleRedirectUris(jsonData.status.redirect_uris)
-          console.log(jsonData.status)
         }
+        setPossibleRedirectUris(jsonData.status.redirect_uris)
         setAuthorized(isAuthorized)
         setConnections(connections)
         setAuthLoading(false)
@@ -190,8 +186,6 @@ const NotionConnectorPage: FC = function () {
                         setClientId={setClientId}
                         clientSecret={clientSecret}
                         setClientSecret={setClientSecret}
-                        authorizationUrl={authorizationUrl}
-                        setAuthorizationUrl={setAuthorizationUrl}
                         redirectUri={redirectUri}
                         setRedirectUri={setRedirectUri}
                         possibleRedirectUris={possibleRedirectUris}
@@ -217,21 +211,23 @@ interface AuthorizeModalProps {
   setClientId: (clientId: string) => void;
   clientSecret: string;
   setClientSecret: (clientSecret: string) => void;
-  authorizationUrl: string;
-  setAuthorizationUrl: (authorizationUrl: string) => void;
   redirectUri: string;
   setRedirectUri: (redirectUri: string) => void;
   possibleRedirectUris: string[];
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
-  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading, possibleRedirectUris, redirectUri, setRedirectUri
+  authorize, clientId, setClientId, clientSecret, setClientSecret, authorized, authLoading, possibleRedirectUris, redirectUri, setRedirectUri
 }: AuthorizeModalProps) {
   console.log(authorized)
 
   return (
     <>
           <Text className="font-bold">Set Custom Credentials</Text>
+
+          <div className="mb-4">
+            <Text>For a step-by-step guide on how to set up custom credentials see the <a href="https://docs.psychic.dev/connectors/notion#custom-oauth-credentials" className="text-blue-400">docs</a></Text>
+          </div>
           <form>
             <div className="lg:col-span-2">
               <div>
@@ -249,15 +245,6 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
                   value={clientSecret}
                   onChange={(e) => setClientSecret(e.target.value)}
                   placeholder='Notion OAuth client secret'
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="apiKeys.label">Authorization URL</Label>
-                <TextInput
-                  value={authorizationUrl}
-                  onChange={(e) => setAuthorizationUrl(e.target.value)}
-                  placeholder='Notion authorization URL'
                   className="mt-1"
                 />
               </div>
