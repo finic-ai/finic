@@ -45,6 +45,7 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
           supportDrives: true,
           multiselect: true,
           setSelectFolderEnabled: true,
+          customScopes: ['https://www.googleapis.com/auth/drive.file'],
           // customViews: customViewsArray, // custom view
           callbackFunction: (data: any) => {
             if (data.action === 'cancel') {

@@ -18,7 +18,7 @@ from collections import deque
 from .google_drive_parser import GoogleDriveParser
 
 
-SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
 def download_pdf(service, file_id):
     request = service.files().get_media(fileId=file_id)
