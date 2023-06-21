@@ -143,7 +143,11 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
           }
           if (data && data.length > 0) {
             setCustomerName(data[0].name);
-            setCustomerLogoUrl(data[0].logo);
+            if (data[0].logo) {
+              setCustomerLogoUrl(data[0].logo);
+            } else {
+              setCustomerLogoUrl('https://uploads-ssl.webflow.com/6401c72af7f8fc5af247a5c7/644d9f332d59bb5fbb0b60e3_Icon%20(3).png');
+            }
             setWhitelabel(data[0].whitelabel);
             setEnabledConnectors(data[0].enabled_connectors);
             if (data[0].whitelabel) {
