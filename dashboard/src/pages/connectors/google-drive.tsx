@@ -47,7 +47,7 @@ const GoogleDriveConnectorPage: FC = function () {
 
   async function authorize(deleteCredentials: boolean) {
     setAuthLoading(true)
-    setError(false)
+    setError('')
     const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
     var clientSecretJson = null
     try {
