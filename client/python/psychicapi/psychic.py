@@ -74,6 +74,16 @@ class Psychic:
         self.api_url = "https://api.psychic.dev/"
         self.secret_key = secret_key
 
+    def handle_http_error(self, response: requests.Response):
+        if response.status_code == 401 or response.status_code == 403:
+            raise Exception("Unauthorized: Invalid or missing secret key")
+        try:
+            data = response.json()
+            message = data.get('detail', 'No additional information')
+        except requests.exceptions.JSONDecodeError:
+            message = 'No additional information'
+        raise Exception(f"HTTP error {response.status_code}: {message}")
+
     def get_documents(self, 
                       *, 
                       account_id: str, 
@@ -110,7 +120,7 @@ class Psychic:
             next_page_cursor = data["next_page_cursor"]
             return GetDocumentsResponse(documents=documents, next_page_cursor=next_page_cursor)
         else:
-            return None
+            self.handle_http_error(response)
         
     def get_connections(self, *, connector_id: Optional[ConnectorId] = None, account_id: Optional[str] = None):
         filter = {
@@ -144,7 +154,7 @@ class Psychic:
 
             return [Connection(**connection) for connection in connections]
         else:
-            return None
+            self.handle_http_error(response)
         
     def add_section_filter(self, *, connector_id: ConnectorId, account_id: str, section_filter: SectionFilter):
         body = {
@@ -175,7 +185,7 @@ class Psychic:
             filter = SectionFilter(id=filter["id"], sections=[Section(**section) for section in filter["sections"]])
             return filter
         else:
-            return None
+            self.handle_http_error(response)
 
         
     def get_conversations(self, *, account_id: str, connector_id: ConnectorId, oldest_timestamp: Optional[int] = None):
@@ -198,4 +208,4 @@ class Psychic:
             messages = response.json()["messages"]
             return messages
         else:
-            return None
+            self.handle_http_error(response)
