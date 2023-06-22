@@ -41,20 +41,33 @@ const GoogleDriveConnectorPage: FC = function () {
   const [redirectUri, setRedirectUri] = useState('');
   const [possibleRedirectUris, setPossibleRedirectUris] = useState(['https://link.psychic.dev/oauth/redirect'] as string[])
   const [connections, setConnections] = useState([] as any[])
+  const [error, setError] = useState("")
 
   const {bearer} = useUserStateContext()
 
-  async function authorize() {
+  async function authorize(deleteCredentials: boolean) {
     setAuthLoading(true)
+    setError(false)
     const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
-    const clientSecretJson = JSON.parse(clientSecret)
-    var payload = {
-      connector_id: "gdrive",
-      credential: {
+    var clientSecretJson = null
+    try {
+      clientSecretJson = JSON.parse(clientSecret)
+    } catch (e) {
+      setError('Client secret must be valid JSON')
+      setAuthLoading(false)
+      return
+    }
+    var credential = null
+    if (!deleteCredentials) {
+      credential = {
         "developer_key": developerKey,
         "client_secrets": clientSecretJson,
         "redirect_uri": redirectUri
       }
+    }
+    var payload = {
+      connector_id: "gdrive",
+      credential: credential
     }
 
     try {
@@ -71,6 +84,10 @@ const GoogleDriveConnectorPage: FC = function () {
       console.log(jsonData)
       if (!isAuthorized) {
         console.log('failed to authenticate')
+      }
+      if (deleteCredentials && !isAuthorized) {
+        setDeveloperKey('')
+        setClientSecret('')
       }
       setAuthLoading(false)
       setAuthorized(isAuthorized)
@@ -205,6 +222,16 @@ const GoogleDriveConnectorPage: FC = function () {
                     </div>
                   </div>
                 </form>
+                {/* Show error message */}
+                {error && (
+                  <div className="mt-4">
+                    <Text className="text-red-500">
+                      {error}
+                    </Text>
+                  </div>
+                )
+                }
+
               </div>
             </div>
           </div>
@@ -215,7 +242,7 @@ const GoogleDriveConnectorPage: FC = function () {
 };
 
 interface AuthorizeModalProps {
-  authorize: () => void;
+  authorize: (deleteCredentials: boolean) => void;
   authorized: boolean;
   authLoading: boolean;
   clientSecret: string;
@@ -277,10 +304,15 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
             </div>
           </form>
 
-          <Button className="mt-4" color="primary" onClick={() => {
-            authorize()
+          <Button disabled={!developerKey || !clientSecret} className="mt-4" color="primary" onClick={() => {
+            authorize(false)
           }}>
             {authLoading ? <Spinner /> : 'Save'}
+          </Button>
+          <Button className="mt-4" color="primary" onClick={() => {
+            authorize(true)
+          }}>
+            {authLoading ? <Spinner /> : 'Delete Credentials'}
           </Button>
     </>
   )

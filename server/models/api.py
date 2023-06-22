@@ -30,7 +30,7 @@ class GetConnectionsResponse(BaseModel):
 
 class EnableConnectorRequest(BaseModel):
     connector_id: ConnectorId
-    credential: Dict
+    credential: Optional[Dict]
 
 class AuthorizeOauthRequest(BaseModel):
     connector_id: ConnectorId

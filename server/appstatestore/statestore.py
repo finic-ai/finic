@@ -45,16 +45,29 @@ class StateStore:
             )
         return None
     
-    def enable_connector(self, connector_id: ConnectorId, credential: Dict, config: AppConfig) -> ConnectorStatus:
-        # Upsert the credential into enabled_connectors
-        insert_data = {
-            'app_id': config.app_id,
-            'user_id': config.user_id,
-            'connector_id': connector_id,
-            'credential': json.dumps(credential)
-        }
-        self.supabase.table("enabled_connectors").upsert(insert_data).execute()
-        return ConnectorStatus(is_enabled=True)
+    def enable_connector(self, connector_id: ConnectorId, credential: Optional[Dict], config: AppConfig) -> ConnectorStatus:
+        if credential is None:
+            # We want to delete the credential from enabled_connectors
+            self.supabase.table('enabled_connectors').delete().filter(
+                'app_id',
+                'eq',
+                config.app_id
+            ).filter(
+                'connector_id',
+                'eq',
+                connector_id
+            ).execute()
+            return ConnectorStatus(is_enabled=False)
+        else:
+            # Upsert the credential into enabled_connectors
+            insert_data = {
+                'app_id': config.app_id,
+                'user_id': config.user_id,
+                'connector_id': connector_id,
+                'credential': json.dumps(credential)
+            }
+            self.supabase.table("enabled_connectors").upsert(insert_data).execute()
+            return ConnectorStatus(is_enabled=True)
 
     def get_connector_status(self, connector_id: ConnectorId, config: AppConfig) -> ConnectorStatus:
         response = self.supabase.table('enabled_connectors').select('*').filter(

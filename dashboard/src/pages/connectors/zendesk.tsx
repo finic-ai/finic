@@ -34,16 +34,20 @@ const ZendeskConnectorPage: FC = function () {
 
   const {bearer} = useUserStateContext()
 
-  async function authorize() {
+  async function authorize(deleteCredentials: boolean) {
     setAuthLoading(true)
     const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
-    var payload = {
-      connector_id: "zendesk",
-      credential: {
+    var credential = null
+    if (!deleteCredentials) {
+      credential = {
         client_id: clientId,
         client_secret: clientSecret,
         redirect_uri: redirectUri,
       }
+    }
+    var payload = {
+      connector_id: "zendesk",
+      credential: credential,
     }
 
     try {
@@ -60,6 +64,10 @@ const ZendeskConnectorPage: FC = function () {
       console.log(jsonData)
       if (!isAuthorized) {
         console.log('failed to authenticate')
+      }
+      if (deleteCredentials && !isAuthorized) {
+        setClientId('')
+        setClientSecret('')
       }
       setAuthLoading(false)
       setAuthorized(isAuthorized)
@@ -204,7 +212,7 @@ const ZendeskConnectorPage: FC = function () {
 };
 
 interface AuthorizeModalProps {
-  authorize: () => void;
+  authorize: (deleteCredentials: boolean) => void;
   authorized: boolean;
   authLoading: boolean;
   clientSecret: string;
@@ -266,11 +274,15 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
               </div>
             </div>
           </form>
-          <Button  className="mt-4" color="primary" onClick={() => {
-            authorize()
+          <Button disabled={!clientId || !clientSecret} className="mt-4" color="primary" onClick={() => {
+            authorize(false)
           }}>
             {authLoading ? <Spinner /> : 'Save'}
-            
+          </Button>
+          <Button className="mt-4" color="primary" onClick={() => {
+            authorize(true)
+          }}>
+            {authLoading ? <Spinner /> : 'Delete Credentials'}
           </Button>
     </>
   );
