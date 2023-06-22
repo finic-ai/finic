@@ -35,7 +35,11 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
         }
         const credsJson = JSON.parse(creds)
 
+        // appId is the first part of client_id when separated by a - 
+        const appId = credsJson.client_id.split('-')[0]
+
         openPicker({
+          appId: appId,
           clientId: credsJson.client_id,
           developerKey: credsJson.developer_key,
           viewId: "DOCS",
@@ -52,8 +56,6 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
               console.log('User clicked cancel/close button')
             }
             if (data.action === 'picked') {
-                console.log(data.docs)
-                var folderId = data.docs[0].id
                 var sections = []
                 for (var i = 0; i < data.docs.length; i++) {
                     var type = data.docs[i].type === 'folder' ? 'folder' : 'document'
@@ -66,8 +68,6 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
                 setFolderMetadata(sections)
             }
 
-
-            console.log(data)
           },
         })
       }
