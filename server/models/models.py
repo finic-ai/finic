@@ -15,6 +15,7 @@ class ConnectorId(str, Enum):
     readme = "readme"
     salesforce = "salesforce"
     clickup = "clickup"
+    web = "web"
 
 
 

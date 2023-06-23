@@ -1,94 +1,90 @@
-from __future__ import annotations
-import time
-import uuid
-from urllib.parse import urlparse
-from pathlib import Path
-from bs4 import BeautifulSoup, PageElement, Tag
-# from playwright.sync_api import sync_playwright, Browser
-from playwright.async_api import async_playwright, Browser
-from tqdm import tqdm
-import random
-from models.models import Source, AppConfig, Document, DocumentMetadata, AuthorizationResult, DataConnector
+from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, ConnectionFilter, Section
+from models.api import GetDocumentsResponse
 from typing import List, Optional
-from connectors.web_connector.evaluate_url import evaluate_url
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
+from appstatestore.statestore import StateStore
+import os
+import uuid
+import json
+import importlib
+from typing import Any, Dict
+import io 
+from PyPDF2 import PdfReader
+import re
+from collections import deque
 
-
-create_document = lambda title, text, url, source_type, : Document(text)
-
-
-async def load_data_from_url(source_id: str, url: str, config: AppConfig, source_type: Source, css_connector: str) -> Document:
-    """
-    Convert HTML within the element matching css_connector to text, or if css_connector is None, convert the entire page to text.
-    """
-    tenant_id = config.tenant_id
-    parsed = urlparse(url)
-    # if this is not a valid url, ignore it
-    if not parsed.scheme and not parsed.hostname:
-        return None
-    
-    ## Use playwright to load the page. More reliable than using http requests.
-    async with async_playwright() as p:
-        try:
-            browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page()
-            page.set_default_timeout(60000)
-            response = await page.goto(url, wait_until='domcontentloaded')
-            status = response.status
-            content = await page.content()
-            if status != 200:
-                raise Exception(f"HTTP error occurred: {status}")
-            if 'Checking if the site connection is secure' in content:
-                raise Exception("Blocked by cloudflare")
-            soup = BeautifulSoup(content, "html.parser")
-            if css_connector:
-                elements = soup.select(css_connector)
-            else:
-                elements = [soup]
-
-            ## TODO: If more than one element matches the selector, combine all matching elements into a single Document
-            combined = elements
-            if len(elements) > 1:
-                combined = soup.new_tag("div")
-                for element in elements:
-                    combined.append(element)
-            
-            documents = Document(
-                title = url,
-                text = str(combined),
-                url = url,
-                source_type = source_type,
-                metadata = DocumentMetadata(
-                    source_id = source_id,
-                    tenant_id = tenant_id,
-                    document_id = str(uuid.uuid4())),
-                )
-            await page.close()
-            return documents
-        except Exception as e:
-            tqdm.write(f'Something went wrong: {url} {e}')
-            return None
-
-
-class WebsiteConnector(DataConnector):
-    source_type: Source = Source.web
-    connector_id: int = 2
+class WebsiteDriveConnector(DocumentConnector):
+    connector_id: ConnectorId = ConnectorId.web
     config: AppConfig
-    urls: List[str]
-    css_selector: Optional[str] = None
 
-    def __init__(self, config: AppConfig, urls: List[str], css_selector: str):
-        super().__init__(config=config, urls=urls, css_selector=css_selector)
+    def __init__(self, config: AppConfig):
+        super().__init__(config=config)
 
-    async def authorize(self) -> AuthorizationResult:
-        pass
+    async def authorize_api_key(self) -> AuthorizationResult:
+        pass              
 
-    async def load(self, source_id: str) -> List[Document]:
+    async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
+        new_connection = StateStore().add_connection(
+            config=self.config,
+            credential="",
+            connector_id=self.connector_id,
+            account_id=account_id,
+            metadata=metadata
+        )
+        return AuthorizationResult(authorized=True, connection=new_connection)
+    
+    async def get_sections(self, account_id: str) -> List[Section]:
+        return []
+
+    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
+        account_id = connection_filter.account_id
+        uris = connection_filter.uris
+        section_filter = connection_filter.section_filter_id
+        # initialize credentials
+        connection = StateStore().load_credentials(
+            self.config, 
+            self.connector_id,
+            account_id 
+        )
+
+        url = connection.metadata['url']
         documents = []
-        for url in self.urls:
-            parsed_url = urlparse(url)
-            if parsed_url.scheme not in ["http", "https"]:
-                raise Exception(f"Invalid URL: {url}")
-            document = await load_data_from_url(source_id, url, self.config, self.source_type, self.css_selector)
-            documents.append(document)
-            time.sleep(random.uniform(1, 2))
-        return documents
+        documents.append(
+            Document(
+                title="name",
+                content="content",
+                connector_id=self.connector_id,
+                account_id=account_id,
+                uri="webViewLink",
+            )
+        )
+        return GetDocumentsResponse(documents=documents)
+
+def get_id_from_folder_name(folder_name: str, service) -> str:
+    print("loading documents")
+    folder_query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+    folder_result = service.files().list(q=folder_query, fields="nextPageToken, files(id)").execute()
+    folder_items = folder_result.get('files', [])
+    print("folder items:", folder_items)
+
+    if len(folder_items) == 0:
+        print(f"No folder named '{folder_name}' was found.")
+        raise Exception(f"No folder named '{folder_name}' was found.")
+    elif len(folder_items) > 1:
+        print(f"Multiple folders named '{folder_name}' were found. Using the first one.")
+
+    folder_id = folder_items[0]['id']
+    return folder_id
+
+def get_id_from_url(url: str):
+    # Extract the folder ID from the link
+    folder_id = re.search(r'folders/([\w-]+)', url)
+    if folder_id:
+        folder_id = folder_id.group(1)
+        return folder_id
+    else:
+        raise Exception("Invalid Google Drive folder link.")
+    
