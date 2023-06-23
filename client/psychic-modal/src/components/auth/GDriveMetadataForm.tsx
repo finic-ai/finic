@@ -42,7 +42,7 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
           appId: appId,
           clientId: credsJson.client_id,
           developerKey: credsJson.developer_key,
-          viewId: "DOCS",
+          viewId: "DOCUMENTS",
           token: credsJson.access_token, // pass oauth token in case you already have one
           showUploadView: false,
           showUploadFolders: false,
