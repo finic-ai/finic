@@ -6,6 +6,7 @@ import {
   Spinner,
   TextInput,
   Checkbox,
+  ToggleSwitch
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
@@ -58,6 +59,7 @@ const ProductsTable: FC = function () {
   const [name, setName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [enabledConnectors, setEnabledConnectors] = useState<string[]>([])
+  const [whitelabel, setWhitelabel] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
   const [webhookUrl, setWebhookUrl] = useState('')
@@ -94,6 +96,9 @@ const ProductsTable: FC = function () {
               } else {
                   // All connector IDs are enabled by default
                   setEnabledConnectors(allConnectors.map(connector => connector.id))
+              }
+              if (data[0].whitelabel) {
+                  setWhitelabel(data[0].whitelabel)
               }
           }
           setLoading(false)
@@ -133,7 +138,7 @@ const ProductsTable: FC = function () {
       }
       const { data, error } = await supabase
       .from('settings')
-      .upsert({ name, logo: downloadUrl, app_id: appId, enabled_connectors: enabledConnectors })
+      .upsert({ name, logo: downloadUrl, app_id: appId, enabled_connectors: enabledConnectors, whitelabel: whitelabel})
       .eq('app_id', appId)
       .select()
       setLoading(false)
@@ -175,7 +180,7 @@ const ProductsTable: FC = function () {
   const ConnectorCheckbox = ({ connectorId, connectorName }: { connectorId: string, connectorName: string }) => {
     return (
       <div className="flex flex-row mt-4">
-        <Checkbox value={connectorId} checked={enabledConnectors.includes(connectorId)} onChange={handleCheckChange} />
+        <Checkbox disabled={loading} value={connectorId} checked={enabledConnectors.includes(connectorId)} onChange={handleCheckChange} />
         <Label htmlFor="apiKeys.newKey" className="ml-2">{connectorName}</Label>
       </div>
     )
@@ -216,6 +221,10 @@ const ProductsTable: FC = function () {
     {allConnectors.map(connector => (
       <ConnectorCheckbox connectorId={connector.id} connectorName={connector.name} />
     ))}
+  </div>
+  <div>
+    <Label htmlFor="apiKeys.newKey">Whitelabeling</Label>
+    <ToggleSwitch disabled={loading} label="Initial Consent Screen" checked={!whitelabel} onChange={() => setWhitelabel(!whitelabel)} />
   </div>
   <div className="flex justify-beginning">
       <Button color="primary" onClick={updateSettings}>
