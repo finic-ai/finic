@@ -20,9 +20,14 @@ from .google_drive_parser import GoogleDriveParser
 
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
-def download_pdf(service, file_id):
-    request = service.files().get_media(fileId=file_id)
-    file = io.BytesIO(request.execute())
+def download_pdf(service, file_id) -> Optional[io.BytesIO]:
+    file = None
+    try:
+        request = service.files().get_media(fileId=file_id)
+        file = io.BytesIO(request.execute())
+    except Exception as e:
+        print(e)
+    
     return file
 
 def extract_pdf_text(pdf_file):
@@ -192,6 +197,8 @@ class GoogleDriveConnector(DocumentConnector):
                 content = doc.decode("utf-8")
             elif mime_type == "application/pdf":
                 pdf_file = download_pdf(service, item["id"])
+                if not pdf_file:
+                    continue
                 content = extract_pdf_text(pdf_file)
             documents.append(
                 Document(
