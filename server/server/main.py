@@ -364,7 +364,9 @@ async def get_documents(
                     page_size=request.page_size,
                 )
             ) 
-            if chunked and connector_id == ConnectorId.notion:
+            if chunked and connector_id != ConnectorId.notion:
+                raise HTTPException(status_code=400, detail="Chunking is only supported for Notion")
+            elif chunked:
                 chunker = DocumentChunker(min_chunk_size=min_chunk_size, max_chunk_size=max_chunk_size)
                 result = GetDocumentsResponse(documents=chunker.chunk(result.documents), next_cursor=result.next_page_cursor)
             documents.extend(result.documents)
