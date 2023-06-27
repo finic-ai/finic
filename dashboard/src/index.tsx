@@ -33,6 +33,7 @@ import SyncsPage from "./pages/syncs";
 import CreateConnectionPage from "./pages/create-connection";
 import { useUserStateContext } from "./context/UserStateContext";
 import ReadmeConnectorPage from "./pages/connectors/readme";
+import WebsiteConnectorPage from "./pages/connectors/website";
 
 const container = document.getElementById("root");
 
@@ -135,6 +136,7 @@ function App() {
                   <Route path="/connectors/hubspot" element={<HubspotConnectorPage />} />
                   <Route path="/connectors/salesforce" element={<SalesforceConnectorPage />} />
                   <Route path="/connectors/readme" element={<ReadmeConnectorPage />} />
+                  <Route path="/connectors/website" element={<WebsiteConnectorPage />} />
                   <Route path="/oauth/redirect" element={<RedirectPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/syncs" element={<SyncsPage />} />

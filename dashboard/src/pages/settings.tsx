@@ -78,6 +78,7 @@ const ProductsTable: FC = function () {
     { id: 'salesforce', name: 'Salesforce' },
     { id: 'gdrive', name: 'Google Drive' },
     { id: 'github', name: 'Github' },
+    { id: 'web', name: 'Website' },
   ]
 
 

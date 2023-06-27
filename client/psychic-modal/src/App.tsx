@@ -15,6 +15,7 @@ import HubspotAuthFlow from './components/auth/HubspotAuthFlow';
 import ReadmeAuthFlow from './components/auth/ReadmeAuthFlow';
 import SalesforceAuthFlow from './components/auth/SalesforceAuthFlow';
 import ModalHeader from './components/ModalHeader';
+import WebAuthFlow from './components/auth/WebAuthForm';
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL
 
@@ -63,6 +64,8 @@ const App: React.FC = () => {
           return <ReadmeAuthFlow />
         } else if (selectedConnectorId == "salesforce") {
           return <SalesforceAuthFlow />
+        } else if (selectedConnectorId == "web") {
+          return <WebAuthFlow />
         }
          else {
           return <div>Unknown connector</div>

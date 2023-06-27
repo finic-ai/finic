@@ -4,12 +4,19 @@ import {
   Button,
   Label,
   TextInput,
-  Textarea,
-  Spinner
+  Tooltip,
+  Spinner,
+  Modal,
+  Tabs,
+  Table
 } from "flowbite-react";
-import type { FC } from "react";
+import { FC, useEffect } from "react";
 import { useState } from "react";
-import { FaPlus } from "react-icons/fa";
+import {
+  TbWorld
+} from "react-icons/tb";
+import { HiOutlineTrash } from "react-icons/hi";
+
 import {
   HiHome,
 } from "react-icons/hi";
@@ -17,52 +24,107 @@ import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import { useUserStateContext } from "../../context/UserStateContext";
 import Text from "../../components/text";
 
-
 const WebsiteConnectorPage: FC = function () {
-  const [urlsInput, setUrlsInput] = useState('');
-  const [connectLoading, setConnectLoading] = useState(false)
-  const [upsertedChunks, setUpsertedChunks] = useState(new Array<string>());
-  const [cssSelector, setCssSelector] = useState('');
+  const [authorized, setAuthorized] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [authorizationUrl, setAuthorizationUrl] = useState('');
+  const [connections, setConnections] = useState([] as any[])
+
   const {bearer} = useUserStateContext()
 
-  async function crawlPages() {
-    setConnectLoading(true)
-    try {
-      // Define the URL to make the request to
-      // split by comma and remove whitespace
-      const urls = urlsInput.split(',').map(url => url.trim())
-      var payload = {
-        urls: urls, 
-        css_selector: cssSelector
+  async function authorize() {
+    setAuthLoading(true)
+    const url = import.meta.env.VITE_SERVER_URL + '/set-custom-connector-credentials';
+    var payload = {
+      connector_id: "web",
+      credential: {
+        client_id: clientId,
+        client_secret: clientSecret,
+        authorization_url: authorizationUrl,
       }
+    }
 
-      // Make the request using the fetch function and await the response
-      const url = import.meta.env.VITE_SERVER_URL + '/upsert-web-data';
+    try {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
         body: JSON.stringify(payload),
       });
-  
-      // Check if the response status is OK (200)
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
-      // Parse the response body as JSON and await the result
       const jsonData = await response.json();
-
-      const numChunks = jsonData.ids.length
-      setUpsertedChunks(jsonData.ids)
-      console.log(`Successfully upserted ${numChunks} chunks`)
-      setConnectLoading(false)
-      
+      const isAuthorized = jsonData.status.is_enabled
+      console.log(jsonData)
+      if (!isAuthorized) {
+        console.log('failed to authenticate')
+      }
+      setAuthLoading(false)
+      setAuthorized(isAuthorized)
     } catch (error) {
-      // Handle any errors that occurred during the fetch
-      console.error('Error connecting to google drive:', error);
-      setConnectLoading(false)
+      setAuthLoading(false)
     }
   }
+
+  useEffect(() => {
+    async function getConnectorStatus() {
+      const url = import.meta.env.VITE_SERVER_URL + '/get-connector-status';
+      console.log(url)
+      var payload = {
+        connector_id: "web",
+      }
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const jsonData = await response.json();
+        const isAuthorized = jsonData.status.is_enabled
+        const connections = jsonData.status.connections
+        setAuthorized(isAuthorized)
+        setConnections(connections)
+        setAuthLoading(false)
+      } catch (error) {
+        setAuthLoading(false)
+      }
+    }
+    if (bearer) {
+      getConnectorStatus()
+    }
+  }, [bearer])
+
+  const deleteConnection = async (accountId: string, i: number) => {
+    setDeleteLoading(true)
+    const url = import.meta.env.VITE_SERVER_URL + '/delete-connection';
+    var payload = {
+      connector_id: "notion",
+      account_id: accountId
+    }
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${bearer}` },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      setDeleteLoading(false)
+      let newConnections = [...connections]
+      newConnections.splice(i, 1)
+      setConnections(newConnections)
+    } catch (error) {
+      setDeleteLoading(false)
+    }
+  }
+      
 
   return (
     <NavbarSidebarLayout isFooter={false}>
@@ -73,64 +135,189 @@ const WebsiteConnectorPage: FC = function () {
               <Breadcrumb.Item href="/">
                 <div className="flex items-center gap-x-3">
                   <HiHome className="text-xl" />
-                  <Text className="dark:text-white">Home</Text>
+                  <Text>Home</Text>
                 </div>
               </Breadcrumb.Item>
               <Breadcrumb.Item>Connectors</Breadcrumb.Item>
               <Breadcrumb.Item>Website</Breadcrumb.Item>
             </Breadcrumb>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-              Scrape web content
-            </h1>
+            <div className="flex items-center">
+              <TbWorld className="mr-2 text-xl" />
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+                Website
+              </h1>
+            </div>
+            <Text>View your active connections and configure the Website connector here. You can create a new connection from the <a href="/playground" className="text-blue-400">Playground</a>.</Text>
           </div>
         </div>
       </div>
-      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
-        <div className="mb-1 w-full">
-          <div className="mb-4">
-            <form>
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div className="lg:col-span-2">
-                  <Label htmlFor="apiKeys.label">URLs</Label>
-                  <Textarea 
-                    id="apiKeys.label"
-                    name="apiKeys.label"
-                    placeholder='https://www.example.com, https://www.example2.com, ...'
-                    className="mt-1 w-1/2"
-                    onChange={(e) => setUrlsInput(e.target.value)}
-                    value={urlsInput}
-                    helperText="URLs of the pages you want to scrape. Must be a comma separated list."
-                  />
-                </div>
-                <div className="lg:col-span-2">
-                  <Label htmlFor="apiKeys.label">CSS Selector</Label>
-                  <TextInput
-                    id="apiKeys.label"
-                    name="apiKeys.label"
-                    className="mt-1 w-1/2"
-                    placeholder=".example-class"
-                    onChange={(e) => setCssSelector(e.target.value.trim())}
-                    value={cssSelector}
-                    helperText={<Text>Only elements matching the <a className="text-blue-400" href="https://www.w3schools.com/cssref/css_selectors.php">CSS selector</a> will be ingested. Applies to all URLs provided.</Text>}
-                  />
-                </div>
-                <div className="lg:col-span-2">
-                    <Button color="primary" disabled={!urlsInput} className="mb-6" onClick={() => crawlPages() } >
-                      {connectLoading ? <Spinner className="mr-3 text-sm" /> : <>
-                      <FaPlus className="mr-3 text-sm" />
-                      Connect
-                      </>}
-                      
-                    </Button>
-                    {upsertedChunks.length > 0 ? <Text>{`Successfully upserted ${upsertedChunks.length} chunks`}</Text> : null}
-                </div>
+      <Tabs.Group>
+      <Tabs.Item active={true} title="Active Connections">
+          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+            <div className="mb-1 w-full">
+              <div className="mb-4">
+                <h2 className="text-sm font-semibold text-gray-900 dark:text-white sm:text-lg mb-2">
+                  Active connections 
+                </h2>
+                <ConnectionsTable connections={connections} isLoading={deleteLoading} deleteConnection={deleteConnection}/>
               </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </div>
+        </Tabs.Item>
+        <Tabs.Item active={true} title="Configuration">
+          <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+            <div className="mb-1 w-full">
+              <div className="mb-4">
+                <form>
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div>
+                      <AuthorizeModal 
+                        authorize={authorize} 
+                        authLoading={authLoading} 
+                        authorized={authorized} 
+                        clientId={clientId} 
+                        setClientId={setClientId}
+                        clientSecret={clientSecret}
+                        setClientSecret={setClientSecret}
+                        authorizationUrl={authorizationUrl}
+                        setAuthorizationUrl={setAuthorizationUrl}
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </Tabs.Item>
+        
+      </Tabs.Group>
     </NavbarSidebarLayout>
   );
 };
+
+interface AuthorizeModalProps {
+  authorize: () => void;
+  authorized: boolean;
+  authLoading: boolean;
+  clientId: string;
+  setClientId: (clientId: string) => void;
+  clientSecret: string;
+  setClientSecret: (clientSecret: string) => void;
+  authorizationUrl: string;
+  setAuthorizationUrl: (authorizationUrl: string) => void;
+}
+
+const AuthorizeModal: FC<AuthorizeModalProps> = function ({
+  authorize, clientId, setClientId, clientSecret, setClientSecret, authorizationUrl, setAuthorizationUrl, authorized, authLoading
+}: AuthorizeModalProps) {
+  const [isOpen, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button color="primary" className="mb-6"  onClick={() => setOpen(true) } >
+        {authLoading ? <Spinner className="mr-3 text-sm" /> : <>
+        {authorized ?  'Update Credentials'  : 'Enable Connector'}
+        </>}
+      </Button>
+      <Modal onClose={() => setOpen(false)} show={isOpen}>
+        <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
+          <strong>Custom Website Credentials</strong>
+        </Modal.Header>
+        <Modal.Body>
+          <form>
+            <div className="lg:col-span-2">
+              <div>
+                <Label htmlFor="apiKeys.label">OAuth client ID</Label>
+                <TextInput
+                  value={clientId}
+                  onChange={(e) => setClientId(e.target.value)}
+                  placeholder='OAuth client ID'
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="apiKeys.label">OAuth client secret</Label>
+                <TextInput
+                  value={clientSecret}
+                  onChange={(e) => setClientSecret(e.target.value)}
+                  placeholder='OAuth client secret'
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="apiKeys.label">Authorization URL</Label>
+                <TextInput
+                  value={authorizationUrl}
+                  onChange={(e) => setAuthorizationUrl(e.target.value)}
+                  placeholder='Authorization URL'
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button color="primary" onClick={() => {
+            authorize()
+            setOpen(false)
+          }}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+interface ConnectionsTableProps {
+  connections: any[];
+  isLoading: boolean;
+  deleteConnection: (accountId: string, i: number) => void;
+}
+
+const ConnectionsTable: FC<ConnectionsTableProps> = function ({connections, isLoading, deleteConnection}: ConnectionsTableProps) {
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  const handleDelete = (accountId: string, i: number) => {
+    setSelectedIndex(i);
+    deleteConnection(accountId, i);
+  };
+  
+  return (
+    <>
+    <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+      <Table.Head className="bg-gray-100 dark:bg-gray-700">
+        <Table.HeadCell>Account ID</Table.HeadCell>
+        <Table.HeadCell>URL</Table.HeadCell>
+        <Table.HeadCell></Table.HeadCell>
+      </Table.Head>
+      <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+          {connections.map((item, i) => (
+          <Table.Row key={i} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <div className="text-base font-semibold text-gray-900 dark:text-white">
+                      {item.account_id}
+                  </div>
+              </Table.Cell>
+              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                      {item.metadata.url}
+                  </div>
+              </Table.Cell>
+              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                <Tooltip content="Delete">
+                  <Button color="failure" onClick={() => handleDelete(item.account_id, i)} disabled={isLoading}>
+                    {isLoading && selectedIndex == i ? <Spinner className="h-4 w-4" /> : <HiOutlineTrash className="h-4 w-4" />}
+                  </Button>
+                </Tooltip>
+              </Table.Cell>
+          </Table.Row>
+          ))}
+      </Table.Body>
+    </Table>
+    </>
+  );
+};
+
 
 export default WebsiteConnectorPage;

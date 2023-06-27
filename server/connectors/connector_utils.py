@@ -9,6 +9,7 @@ from .hubspot_connector import HubspotConnector
 from .readme_connector import ReadmeConnector
 from .salesforce_connector import SalesforceConnector
 from .clickup_connector import ClickupConnector
+from .website_connector import WebsiteConnector
 from models.models import AppConfig, DocumentConnector, ConversationConnector, DataConnector, ConnectorId
 from typing import Optional
 
@@ -33,6 +34,8 @@ def get_document_connector_for_id(connector_id: ConnectorId, config: AppConfig) 
         return SalesforceConnector(config)
     elif connector_id == ConnectorId.clickup:
         return ClickupConnector(config)
+    elif connector_id == ConnectorId.web:
+        return WebsiteConnector(config)
     return None
 
 def get_conversation_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[ConversationConnector]:
@@ -63,4 +66,6 @@ def get_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Option
         return SalesforceConnector(config)
     elif connector_id == ConnectorId.clickup:
         return ClickupConnector(config)
+    elif connector_id == ConnectorId.web:
+        return WebsiteConnector(config)
     return None

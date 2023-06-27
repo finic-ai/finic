@@ -15,8 +15,9 @@ import io
 from PyPDF2 import PdfReader
 import re
 from collections import deque
+import requests
 
-class WebsiteDriveConnector(DocumentConnector):
+class WebsiteConnector(DocumentConnector):
     connector_id: ConnectorId = ConnectorId.web
     config: AppConfig
 
@@ -51,16 +52,57 @@ class WebsiteDriveConnector(DocumentConnector):
         )
 
         url = connection.metadata['url']
-        documents = []
-        documents.append(
+
+        url = "https://www.psychic.dev/"
+
+        api_key = "apify_api_ZbG35A3tr2yjThiogjeFsWd4hkr94T3hVZpp"
+        actor_id = "aYG0l9s7dbB7j3gbS"
+
+        apify_endpoint = f"https://api.apify.com/v2/acts/{actor_id}/runs"
+
+        url_params = {
+            "token": api_key,
+            "waitForFinish": 60,
+        }
+
+        response = requests.post(apify_endpoint, params=url_params, json={"startUrls": [
+            {"url": url}
+        ]})
+
+        response_data = response.json()
+
+        terminal_statuses = ['SUCCEEDED', 'FAILED', 'TIMED-OUT', 'ABORTED']
+
+        succeeded = response_data['data']['status'] == 'SUCCEEDED'
+        finished = response_data['data']['status'] in terminal_statuses
+        run_id = response_data['data']['id']
+        
+
+        while not finished:
+            run = requests.get(f"https://api.apify.com/v2/actor-runs/{run_id}", params={
+                "token": api_key,
+                "waitForFinish": 60,
+            })
+            run_data = run.json()
+            succeeded = run_data['data']['status'] == 'SUCCEEDED'
+            finished = run_data['data']['status'] in terminal_statuses
+            if finished and not succeeded:
+                raise Exception("Web scrape failed")
+
+        run = requests.get(f"https://api.apify.com/v2/actor-runs/{run_id}/dataset/items", params={
+            "token": api_key
+        })
+        results = run.json()
+        
+        documents = [
             Document(
-                title="name",
-                content="content",
-                connector_id=self.connector_id,
-                account_id=account_id,
-                uri="webViewLink",
-            )
-        )
+                title=result.get('metadata').get('title') or '', 
+                content=result["text"], 
+                connector_id=self.connector_id, 
+                account_id=account_id, 
+                uri=result["url"]
+            ) 
+                     for result in results]
         return GetDocumentsResponse(documents=documents)
 
 def get_id_from_folder_name(folder_name: str, service) -> str:

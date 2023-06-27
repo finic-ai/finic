@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import classNames from "classnames";
-import { Sidebar, Tooltip } from "flowbite-react";
+import { Sidebar } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
@@ -176,14 +176,16 @@ const DashboardSidebar: FC = function () {
                   >
                     Readme
                   </Sidebar.Item>
-                  <Tooltip content="Coming Soon" trigger="hover">
-                    <Sidebar.Item
-                      href="/connectors/website"
-                      className="pointer-events-none text-gray-400"
-                    >
-                      Website
-                    </Sidebar.Item>
-                  </Tooltip>
+                  <Sidebar.Item
+                    href="/connectors/website"
+                    className={
+                      "/connectors/website" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Website
+                  </Sidebar.Item>
                   {/* <Sidebar.Item
                     href="/connectors/website"
                     className={

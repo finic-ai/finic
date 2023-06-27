@@ -13,8 +13,8 @@ import { useState, useEffect } from "react";
 import { useModalContext } from "../context/ModalContext";
 
 import {
-  HiOutlineArrowLeft
-} from "react-icons/hi2";
+  TbWorld
+} from "react-icons/tb";
 
 
 import NotionIcon from "./icons/NotionIcon";
@@ -84,6 +84,14 @@ const connectors = [
     name: "Readme",
     id: "readme",
     icon: ReadmeIcon,
+    label: null,
+    labelColor: "info",
+    active: true
+  },
+  {
+    name: "Website",
+    id: "web",
+    icon: TbWorld,
     label: null,
     labelColor: "info",
     active: true
