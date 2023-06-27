@@ -53,8 +53,6 @@ class WebsiteConnector(DocumentConnector):
 
         url = connection.metadata['url']
 
-        url = "https://www.psychic.dev/"
-
         api_key = "apify_api_ZbG35A3tr2yjThiogjeFsWd4hkr94T3hVZpp"
         actor_id = "aYG0l9s7dbB7j3gbS"
 
