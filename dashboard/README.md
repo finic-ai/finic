@@ -1,3 +1,19 @@
+# Javelo Fork
+
+## Environment variables
+
+Before building you must copy to a `.env` file the `.env.example` file and fill the following variables
+
+- VITE_SUPABASE_URL
+- VITE_SUPABASE_KEY
+- VITE_PSYCHIC_LINK_OAUTH_URL
+- VITE_SERVER_URL (optional)
+- VITE_PUBLIC_POSTHOG_DISABLED=true
+- VITE_PUBLIC_POSTHOG_HOST (optional)
+- VITE_PUBLIC_POSTHOG_KEY (optional)
+
+
+
 <div align="center">
   <h1>flowbite-react-admin-dashboard</h1>
   <p>
