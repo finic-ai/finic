@@ -4,6 +4,22 @@ const PSYCHIC_URL = 'https://link.psychic.dev';
 // const PSYCHIC_API_URL = 'http://localhost:8080'
 const PSYCHIC_API_URL = 'https://sidekick-ezml2kwdva-uc.a.run.app';
 
+export enum ConnectorId {
+  Notion = 'notion',
+  GDrive = 'gdrive',
+  Confluence = 'confluence',
+  Zendesk = 'zendesk',
+  Slack = 'slack',
+  Dropbox = 'dropbox',
+  Readme = 'readme',
+  Web = 'web',
+  Intercom = 'intercom',
+  Hubspot = 'hubspot',
+  Salesforce = 'salesforce',
+  Github = 'github',
+}
+
+
 export function usePsychicLink(public_key: string, onSuccessCallback: Function) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -34,7 +50,7 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
   }
 
 
-  async function open(accountId: string) {
+  async function open(accountId: string, connectorId?: ConnectorId) {
     setIsLoading(true)
 
     // Call the get-link-settings endpoint to get any custom settings
@@ -44,6 +60,10 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
       url = `${customUrl}?public_key=${public_key}&account_id=${accountId}`
     } else {
       url = `${PSYCHIC_URL}?public_key=${public_key}&account_id=${accountId}`
+    }
+
+    if (connectorId) {
+      url = `${url}&connector_id=${connectorId}`
     }
 
     if (windowObjectReference === null || windowObjectReference.closed) {

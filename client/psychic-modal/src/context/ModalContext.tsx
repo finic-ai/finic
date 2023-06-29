@@ -35,9 +35,10 @@ interface ModalContextType {
   logoLoading: boolean;
   enabledConnectors: string[];
   whitelabel: boolean;
-
   authorizeConnection: Function;
   startConnectorAuthFlow: Function;
+  skipConnectorSelection: boolean;
+  connectorsThatStartOAuthFirst: string[];
 }
 
 export enum AuthMethod {
@@ -65,13 +66,82 @@ interface ModalProviderProps {
   children: ReactNode;
 }
 
+const connectors = [
+  {
+    name: "Notion",
+    id: "notion",
+  },
+  {
+    name: "Google Drive",
+    id: "gdrive",
+  },
+  {
+    name: "Confluence",
+    id: "confluence",
+  },
+  {
+    name: "Zendesk",
+    id: "zendesk",
+  },
+  {
+    name: "Slack",
+    id: "slack",
+  },
+  {
+    name: "Dropbox",
+    id: "dropbox",
+  },
+  {
+    name: "Readme",
+    id: "readme",
+  },
+  {
+    name: "Website",
+    id: "web",
+  },
+  {
+    name: "Intercom",
+    id: "intercom",
+  },
+  {
+    name: "Hubspot",
+    id: "hubspot",
+  },
+  {
+    name: "Salesforce",
+    id: "salesforce",
+  },
+  {
+    name: "Github Issues",
+    id: "github",
+  },
+  
+]
+
 // Custom provider component
 const ModalProvider = ({ children }: ModalProviderProps) => {
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const accountId = urlParams.get('account_id');
+  const publicKey = urlParams.get('public_key');
+  const urlParamConnectorId = urlParams.get('connector_id');
+  var urlParamConnectorName: string | undefined = '';
+  if (urlParamConnectorId) {
+    // Connector name is from the connectors array
+    urlParamConnectorName = connectors.find(connector => connector.id === urlParamConnectorId)?.name;
+  }
+
+  const skipConnectorSelection = urlParamConnectorId ? true : false;
+
+
   const [currentStep, setCurrentStep] = useState(0);
   const [customerName, setCustomerName] = useState('');
   const [customerLogoUrl, setCustomerLogoUrl] = useState('');
-  const [connectorName, setConnectorName] = useState('');
-  const [selectedConnectorId, setSelectedConnectorId] = useState('');
+  
+  
+  const [connectorName, setConnectorName] = useState(urlParamConnectorName || '');
+  const [selectedConnectorId, setSelectedConnectorId] = useState(urlParamConnectorId || '');
+  
   const [newConnection, setNewConnection] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -85,9 +155,9 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
 
   const authCodeHandled = useRef(false);
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const accountId = urlParams.get('account_id');
-  const publicKey = urlParams.get('public_key');
+  const connectorsThatStartOAuthFirst = ['notion', 'confluence', 'slack', 'dropbox', 'intercom', 'hubspot', 'salesforce', 'gdrive'];
+
+  
 
   const value: ModalContextType = {
     currentStep,
@@ -121,7 +191,9 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     credential,
     setCredential,
     enabledConnectors,
-    whitelabel
+    whitelabel,
+    skipConnectorSelection,
+    connectorsThatStartOAuthFirst
   };
 
   useEffect(() => {
@@ -151,7 +223,14 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
             setWhitelabel(data[0].whitelabel);
             setEnabledConnectors(data[0].enabled_connectors);
             if (data[0].whitelabel) {
-              setCurrentStep(1);
+              if (skipConnectorSelection) {
+                setCurrentStep(2);
+                if (connectorsThatStartOAuthFirst.includes(selectedConnectorId)) {
+                  startConnectorAuthFlow(window, selectedConnectorId)
+                }
+              } else {
+                setCurrentStep(1);
+              }
             }
           } else {
             setCustomerName('Support Hero');
@@ -251,5 +330,7 @@ const useModalContext = (): ModalContextType => {
     }
     return context;
   };
+
+
 
 export { ModalContext, ModalProvider, useModalContext };

@@ -13,7 +13,19 @@ import { useModalContext } from "../context/ModalContext";
 
 
 const StartPage: React.FC = () => {
-  const { customerName, customerLogoUrl, setCurrentStep, logoLoading} = useModalContext();
+  const { customerName, customerLogoUrl, setCurrentStep, logoLoading, skipConnectorSelection, selectedConnectorId, startConnectorAuthFlow, connectorsThatStartOAuthFirst} = useModalContext();
+
+  const goToNextStep = () => {
+    if (skipConnectorSelection) {
+      setCurrentStep(2);
+      if (connectorsThatStartOAuthFirst.includes(selectedConnectorId)) {
+        startConnectorAuthFlow(window, selectedConnectorId)
+      }
+    }
+    else {
+      setCurrentStep(1)
+    }
+  }
   const renderModalHeader = () => {
     return (
       <div>
@@ -75,7 +87,7 @@ const StartPage: React.FC = () => {
         <p className="text-sm text-gray-500">
           By selecting “Continue” you agree to the <a href="https://www.psyhic.dev/privacy-policy" target="_blank" className="underline text-blue-500">Psychic End User Privacy Policy</a>
         </p>
-        <Button size="xl" className="w-3/5 min-w-300" onClick={() => setCurrentStep(1)}>
+        <Button size="xl" className="w-3/5 min-w-300" onClick={() => goToNextStep()}>
           Continue
         </Button>
       </div>

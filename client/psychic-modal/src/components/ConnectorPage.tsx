@@ -132,15 +132,13 @@ const connectors = [
 ]
   
 const ConnectorPage: React.FC = () => {
-
-  const { enabledConnectors, whitelabel, customerName, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow, setMetadata } = useModalContext()
+  const { enabledConnectors, whitelabel, customerName, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow, setMetadata, connectorsThatStartOAuthFirst } = useModalContext()
 
   const pickConnector = (connectorName: string, connectorId: string) => {
     setCurrentStep(2)
     setConnectorName(connectorName)
     setSelectedConnectorId(connectorId)
-    if (connectorId == 'notion' || connectorId == 'confluence' || connectorId == 'slack' || connectorId == 'dropbox' || connectorId == 'intercom' || connectorId == 'hubspot' || connectorId == 'salesforce' || connectorId == 'gdrive') {
-      console.log('hello')
+    if (connectorsThatStartOAuthFirst.includes(connectorId)) {
       startConnectorAuthFlow(window, connectorId)
     }
   }
