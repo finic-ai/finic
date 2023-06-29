@@ -9,15 +9,12 @@ import {
 } from "flowbite-react";
 import type { FC } from "react";
 import { useState } from "react";
-import {
-  HiHome,
-} from "react-icons/hi";
+import { HiHome } from "react-icons/hi";
 import { useUserStateContext } from "../context/UserStateContext";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 import Text from "../components/text";
-  
+
 const ApiKeysPage: FC = function () {
-  
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
@@ -107,17 +104,17 @@ const AddAPIKeyModal: FC = function () {
 };
 
 const APIKeyTable: FC = function () {
-  const {bearer, appId} = useUserStateContext()
+  const { bearer, appId } = useUserStateContext();
   const testAPIKeys = [
     {
-        id: bearer,
-        label: "Secret Key",
+      id: bearer,
+      label: "Secret Key",
     },
     {
       id: appId,
       label: "Public Key",
-  }
-  ]
+    },
+  ];
   return (
     <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
       <Table.Head className="bg-gray-100 dark:bg-gray-700">
@@ -125,24 +122,26 @@ const APIKeyTable: FC = function () {
         <Table.HeadCell>API Key</Table.HeadCell>
       </Table.Head>
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-          {testAPIKeys.map((key, i) => (
-          <Table.Row key={i} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                  <div className="text-base font-semibold text-gray-900 dark:text-white">
-                      {key.label}
-                  </div>
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                  <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                      {key.id}
-                  </div>
-              </Table.Cell>
+        {testAPIKeys.map((key, i) => (
+          <Table.Row
+            key={i}
+            className="hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+              <div className="text-base font-semibold text-gray-900 dark:text-white">
+                {key.label}
+              </div>
+            </Table.Cell>
+            <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+              <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                {key.id}
+              </div>
+            </Table.Cell>
           </Table.Row>
-          ))}
+        ))}
       </Table.Body>
     </Table>
   );
 };
 
 export default ApiKeysPage;
-  

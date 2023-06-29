@@ -18,12 +18,8 @@ import {
   HiOutlineRefresh,
   HiPlus,
 } from "react-icons/hi";
-import {
-  SiZendesk,
-  SiConfluence,
-  SiGithub
-} from "react-icons/si";
-import {TbWorld} from "react-icons/tb";
+import { SiZendesk, SiConfluence, SiGithub } from "react-icons/si";
+import { TbWorld } from "react-icons/tb";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 
 const ConnectionsPage: FC = function () {
@@ -186,7 +182,7 @@ const testConnections = [
     last_run: "2021-08-12 12:00:00",
     status: "active",
   },
-]
+];
 
 const AllConnectionsTable: FC = function () {
   return (
@@ -207,44 +203,44 @@ const AllConnectionsTable: FC = function () {
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
         {testConnections.map((connection) => (
           <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
-          <Table.Cell className="w-4 p-4">
-            <div className="flex items-center">
-              <Checkbox aria-describedby="checkbox-1" id="checkbox-1" />
-              <label htmlFor="checkbox-1" className="sr-only">
-                checkbox
-              </label>
-            </div>
-          </Table.Cell>
-          <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
-            {connection.icon}
-            <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-              <div className="text-base font-semibold text-gray-900 dark:text-white">
-                {connection.name}
+            <Table.Cell className="w-4 p-4">
+              <div className="flex items-center">
+                <Checkbox aria-describedby="checkbox-1" id="checkbox-1" />
+                <label htmlFor="checkbox-1" className="sr-only">
+                  checkbox
+                </label>
               </div>
+            </Table.Cell>
+            <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
+              {connection.icon}
               <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                {connection.url}
+                <div className="text-base font-semibold text-gray-900 dark:text-white">
+                  {connection.name}
+                </div>
+                <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                  {connection.url}
+                </div>
               </div>
-            </div>
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {connection.source_type}
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
-            <div className="flex items-center">
-              <div className="mr-2 h-2.5 w-2.5 rounded-full bg-green-400"></div>{" "}
-              {connection.status}
-            </div>
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {connection.last_run}
-          </Table.Cell>
-          <Table.Cell>
-            <div className="flex items-center gap-x-3 whitespace-nowrap">
-              <RunConnectionButton />
-              <EditConnectionModal />
-            </div>
-          </Table.Cell>
-        </Table.Row>
+            </Table.Cell>
+            <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+              {connection.source_type}
+            </Table.Cell>
+            <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
+              <div className="flex items-center">
+                <div className="mr-2 h-2.5 w-2.5 rounded-full bg-green-400"></div>{" "}
+                {connection.status}
+              </div>
+            </Table.Cell>
+            <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+              {connection.last_run}
+            </Table.Cell>
+            <Table.Cell>
+              <div className="flex items-center gap-x-3 whitespace-nowrap">
+                <RunConnectionButton />
+                <EditConnectionModal />
+              </div>
+            </Table.Cell>
+          </Table.Row>
         ))}
       </Table.Body>
     </Table>
@@ -373,7 +369,7 @@ const EditConnectionModal: FC = function () {
 
 export const Pagination: FC = function () {
   return (
-    <div className="sticky right-0 bottom-0 w-full items-center border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex sm:justify-between">
+    <div className="sticky bottom-0 right-0 w-full items-center border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex sm:justify-between">
       <div className="mb-4 flex items-center sm:mb-0">
         <a
           href="#"
@@ -403,14 +399,14 @@ export const Pagination: FC = function () {
       <div className="flex items-center space-x-3">
         <a
           href="#"
-          className="inline-flex flex-1 items-center justify-center rounded-lg bg-primary-700 py-2 px-3 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          className="inline-flex flex-1 items-center justify-center rounded-lg bg-primary-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
           <HiChevronLeft className="mr-1 text-base" />
           Previous
         </a>
         <a
           href="#"
-          className="inline-flex flex-1 items-center justify-center rounded-lg bg-primary-700 py-2 px-3 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          className="inline-flex flex-1 items-center justify-center rounded-lg bg-primary-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
           Next
           <HiChevronRight className="ml-1 text-base" />

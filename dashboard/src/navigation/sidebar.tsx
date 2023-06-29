@@ -4,23 +4,25 @@ import { Sidebar } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
-  HiKey, 
+  HiKey,
   HiLink,
   HiBeaker,
   HiQuestionMarkCircle,
   HiCog,
   HiPlay,
   HiCloudDownload,
-  HiSparkles
+  HiSparkles,
 } from "react-icons/hi";
-import {FaGithub, FaReadme} from "react-icons/fa"
+import { FaGithub, FaReadme } from "react-icons/fa";
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 
 const DashboardSidebar: FC = function () {
-  const { isOpenOnSmallScreens: isSidebarOpenOnSmallScreens, isPageWithSidebar} =
-    useSidebarContext();
+  const {
+    isOpenOnSmallScreens: isSidebarOpenOnSmallScreens,
+    isPageWithSidebar,
+  } = useSidebarContext();
 
   const [currentPage, setCurrentPage] = useState("");
   const [isConnectorsOpen, setEcommerceOpen] = useState(true);
@@ -35,7 +37,7 @@ const DashboardSidebar: FC = function () {
   if (!isPageWithSidebar) {
     return null;
   }
-  
+
   return (
     <div
       className={classNames("lg:!block", {
@@ -59,16 +61,10 @@ const DashboardSidebar: FC = function () {
             </form> */}
             <Sidebar.Items>
               <Sidebar.ItemGroup>
-                <Sidebar.Item
-                  href="/onboarding"
-                  icon={HiSparkles}
-                >
+                <Sidebar.Item href="/onboarding" icon={HiSparkles}>
                   First Steps
                 </Sidebar.Item>
-                <Sidebar.Item
-                  href="/create-connection"
-                  icon={HiPlay}
-                >
+                <Sidebar.Item href="/create-connection" icon={HiPlay}>
                   Create Connection
                 </Sidebar.Item>
                 <Sidebar.Collapse
@@ -203,10 +199,7 @@ const DashboardSidebar: FC = function () {
                 >
                   Vector Store
                 </Sidebar.Item> */}
-                <Sidebar.Item
-                  href="/syncs"
-                  icon={HiCloudDownload}
-                >
+                <Sidebar.Item href="/syncs" icon={HiCloudDownload}>
                   Syncs
                 </Sidebar.Item>
               </Sidebar.ItemGroup>
@@ -217,16 +210,10 @@ const DashboardSidebar: FC = function () {
                 >
                   Query
                 </Sidebar.Item> */}
-                <Sidebar.Item
-                  href="/api-keys"
-                  icon={HiKey}
-                >
+                <Sidebar.Item href="/api-keys" icon={HiKey}>
                   API Key
                 </Sidebar.Item>
-                <Sidebar.Item
-                  href="/settings"
-                  icon={HiCog}
-                >
+                <Sidebar.Item href="/settings" icon={HiCog}>
                   Settings
                 </Sidebar.Item>
                 <Sidebar.Item
@@ -243,7 +230,7 @@ const DashboardSidebar: FC = function () {
                 >
                   Docs
                 </Sidebar.Item>
-                
+
                 <Sidebar.Item
                   href="https://docs.psychic.dev/api-reference/endpoint/get-documents"
                   icon={HiBeaker}

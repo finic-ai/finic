@@ -1,16 +1,12 @@
-import { FC, ReactNode } from 'react';
+import type { FC, ReactNode } from "react";
 
 interface TextProps {
-    children: ReactNode;
-    className?: string;
-  }
+  children: ReactNode;
+  className?: string;
+}
 
-const Text: FC<TextProps> = ({children, className = ''}) => {
-  return (
-    <p className={`dark:text-white ${className}`}>
-      {children}
-    </p>
-  );
+const Text: FC<TextProps> = ({ children, className = "" }) => {
+  return <p className={`dark:text-white ${className}`}>{children}</p>;
 };
 
 export default Text;

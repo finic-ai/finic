@@ -4,7 +4,7 @@ import Navbar from "../navigation/navbar";
 import Sidebar from "../navigation/sidebar";
 import { MdFacebook } from "react-icons/md";
 import { FaDribbble, FaGithub, FaInstagram, FaTwitter } from "react-icons/fa";
-import { SidebarProvider, useSidebarContext } from "../context/SidebarContext";
+import { SidebarProvider } from "../context/SidebarContext";
 import classNames from "classnames";
 import Text from "../components/text";
 
@@ -17,7 +17,7 @@ const NavbarSidebarLayout: FC<PropsWithChildren<NavbarSidebarLayoutProps>> =
     return (
       <SidebarProvider>
         <Navbar />
-        <div className="flex items-start pt-16">
+        <div className="flex items-start pt-1">
           <Sidebar />
           <MainContent isFooter={isFooter}>{children}</MainContent>
         </div>
@@ -29,13 +29,11 @@ const MainContent: FC<PropsWithChildren<NavbarSidebarLayoutProps>> = function ({
   children,
   isFooter,
 }) {
-  const { isOpenOnSmallScreens: isSidebarOpen, isPageWithSidebar } = useSidebarContext();
-
   return (
     <main
       className={classNames(
         "overflow-y-auto relative w-full h-full bg-gray-50 dark:bg-gray-900",
-        !isPageWithSidebar ? "lg:ml-0" : isSidebarOpen ? "lg:ml-16" : "lg:ml-64",
+        "lg:ml-1"
       )}
     >
       {children}
@@ -54,10 +52,10 @@ const MainContentFooter: FC = function () {
       <Footer container>
         <div className="flex w-full flex-col gap-y-6 lg:flex-row lg:justify-between lg:gap-y-0">
           <Footer.LinkGroup>
-            <Footer.Link href="#" className="mr-3 mb-3 lg:mb-0">
+            <Footer.Link href="#" className="mb-3 mr-3 lg:mb-0">
               Terms and conditions
             </Footer.Link>
-            <Footer.Link href="#" className="mr-3 mb-3 lg:mb-0">
+            <Footer.Link href="#" className="mb-3 mr-3 lg:mb-0">
               Privacy Policy
             </Footer.Link>
             <Footer.Link href="#" className="mr-3">

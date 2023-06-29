@@ -1,26 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import type { FC } from "react";
-import {
-  DarkThemeToggle,
-  Navbar,
-} from "flowbite-react";
-import {
-  HiMenuAlt1,
-  HiSearch,
-  HiX
-} from "react-icons/hi";
+import { DarkThemeToggle, Navbar } from "flowbite-react";
+import { HiMenuAlt1, HiSearch, HiX } from "react-icons/hi";
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 import supabase from "../lib/supabaseClient";
-
 
 const ExampleNavbar: FC = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } =
     useSidebarContext();
 
   return (
-    <Navbar fluid>
-      <div className="w-full p-3 lg:px-5 lg:pl-3">
+    <Navbar fluid className="sm:px-3">
+      <div className="w-full p-3 lg:px-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             {isPageWithSidebar && (
@@ -40,12 +32,12 @@ const ExampleNavbar: FC = function () {
               <img
                 alt=""
                 src="/images/Horizontal_Logo_light.svg"
-                className="dark:hidden mr-3 h-8"
+                className="mr-3 h-8 dark:hidden"
               />
               <img
                 alt=""
                 src="/images/Horizontal_Logo_dark.svg"
-                className="hidden dark:block mr-3 h-8"
+                className="mr-3 hidden h-8 dark:block"
               />
             </Navbar.Brand>
             {/* <form className="ml-16 hidden md:block">
@@ -76,17 +68,12 @@ const ExampleNavbar: FC = function () {
 
               <button
                 onClick={() => supabase.auth.signOut()}
-                className="bg-white border border-blue-600 hover:bg-blue-600 hover:text-white text-blue-600 font-semibold py-2 px-4 rounded"
+                className="rounded border border-blue-600 bg-white px-4 py-2 font-semibold text-blue-600 hover:bg-blue-600 hover:text-white"
               >
-                <div className="flex items-center gap-x-3">
-                  Log out
-                </div>
+                <div className="flex items-center gap-x-3">Log out</div>
               </button>
-
-
             </div>
-            <div className="hidden lg:block">
-            </div>
+            <div className="hidden lg:block"></div>
           </div>
         </div>
       </div>
