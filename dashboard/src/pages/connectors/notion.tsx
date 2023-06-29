@@ -31,7 +31,7 @@ const NotionConnectorPage: FC = function () {
   const [clientSecret, setClientSecret] = useState('');
   const [redirectUri, setRedirectUri] = useState('');
   const [connections, setConnections] = useState([] as any[])
-  const [possibleRedirectUris, setPossibleRedirectUris] = useState(['https://link.psychic.dev/oauth/redirect'] as string[])
+  const [possibleRedirectUris, setPossibleRedirectUris] = useState([import.meta.env.VITE_PSYCHIC_LINK_OAUTH_URL] as string[])
 
   const {bearer} = useUserStateContext()
 

@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build": "yarn typecheck && vite build",
-    "dev": "vite --host",
+    "dev": "vite --port 5173 --host",
     "format": "prettier --check --ignore-path .gitignore --write .",
     "lint": "eslint --ignore-path .gitignore .",
     "preview": "vite preview --host",

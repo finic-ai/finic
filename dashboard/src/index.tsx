@@ -41,7 +41,7 @@ if (typeof (window as any).global === 'undefined') {
   (window as any).global = window;
 }
 
-if (!window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
+if (!import.meta.env.VITE_PUBLIC_POSTHOG_DISABLED && !window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
   posthog.init(
     import.meta.env.VITE_PUBLIC_POSTHOG_KEY,
     {

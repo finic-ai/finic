@@ -39,7 +39,7 @@ const GoogleDriveConnectorPage: FC = function () {
   const [clientSecret, setClientSecret] = useState('');
   const [developerKey, setDeveloperKey] = useState('');
   const [redirectUri, setRedirectUri] = useState('');
-  const [possibleRedirectUris, setPossibleRedirectUris] = useState(['https://link.psychic.dev/oauth/redirect'] as string[])
+  const [possibleRedirectUris, setPossibleRedirectUris] = useState([import.meta.env.VITE_PSYCHIC_LINK_OAUTH_URL] as string[])
   const [connections, setConnections] = useState([] as any[])
   const [error, setError] = useState("")
 
