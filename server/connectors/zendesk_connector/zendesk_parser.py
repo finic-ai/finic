@@ -1,6 +1,7 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from models.models import Section, SectionType
 import requests
+import yaml
 
 class ZendeskParser:
 
@@ -54,6 +55,66 @@ class ZendeskParser:
             base_url = data["next_page"]
 
         return articles
+    
+    def get_all_tickets(self, section_id: Optional[str] = None, cursor: Optional[str] = None) -> Tuple[list, Optional[str]]:
+        tickets = []
+
+        if cursor:
+            base_url = cursor
+        else:
+            base_url = f"https://{self.subdomain}.zendesk.com/api/v2/tickets.json"
+        
+
+        response = self.call_zendesk_api(base_url)
+        if response.status_code != 200:
+            print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
+            return []
+
+        data = response.json()
+        tickets.extend(data["tickets"])
+        next_page = data["next_page"]
+
+        parsed_tickets = [] 
+        for ticket in tickets:
+            title = ticket["subject"]
+            uri = ticket["url"] 
+            customer_id = ticket["requester_id"]
+
+            content_ison = {
+                "subject": ticket["subject"],
+                "description": ticket["description"],
+                "timestamp": ticket["created_at"],
+                "status": ticket["status"],
+            }
+
+            comments = self.get_ticket_comments(ticket["id"])
+            parsed_comments = []
+            for comment in comments:
+                parsed_comments.append({
+                    "author": "Customer" if comment["author_id"] == customer_id else "Agent",
+                    "content": comment["body"]
+                })
+            content_ison["comments"] = parsed_comments
+            content_yaml = yaml.dump(content_ison)
+
+            parsed_tickets.append({
+                "title": title,
+                "uri": uri,
+                "content": content_yaml,
+            })
+
+
+        return parsed_tickets, next_page
+
+    def get_ticket_comments(self, ticket_id: str) -> list:
+        base_url = f"https://{self.subdomain}.zendesk.com/api/v2/tickets/{ticket_id}/comments.json"
+        response = self.call_zendesk_api(base_url)
+        if response.status_code != 200:
+            err = response.json()
+            print(f"Error: Unable to fetch ticket comments. Status code: {err}")
+            return []
+        data = response.json()
+        return data["comments"]
     
     def list_sections(self) -> List[Section]:
         base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/sections.json"

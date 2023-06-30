@@ -1,4 +1,6 @@
-from models.models import AppConfig, Document, ConnectorId, AuthorizationResult, DataConnector, ConnectionFilter
+from models.models import (
+    AppConfig, Document, ConnectorId, AuthorizationResult, DocumentConnector, TicketConnector, ConnectionFilter, GetTicketsResponse
+)
 from models.api import GetDocumentsResponse
 from typing import List, Optional
 from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
@@ -12,10 +14,11 @@ from typing import Dict
 import json
 import requests
 from bs4 import BeautifulSoup
+
 from .zendesk_parser import ZendeskParser
 
 
-class ZendeskConnector(DataConnector):
+class ZendeskConnector(DocumentConnector, TicketConnector):
     connector_id: ConnectorId = ConnectorId.zendesk
     config: AppConfig
 
@@ -49,7 +52,7 @@ class ZendeskConnector(DataConnector):
         
         if not auth_code:
             auth_url = f"https://{subdomain}.zendesk.com/oauth/authorizations/new"
-            scopes = "hc:read tickets:read"
+            scopes = "read"
             if self.config.app_id == "15edc3c2-ec0d-429a-ad1c-497aea3d7384":
                 scopes = "hc:read"
             params = {
@@ -168,3 +171,33 @@ class ZendeskConnector(DataConnector):
                 )
 
         return GetDocumentsResponse(documents=documents)
+    
+    async def load_tickets(self, connection_filter: ConnectionFilter) -> GetTicketsResponse:
+        account_id = connection_filter.account_id
+        uris = connection_filter.uris
+        section_filter = connection_filter.section_filter_id
+        # initialize credentials
+        connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
+        credential_json = json.loads(connection.credential)
+
+        subdomain = connection.metadata['subdomain']
+
+        parser = ZendeskParser(subdomain, credential_json)
+
+        raw_tickets, next_page_cursor = parser.get_all_tickets(None, connection_filter.page_cursor)
+
+        tickets = []
+        for ticket in raw_tickets:
+            tickets.append(
+                Document(
+                    title=ticket['title'],
+                    content=ticket['content'],
+                    connector_id=self.connector_id,
+                    account_id=account_id,
+                    uri=ticket['uri']
+                )
+            )
+
+        return GetTicketsResponse(tickets=tickets, next_page_cursor=next_page_cursor)
+
+

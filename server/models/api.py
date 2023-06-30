@@ -59,6 +59,16 @@ class GetDocumentsRequest(BaseModel):
     page_cursor: Optional[str] = None
     page_size: Optional[int] = 100
 
+class GetTicketsRequest(BaseModel):
+    connector_id: Optional[ConnectorId]
+    account_id: str
+    page_cursor: Optional[str] = None
+    page_size: Optional[int] = 100
+
+class GetTicketsResponse(BaseModel):
+    tickets: List[Document]
+    next_page_cursor: Optional[str] = None
+
 class GetConversationsRequest(BaseModel):
     connector_id: ConnectorId
     account_id: str
@@ -66,6 +76,8 @@ class GetConversationsRequest(BaseModel):
 
 class GetConversationsResponse(BaseModel):
     messages: List[Message]
+
+
 
 class RunSyncRequest(BaseModel):
     sync_all: bool

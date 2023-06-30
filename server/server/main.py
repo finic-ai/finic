@@ -34,7 +34,9 @@ from models.api import (
     UpdateConnectionMetadataRequest,
     UpdateConnectionMetadataResponse,
     DeleteConnectionRequest,
-    DeleteConnectionResponse
+    DeleteConnectionResponse,
+    GetTicketsRequest,
+    GetTicketsResponse,
 )
 
 from appstatestore.statestore import StateStore
@@ -43,7 +45,7 @@ from models.models import (
     ConnectionFilter,
     ConnectorId
 )
-from connectors.connector_utils import get_connector_for_id, get_conversation_connector_for_id, get_document_connector_for_id
+from connectors.connector_utils import get_connector_for_id, get_conversation_connector_for_id, get_document_connector_for_id, get_ticket_connector_for_id
 import uuid
 from logger import Logger
 from chunker.chunker import DocumentChunker
@@ -352,7 +354,7 @@ async def get_documents(
 
             connector = get_document_connector_for_id(connector_id, config)
             if connector is None:
-                raise HTTPException(status_code=404, detail="Connector not found")
+                continue
 
             result = await connector.load(
                 ConnectionFilter(
@@ -379,6 +381,52 @@ async def get_documents(
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.post(
+    "/get-tickets",
+    response_model=GetTicketsResponse,
+)
+async def get_tickets(
+    request: GetTicketsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        account_id = request.account_id
+        # If connector_id is not provided, return documents from all connectors
+        if not request.connector_id:
+            connections = StateStore().get_connections(
+                ConnectionFilter(account_id=account_id), config
+            )
+            if len(connections) == 0:
+                raise HTTPException(status_code=404, detail="No connections found for this Account")
+            connector_ids = [connection.connector_id for connection in connections]
+        else:
+            connector_ids = [request.connector_id]
+
+        tickets = []
+
+        for connector_id in connector_ids:
+
+            connector = get_ticket_connector_for_id(connector_id, config)
+            if connector is None:
+                continue
+
+            result = await connector.load_tickets(
+                ConnectionFilter(
+                    connector_id=connector_id, 
+                    account_id=account_id, 
+                    page_cursor=request.page_cursor,
+                    page_size=request.page_size,
+                )
+            )
+            tickets.extend(result.tickets)
+        response = result
+        response.tickets = tickets
+        logger.log_api_call(config, Event.get_tickets, request, response, None)
+        return response
+    except Exception as e:
+        logger.log_api_call(config, Event.get_tickets, request, None, e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post(
     "/get-conversations",
     response_model=GetConversationsResponse,
 )
@@ -397,7 +445,7 @@ async def get_conversations(
         if connector is None:
             raise HTTPException(status_code=404, detail="Connector not found")
 
-        result = await connector.load(account_id, oldest_message_time=oldest_timestamp)
+        result = await connector.load_messages(account_id, oldest_message_time=oldest_timestamp)
         response = GetConversationsResponse(messages=result)
         logger.log_api_call(config, Event.get_conversations, request, response, None)
         return response

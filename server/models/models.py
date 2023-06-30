@@ -62,16 +62,7 @@ class ConnectorStatus(BaseModel):
     connections: List[Connection] = []
     redirect_uris: Optional[List[str]] = []
 
-class Document(BaseModel):
-    title: str
-    content: str
-    connector_id: ConnectorId
-    account_id: str
-    uri: Optional[str] = None
 
-class GetDocumentsResponse(BaseModel):
-    documents: List[Document]
-    next_page_cursor: Optional[str] = None
 
 class MessageSender(BaseModel):
     name: str
@@ -96,6 +87,21 @@ class AuthorizationResult(BaseModel):
     auth_url: Optional[str] = None
     authorized: bool = False
     connection: Optional[Connection] = None
+
+class Document(BaseModel):
+    title: str
+    content: str
+    connector_id: ConnectorId
+    account_id: str
+    uri: Optional[str] = None
+
+class GetDocumentsResponse(BaseModel):
+    documents: List[Document]
+    next_page_cursor: Optional[str] = None
+
+class GetTicketsResponse(BaseModel):
+    tickets: List[Document]
+    next_page_cursor: Optional[str] = None
 
 class ConnectionFilter(BaseModel):
     connector_id: Optional[ConnectorId] = None
@@ -127,10 +133,13 @@ class DocumentConnector(DataConnector):
 
 class ConversationConnector(DataConnector):
     @abstractmethod
-    async def load(self, account_id: str, oldest_message_time: Optional[str]) -> List[Message]:
+    async def load_messages(self, account_id: str, oldest_message_time: Optional[str]) -> List[Message]:
         pass
 
-
+class TicketConnector(DataConnector):
+    @abstractmethod
+    async def load_tickets(self, connection_filter: ConnectionFilter) -> GetTicketsResponse:
+        pass
 
 class Sync(BaseModel):
     app_id: str

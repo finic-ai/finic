@@ -14,6 +14,7 @@ class Event(str, Enum):
     add_apikey_connection = "log_add_apikey_connection"
     add_oauth_connection = "add_oauth_connection"
     get_documents = "get_documents"
+    get_tickets = "get_tickets"
     run_sync = "run_sync"
     get_conversations = "get_conversations"
     ask_question = "ask_question"

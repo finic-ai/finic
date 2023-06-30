@@ -50,6 +50,18 @@ const App = () => {
 export default App;
 ```
 
+### Open to a specific connector
+
+By default, the Psychic modal displays a list of connectors for the user to pick. If you want the modal to open to a specific connector, such as Notion, use the optional `connectorId` parameter in the `open` function:
+
+```
+// Import the ConnectorId enum
+import { usePsychicLink, ConnectorId } from '@psychic-api/link';
+
+// Pass in the connector that you want to display to the user
+open(accountId, ConnectorId.Notion);
+```
+
 ## Troubleshooting
 For assistance, join the Psychic community Slack [here](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg)
 

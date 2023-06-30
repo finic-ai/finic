@@ -10,7 +10,7 @@ from .readme_connector import ReadmeConnector
 from .salesforce_connector import SalesforceConnector
 from .clickup_connector import ClickupConnector
 from .website_connector import WebsiteConnector
-from models.models import AppConfig, DocumentConnector, ConversationConnector, DataConnector, ConnectorId
+from models.models import AppConfig, DocumentConnector, ConversationConnector, DataConnector, ConnectorId, TicketConnector
 from typing import Optional
 
 def get_document_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[DocumentConnector]:
@@ -41,6 +41,11 @@ def get_document_connector_for_id(connector_id: ConnectorId, config: AppConfig) 
 def get_conversation_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[ConversationConnector]:
     if connector_id == ConnectorId.slack:
         return SlackConnector(config)
+    return None
+
+def get_ticket_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[TicketConnector]:
+    if connector_id == ConnectorId.zendesk:
+        return ZendeskConnector(config)
     return None
 
 def get_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[DataConnector]:

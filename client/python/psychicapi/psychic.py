@@ -8,6 +8,15 @@ class ConnectorId(Enum):
     zendesk = "zendesk"
     gdrive = "gdrive"
     slack = "slack"
+    dropbox = "dropbox"
+    readme = "readme"
+    web = "web"
+    intercom = "intercom"
+    hubspot = "hubspot"
+    salesforce = "salesforce"
+    github = "github"
+    gmail = "gmail"
+    sharepoint = "sharepoint"
 
 class SectionType(str, Enum):
     folder = "folder"

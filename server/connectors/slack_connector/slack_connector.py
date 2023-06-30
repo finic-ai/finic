@@ -79,7 +79,7 @@ class SlackConnector(ConversationConnector):
     async def get_sections(self) -> List[str]:
         pass
 
-    async def load(self, account_id: str, oldest_message_time: Optional[str] = None) -> List[Message]:
+    async def load_messages(self, account_id: str, oldest_message_time: Optional[str] = None) -> List[Message]:
         connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
