@@ -3,8 +3,8 @@ import { Button, Spinner, Modal } from "flowbite-react";
 import React from "react";
 import { useState } from "react";
 
-import SuccessIcon from "./icons/SuccessIcon";
-import ErrorIcon from "./icons/ErrorIcon";
+import SuccessIcon from "./icons/ErrorIcon";
+import ErrorIcon from "./icons/SuccessIcon";
 import MetadataForm from "./auth/GDriveMetadataForm";
 import { useModalContext } from "../context/ModalContext";
 

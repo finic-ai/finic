@@ -22,6 +22,7 @@ import ReadmeAuthFlow from "./components/auth/ReadmeAuthFlow";
 import SalesforceAuthFlow from "./components/auth/SalesforceAuthFlow";
 import ModalHeader from "./components/ModalHeader";
 import WebAuthFlow from "./components/auth/WebAuthForm";
+import GmailAuthFlow from "./components/auth/GmailAuthFlow";
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL;
 
@@ -47,30 +48,32 @@ const App: React.FC = () => {
       case 1:
         return <ConnectorPage />;
       case 2:
-        if (selectedConnectorId == "notion") {
-          return <NotionAuthFlow />;
-        } else if (selectedConnectorId == "gdrive") {
-          return <GDriveAuthFlow />;
-        } else if (selectedConnectorId == "zendesk") {
-          return <ZendeskAuthFlow />;
-        } else if (selectedConnectorId == "confluence") {
+        if (selectedConnectorId == "confluence") {
           return <ConfluenceAuthFlow />;
-        } else if (selectedConnectorId == "github") {
-          return <div>Github</div>;
-        } else if (selectedConnectorId == "slack") {
-          return <SlackAuthFlow />;
         } else if (selectedConnectorId == "dropbox") {
           return <DropboxAuthFlow />;
-        } else if (selectedConnectorId == "intercom") {
-          return <IntercomAuthFlow />;
+        } else if (selectedConnectorId == "gdrive") {
+          return <GDriveAuthFlow />;
+        } else if (selectedConnectorId == "gmail") {
+          return <GmailAuthFlow />;
+        } else if (selectedConnectorId == "github") {
+          return <div>Github</div>;
         } else if (selectedConnectorId == "hubspot") {
           return <HubspotAuthFlow />;
+        } else if (selectedConnectorId == "intercom") {
+          return <IntercomAuthFlow />;
+        } else if (selectedConnectorId == "notion") {
+          return <NotionAuthFlow />;
         } else if (selectedConnectorId == "readme") {
           return <ReadmeAuthFlow />;
         } else if (selectedConnectorId == "salesforce") {
           return <SalesforceAuthFlow />;
+        } else if (selectedConnectorId == "slack") {
+          return <SlackAuthFlow />;
         } else if (selectedConnectorId == "web") {
           return <WebAuthFlow />;
+        } else if (selectedConnectorId == "zendesk") {
+          return <ZendeskAuthFlow />;
         } else {
           return <div>Unknown connector</div>;
         }

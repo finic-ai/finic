@@ -1,22 +1,23 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 const PSYCHIC_URL = "https://link.psychic.dev";
-// const PSYCHIC_API_URL = 'http://localhost:8080'
-const PSYCHIC_API_URL = "https://sidekick-ezml2kwdva-uc.a.run.app";
+// const PSYCHIC_API_URL = "http://localhost:8080";
+const PSYCHIC_API_URL = 'https://sidekick-ezml2kwdva-uc.a.run.app';
 
 export enum ConnectorId {
-  Notion = "notion",
-  GDrive = "gdrive",
   Confluence = "confluence",
-  Zendesk = "zendesk",
-  Slack = "slack",
   Dropbox = "dropbox",
-  Readme = "readme",
-  Web = "web",
-  Intercom = "intercom",
-  Hubspot = "hubspot",
-  Salesforce = "salesforce",
+  GDrive = "gdrive",
   Github = "github",
+  Gmail = "gmail",
+  Hubspot = "hubspot",
+  Intercom = "intercom",
+  Notion = "notion",
+  Slack = "slack",
+  Readme = "readme",
+  Salesforce = "salesforce",
+  Web = "web",
+  Zendesk = "zendesk",
 }
 
 export function usePsychicLink(

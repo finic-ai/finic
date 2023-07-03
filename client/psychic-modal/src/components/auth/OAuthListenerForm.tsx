@@ -4,9 +4,6 @@ import React, { useEffect, useCallback, useRef } from "react";
 import { useState } from "react";
 import { useModalContext } from "../../context/ModalContext";
 
-import SuccessIcon from "../icons/SuccessIcon";
-import ErrorIcon from "../icons/ErrorIcon";
-
 // Subdomain props
 interface OAuthListenerFormProps {
   onSubmit: (code: string) => void;

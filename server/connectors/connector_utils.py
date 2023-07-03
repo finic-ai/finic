@@ -10,67 +10,89 @@ from .readme_connector import ReadmeConnector
 from .salesforce_connector import SalesforceConnector
 from .clickup_connector import ClickupConnector
 from .website_connector import WebsiteConnector
-from models.models import AppConfig, DocumentConnector, ConversationConnector, DataConnector, ConnectorId, TicketConnector
+from .gmail_connector import GmailConnector
+from models.models import (
+    AppConfig,
+    DocumentConnector,
+    ConversationConnector,
+    DataConnector,
+    ConnectorId,
+    TicketConnector,
+)
 from typing import Optional
 
-def get_document_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[DocumentConnector]:
-    if connector_id == ConnectorId.notion: 
-        return NotionConnector(config)
-    elif connector_id == ConnectorId.gdrive:
-        return GoogleDriveConnector(config)
-    elif connector_id == ConnectorId.zendesk:
-        return ZendeskConnector(config)
-    elif connector_id == ConnectorId.confluence:
+
+def get_document_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[DocumentConnector]:
+    if connector_id == ConnectorId.confluence:
         return ConfluenceConnector(config)
+    elif connector_id == ConnectorId.clickup:
+        return ClickupConnector(config)
     elif connector_id == ConnectorId.dropbox:
         return DropboxConnector(config)
-    elif connector_id == ConnectorId.intercom:
-        return IntercomConnector(config)
+    elif connector_id == ConnectorId.gdrive:
+        return GoogleDriveConnector(config)
+    elif connector_id == ConnectorId.gmail:
+        return GmailConnector(config)
     elif connector_id == ConnectorId.hubspot:
         return HubspotConnector(config)
+    elif connector_id == ConnectorId.intercom:
+        return IntercomConnector(config)
+    elif connector_id == ConnectorId.notion:
+        return NotionConnector(config)
     elif connector_id == ConnectorId.readme:
         return ReadmeConnector(config)
     elif connector_id == ConnectorId.salesforce:
         return SalesforceConnector(config)
-    elif connector_id == ConnectorId.clickup:
-        return ClickupConnector(config)
     elif connector_id == ConnectorId.web:
         return WebsiteConnector(config)
+    elif connector_id == ConnectorId.zendesk:
+        return ZendeskConnector(config)
     return None
 
-def get_conversation_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[ConversationConnector]:
+
+def get_conversation_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[ConversationConnector]:
     if connector_id == ConnectorId.slack:
         return SlackConnector(config)
     return None
 
-def get_ticket_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[TicketConnector]:
+
+def get_ticket_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[TicketConnector]:
     if connector_id == ConnectorId.zendesk:
         return ZendeskConnector(config)
     return None
 
-def get_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[DataConnector]:
-    if connector_id == ConnectorId.notion: 
-        return NotionConnector(config)
-    elif connector_id == ConnectorId.gdrive:
-        return GoogleDriveConnector(config)
-    elif connector_id == ConnectorId.zendesk:
-        return ZendeskConnector(config)
-    elif connector_id == ConnectorId.confluence:
+
+def get_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[DataConnector]:
+    if connector_id == ConnectorId.confluence:
         return ConfluenceConnector(config)
-    elif connector_id == ConnectorId.slack:
-        return SlackConnector(config)
+    elif connector_id == ConnectorId.clickup:
+        return ClickupConnector(config)
     elif connector_id == ConnectorId.dropbox:
         return DropboxConnector(config)
-    elif connector_id == ConnectorId.intercom:
-        return IntercomConnector(config)
+    elif connector_id == ConnectorId.gdrive:
+        return GoogleDriveConnector(config)
+    elif connector_id == ConnectorId.gmail:
+        return GmailConnector(config)
     elif connector_id == ConnectorId.hubspot:
         return HubspotConnector(config)
+    elif connector_id == ConnectorId.intercom:
+        return IntercomConnector(config)
+    elif connector_id == ConnectorId.notion:
+        return NotionConnector(config)
     elif connector_id == ConnectorId.readme:
         return ReadmeConnector(config)
     elif connector_id == ConnectorId.salesforce:
         return SalesforceConnector(config)
-    elif connector_id == ConnectorId.clickup:
-        return ClickupConnector(config)
     elif connector_id == ConnectorId.web:
         return WebsiteConnector(config)
+    elif connector_id == ConnectorId.zendesk:
+        return ZendeskConnector(config)
     return None
