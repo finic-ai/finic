@@ -3,7 +3,7 @@ import posthog
 from typing import Optional, Dict, Any
 from enum import Enum
 from pydantic import BaseModel
-from models.models import AppConfig
+from models.models import AppConfig, Connection, ConnectorStatus
 
 # Enum of logging events
 class Event(str, Enum):
@@ -21,6 +21,30 @@ class Event(str, Enum):
     get_link_settings = "get_link_settings"
     add_section_filter = "add_section_filter"
     update_connection_metadata = "update_connection_metadata"
+
+def sanitize(self, data: BaseModel | dict) -> BaseModel | dict:
+    '''
+    Remove credentials and other sensitive information from the data
+    '''
+    if isinstance(data, Connection):
+        sanitized_data = data.copy()
+        sanitized_data.credential = "REDACTED"
+        return sanitized_data
+
+    if isinstance(data, ConnectorStatus):
+        sanitized_data = data.copy()
+        sanitized_data.custom_credentials = "REDACTED"
+        return sanitized_data
+
+    if isinstance(data, dict):  # if the current item is a dictionary
+        for k, v in data.items():
+            data[k] = sanitize(v)
+
+    elif isinstance(data, list):  # if the current item is a list
+        for item, i in data:
+            data[i] = sanitize(item)
+
+    return data
 
 class Logger:
     posthog_client: Optional[posthog.Client] = None
@@ -41,16 +65,17 @@ class Logger:
             self.posthog_client.capture(distinct_id=app_config.user_id, event=event, properties=properties)
 
     def log_api_call(self, app_config: AppConfig, event: str, request: Optional[BaseModel], response: BaseModel, error: Exception):
+        # Remove sensitive data from requests and responses
         if self.posthog_client is None:
             return
         if event not in Event.__members__.values():
             raise Exception("Invalid event type")
         properties = {
             'app_id': app_config.app_id,
-            'request': request.dict() if request is not None else None,
+            'request': sanitize(request).dict() if request is not None else None,
         }
         if not error:
-            properties['response'] = response.dict()
+            properties['response'] = sanitize(response).dict()
         else:
             properties['error'] = str(error)
         self.log(app_config=app_config, event="server_" + event, properties=properties)
