@@ -22,7 +22,7 @@ class Event(str, Enum):
     add_section_filter = "add_section_filter"
     update_connection_metadata = "update_connection_metadata"
 
-def sanitize(self, data: BaseModel | dict = None) -> BaseModel | dict:
+def sanitize(data: BaseModel | dict = None) -> BaseModel | dict:
     '''
     Remove credentials and other sensitive information from the data
     '''
