@@ -74,11 +74,12 @@ class Logger:
         if event not in Event.__members__.values():
             raise Exception("Invalid event type")
         properties = {
-            'app_id': app_config.app_id,
-            'request': sanitize(request).dict() if request is not None else None,
+            'app_id': app_config.app_id
         }
-        if not error:
+        if isinstance(request, BaseModel):
+            properties['request'] = sanitize(request).dict()
+        if isinstance(response, BaseModel):
             properties['response'] = sanitize(response).dict()
-        else:
+        if error is not None:
             properties['error'] = str(error)
         self.log(app_config=app_config, event="server_" + event, properties=properties)
