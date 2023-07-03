@@ -54,6 +54,7 @@ class Connection(BaseModel):
     section_filters: Optional[List[SectionFilter]] = []
     sections: Optional[List[Section]] = None
     credential: Optional[str]
+    new_credential: Optional[str] = None
     config: Optional[AppConfig]
     
 class ConnectorStatus(BaseModel):

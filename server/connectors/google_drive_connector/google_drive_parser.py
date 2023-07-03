@@ -17,22 +17,34 @@ class GoogleDriveParser:
         files = []
         for uri in uris:
             id = self.get_id_from_uri(uri)
-            file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
-            files.append(file)
+            try:
+                file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
+                files.append(file)
+            except Exception as e:
+                print(e)
         return files
     
-    def get_file_by_id(self, id: str) -> list:
-        file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
-        return file
+    def get_file_by_id(self, id: str) -> Any:
+        try:
+            print(id)
+            file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
+            return file
+        except Exception as e:
+            print(e)
+            return None
     
-    def list_files_in_folder(self, folder_id: Optional[str]) -> bool:
-        if not folder_id:
-            results = self.service.files().list(fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
-        else:
-            query = f"'{folder_id}' in parents"
-            results = self.service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
-        items = results.get("files", [])
-        return items
+    def list_files_in_folder(self, folder_id: Optional[str]) -> list:
+        try:
+            if not folder_id:
+                results = self.service.files().list(fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
+            else:
+                query = f"'{folder_id}' in parents"
+                results = self.service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
+            items = results.get("files", [])
+            return items
+        except Exception as e:
+            print(e)
+            return []
     
     def list_all_subfolders(self) -> List[Section]:
         folders_to_process = deque([])
@@ -90,6 +102,8 @@ class GoogleDriveParser:
             folder_id = section.id
         else:
             file = self.get_file_by_id(section.id)
+            if not file:
+                return []
             return [file]
 
         folders_to_process = deque([folder_id])

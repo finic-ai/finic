@@ -3,6 +3,15 @@ from models.models import Section, SectionType
 import requests
 import yaml
 
+
+class Ticket:
+    def __init__(self, subject, description, timestamp, status, comments):
+        self.subject = subject
+        self.description = description
+        self.timestamp = timestamp
+        self.status = status
+        self.comments = comments
+
 class ZendeskParser:
 
     def __init__(self, subdomain: str, credential: Dict):
@@ -57,7 +66,6 @@ class ZendeskParser:
         return articles
     
     def get_all_tickets(self, section_id: Optional[str] = None, cursor: Optional[str] = None) -> Tuple[list, Optional[str]]:
-        tickets = []
 
         if cursor:
             base_url = cursor
@@ -71,14 +79,15 @@ class ZendeskParser:
             return []
 
         data = response.json()
-        tickets.extend(data["tickets"])
+        raw_tickets = data["tickets"]
         next_page = data["next_page"]
 
         parsed_tickets = [] 
-        for ticket in tickets:
+        for ticket in raw_tickets:
             title = ticket["subject"]
             uri = ticket["url"] 
             customer_id = ticket["requester_id"]
+
 
             content_ison = {
                 "subject": ticket["subject"],

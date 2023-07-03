@@ -159,7 +159,7 @@ async def get_connections(
     "/delete-connection",
     response_model=DeleteConnectionResponse,
 )
-async def get_connections(
+async def delete_connections(
     request: DeleteConnectionRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
@@ -223,10 +223,7 @@ async def add_section_filter_public(
         connector_id = request.connector_id
         account_id = request.account_id
         filter = request.section_filter
-        connections = StateStore().get_connections(ConnectionFilter(connector_id=connector_id, account_id=account_id), config)
-        if len(connections) == 0:
-            raise HTTPException(status_code=404, detail="Connection not found")
-        connection = connections[0]
+        connection = StateStore().load_credentials(config, connector_id=connector_id, account_id=account_id)
         section_filters = connection.section_filters
         if section_filters is None:
             section_filters = []
@@ -237,6 +234,15 @@ async def add_section_filter_public(
                 section_filters.remove(existing_filter)
         section_filters.append(filter)
         StateStore().update_section_filters(config, connector_id=connector_id, account_id=account_id, filters=section_filters)
+        if connection.new_credential is not None:
+            StateStore().add_connection(
+                config,
+                connection.new_credential,
+                connection.connector_id,
+                connection.account_id,
+                connection.metadata,
+                None
+            )
         response = AddSectionFilterResponse(success=True, section_filter=filter)
         logger.log_api_call(config, Event.add_section_filter, request, response, None)
         return response

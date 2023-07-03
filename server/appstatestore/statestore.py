@@ -181,18 +181,22 @@ class StateStore:
     
     def add_connection(self, 
                        config: AppConfig, 
-                       credential: str, 
+                       credential: Optional[str], 
                        connector_id: ConnectorId, 
                        account_id: str, 
-                       metadata: Dict) -> Connection:
+                       metadata: Dict,
+                       new_credential: Optional[str] = None) -> Connection:
+        
         insert_data = {
             'account_id': account_id,
             'user_id': config.user_id,
             'app_id': config.app_id,
             'connector_id': connector_id,
-            'credential': credential,
-            'metadata': metadata
+            'metadata': metadata,
+            'new_credential': new_credential,
         }
+        if credential is not None:
+            insert_data['credential'] = credential
         print(insert_data)
         self.supabase.table("connections").upsert(insert_data).execute()
 
@@ -236,7 +240,9 @@ class StateStore:
                 account_id=account_id,
                 connector_id=connector_id,
                 metadata=data['metadata'],
+                section_filters=data['section_filters'],
                 credential=data['credential'],
+                new_credential=data['new_credential'],
                 config=AppConfig(app_id=data['app_id'], user_id=data['user_id'])
             )   
         raise Exception("No credentials found for connector_id: " + connector_id + " and account_id: " + account_id)
