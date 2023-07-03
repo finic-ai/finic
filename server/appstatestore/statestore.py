@@ -164,7 +164,7 @@ class StateStore:
         ).execute()
 
 
-        if len(response.data) > 0:
+        if len(response.data) > 0 and response.data[0]['credential']:
             return json.loads(response.data[0]['credential'])
         
         # If no credentials are defined in enabled_connectors, use the default ones
