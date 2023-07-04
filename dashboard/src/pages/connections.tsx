@@ -18,12 +18,8 @@ import {
   HiOutlineRefresh,
   HiPlus,
 } from "react-icons/hi";
-import {
-  SiZendesk,
-  SiConfluence,
-  SiGithub
-} from "react-icons/si";
-import {TbWorld} from "react-icons/tb";
+import { SiZendesk, SiConfluence, SiGithub } from "react-icons/si";
+import { TbWorld } from "react-icons/tb";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 
 const ConnectionsPage: FC = function () {
@@ -186,7 +182,7 @@ const testConnections = [
     last_run: "2021-08-12 12:00:00",
     status: "active",
   },
-]
+];
 
 const AllConnectionsTable: FC = function () {
   return (
@@ -207,44 +203,44 @@ const AllConnectionsTable: FC = function () {
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
         {testConnections.map((connection) => (
           <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
-          <Table.Cell className="w-4 p-4">
-            <div className="flex items-center">
-              <Checkbox aria-describedby="checkbox-1" id="checkbox-1" />
-              <label htmlFor="checkbox-1" className="sr-only">
-                checkbox
-              </label>
-            </div>
-          </Table.Cell>
-          <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
-            {connection.icon}
-            <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-              <div className="text-base font-semibold text-gray-900 dark:text-white">
-                {connection.name}
+            <Table.Cell className="w-4 p-4">
+              <div className="flex items-center">
+                <Checkbox aria-describedby="checkbox-1" id="checkbox-1" />
+                <label htmlFor="checkbox-1" className="sr-only">
+                  checkbox
+                </label>
               </div>
+            </Table.Cell>
+            <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
+              {connection.icon}
               <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                {connection.url}
+                <div className="text-base font-semibold text-gray-900 dark:text-white">
+                  {connection.name}
+                </div>
+                <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                  {connection.url}
+                </div>
               </div>
-            </div>
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {connection.source_type}
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
-            <div className="flex items-center">
-              <div className="mr-2 h-2.5 w-2.5 rounded-full bg-green-400"></div>{" "}
-              {connection.status}
-            </div>
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {connection.last_run}
-          </Table.Cell>
-          <Table.Cell>
-            <div className="flex items-center gap-x-3 whitespace-nowrap">
-              <RunConnectionButton />
-              <EditConnectionModal />
-            </div>
-          </Table.Cell>
-        </Table.Row>
+            </Table.Cell>
+            <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+              {connection.source_type}
+            </Table.Cell>
+            <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
+              <div className="flex items-center">
+                <div className="mr-2 h-2.5 w-2.5 rounded-full bg-green-400"></div>{" "}
+                {connection.status}
+              </div>
+            </Table.Cell>
+            <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+              {connection.last_run}
+            </Table.Cell>
+            <Table.Cell>
+              <div className="flex items-center gap-x-3 whitespace-nowrap">
+                <RunConnectionButton />
+                <EditConnectionModal />
+              </div>
+            </Table.Cell>
+          </Table.Row>
         ))}
       </Table.Body>
     </Table>

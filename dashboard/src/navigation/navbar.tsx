@@ -1,18 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import type { FC } from "react";
-import {
-  DarkThemeToggle,
-  Navbar,
-} from "flowbite-react";
-import {
-  HiMenuAlt1,
-  HiSearch,
-  HiX
-} from "react-icons/hi";
+import { DarkThemeToggle, Navbar } from "flowbite-react";
+import { HiMenuAlt1, HiSearch, HiX } from "react-icons/hi";
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 import supabase from "../lib/supabaseClient";
-
 
 const ExampleNavbar: FC = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } =
@@ -78,15 +70,10 @@ const ExampleNavbar: FC = function () {
                 onClick={() => supabase.auth.signOut()}
                 className="bg-white border border-blue-600 hover:bg-blue-600 hover:text-white text-blue-600 font-semibold py-2 px-4 rounded"
               >
-                <div className="flex items-center gap-x-3">
-                  Log out
-                </div>
+                <div className="flex items-center gap-x-3">Log out</div>
               </button>
-
-
             </div>
-            <div className="hidden lg:block">
-            </div>
+            <div className="hidden lg:block"></div>
           </div>
         </div>
       </div>
