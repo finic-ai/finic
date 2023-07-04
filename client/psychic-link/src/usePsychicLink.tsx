@@ -1,26 +1,28 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from "react";
 
-const PSYCHIC_URL = 'https://link.psychic.dev';
+const PSYCHIC_URL = "https://link.psychic.dev";
 // const PSYCHIC_API_URL = 'http://localhost:8080'
-const PSYCHIC_API_URL = 'https://sidekick-ezml2kwdva-uc.a.run.app';
+const PSYCHIC_API_URL = "https://sidekick-ezml2kwdva-uc.a.run.app";
 
 export enum ConnectorId {
-  Notion = 'notion',
-  GDrive = 'gdrive',
-  Confluence = 'confluence',
-  Zendesk = 'zendesk',
-  Slack = 'slack',
-  Dropbox = 'dropbox',
-  Readme = 'readme',
-  Web = 'web',
-  Intercom = 'intercom',
-  Hubspot = 'hubspot',
-  Salesforce = 'salesforce',
-  Github = 'github',
+  Notion = "notion",
+  GDrive = "gdrive",
+  Confluence = "confluence",
+  Zendesk = "zendesk",
+  Slack = "slack",
+  Dropbox = "dropbox",
+  Readme = "readme",
+  Web = "web",
+  Intercom = "intercom",
+  Hubspot = "hubspot",
+  Salesforce = "salesforce",
+  Github = "github",
 }
 
-
-export function usePsychicLink(public_key: string, onSuccessCallback: Function) {
+export function usePsychicLink(
+  public_key: string,
+  onSuccessCallback: Function
+) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,11 +34,11 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
     try {
       // Use the public key as the bearer
       const response = await fetch(`${PSYCHIC_API_URL}/get-link-settings`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${public_key}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${public_key}`,
+          "Content-Type": "application/json",
+        },
       });
       const data = await response.json();
       if (data && data.settings && data.settings.custom_auth_url) {
@@ -49,21 +51,20 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
     }
   }
 
-
   async function open(accountId: string, connectorId?: ConnectorId) {
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Call the get-link-settings endpoint to get any custom settings
     const customUrl = await getCustomAuthUrl(public_key);
-    var url = ""
+    var url = "";
     if (customUrl) {
-      url = `${customUrl}?public_key=${public_key}&account_id=${accountId}`
+      url = `${customUrl}?public_key=${public_key}&account_id=${accountId}`;
     } else {
-      url = `${PSYCHIC_URL}?public_key=${public_key}&account_id=${accountId}`
+      url = `${PSYCHIC_URL}?public_key=${public_key}&account_id=${accountId}`;
     }
 
     if (connectorId) {
-      url = `${url}&connector_id=${connectorId}`
+      url = `${url}&connector_id=${connectorId}`;
     }
 
     if (windowObjectReference === null || windowObjectReference.closed) {
@@ -71,7 +72,11 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
       const height = 800;
       const left = (window.screen.width - width) / 2;
       const top = (window.screen.height - height) / 2;
-      windowObjectReference = window.open(url, '_blank', `addressbar=no, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`)
+      windowObjectReference = window.open(
+        url,
+        "_blank",
+        `addressbar=no, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`
+      );
     } else {
       windowObjectReference.focus();
     }
@@ -80,22 +85,25 @@ export function usePsychicLink(public_key: string, onSuccessCallback: Function) 
   const handleMessage = useCallback((event: MessageEvent) => {
     const data = event.data;
     if (data && data.psychic_link && data.account_id) {
-      setIsLoading(false)
-      onSuccessCallback({accountId: data.account_id, connectorId: data.connector_id})
+      setIsLoading(false);
+      onSuccessCallback({
+        accountId: data.account_id,
+        connectorId: data.connector_id,
+      });
     } else {
-      setError("Connection failed. Please try again later.")
+      setError("Connection failed. Please try again later.");
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     // Add event listeners to get auth codes
-    window.addEventListener('message', handleMessage, false);
-    setIsReady(true)
+    window.addEventListener("message", handleMessage, false);
+    setIsReady(true);
 
     return () => {
-      window.removeEventListener('message', handleMessage);
+      window.removeEventListener("message", handleMessage);
     };
   }, []);
 
-  return { open, isReady, isLoading, error};
+  return { open, isReady, isLoading, error };
 }
