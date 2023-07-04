@@ -41,7 +41,7 @@ class StateStore:
                 logo=row['logo'],
                 whitelabel=row['whitelabel'],
                 custom_auth_url=row['custom_auth_url'],
-                enabled_connectors=row['enabled_connectors']
+                enabled_connectors=row['enabled_connectors'],
             )
         return None
     
@@ -177,6 +177,22 @@ class StateStore:
         if len(response.data) > 0:
             return json.loads(response.data[0]['default_credentials'])
 
+        return None
+
+    def get_connector_custom_config(self, connector_id: ConnectorId, config: AppConfig) -> Optional[Dict]:
+        response = self.supabase.table('enabled_connectors').select('*').filter(
+            'app_id', 
+            'eq', 
+            config.app_id
+        ).filter(
+            'connector_id', 
+            'eq', 
+            connector_id
+        ).execute()
+
+
+        if len(response.data) > 0 and response.data[0]['config']:
+            return response.data[0]['config']
         return None
     
     def add_connection(self, 

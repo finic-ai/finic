@@ -26,7 +26,6 @@ class GoogleDriveParser:
     
     def get_file_by_id(self, id: str) -> Any:
         try:
-            print(id)
             file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
             return file
         except Exception as e:

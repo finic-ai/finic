@@ -49,15 +49,30 @@ class GoogleDriveConnector(DocumentConnector):
 
     async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Dict) -> AuthorizationResult:
         cred = StateStore().get_connector_credential(self.connector_id, self.config)
-        print(cred)
+        try:
+            custom_config = StateStore().get_connector_custom_config(self.connector_id, self.config)
+        except Exception as e:
+            print(e)
+            custom_config = None
+        
         client_secrets = cred['client_secrets']
         developer_key = cred['developer_key']
 
         redirect_uri = client_secrets['web']['redirect_uris'][0]
 
+        if custom_config and custom_config.get('scope'):
+            scopes = custom_config['scope']
+        else:
+            scopes = SCOPES
+
+        # if settings.connector_configs and settings.connector_configs.get(self.connector_id):
+        #     gdrive_configs = settings.connector_configs[self.connector_id]
+        #     if gdrive_configs.get('folder_selection'):
+        #         scopes = SCOPES_READONLY
+
         flow = InstalledAppFlow.from_client_config(
             client_secrets,
-            SCOPES, 
+            scopes, 
             redirect_uri=redirect_uri
         )
         
@@ -120,6 +135,8 @@ class GoogleDriveConnector(DocumentConnector):
         )
 
         credential_string = connection.credential
+
+        print(credential_string)
 
         credential_json = json.loads(credential_string)
         creds = Credentials.from_authorized_user_info(

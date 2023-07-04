@@ -43,7 +43,7 @@ const GDriveMetadataForm: React.FC<GDriveMetadataFormProps> = ({creds, onSubmit}
           clientId: credsJson.client_id,
           developerKey: credsJson.developer_key,
           // Mimetypes should be docs and pdfs
-          viewMimeTypes: "application/vnd.google-apps.document,application/pdf",
+          viewMimeTypes: "application/vnd.google-apps.document,application/pdf,application/vnd.google-apps.folder",
           token: credsJson.access_token, // pass oauth token in case you already have one
           showUploadView: false,
           showUploadFolders: false,

@@ -25,6 +25,7 @@ class Settings(BaseModel):
     whitelabel: bool
     custom_auth_url: Optional[str]
     enabled_connectors: Optional[List[ConnectorId]] = []
+    connector_configs: Optional[Dict] = {}
 
 class AppConfig(BaseModel):
     app_id: str
