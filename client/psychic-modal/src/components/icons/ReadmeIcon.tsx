@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const ReadmeIcon = () => {
   return (
@@ -7,4 +7,3 @@ const ReadmeIcon = () => {
 };
 
 export default ReadmeIcon;
-

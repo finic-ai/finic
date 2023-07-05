@@ -12,10 +12,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useModalContext } from "../context/ModalContext";
 
-import {
-  TbWorld
-} from "react-icons/tb";
-
+import { TbWorld } from "react-icons/tb";
 
 import NotionIcon from "./icons/NotionIcon";
 import GoogleDriveIcon from "./icons/GoogleDriveIcon";
@@ -46,7 +43,7 @@ const connectors = [
     icon: GoogleDriveIcon,
     label: null,
     labelColor: "info",
-    active: true
+    active: true,
   },
   {
     name: "Confluence",
@@ -54,7 +51,7 @@ const connectors = [
     icon: ConfluenceIcon,
     label: null,
     labelColor: "info",
-    active: true
+    active: true,
   },
   {
     name: "Zendesk",
@@ -62,7 +59,7 @@ const connectors = [
     icon: ZendeskIcon,
     label: null,
     labelColor: "info",
-    active: true
+    active: true,
   },
   {
     name: "Slack",
@@ -70,7 +67,7 @@ const connectors = [
     icon: SlackIcon,
     label: null,
     labelColor: "info",
-    active: true
+    active: true,
   },
   {
     name: "Dropbox",
@@ -78,7 +75,7 @@ const connectors = [
     icon: DropboxIcon,
     label: null,
     labelColor: "info",
-    active: true
+    active: true,
   },
   {
     name: "Readme",
@@ -86,7 +83,7 @@ const connectors = [
     icon: ReadmeIcon,
     label: null,
     labelColor: "info",
-    active: true
+    active: true,
   },
   {
     name: "Website",
@@ -94,7 +91,7 @@ const connectors = [
     icon: TbWorld,
     label: null,
     labelColor: "info",
-    active: true
+    active: true,
   },
   {
     name: "Intercom",
@@ -102,7 +99,7 @@ const connectors = [
     icon: IntercomIcon,
     label: "Alpha",
     labelColor: "warning",
-    active: true
+    active: true,
   },
   {
     name: "Hubspot",
@@ -110,7 +107,7 @@ const connectors = [
     icon: HubspotIcon,
     label: "Alpha",
     labelColor: "warning",
-    active: true
+    active: true,
   },
   {
     name: "Salesforce",
@@ -118,7 +115,7 @@ const connectors = [
     icon: SalesforceIcon,
     label: "Alpha",
     labelColor: "warning",
-    active: true
+    active: true,
   },
   {
     name: "Github Issues",
@@ -126,40 +123,57 @@ const connectors = [
     icon: GithubIcon,
     label: "In Development",
     labelColor: "warning",
-    active: false
+    active: false,
   },
-  
-]
-  
+];
+
 const ConnectorPage: React.FC = () => {
-  const { enabledConnectors, whitelabel, customerName, setCurrentStep, setConnectorName, setSelectedConnectorId, startConnectorAuthFlow, setMetadata, connectorsThatStartOAuthFirst } = useModalContext()
+  const {
+    enabledConnectors,
+    whitelabel,
+    customerName,
+    setCurrentStep,
+    setConnectorName,
+    setSelectedConnectorId,
+    startConnectorAuthFlow,
+    setMetadata,
+    connectorsThatStartOAuthFirst,
+  } = useModalContext();
 
   const pickConnector = (connectorName: string, connectorId: string) => {
-    setCurrentStep(2)
-    setConnectorName(connectorName)
-    setSelectedConnectorId(connectorId)
+    setCurrentStep(2);
+    setConnectorName(connectorName);
+    setSelectedConnectorId(connectorId);
     if (connectorsThatStartOAuthFirst.includes(connectorId)) {
-      startConnectorAuthFlow(window, connectorId)
+      startConnectorAuthFlow(window, connectorId);
     }
-  }
+  };
 
-  const renderConnectorButton = (ConnectorIcon: React.FC, connectorName: string, connectorId: string, label: string|null, labelColor: string, active: boolean) => {
+  const renderConnectorButton = (
+    ConnectorIcon: React.FC,
+    connectorName: string,
+    connectorId: string,
+    label: string | null,
+    labelColor: string,
+    active: boolean
+  ) => {
     return (
       <button
-        className={active ? "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 hover:bg-gray-100 hover:shadow" : "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 pointer-events-none opacity-50"}
-        onClick={() =>  {
-          pickConnector(connectorName, connectorId)
+        className={
+          active
+            ? "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 hover:bg-gray-100 hover:shadow"
+            : "group flex items-center text-left w-full rounded-lg bg-gray-50 p-3 text-base font-bold text-gray-900 pointer-events-none opacity-50"
+        }
+        onClick={() => {
+          pickConnector(connectorName, connectorId);
         }}
       >
-        <ConnectorIcon/>
-        <span className="ml-3 flex-1 whitespace-nowrap">
-          {connectorName}
-        </span>
+        <ConnectorIcon />
+        <span className="ml-3 flex-1 whitespace-nowrap">{connectorName}</span>
         {label && <Badge color={labelColor}>{label}</Badge>}
       </button>
-    )
-  }
-
+    );
+  };
 
   const renderModalBody = () => {
     return (
@@ -167,14 +181,26 @@ const ConnectorPage: React.FC = () => {
         <div className="space-y-6">
           <ul className="my-4 space-y-3">
             {connectors.map((connector) => {
-
-              if (enabledConnectors && enabledConnectors.length > 0 && !enabledConnectors.includes(connector.id)) {
-                return null
+              if (
+                enabledConnectors &&
+                enabledConnectors.length > 0 &&
+                !enabledConnectors.includes(connector.id)
+              ) {
+                return null;
               }
-              
-              return (<li>
-                {renderConnectorButton(connector.icon, connector.name, connector.id, connector.label, connector.labelColor, connector.active)}
-              </li>)
+
+              return (
+                <li>
+                  {renderConnectorButton(
+                    connector.icon,
+                    connector.name,
+                    connector.id,
+                    connector.label,
+                    connector.labelColor,
+                    connector.active
+                  )}
+                </li>
+              );
             })}
           </ul>
           <div className="text-xs font-normal text-gray-500">
@@ -188,19 +214,14 @@ const ConnectorPage: React.FC = () => {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   useEffect(() => {
-    setMetadata(null)
-  }, [])
+    setMetadata(null);
+  }, []);
 
-  return (
-    <div>
-      {renderModalBody()}
-    </div>
-  );
-}
+  return <div>{renderModalBody()}</div>;
+};
 
 export default ConnectorPage;
-  
