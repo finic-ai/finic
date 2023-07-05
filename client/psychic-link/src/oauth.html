@@ -5,9 +5,12 @@
     <script>
       window.onload = function () {
         const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
+        const code = urlParams.get("code");
         if (code) {
-          window.opener.postMessage({ notion_oauth_code: code }, window.location.origin);
+          window.opener.postMessage(
+            { notion_oauth_code: code },
+            window.location.origin
+          );
         }
       };
     </script>

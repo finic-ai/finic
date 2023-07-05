@@ -21,19 +21,23 @@ npm install @psychic-api/link
 Here's an example of how to use the library:
 
 ```javascript
-import React, { useEffect, useState } from 'react';
-import { usePsychicLink } from '@psychic-api/link';
+import React, { useEffect, useState } from "react";
+import { usePsychicLink } from "@psychic-api/link";
 
 const App = () => {
   const [newConnection, setNewConnection] = useState(null);
   // Your Psychic.dev public API key
-  const publicKey = '5c362fda-bb72-4a6c-b930-71f33ad45f79';
-  
+  const publicKey = "5c362fda-bb72-4a6c-b930-71f33ad45f79";
+
   // Unique ID for the account that is requesting this connection
-  const accountId = '2cbaa840-0b21-4d8e-924c-e418a08ce53f';
+  const accountId = "2cbaa840-0b21-4d8e-924c-e418a08ce53f";
 
   // usePsychicLink accepts a callback that handles your application logic once a new connection is established
-  const { open, isReady, isLoading, error } = usePsychicLink(publicKey, (newConnection: {accountId: string, connectorId: string}) => setNewConnection(newConnection));
+  const { open, isReady, isLoading, error } = usePsychicLink(
+    publicKey,
+    (newConnection: { accountId: string, connectorId: string }) =>
+      setNewConnection(newConnection)
+  );
 
   useEffect(() => {
     // Shows the Psychic Link modal to the user
@@ -41,9 +45,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="App">
-      {newConnection && <div>{newConnection}</div>}
-    </div>
+    <div className="App">{newConnection && <div>{newConnection}</div>}</div>
   );
 };
 
@@ -63,9 +65,9 @@ open(accountId, ConnectorId.Notion);
 ```
 
 ## Troubleshooting
+
 For assistance, join the Psychic community Slack [here](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg)
 
 ### Invalid Hook Call Warning
 
 If you encounter an "Invalid hook call" warning when importing the library into another project, it might be caused by the library using a different version of React than the project. To resolve this issue, follow the instructions provided in this StackOverflow post: [Invalid hook call warning - linking a React app and a local npm package](https://stackoverflow.com/questions/57825421/invalid-hook-call-warning-linking-a-react-app-and-a-local-npm-package)
-

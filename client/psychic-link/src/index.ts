@@ -1,1 +1,1 @@
-export { usePsychicLink, ConnectorId } from './usePsychicLink';
+export { usePsychicLink, ConnectorId } from "./usePsychicLink";
