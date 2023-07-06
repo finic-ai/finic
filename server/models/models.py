@@ -73,26 +73,55 @@ class ConnectorStatus(BaseModel):
 
 
 class MessageSender(BaseModel):
-    name: str
     id: str
 
 
-class MessageChannel(BaseModel):
+class EmailSender(MessageSender):
+    pass
+
+
+class SlackMessageSender(MessageSender):
     name: str
+
+
+class MessageRecipientType(StrEnum):
+    user = "user"
+    slack_channel = "slack_channel"
+    slack_thread = "slack_thread"
+
+
+class MessageRecipient(BaseModel):
     id: str
+    message_recipient_type: MessageRecipientType
+
+
+class SlackThreadRecipient(MessageRecipient):
+    message_recipient_type = MessageRecipientType.slack_thread
+
+
+class SlackChannelRecipient(MessageRecipient):
+    name: str
+    message_recipient_type = MessageRecipientType.slack_channel
 
 
 class Message(BaseModel):
     id: str
-    channel: MessageChannel
     sender: MessageSender
+    recipients: List[MessageRecipient]
     content: str
     timestamp: str
-    replies: List["Message"] = []
     uri: Optional[str] = None
 
 
-Message.update_forward_refs()
+class SlackMessage(Message):
+    replies: List["SlackMessage"] = []
+
+
+SlackMessage.update_forward_refs()
+
+
+class Email(Message):
+    pass
 
 
 class AuthorizationResult(BaseModel):
@@ -112,6 +141,11 @@ class Document(BaseModel):
 class GetDocumentsResponse(BaseModel):
     documents: List[Document]
     next_page_cursor: Optional[str] = None
+
+
+class GetConversationsResponse(BaseModel):
+    messages: List[Message]
+    page_cursor: Optional[str]
 
 
 class GetTicketsResponse(BaseModel):
@@ -153,8 +187,12 @@ class DocumentConnector(DataConnector):
 class ConversationConnector(DataConnector):
     @abstractmethod
     async def load_messages(
-        self, account_id: str, oldest_message_time: Optional[str]
-    ) -> List[Message]:
+        self,
+        account_id: str,
+        oldest_message_timestamp: Optional[str],
+        page_cursor: Optional[str],
+        page_size: Optional[int],
+    ) -> GetConversationsResponse:
         pass
 
 

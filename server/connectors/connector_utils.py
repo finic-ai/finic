@@ -33,8 +33,6 @@ def get_document_connector_for_id(
         return DropboxConnector(config)
     elif connector_id == ConnectorId.gdrive:
         return GoogleDriveConnector(config)
-    elif connector_id == ConnectorId.gmail:
-        return GmailConnector(config)
     elif connector_id == ConnectorId.hubspot:
         return HubspotConnector(config)
     elif connector_id == ConnectorId.intercom:
@@ -57,6 +55,8 @@ def get_conversation_connector_for_id(
 ) -> Optional[ConversationConnector]:
     if connector_id == ConnectorId.slack:
         return SlackConnector(config)
+    elif connector_id == ConnectorId.gmail:
+        return GmailConnector(config)
     return None
 
 

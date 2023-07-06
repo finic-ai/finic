@@ -1,18 +1,17 @@
 import base64
-import yaml
+import time
+from models.api import GetConversationsResponse
 from appstatestore.statestore import StateStore
 from models.models import (
     AuthorizationResult,
-    ConnectionFilter,
-    Document,
-    DocumentConnector,
-    GetDocumentsResponse,
-)
-from models.models import (
+    ConversationConnector,
     AppConfig,
     ConnectorId,
-    DocumentConnector,
     AuthorizationResult,
+    Email,
+    MessageRecipient,
+    MessageRecipientType,
+    MessageSender,
     Section,
 )
 from google.oauth2.credentials import Credentials
@@ -25,7 +24,7 @@ import json
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 
-class GmailConnector(DocumentConnector):
+class GmailConnector(ConversationConnector):
     connector_id = ConnectorId.gmail
     config: AppConfig
 
@@ -75,10 +74,22 @@ class GmailConnector(DocumentConnector):
     async def get_sections(self) -> List[Section]:
         pass
 
-    def _get_message_ids(self, service) -> Tuple[List[str], Optional[str]]:
+    def _get_message_ids(
+        self, service, page_cursor, oldest_message_time
+    ) -> Tuple[List[str], Optional[str]]:
         msg_ids = []
 
-        result = service.users().messages().list(userId="me", maxResults=100).execute()
+        result = (
+            service.users()
+            .messages()
+            .list(
+                userId="me",
+                maxResults=100,
+                pageToken=page_cursor,
+                q="after: {}".format(oldest_message_time),
+            )
+            .execute()
+        )
         if "messages" in result:
             for message in result["messages"]:
                 msg_ids.append(message["id"])
@@ -88,65 +99,82 @@ class GmailConnector(DocumentConnector):
             return msg_ids, None
 
     def _get_message(self, service, msg_id: str) -> Dict:
-        try:
-            msg = (
-                service.users()
-                .messages()
-                .get(userId="me", id=msg_id, format="full")
-                .execute()
-            )
-            payload = msg.get("payload")
-            headers = payload.get("headers")
+        msg = (
+            service.users()
+            .messages()
+            .get(userId="me", id=msg_id, format="full")
+            .execute()
+        )
+        timestamp = msg.get("internalDate")
+        payload = msg.get("payload")
+        headers = payload.get("headers")
 
-            formatted_msg = {}
+        formatted_msg = {"id": msg_id, "timestamp": timestamp}
 
-            # Append metadata like email sender, recipient, subject and time
-            if headers:
-                for header in headers:
-                    name = header.get("name")
-                    value = header.get("value")
-                    if name.lower() == "from":
-                        formatted_msg["from"] = value
-                    elif name.lower() == "to":
-                        formatted_msg["to"] = value
-                    elif name.lower() == "subject":
-                        formatted_msg["subject"] = value
-                    elif name.lower() == "date":
-                        formatted_msg["date"] = value
+        # Append metadata like email sender, recipient, subject and time
+        if headers:
+            for header in headers:
+                name = header.get("name")
+                value = header.get("value")
+                if name.lower() == "from":
+                    formatted_msg["sender"] = value
+                elif name.lower() == "to":
+                    # str is of the form "a@abc.com, b@def.com"
+                    formatted_msg["recipients"] = value.split(", ")
+                elif name.lower() == "subject":
+                    formatted_msg["subject"] = value
 
-            # Append email content
-            parts = payload.get("parts")
-            formatted_msg["content"] = ""
-            for part in parts:
-                mimeType = part.get("mimeType")
-                body = part.get("body")
-                # TODO handle downloading attachments
-                if mimeType == "text/plain":
-                    data = body.get("data")
-                    if data:
-                        padding = 4 - (len(data) % 4)
-                        data = str(data) + "=" * padding
-                        formatted_msg["content"] += str(base64.urlsafe_b64decode(data))
+        # Append email content
+        parts = payload.get("parts")
+        formatted_msg["content"] = "Subject:" + formatted_msg["subject"]
+        for part in parts:
+            mimeType = part.get("mimeType")
+            body = part.get("body")
+            # TODO handle downloading attachments
+            if mimeType == "text/plain":
+                data = body.get("data")
+                if data:
+                    padding = 4 - (len(data) % 4)
+                    data = str(data) + "=" * padding
+                    formatted_msg["content"] += str(base64.urlsafe_b64decode(data))
 
-            return formatted_msg
-        except Exception as e:
-            print(e)
-            return None
+        return formatted_msg
 
     def _get_messages(self, service, msg_ids: List[str]) -> List[Dict]:
-        return [self._get_message(service, msg_id) for msg_id in msg_ids]
+        msgs = []
+        for msg_id in msg_ids:
+            try:
+                msg = self._get_message(service, msg_id)
+                msgs.append(msg)
+            except Exception as e:
+                continue
 
-    def _map_message_to_document(self, msg: Dict, account_id: str) -> Document:
-        content = yaml.dump(msg)
-        return Document(
-            title=msg["subject"],
-            content=content,
-            connector_id=self.connector_id,
-            account_id=account_id,
+        return msgs
+
+    def _map_message_to_email(
+        self,
+        msg: Dict,
+    ) -> Email:
+        return Email(
+            id=msg["id"],
+            sender=MessageSender(id=msg["sender"]),
+            recipients=[
+                MessageRecipient(
+                    id=recipient,
+                    message_recipient_type=MessageRecipientType.user,
+                )
+                for recipient in msg["recipients"]
+            ],
+            content=msg["content"],
+            timestamp=msg["timestamp"],
         )
 
-    async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
-        account_id = connection_filter.account_id
+    async def load_messages(
+        self,
+        account_id: str,
+        oldest_message_timestamp: Optional[str] = None,
+        page_cursor: Optional[str] = None,
+    ) -> GetConversationsResponse:
         connection = StateStore().load_credentials(
             self.config, self.connector_id, account_id
         )
@@ -169,11 +197,14 @@ class GmailConnector(DocumentConnector):
 
         service = build("gmail", "v1", credentials=creds)
 
-        msg_ids, next_page_token = self._get_message_ids(service)
+        if not oldest_message_timestamp:
+            # oldest message is 24 hours ago
+            oldest = str(int(time.time()) - 24 * 60 * 60)
+        else:
+            oldest = oldest_message_timestamp
+
+        msg_ids, next_page_cursor = self._get_message_ids(service, page_cursor, oldest)
         msgs = self._get_messages(service, msg_ids)
+        emails = [self._map_message_to_email(msg) for msg in msgs]
 
-        documents = [self._map_message_to_document(msg, account_id) for msg in msgs]
-
-        return GetDocumentsResponse(
-            documents=documents, next_page_cursor=next_page_token
-        )
+        return GetConversationsResponse(messages=emails, page_cursor=next_page_cursor)
