@@ -12,8 +12,8 @@ class Ticket:
         self.status = status
         self.comments = comments
 
-class ZendeskParser:
 
+class ZendeskParser:
     def __init__(self, subdomain: str, credential: Dict):
         self.subdomain = subdomain
         self.credential = credential
@@ -35,28 +35,35 @@ class ZendeskParser:
 
         for uri in uris:
             id = self.get_id_from_uri(uri)
-            api_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/articles/{id}"
+            api_url = (
+                f"https://{self.subdomain}.zendesk.com/api/v2/help_center/articles/{id}"
+            )
             response = self.call_zendesk_api(api_url)
             if response.status_code != 200:
-                print(f"Error: Unable to fetch article. Status code: {response.status_code}")
+                print(
+                    f"Error: Unable to fetch article. Status code: {response.status_code}"
+                )
                 return []
             article = response.json()["article"]
             articles.append(article)
 
         return articles
 
-
     def get_all_articles(self, section_id: Optional[str] = None) -> list:
         articles = []
         if section_id:
             base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/sections/{section_id}/articles.json"
         else:
-            base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/articles.json"
+            base_url = (
+                f"https://{self.subdomain}.zendesk.com/api/v2/help_center/articles.json"
+            )
 
         while base_url:
             response = self.call_zendesk_api(base_url)
             if response.status_code != 200:
-                print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
+                print(
+                    f"Error: Unable to fetch articles. Status code: {response.status_code}"
+                )
                 return []
 
             data = response.json()
@@ -64,30 +71,31 @@ class ZendeskParser:
             base_url = data["next_page"]
 
         return articles
-    
-    def get_all_tickets(self, section_id: Optional[str] = None, cursor: Optional[str] = None) -> Tuple[list, Optional[str]]:
 
+    def get_all_tickets(
+        self, section_id: Optional[str] = None, cursor: Optional[str] = None
+    ) -> Tuple[list, Optional[str]]:
         if cursor:
             base_url = cursor
         else:
             base_url = f"https://{self.subdomain}.zendesk.com/api/v2/tickets.json"
-        
 
         response = self.call_zendesk_api(base_url)
         if response.status_code != 200:
-            print(f"Error: Unable to fetch articles. Status code: {response.status_code}")
+            print(
+                f"Error: Unable to fetch articles. Status code: {response.status_code}"
+            )
             return []
 
         data = response.json()
         raw_tickets = data["tickets"]
         next_page = data["next_page"]
 
-        parsed_tickets = [] 
+        parsed_tickets = []
         for ticket in raw_tickets:
             title = ticket["subject"]
-            uri = ticket["url"] 
+            uri = ticket["url"]
             customer_id = ticket["requester_id"]
-
 
             content_ison = {
                 "subject": ticket["subject"],
@@ -99,19 +107,24 @@ class ZendeskParser:
             comments = self.get_ticket_comments(ticket["id"])
             parsed_comments = []
             for comment in comments:
-                parsed_comments.append({
-                    "author": "Customer" if comment["author_id"] == customer_id else "Agent",
-                    "content": comment["body"]
-                })
+                parsed_comments.append(
+                    {
+                        "author": "Customer"
+                        if comment["author_id"] == customer_id
+                        else "Agent",
+                        "content": comment["body"],
+                    }
+                )
             content_ison["comments"] = parsed_comments
             content_yaml = yaml.dump(content_ison)
 
-            parsed_tickets.append({
-                "title": title,
-                "uri": uri,
-                "content": content_yaml,
-            })
-
+            parsed_tickets.append(
+                {
+                    "title": title,
+                    "uri": uri,
+                    "content": content_yaml,
+                }
+            )
 
         return parsed_tickets, next_page
 
@@ -124,17 +137,28 @@ class ZendeskParser:
             return []
         data = response.json()
         return data["comments"]
-    
+
     def list_sections(self) -> List[Section]:
-        base_url = f"https://{self.subdomain}.zendesk.com/api/v2/help_center/sections.json"
+        base_url = (
+            f"https://{self.subdomain}.zendesk.com/api/v2/help_center/sections.json"
+        )
         response = self.call_zendesk_api(base_url)
         if response.status_code != 200:
-            print(f"Error: Unable to fetch sections. Status code: {response.status_code}")
+            print(
+                f"Error: Unable to fetch sections. Status code: {response.status_code}"
+            )
             return []
         data = response.json()
-        return [Section(id=section["id"], name=section["name"], type=SectionType.folder, children=[]) for section in data["sections"]]
+        return [
+            Section(
+                id=section["id"],
+                name=section["name"],
+                type=SectionType.folder,
+                children=[],
+            )
+            for section in data["sections"]
+        ]
 
-    
     def get_id_from_uri(self, uri: str) -> str:
         id = uri.split("/")[-1]
         # If there is a - in the id we want to get the first part of the id
@@ -144,15 +168,15 @@ class ZendeskParser:
 
     def call_zendesk_api(self, url):
         if self.is_oauth:
-            response = requests.get(url, headers={"Authorization": f"Bearer {self.access_token}"})
+            response = requests.get(
+                url, headers={"Authorization": f"Bearer {self.access_token}"}
+            )
         else:
             if self.email and self.api_key:
                 response = requests.get(url, auth=(self.email + "/token", self.api_key))
             else:
-                response = requests.get(url, headers= {"Authorization": f"Basic {self.access_token}"})
+                response = requests.get(
+                    url, headers={"Authorization": f"Basic {self.access_token}"}
+                )
 
         return response
-
-    
-
-    

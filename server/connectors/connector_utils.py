@@ -10,11 +10,21 @@ from .readme_connector import ReadmeConnector
 from .salesforce_connector import SalesforceConnector
 from .clickup_connector import ClickupConnector
 from .website_connector import WebsiteConnector
-from models.models import AppConfig, DocumentConnector, ConversationConnector, DataConnector, ConnectorId, TicketConnector
+from models.models import (
+    AppConfig,
+    DocumentConnector,
+    ConversationConnector,
+    DataConnector,
+    ConnectorId,
+    TicketConnector,
+)
 from typing import Optional
 
-def get_document_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[DocumentConnector]:
-    if connector_id == ConnectorId.notion: 
+
+def get_document_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[DocumentConnector]:
+    if connector_id == ConnectorId.notion:
         return NotionConnector(config)
     elif connector_id == ConnectorId.gdrive:
         return GoogleDriveConnector(config)
@@ -38,18 +48,27 @@ def get_document_connector_for_id(connector_id: ConnectorId, config: AppConfig) 
         return WebsiteConnector(config)
     return None
 
-def get_conversation_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[ConversationConnector]:
+
+def get_conversation_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[ConversationConnector]:
     if connector_id == ConnectorId.slack:
         return SlackConnector(config)
     return None
 
-def get_ticket_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[TicketConnector]:
+
+def get_ticket_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[TicketConnector]:
     if connector_id == ConnectorId.zendesk:
         return ZendeskConnector(config)
     return None
 
-def get_connector_for_id(connector_id: ConnectorId, config: AppConfig) -> Optional[DataConnector]:
-    if connector_id == ConnectorId.notion: 
+
+def get_connector_for_id(
+    connector_id: ConnectorId, config: AppConfig
+) -> Optional[DataConnector]:
+    if connector_id == ConnectorId.notion:
         return NotionConnector(config)
     elif connector_id == ConnectorId.gdrive:
         return GoogleDriveConnector(config)
