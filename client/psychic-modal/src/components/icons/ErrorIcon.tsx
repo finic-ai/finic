@@ -1,6 +1,6 @@
 import React from "react";
 
-const SuccessIcon = () => {
+const ErrorIcon = () => {
   return (
     <svg
       width="64"
@@ -20,4 +20,4 @@ const SuccessIcon = () => {
   );
 };
 
-export default SuccessIcon;
+export default ErrorIcon;

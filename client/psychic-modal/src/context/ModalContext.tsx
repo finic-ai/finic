@@ -74,52 +74,57 @@ interface ModalProviderProps {
 
 const connectors = [
   {
-    name: "Notion",
-    id: "notion",
-  },
-  {
-    name: "Google Drive",
-    id: "gdrive",
-  },
-  {
     name: "Confluence",
     id: "confluence",
-  },
-  {
-    name: "Zendesk",
-    id: "zendesk",
-  },
-  {
-    name: "Slack",
-    id: "slack",
   },
   {
     name: "Dropbox",
     id: "dropbox",
   },
   {
-    name: "Readme",
-    id: "readme",
+    name: "Github Issues",
+    id: "github",
   },
   {
-    name: "Website",
-    id: "web",
+    name: "Gmail",
+    id: "gmail",
   },
   {
-    name: "Intercom",
-    id: "intercom",
+    name: "Google Drive",
+    id: "gdrive",
   },
   {
     name: "Hubspot",
     id: "hubspot",
   },
   {
+    name: "Intercom",
+    id: "intercom",
+  },
+  {
+    name: "Notion",
+    id: "notion",
+  },
+  {
+    name: "Readme",
+    id: "readme",
+  },
+
+  {
     name: "Salesforce",
     id: "salesforce",
   },
   {
-    name: "Github Issues",
-    id: "github",
+    name: "Slack",
+    id: "slack",
+  },
+  {
+    name: "Website",
+    id: "web",
+  },
+  {
+    name: "Zendesk",
+    id: "zendesk",
   },
 ];
 
@@ -172,6 +177,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     "hubspot",
     "salesforce",
     "gdrive",
+    "gmail",
   ];
 
   const value: ModalContextType = {
@@ -331,9 +337,6 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     metadata?: any
   ) {
     setIsLoading(true);
-    console.log("hello");
-    console.log(accountId);
-    console.log(publicKey);
     if (!accountId || !publicKey) {
       setError("Invalid account_id or public_key");
       setIsLoading(false);

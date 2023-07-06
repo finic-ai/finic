@@ -34,6 +34,7 @@ import CreateConnectionPage from "./pages/create-connection";
 import { useUserStateContext } from "./context/UserStateContext";
 import ReadmeConnectorPage from "./pages/connectors/readme";
 import WebsiteConnectorPage from "./pages/connectors/website";
+import GmailConnectorPage from "./pages/connectors/gmail";
 
 const container = document.getElementById("root");
 
@@ -135,48 +136,52 @@ function App() {
                 <Route path="/api-keys" element={<ApiKeysPage />} />
                 <Route path="/connections" element={<ConnectionsPage />} />
                 <Route
-                  path="/connectors/notion"
-                  element={<NotionConnectorPage />}
-                />
-                <Route
-                  path="/connectors/google-drive"
-                  element={<GoogleDriveConnectorPage />}
-                />
-                <Route
-                  path="/connectors/zendesk"
-                  element={<ZendeskConnectorPage />}
-                />
-                <Route
                   path="/connectors/confluence"
                   element={<ConfluenceConnectorPage />}
-                />
-                <Route
-                  path="/connectors/slack"
-                  element={<SlackConnectorPage />}
                 />
                 <Route
                   path="/connectors/dropbox"
                   element={<DropboxConnectorPage />}
                 />
                 <Route
-                  path="/connectors/intercom"
-                  element={<IntercomConnectorPage />}
+                  path="/connectors/google-drive"
+                  element={<GoogleDriveConnectorPage />}
+                />
+                <Route
+                  path="/connectors/gmail"
+                  element={<GmailConnectorPage />}
                 />
                 <Route
                   path="/connectors/hubspot"
                   element={<HubspotConnectorPage />}
                 />
                 <Route
-                  path="/connectors/salesforce"
-                  element={<SalesforceConnectorPage />}
+                  path="/connectors/intercom"
+                  element={<IntercomConnectorPage />}
+                />
+                <Route
+                  path="/connectors/notion"
+                  element={<NotionConnectorPage />}
                 />
                 <Route
                   path="/connectors/readme"
                   element={<ReadmeConnectorPage />}
                 />
                 <Route
+                  path="/connectors/salesforce"
+                  element={<SalesforceConnectorPage />}
+                />
+                <Route
+                  path="/connectors/slack"
+                  element={<SlackConnectorPage />}
+                />
+                <Route
                   path="/connectors/website"
                   element={<WebsiteConnectorPage />}
+                />
+                <Route
+                  path="/connectors/zendesk"
+                  element={<ZendeskConnectorPage />}
                 />
                 <Route path="/oauth/redirect" element={<RedirectPage />} />
                 <Route path="/settings" element={<SettingsPage />} />

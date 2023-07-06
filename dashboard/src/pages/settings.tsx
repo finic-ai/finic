@@ -6,7 +6,7 @@ import {
   Spinner,
   TextInput,
   Checkbox,
-  ToggleSwitch,
+  ToggleSwitch
 } from "flowbite-react";
 import { FC, useEffect } from "react";
 import { useState } from "react";
@@ -75,7 +75,7 @@ const ProductsTable: FC = function () {
     { id: "salesforce", name: "Salesforce" },
     { id: "gdrive", name: "Google Drive" },
     { id: "github", name: "Github" },
-    { id: "web", name: "Website" },
+    { id: "web", name: "Website" }
   ];
 
   useEffect(() => {
@@ -123,10 +123,7 @@ const ProductsTable: FC = function () {
     var downloadUrl = "";
     // Check if the url starts with https://drive.google.com/file/d/ and ends with /view?usp=sharing.
     // If it does, then it is a google drive link and we need to convert it to a direct download link.
-    console.log("hello");
-    console.log(logoUrl);
     if (logoUrl.startsWith("https://drive.google.com/file/d/")) {
-      console.log("hello");
       const fileId = logoUrl.split("/")[5];
       downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
     } else {
@@ -139,7 +136,7 @@ const ProductsTable: FC = function () {
         logo: downloadUrl,
         app_id: appId,
         enabled_connectors: enabledConnectors,
-        whitelabel: whitelabel,
+        whitelabel: whitelabel
       })
       .eq("app_id", appId)
       .select();
@@ -183,7 +180,7 @@ const ProductsTable: FC = function () {
 
   const ConnectorCheckbox = ({
     connectorId,
-    connectorName,
+    connectorName
   }: {
     connectorId: string;
     connectorName: string;

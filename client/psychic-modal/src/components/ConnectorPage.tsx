@@ -26,6 +26,7 @@ import HubspotIcon from "./icons/HubspotIcon";
 import ReadmeIcon from "./icons/ReadmeIcon";
 import SalesforceIcon from "./icons/SalesforceIcon";
 import { start } from "repl";
+import GmailIcon from "./icons/GmailIcon";
 
 // This should be set via a config file eventually so new connectors can be added declaratively without modifying this file
 const connectors = [
@@ -41,6 +42,14 @@ const connectors = [
     name: "Google Drive",
     id: "gdrive",
     icon: GoogleDriveIcon,
+    label: null,
+    labelColor: "info",
+    active: true,
+  },
+  {
+    name: "Gmail",
+    id: "gmail",
+    icon: GmailIcon,
     label: null,
     labelColor: "info",
     active: true,
