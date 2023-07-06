@@ -1,7 +1,14 @@
 import requests
 import json
 from typing import Dict, List, Any
-from models.models import Source, AppConfig, Document, DocumentMetadata, DataConnector, AuthorizationResult
+from models.models import (
+    Source,
+    AppConfig,
+    Document,
+    DocumentMetadata,
+    DataConnector,
+    AuthorizationResult,
+)
 from appstatestore.statestore import StateStore
 from github import Github
 import markdown
@@ -19,7 +26,9 @@ class GithubConnector(DataConnector):
     def __init__(self, config: AppConfig, repo_name: str):
         super().__init__(config=config, repo_name=repo_name)
 
-    async def authorize(self, api_key: str, subdomain: str, email: str) -> AuthorizationResult:
+    async def authorize(
+        self, api_key: str, subdomain: str, email: str
+    ) -> AuthorizationResult:
         creds = {
             "api_key": api_key,
         }
@@ -37,7 +46,17 @@ class GithubConnector(DataConnector):
         return AuthorizationResult(authorized=True)
 
     def get_markdown_text_in_repo(self, repo_name: str):
-        markdown_extensions = (".md", ".rst", ".mdx", ".mkd", ".mdwn", ".mdown", ".mdtxt", ".mdtext", ".markdown")
+        markdown_extensions = (
+            ".md",
+            ".rst",
+            ".mdx",
+            ".mkd",
+            ".mdwn",
+            ".mdown",
+            ".mdtxt",
+            ".mdtext",
+            ".markdown",
+        )
         texts = []
         try:
             repo = self.user.get_repo(repo_name)
@@ -48,9 +67,9 @@ class GithubConnector(DataConnector):
                 if file_content.path.lower().endswith(markdown_extensions):
                     file_name = file_content.name
                     url = file_content.html_url
-                    markdown_text = file_content.decoded_content.decode('utf-8')
+                    markdown_text = file_content.decoded_content.decode("utf-8")
                     html = markdown.markdown(markdown_text)
-                    soup = BeautifulSoup(html, features='html.parser')
+                    soup = BeautifulSoup(html, features="html.parser")
                     text = soup.get_text()
                     text = text.replace("\n", "")
                     texts.append((text, file_name, url))
@@ -63,7 +82,7 @@ class GithubConnector(DataConnector):
 
     async def get_sections(self) -> List[str]:
         pass
-    
+
     async def load(self, source_id: str) -> List[Document]:
         credential_string = StateStore().load_credentials(self.config, self)
         credential_json = json.loads(credential_string)
@@ -86,8 +105,8 @@ class GithubConnector(DataConnector):
                     metadata=DocumentMetadata(
                         document_id=str(uuid.uuid4()),
                         source_id=source_id,
-                        tenant_id=self.config.tenant_id
-                    )
+                        tenant_id=self.config.tenant_id,
+                    ),
                 )
             )
 

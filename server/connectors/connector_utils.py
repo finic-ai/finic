@@ -10,7 +10,10 @@ from .readme_connector import ReadmeConnector
 from .salesforce_connector import SalesforceConnector
 from .clickup_connector import ClickupConnector
 from .website_connector import WebsiteConnector
+<<<<<<< HEAD
 from .gmail_connector import GmailConnector
+=======
+>>>>>>> aea979b3 (chore: run black across files and add target to Makefile)
 from models.models import (
     AppConfig,
     DocumentConnector,
@@ -25,7 +28,17 @@ from typing import Optional
 def get_document_connector_for_id(
     connector_id: ConnectorId, config: AppConfig
 ) -> Optional[DocumentConnector]:
+<<<<<<< HEAD
     if connector_id == ConnectorId.confluence:
+=======
+    if connector_id == ConnectorId.notion:
+        return NotionConnector(config)
+    elif connector_id == ConnectorId.gdrive:
+        return GoogleDriveConnector(config)
+    elif connector_id == ConnectorId.zendesk:
+        return ZendeskConnector(config)
+    elif connector_id == ConnectorId.confluence:
+>>>>>>> aea979b3 (chore: run black across files and add target to Makefile)
         return ConfluenceConnector(config)
     elif connector_id == ConnectorId.clickup:
         return ClickupConnector(config)
@@ -71,7 +84,17 @@ def get_ticket_connector_for_id(
 def get_connector_for_id(
     connector_id: ConnectorId, config: AppConfig
 ) -> Optional[DataConnector]:
+<<<<<<< HEAD
     if connector_id == ConnectorId.confluence:
+=======
+    if connector_id == ConnectorId.notion:
+        return NotionConnector(config)
+    elif connector_id == ConnectorId.gdrive:
+        return GoogleDriveConnector(config)
+    elif connector_id == ConnectorId.zendesk:
+        return ZendeskConnector(config)
+    elif connector_id == ConnectorId.confluence:
+>>>>>>> aea979b3 (chore: run black across files and add target to Makefile)
         return ConfluenceConnector(config)
     elif connector_id == ConnectorId.clickup:
         return ClickupConnector(config)

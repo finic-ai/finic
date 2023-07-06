@@ -1,3 +1,5 @@
+.PHONY: format
+
 # Heroku
 # make heroku-login
 # make heroku-push
@@ -12,3 +14,6 @@ heroku-push:
 
 heroku-login:
 	heroku container:login
+
+format:
+	poetry run black .
