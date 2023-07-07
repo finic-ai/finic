@@ -1,35 +1,20 @@
-import { Avatar, Button, Spinner } from "flowbite-react";
+import { Button, Spinner } from "flowbite-react";
 
-import { HiLockClosed, HiEyeSlash } from "react-icons/hi2";
-import React from "react";
-import { useState, useEffect, useRef, useCallback } from "react";
 import { useModalContext } from "../../context/ModalContext";
+import React, { useState } from "react";
+import OAuthListenerForm from "./OAuthListenerForm";
 import ErrorIcon from "../icons/ErrorIcon";
 import SuccessIcon from "../icons/SuccessIcon";
-import { start } from "repl";
-import MetadataForm from "./GDriveMetadataForm";
-import SubdomainMetadataForm from "./SubdomainMetadataForm";
-import ApiKeysForm from "./ApiKeysForm";
-import { AuthMethod } from "../../context/ModalContext";
-import OAuthListenerForm from "./OAuthListenerForm";
 
-type Metadata = {
-  [key: string]: string | null;
-};
-
-const ConfluenceAuthFlow: React.FC = () => {
+const GmailAuthFlow: React.FC = () => {
   const {
-    authCode,
-    setAuthCode,
     currentStep,
     setCurrentStep,
     selectedConnectorId,
     connectorName,
-    customerLogoUrl,
     accountId,
     publicKey,
     metadata,
-    setMetadata,
     setIsLoading,
     isSuccess,
     setIsSuccess,
@@ -38,25 +23,40 @@ const ConfluenceAuthFlow: React.FC = () => {
     setError,
     authorizeConnection,
     setNewConnection,
-    startConnectorAuthFlow,
   } = useModalContext();
 
   const [authFlowStep, setAuthFlowStep] = useState(0);
+  const [creds, setCreds] = useState(null);
+  const [connection, setConnection] = useState<any>(null);
+
+  async function completeAuthWithCode(connectorId: string, code: string) {
+    if (!accountId || !publicKey) {
+      setError("Invalid account_id or public_key");
+      setIsLoading(false);
+      return;
+    }
+    const result = await authorizeConnection(
+      connectorId,
+      accountId,
+      publicKey,
+      code,
+      metadata
+    );
+    if (!result) {
+      setError("Something went wrong. Please try again.");
+      setIsSuccess(false);
+      setIsLoading(false);
+      return;
+    }
+    setNewConnection(result.connection);
+    setCreds(result.connection.credential);
+    setConnection(result.connection);
+    setIsLoading(false);
+    setIsSuccess(true);
+  }
 
   const renderModalBody = () => {
     switch (authFlowStep) {
-      // case 0:
-      //   return (
-      //     <>
-      //       <SubdomainMetadataForm onSubmit={(subdomain: string) => {
-      //         setMetadata({'subdomain': subdomain})
-      //         console.log( currentStep)
-      //         setAuthFlowStep(authFlowStep + 1)
-      //         startConnectorAuthFlow(window, selectedConnectorId)
-      //       }} />
-
-      //     </>
-      //   )
       case 0:
         return (
           <OAuthListenerForm
@@ -69,7 +69,6 @@ const ConfluenceAuthFlow: React.FC = () => {
         );
 
       case 1:
-        console.log("error", error);
         return (
           <>
             {isSuccess && (
@@ -147,7 +146,11 @@ const ConfluenceAuthFlow: React.FC = () => {
             size="xl"
             className="w-3/5 min-w-300"
             onClick={() => {
-              setCurrentStep(currentStep - 1);
+              if (authFlowStep === 0) {
+                setCurrentStep(currentStep - 1);
+              } else {
+                setAuthFlowStep(authFlowStep - 1);
+              }
             }}
           >
             Go Back
@@ -157,45 +160,12 @@ const ConfluenceAuthFlow: React.FC = () => {
     }
   };
 
-  async function completeAuthWithCode(connectorId: string, code: string) {
-    if (!accountId || !publicKey) {
-      setError("Invalid account_id or public_key");
-      setIsLoading(false);
-      return;
-    }
-    const result = await authorizeConnection(
-      connectorId,
-      accountId,
-      publicKey,
-      code,
-      metadata
-    );
-    console.log("result", result);
-    if (!result) {
-      setError("Something went wrong. Please try again.");
-      setIsSuccess(false);
-      setIsLoading(false);
-      return;
-    }
-    setNewConnection(result.connection);
-    setIsLoading(false);
-    setIsSuccess(true);
-    // Notify opening window that auth is complete
-
-    if (window.opener) {
-      result.connection.psychic_link = true;
-      window.opener.postMessage(result.connection, "*");
-    }
-    // setAuthFlowStep(authFlowStep + 1)
-  }
-
   return (
     <div className="px-8">
       {renderModalBody()}
-      {/* {renderResult()} */}
       {renderModalFooter()}
     </div>
   );
 };
 
-export default ConfluenceAuthFlow;
+export default GmailAuthFlow;

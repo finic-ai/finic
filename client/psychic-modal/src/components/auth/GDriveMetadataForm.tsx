@@ -4,8 +4,6 @@ import React from "react";
 import { useState } from "react";
 import { useModalContext } from "../../context/ModalContext";
 import useDrivePicker from "react-google-drive-picker";
-import SuccessIcon from "../icons/SuccessIcon";
-import ErrorIcon from "../icons/ErrorIcon";
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL;
 
 interface GDriveMetadataFormProps {

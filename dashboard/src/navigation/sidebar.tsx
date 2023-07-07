@@ -93,6 +93,16 @@ const DashboardSidebar: FC = function () {
                     Google Drive
                   </Sidebar.Item>
                   <Sidebar.Item
+                    href="/connectors/gmail"
+                    className={
+                      "/connectors/gmail" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Gmail
+                  </Sidebar.Item>
+                  <Sidebar.Item
                     href="/connectors/zendesk"
                     className={
                       "/connectors/zendesk" === currentPage
