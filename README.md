@@ -41,7 +41,7 @@ https://github.com/psychic-api/psychic/assets/14931371/00008f3d-8c9e-4b64-821a-7
 
 Get an API key to test out the cloud version by creating an account on the [Psychic dashboard.](https://dashboard.psychic.dev/)
 
-If you have any questions on how to get started, [come join our Slack community!](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg).
+If you have any questions on how to get started, [come join our Slack community!](https://join.slack.com/t/psychicapi/shared_invite/zt-1yptnhwcz-SiOCnrbqnBDsuzps9sEMSw).
 
 ## Roadmap
 * ✅ [LangChain DataLoader](https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/psychic.html?highlight=psychic)

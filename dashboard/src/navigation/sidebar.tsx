@@ -249,7 +249,7 @@ const DashboardSidebar: FC = function () {
                   API Playground
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg"
+                  href="https://join.slack.com/t/psychicapi/shared_invite/zt-1yptnhwcz-SiOCnrbqnBDsuzps9sEMSw"
                   icon={HiQuestionMarkCircle}
                   target="_blank"
                 >
