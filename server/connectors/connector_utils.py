@@ -95,4 +95,6 @@ def get_connector_for_id(
         return WebsiteConnector(config)
     elif connector_id == ConnectorId.zendesk:
         return ZendeskConnector(config)
+    elif connector_id == ConnectorId.slack:
+        return SlackConnector(config)
     return None
