@@ -53,6 +53,11 @@ const GmailAuthFlow: React.FC = () => {
     setConnection(result.connection);
     setIsLoading(false);
     setIsSuccess(true);
+    // Notify opening window that auth is complete
+    if (window.opener) {
+      result.connection.psychic_link = true;
+      window.opener.postMessage(result.connection, "*");
+    }
   }
 
   const renderModalBody = () => {
