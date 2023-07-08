@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, TypeVar
 from enum import Enum
 from strenum import StrEnum
+
 
 class ConnectorId(StrEnum):
     clickup = "clickup"
@@ -121,7 +122,11 @@ SlackMessage.update_forward_refs()
 
 
 class Email(Message):
-    pass
+    subject: Optional[str] = None
+    replies: List["Email"] = []
+
+
+Email.update_forward_refs()
 
 
 class AuthorizationResult(BaseModel):
@@ -141,6 +146,9 @@ class Document(BaseModel):
 class GetDocumentsResponse(BaseModel):
     documents: List[Document]
     next_page_cursor: Optional[str] = None
+
+
+T = TypeVar("T", bound=Message)
 
 
 class GetConversationsResponse(BaseModel):
