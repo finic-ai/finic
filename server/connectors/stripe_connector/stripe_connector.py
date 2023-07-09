@@ -2,10 +2,17 @@ import requests
 import os
 import json
 from typing import Dict, List
-from models.models import Source, AppConfig, Document, DocumentMetadata, DataConnector, AuthorizationResult
+from models.models import (
+    Source,
+    AppConfig,
+    Document,
+    DocumentMetadata,
+    DataConnector,
+    AuthorizationResult,
+)
 from appstatestore.statestore import StateStore
-import stripe 
-import uuid 
+import stripe
+import uuid
 
 BASE_URL = "https://api.notion.com"
 
@@ -19,7 +26,9 @@ class StripeConnector(DataConnector):
     def __init__(self, config: AppConfig):
         super().__init__(config=config)
 
-    async def authorize(self, api_key: str, subdomain: str, email: str) -> AuthorizationResult:
+    async def authorize(
+        self, api_key: str, subdomain: str, email: str
+    ) -> AuthorizationResult:
         try:
             stripe.api_key = api_key
             charges = stripe.Charge.list(limit=100)
@@ -35,7 +44,6 @@ class StripeConnector(DataConnector):
 
         documents: List[Document] = []
 
-
         # Get charges
         charges = stripe.Charge.list(limit=100)  # Limit can be 1 to 100, 10 is default
         charge_list = charges.get("data")
@@ -48,13 +56,13 @@ Billing Details: {}
 Created: {}
 Currency: {}
 Description: {}""".format(
-    charge.get("amount"),
-    charge.get("amount_refunded"),
-    charge.get("billing_details"),
-    charge.get("created"),
-    charge.get("currency"),
-    charge.get("description")
-)
+                charge.get("amount"),
+                charge.get("amount_refunded"),
+                charge.get("billing_details"),
+                charge.get("created"),
+                charge.get("currency"),
+                charge.get("description"),
+            )
             documents.append(
                 Document(
                     title="Charge",
@@ -64,11 +72,10 @@ Description: {}""".format(
                     metadata=DocumentMetadata(
                         document_id=str(uuid.uuid4()),
                         source_id=source_id,
-                        tenant_id=self.config.tenant_id
-                    )
+                        tenant_id=self.config.tenant_id,
+                    ),
                 )
             )
-
 
         # Get refunds
         refunds = stripe.Refund.list(limit=100)
@@ -81,12 +88,12 @@ Currency: {}
 Reason: {}
 Created: {}
 Status: {}""".format(
-    refund.get("amount"),
-    refund.get("currency"),
-    refund.get("reason"),
-    refund.get("created"),
-    refund.get("status")
-)
+                refund.get("amount"),
+                refund.get("currency"),
+                refund.get("reason"),
+                refund.get("created"),
+                refund.get("status"),
+            )
             documents.append(
                 Document(
                     title="Refund",
@@ -96,8 +103,8 @@ Status: {}""".format(
                     metadata=DocumentMetadata(
                         document_id=str(uuid.uuid4()),
                         source_id=source_id,
-                        tenant_id=self.config.tenant_id
-                    )
+                        tenant_id=self.config.tenant_id,
+                    ),
                 )
             )
 
@@ -112,12 +119,12 @@ Currency: {}
 Description: {}
 Created: {}
 Status: {}""".format(
-    transfer.get("amount"),
-    transfer.get("currency"),
-    transfer.get("description"),
-    transfer.get("created"),
-    transfer.get("status")
-)
+                transfer.get("amount"),
+                transfer.get("currency"),
+                transfer.get("description"),
+                transfer.get("created"),
+                transfer.get("status"),
+            )
             documents.append(
                 Document(
                     title="Transfer",
@@ -127,8 +134,8 @@ Status: {}""".format(
                     metadata=DocumentMetadata(
                         document_id=str(uuid.uuid4()),
                         source_id=source_id,
-                        tenant_id=self.config.tenant_id
-                    )
+                        tenant_id=self.config.tenant_id,
+                    ),
                 )
             )
 
