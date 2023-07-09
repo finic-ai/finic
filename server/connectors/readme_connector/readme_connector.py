@@ -2,7 +2,15 @@ import requests
 import os
 import json
 from typing import Dict, List, Optional
-from models.models import AppConfig, Document, ConnectorId, DocumentConnector, AuthorizationResult, Section, ConnectionFilter
+from models.models import (
+    AppConfig,
+    Document,
+    ConnectorId,
+    DocumentConnector,
+    AuthorizationResult,
+    Section,
+    ConnectionFilter,
+)
 from models.api import GetDocumentsResponse
 from appstatestore.statestore import StateStore
 import base64
@@ -17,24 +25,28 @@ class ReadmeConnector(DocumentConnector):
     def __init__(self, config: AppConfig):
         super().__init__(config=config)
 
-    async def authorize_api_key(self, account_id: str, credential: Dict, metadata: Optional[Dict]) -> AuthorizationResult:
+    async def authorize_api_key(
+        self, account_id: str, credential: Dict, metadata: Optional[Dict]
+    ) -> AuthorizationResult:
         credential_string = json.dumps(credential)
 
-        assert(credential["api_key"] is not None)
+        assert credential["api_key"] is not None
 
         new_connection = StateStore().add_connection(
             config=self.config,
             credential=credential_string,
             connector_id=self.connector_id,
             account_id=account_id,
-            metadata={}
+            metadata={},
         )
 
         return AuthorizationResult(authorized=True, connection=new_connection)
 
-    async def authorize(self, account_id: str, auth_code: Optional[str], metadata: Optional[Dict]) -> AuthorizationResult:
+    async def authorize(
+        self, account_id: str, auth_code: Optional[str], metadata: Optional[Dict]
+    ) -> AuthorizationResult:
         pass
-    
+
     async def get_sections(self, account_id: str) -> List[Section]:
         pass
 
@@ -43,7 +55,9 @@ class ReadmeConnector(DocumentConnector):
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
 
-        connection = StateStore().load_credentials(self.config, self.connector_id, account_id)
+        connection = StateStore().load_credentials(
+            self.config, self.connector_id, account_id
+        )
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
         api_key = credential_json["api_key"]
@@ -52,24 +66,15 @@ class ReadmeConnector(DocumentConnector):
 
         all_docs = parser.get_all_docs()
 
-        
-        documents =  [
+        documents = [
             Document(
-                title=doc['title'],
-                content=doc['content'],
+                title=doc["title"],
+                content=doc["content"],
                 connector_id=self.connector_id,
                 account_id=account_id,
-                uri=doc['uri']
+                uri=doc["uri"],
             )
-            for doc in all_docs     
+            for doc in all_docs
         ]
 
         return GetDocumentsResponse(documents=documents)
-
-
-
-
-
-            
-
-    

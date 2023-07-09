@@ -5,6 +5,7 @@ from enum import Enum
 from pydantic import BaseModel
 from models.models import AppConfig, Connection, ConnectorStatus
 
+
 # Enum of logging events
 class Event(str, Enum):
     set_custom_connector_credentials = "set_custom_connector_credentials"
@@ -22,13 +23,14 @@ class Event(str, Enum):
     add_section_filter = "add_section_filter"
     update_connection_metadata = "update_connection_metadata"
 
+
 def sanitize(data: BaseModel | dict = None) -> BaseModel | dict:
-    '''
+    """
     Remove credentials and other sensitive information from the data
-    '''
+    """
     if data is None:
         return None
-    
+
     if isinstance(data, Connection):
         sanitized_data = data.copy()
         sanitized_data.credential = "REDACTED"
@@ -49,37 +51,45 @@ def sanitize(data: BaseModel | dict = None) -> BaseModel | dict:
 
     return data
 
+
 class Logger:
     posthog_client: Optional[posthog.Client] = None
 
     def __init__(self):
         # set up posthog logger
-        api_key = os.environ.get('POSTHOG_API_KEY')
-        host = os.environ.get('POSTHOG_HOST')
-        if api_key is not None and host is not None: 
+        api_key = os.environ.get("POSTHOG_API_KEY")
+        host = os.environ.get("POSTHOG_HOST")
+        if api_key is not None and host is not None:
             self.posthog_client = posthog.Client(
-                api_key=os.environ.get('POSTHOG_API_KEY'),
-                host=os.environ.get('POSTHOG_HOST')
+                api_key=os.environ.get("POSTHOG_API_KEY"),
+                host=os.environ.get("POSTHOG_HOST"),
             )
 
     def log(self, app_config: AppConfig, event: str, properties: Dict[str, Any]):
         if self.posthog_client is not None:
             print("logging event: ", event, " with properties: ", properties)
-            self.posthog_client.capture(distinct_id=app_config.user_id, event=event, properties=properties)
+            self.posthog_client.capture(
+                distinct_id=app_config.user_id, event=event, properties=properties
+            )
 
-    def log_api_call(self, app_config: AppConfig, event: str, request: Optional[BaseModel], response: BaseModel, error: Exception):
+    def log_api_call(
+        self,
+        app_config: AppConfig,
+        event: str,
+        request: Optional[BaseModel],
+        response: BaseModel,
+        error: Exception,
+    ):
         # Remove sensitive data from requests and responses
         if self.posthog_client is None:
             return
         if event not in Event.__members__.values():
             raise Exception("Invalid event type")
-        properties = {
-            'app_id': app_config.app_id
-        }
+        properties = {"app_id": app_config.app_id}
         if isinstance(request, BaseModel):
-            properties['request'] = sanitize(request).dict()
+            properties["request"] = sanitize(request).dict()
         if isinstance(response, BaseModel):
-            properties['response'] = sanitize(response).dict()
+            properties["response"] = sanitize(response).dict()
         if error is not None:
-            properties['error'] = str(error)
+            properties["error"] = str(error)
         self.log(app_config=app_config, event="server_" + event, properties=properties)
