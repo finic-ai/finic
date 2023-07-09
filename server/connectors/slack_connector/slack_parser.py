@@ -45,13 +45,11 @@ class SlackParser:
 
         msgs = []
         content = {
-            "sender": json.dumps(
-                (MessageSender(id=message["user"], name=user_name).dict())
-            ),
+            "sender":
+                MessageSender(id=message["user"], name=user_name).dict()
+            ,
             "recipients": [
-                json.dumps(
-                    MessageRecipient(id=channel["id"], name=channel["name"]).dict()
-                )
+                MessageRecipient(id=channel["id"], name=channel["name"]).dict()
             ],
             "slack_message_content": self.parse_message_content(message),
             "timestamp": message["ts"],
@@ -60,7 +58,7 @@ class SlackParser:
         msgs.append(
             Message(
                 id=message["ts"],
-                content=yaml.dump(content),
+                content=yaml.dump(content, sort_keys=False),
                 uri=link,
             )
         )
