@@ -23,6 +23,7 @@ import SalesforceAuthFlow from "./components/auth/SalesforceAuthFlow";
 import ModalHeader from "./components/ModalHeader";
 import WebAuthFlow from "./components/auth/WebAuthForm";
 import GmailAuthFlow from "./components/auth/GmailAuthFlow";
+import SharepointAuthFlow from "./components/auth/SharepointAuthFlow";
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL;
 
@@ -74,6 +75,8 @@ const App: React.FC = () => {
           return <WebAuthFlow />;
         } else if (selectedConnectorId == "zendesk") {
           return <ZendeskAuthFlow />;
+        } else if (selectedConnectorId == "sharepoint") {
+          return <SharepointAuthFlow />;
         } else {
           return <div>Unknown connector</div>;
         }

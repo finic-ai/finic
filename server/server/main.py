@@ -336,7 +336,6 @@ async def add_oauth_connection(
         connector_id = request.connector_id
         account_id = request.account_id
         metadata = request.metadata
-
         connector = get_connector_for_id(connector_id, config)
 
         if connector is None:

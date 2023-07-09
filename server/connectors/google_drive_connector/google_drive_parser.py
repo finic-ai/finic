@@ -18,7 +18,7 @@ class GoogleDriveParser:
         for uri in uris:
             id = self.get_id_from_uri(uri)
             try:
-                file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
+                file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType", supportsAllDrives=True).execute()
                 files.append(file)
             except Exception as e:
                 print(e)
@@ -26,7 +26,7 @@ class GoogleDriveParser:
     
     def get_file_by_id(self, id: str) -> Any:
         try:
-            file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType").execute()
+            file = self.service.files().get(fileId=id, fields="id, name, webViewLink, mimeType", supportsAllDrives=True).execute()
             return file
         except Exception as e:
             print(e)
@@ -35,10 +35,10 @@ class GoogleDriveParser:
     def list_files_in_folder(self, folder_id: Optional[str]) -> list:
         try:
             if not folder_id:
-                results = self.service.files().list(fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
+                results = self.service.files().list(fields="nextPageToken, files(id, name, mimeType, webViewLink)", supportsAllDrives=True).execute()
             else:
                 query = f"'{folder_id}' in parents"
-                results = self.service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)").execute()
+                results = self.service.files().list(q=query, fields="nextPageToken, files(id, name, mimeType, webViewLink)", supportsAllDrives=True, includeItemsFromAllDrives=True).execute()
             items = results.get("files", [])
             return items
         except Exception as e:
@@ -118,7 +118,7 @@ class GoogleDriveParser:
                     folders_to_process.append(item["id"])
                 elif mime_type in ["application/vnd.google-apps.document", "application/pdf"]:
                     # Retrieve the full metadata for the file
-                    file_metadata = self.service.files().get(fileId=item["id"], fields="id, name, webViewLink, mimeType").execute()
+                    file_metadata = self.service.files().get(fileId=item["id"], fields="id, name, webViewLink, mimeType", supportsAllDrives=True).execute()
                     files.append(file_metadata)
                 else:
                     print(f"Unsupported file type: {mime_type}")

@@ -136,8 +136,6 @@ class GoogleDriveConnector(DocumentConnector):
 
         credential_string = connection.credential
 
-        print(credential_string)
-
         credential_json = json.loads(credential_string)
         creds = Credentials.from_authorized_user_info(
             credential_json

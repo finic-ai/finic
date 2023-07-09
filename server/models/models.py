@@ -18,6 +18,7 @@ class ConnectorId(StrEnum):
     slack = "slack"
     web = "web"
     zendesk = "zendesk"
+    sharepoint = "sharepoint"
 
 
 class Settings(BaseModel):

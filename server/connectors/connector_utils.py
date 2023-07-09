@@ -11,6 +11,7 @@ from .salesforce_connector import SalesforceConnector
 from .clickup_connector import ClickupConnector
 from .website_connector import WebsiteConnector
 from .gmail_connector import GmailConnector
+from .sharepoint_connector import SharepointConnector
 from models.models import (
     AppConfig,
     DocumentConnector,
@@ -47,6 +48,8 @@ def get_document_connector_for_id(
         return WebsiteConnector(config)
     elif connector_id == ConnectorId.zendesk:
         return ZendeskConnector(config)
+    elif connector_id == ConnectorId.sharepoint:
+        return SharepointConnector(config)
     return None
 
 
@@ -97,4 +100,6 @@ def get_connector_for_id(
         return ZendeskConnector(config)
     elif connector_id == ConnectorId.slack:
         return SlackConnector(config)
+    elif connector_id == ConnectorId.sharepoint:
+        return SharepointConnector(config)
     return None

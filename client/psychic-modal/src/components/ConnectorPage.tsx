@@ -95,6 +95,14 @@ const connectors = [
     active: true,
   },
   {
+    name: "Sharepoint",
+    id: "sharepoint",
+    icon: ReadmeIcon,
+    label: null,
+    labelColor: "info",
+    active: true,
+  },
+  {
     name: "Website",
     id: "web",
     icon: TbWorld,
