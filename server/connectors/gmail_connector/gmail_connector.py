@@ -11,7 +11,6 @@ from models.models import (
     AuthorizationResult,
     Message,
     MessageRecipient,
-    MessageRecipientType,
     MessageSender,
     Section,
 )
@@ -125,7 +124,6 @@ class GmailConnector(ConversationConnector):
             replies.append(self._parse_message(msg))
 
         first_email = self._parse_message(first_msg, replies)
-
         return first_email
 
     def _parse_message(
@@ -133,7 +131,11 @@ class GmailConnector(ConversationConnector):
     ) -> Message:
         payload = msg.get("payload")
         headers = payload.get("headers")
-        id = msg.get("id")
+
+        # only need ID if this is the first message in the thread. if it has replies, ignore id
+        id = None
+        if replies:
+            id = msg.get("id")
 
         sender = None
         recipients = []
@@ -151,12 +153,7 @@ class GmailConnector(ConversationConnector):
                 elif name.lower() == "to":
                     # str is of the form "a@abc.com, b@def.com"
                     emails = value.split(", ")
-                    recipients = [
-                        MessageRecipient(
-                            id=email, message_recipient_type=MessageRecipientType.user
-                        )
-                        for email in emails
-                    ]
+                    recipients = [MessageRecipient(id=email) for email in emails]
                 elif name.lower() == "subject":
                     subject = value
                 elif name.lower() == "date":
@@ -195,15 +192,22 @@ class GmailConnector(ConversationConnector):
 
         content = {
             "subject": subject,
-            "email_content": email_content,
-            "sender": json.dumps(sender.dict()),
-            "recipients": json.dumps([recipient.dict() for recipient in recipients]),
+            "sender": sender.dict(exclude_none=True),
+            "recipients": [
+                recipient.dict(exclude_none=True) for recipient in recipients
+            ],
             "timestamp": timestamp,
-            "replies": json.dumps([reply.dict() for reply in replies]),
+            "email_content": email_content,
+            "replies": [reply.dict(exclude_none=True) for reply in replies],
         }
         return Message(
             id=id,
-            content=yaml.dump(content),
+            content=yaml.dump(
+                content,
+                sort_keys=False,
+                default_style=None,
+                default_flow_style=False,
+            ),
         )
 
     async def load_messages(

@@ -2,9 +2,8 @@ import json
 from typing import Dict, List
 from models.models import (
     Message,
-    SlackChannelRecipient,
-    SlackMessageSender,
-    SlackThreadRecipient,
+    MessageRecipient,
+    MessageSender,
 )
 from slack_sdk.web import WebClient
 import yaml
@@ -47,11 +46,11 @@ class SlackParser:
         msgs = []
         content = {
             "sender": json.dumps(
-                (SlackMessageSender(id=message["user"], name=user_name).dict())
+                (MessageSender(id=message["user"], name=user_name).dict())
             ),
             "recipients": [
                 json.dumps(
-                    SlackChannelRecipient(id=channel["id"], name=channel["name"]).dict()
+                    MessageRecipient(id=channel["id"], name=channel["name"]).dict()
                 )
             ],
             "slack_message_content": self.parse_message_content(message),
@@ -79,8 +78,8 @@ class SlackParser:
                 user_response = self.client.users_info(user=message["user"])
                 user = user_response["user"]
                 msg_content = {
-                    "sender": SlackMessageSender(id=reply["user"], name=user["name"]),
-                    "recipients": [SlackThreadRecipient(id=message["thread_ts"])],
+                    "sender": MessageSender(id=reply["user"], name=user["name"]),
+                    "recipients": [MessageRecipient(id=message["thread_ts"])],
                     "slack_message_content": self.parse_message_content(reply),
                     "timestamp": reply["ts"],
                 }

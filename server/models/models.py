@@ -75,39 +75,17 @@ class ConnectorStatus(BaseModel):
 
 class MessageSender(BaseModel):
     id: str
-
-
-class EmailSender(MessageSender):
-    pass
-
-
-class SlackMessageSender(MessageSender):
-    name: str
-
-
-class MessageRecipientType(StrEnum):
-    user = "user"
-    slack_channel = "slack_channel"
-    slack_thread = "slack_thread"
+    name: Optional[str]
 
 
 class MessageRecipient(BaseModel):
     id: str
-    message_recipient_type: MessageRecipientType
-
-
-class SlackThreadRecipient(MessageRecipient):
-    message_recipient_type = MessageRecipientType.slack_thread
-
-
-class SlackChannelRecipient(MessageRecipient):
-    name: str
-    message_recipient_type = MessageRecipientType.slack_channel
+    name: Optional[str]
 
 
 class Message(BaseModel):
-    id: str
     content: str
+    id: Optional[str] = None
     uri: Optional[str] = None
 
 
