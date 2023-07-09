@@ -6,7 +6,7 @@ import OAuthListenerForm from "./OAuthListenerForm";
 import ErrorIcon from "../icons/ErrorIcon";
 import SuccessIcon from "../icons/SuccessIcon";
 
-const GmailAuthFlow: React.FC = () => {
+const SharepointAuthFlow: React.FC = () => {
   const {
     currentStep,
     setCurrentStep,
@@ -173,4 +173,4 @@ const GmailAuthFlow: React.FC = () => {
   );
 };
 
-export default GmailAuthFlow;
+export default SharepointAuthFlow;

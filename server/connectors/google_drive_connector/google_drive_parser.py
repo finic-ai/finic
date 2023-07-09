@@ -19,7 +19,7 @@ class GoogleDriveParser:
             try:
                 file = (
                     self.service.files()
-                    .get(fileId=id, fields="id, name, webViewLink, mimeType")
+                    .get(fileId=id, fields="id, name, webViewLink, mimeType", supportsAllDrives=True)
                     .execute()
                 )
                 files.append(file)
@@ -31,7 +31,7 @@ class GoogleDriveParser:
         try:
             file = (
                 self.service.files()
-                .get(fileId=id, fields="id, name, webViewLink, mimeType")
+                .get(fileId=id, fields="id, name, webViewLink, mimeType", supportsAllDrives=True)
                 .execute()
             )
             return file
@@ -45,7 +45,8 @@ class GoogleDriveParser:
                 results = (
                     self.service.files()
                     .list(
-                        fields="nextPageToken, files(id, name, mimeType, webViewLink)"
+                        fields="nextPageToken, files(id, name, mimeType, webViewLink)",
+                        supportsAllDrives=True
                     )
                     .execute()
                 )
@@ -56,6 +57,8 @@ class GoogleDriveParser:
                     .list(
                         q=query,
                         fields="nextPageToken, files(id, name, mimeType, webViewLink)",
+                        supportsAllDrives=True, 
+                        includeItemsFromAllDrives=True
                     )
                     .execute()
                 )
@@ -152,7 +155,8 @@ class GoogleDriveParser:
                     file_metadata = (
                         self.service.files()
                         .get(
-                            fileId=item["id"], fields="id, name, webViewLink, mimeType"
+                            fileId=item["id"], fields="id, name, webViewLink, mimeType",
+                            supportsAllDrives=True
                         )
                         .execute()
                     )

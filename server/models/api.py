@@ -1,17 +1,17 @@
 from models.models import (
     Document,
-    Message,
     ConnectorId,
     ConnectorStatus,
     AuthorizationResult,
     Connection,
     ConnectionFilter,
+    Message,
     Settings,
     SectionFilter,
     GetDocumentsResponse,
 )
 from pydantic import BaseModel
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, TypeVar, Union
 
 
 class GetLinkSettingsResponse(BaseModel):
@@ -79,11 +79,6 @@ class GetTicketsRequest(BaseModel):
 class GetTicketsResponse(BaseModel):
     tickets: List[Document]
     next_page_cursor: Optional[str] = None
-
-
-class GetConversationsResponse(BaseModel):
-    messages: List[Message]
-    page_cursor: Optional[str]
 
 
 class GetConversationsRequest(BaseModel):

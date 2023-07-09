@@ -100,6 +100,7 @@ async def enable_connector(
         )
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(
             config, Event.set_custom_connector_credentials, request, None, e
         )
@@ -121,6 +122,7 @@ async def get_connector_status(
         logger.log_api_call(config, Event.get_connector_status, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.get_connector_status, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -138,6 +140,7 @@ async def get_link_settings(
         logger.log_api_call(config, Event.get_link_settings, None, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.get_link_settings, None, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -165,6 +168,7 @@ async def get_connections(
         logger.log_api_call(config, Event.get_connections, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.get_connections, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -192,6 +196,7 @@ async def delete_connections(
         logger.log_api_call(config, Event.delete_connection, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.delete_connection, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -235,6 +240,7 @@ async def add_section_filter(
         logger.log_api_call(config, Event.add_section_filter, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.add_section_filter, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -282,6 +288,7 @@ async def add_section_filter_public(
         logger.log_api_call(config, Event.add_section_filter, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.add_section_filter, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -303,7 +310,7 @@ async def add_apikey_connection(
         connector = get_connector_for_id(connector_id, config)
 
         if connector is None:
-            raise HTTPException(status_code=404, detail="Connector not found")
+            raise Exception("Connector not found")
         result = await connector.authorize_api_key(account_id, credential, metadata)
         response = AuthorizationResponse(result=result)
         logger.log_api_call(
@@ -311,6 +318,7 @@ async def add_apikey_connection(
         )
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.add_apikey_connection, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -328,17 +336,17 @@ async def add_oauth_connection(
         connector_id = request.connector_id
         account_id = request.account_id
         metadata = request.metadata
-
         connector = get_connector_for_id(connector_id, config)
 
         if connector is None:
-            raise HTTPException(status_code=404, detail="Connector not found")
+            raise Exception("Connector not found")
 
         result = await connector.authorize(account_id, auth_code, metadata)
         response = AuthorizationResponse(result=result)
         logger.log_api_call(config, Event.add_oauth_connection, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.add_oauth_connection, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -367,6 +375,7 @@ async def update_connection_metadata(
         )
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.update_connection_metadata, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -435,6 +444,7 @@ async def get_documents(
         logger.log_api_call(config, Event.get_documents, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.get_documents, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -483,6 +493,7 @@ async def get_tickets(
         logger.log_api_call(config, Event.get_tickets, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.get_tickets, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -515,6 +526,7 @@ async def get_conversations(
         logger.log_api_call(config, Event.get_conversations, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.get_conversations, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -534,6 +546,7 @@ async def run_sync(
         logger.log_api_call(config, Event.run_sync, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.run_sync, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -571,6 +584,7 @@ async def run_sync(
         logger.log_api_call(config, Event.ask_question, request, response, None)
         return response
     except Exception as e:
+        print(e)
         logger.log_api_call(config, Event.ask_question, request, None, e)
         raise HTTPException(status_code=500, detail=str(e))
 

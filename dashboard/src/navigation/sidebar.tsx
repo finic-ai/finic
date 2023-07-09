@@ -192,16 +192,16 @@ const DashboardSidebar: FC = function () {
                   >
                     Website
                   </Sidebar.Item>
-                  {/* <Sidebar.Item
-                    href="/connectors/website"
+                  <Sidebar.Item
+                    href="/connectors/sharepoint"
                     className={
-                      "/connectors/website" === currentPage
+                      "/connectors/sharepoint" === currentPage
                         ? "bg-gray-100 dark:bg-gray-700"
                         : ""
                     }
                   >
-                    Website
-                  </Sidebar.Item> */}
+                    Sharepoint
+                  </Sidebar.Item>
                 </Sidebar.Collapse>
                 {/* <Sidebar.Item
                   href="/vectorstore"
@@ -249,7 +249,7 @@ const DashboardSidebar: FC = function () {
                   API Playground
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg"
+                  href="https://join.slack.com/t/psychicapi/shared_invite/zt-1yptnhwcz-SiOCnrbqnBDsuzps9sEMSw"
                   icon={HiQuestionMarkCircle}
                   target="_blank"
                 >

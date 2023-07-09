@@ -178,6 +178,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     "salesforce",
     "gdrive",
     "gmail",
+    "sharepoint",
   ];
 
   const value: ModalContextType = {
@@ -301,9 +302,6 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     if (metadata) {
       payload.metadata = metadata;
     }
-
-    console.log(payload);
-    console.log(url);
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -352,7 +350,6 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
       AuthMethod.OAUTH
     );
     const auth_url = result.auth_url;
-    console.log(result);
     // Open the auth url in a new window and center it.
     const width = window.innerWidth;
     const height = window.innerHeight;

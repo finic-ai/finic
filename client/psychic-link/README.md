@@ -66,7 +66,7 @@ open(accountId, ConnectorId.Notion);
 
 ## Troubleshooting
 
-For assistance, join the Psychic community Slack [here](https://join.slack.com/t/psychicapi/shared_invite/zt-1ty1wz6w0-8jkmdvBpM5kj_Fh30EiCcg)
+For assistance, join the Psychic community Slack [here](https://join.slack.com/t/psychicapi/shared_invite/zt-1yptnhwcz-SiOCnrbqnBDsuzps9sEMSw)
 
 ### Invalid Hook Call Warning
 

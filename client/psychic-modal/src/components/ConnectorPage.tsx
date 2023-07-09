@@ -25,6 +25,7 @@ import IntercomIcon from "./icons/IntercomIcon";
 import HubspotIcon from "./icons/HubspotIcon";
 import ReadmeIcon from "./icons/ReadmeIcon";
 import SalesforceIcon from "./icons/SalesforceIcon";
+import SharepointIcon from "./icons/SharepointIcon";
 import { start } from "repl";
 import GmailIcon from "./icons/GmailIcon";
 
@@ -42,14 +43,6 @@ const connectors = [
     name: "Google Drive",
     id: "gdrive",
     icon: GoogleDriveIcon,
-    label: null,
-    labelColor: "info",
-    active: true,
-  },
-  {
-    name: "Gmail",
-    id: "gmail",
-    icon: GmailIcon,
     label: null,
     labelColor: "info",
     active: true,
@@ -95,11 +88,27 @@ const connectors = [
     active: true,
   },
   {
+    name: "Sharepoint",
+    id: "sharepoint",
+    icon: SharepointIcon,
+    label: null,
+    labelColor: "info",
+    active: true,
+  },
+  {
     name: "Website",
     id: "web",
     icon: TbWorld,
     label: null,
     labelColor: "info",
+    active: true,
+  },
+  {
+    name: "Gmail",
+    id: "gmail",
+    icon: GmailIcon,
+    label: "Alpha",
+    labelColor: "warning",
     active: true,
   },
   {

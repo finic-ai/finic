@@ -1,5 +1,6 @@
 import base64
 import time
+from datetime import datetime
 from models.api import GetConversationsResponse
 from appstatestore.statestore import StateStore
 from models.models import (
@@ -8,9 +9,8 @@ from models.models import (
     AppConfig,
     ConnectorId,
     AuthorizationResult,
-    Email,
+    Message,
     MessageRecipient,
-    MessageRecipientType,
     MessageSender,
     Section,
 )
@@ -20,8 +20,14 @@ from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from typing import List, Dict, Optional, Tuple
 import json
+import re
+import yaml
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
+
+# Matches regex of the form "On Sat, Jul 8, 2023 at 10:13 AM Foo Bar <foo.bar@email.com> wrote:"
+# This is usually the first line indicating the following text is quoted
+EMAIL_QUOTE_START_PATTERN = r"On (Mon|Tue|Wed|Thu|Fri|Sat|Sun), [A-Z][a-z]{2} \d{1,2}, \d{4} at \d{1,2}:\d{2} [AP]M [A-Za-z0-9 ]* <[\w.-]+@[\w.-]+> wrote:"
 
 
 class GmailConnector(ConversationConnector):
@@ -74,14 +80,14 @@ class GmailConnector(ConversationConnector):
     async def get_sections(self) -> List[Section]:
         pass
 
-    def _get_message_ids(
+    def _get_thread_ids(
         self, service, page_cursor, oldest_message_time
     ) -> Tuple[List[str], Optional[str]]:
-        msg_ids = []
+        thread_ids = []
 
         result = (
             service.users()
-            .messages()
+            .threads()
             .list(
                 userId="me",
                 maxResults=100,
@@ -90,26 +96,52 @@ class GmailConnector(ConversationConnector):
             )
             .execute()
         )
-        if "messages" in result:
-            for message in result["messages"]:
-                msg_ids.append(message["id"])
+        if "threads" in result:
+            for thread in result["threads"]:
+                thread_ids.append(thread["id"])
         if "nextPageToken" in result:
-            return msg_ids, result["nextPageToken"]
+            return thread_ids, result["nextPageToken"]
         else:
-            return msg_ids, None
+            return thread_ids, None
 
-    def _get_message(self, service, msg_id: str) -> Dict:
-        msg = (
+    def _get_email_from_thread(self, service, thread_id: str) -> Message:
+        thread = (
             service.users()
-            .messages()
-            .get(userId="me", id=msg_id, format="full")
+            .threads()
+            .get(userId="me", id=thread_id, format="full")
             .execute()
         )
-        timestamp = msg.get("internalDate")
+        msgs = thread.get("messages")
+        first_msg = msgs[0]
+
+        replies = []
+
+        # find and parse all replies to the first email first, since to create the final message we need the replies parsed
+        for msg in msgs:
+            if msg == first_msg:
+                continue
+
+            replies.append(self._parse_message(msg))
+
+        first_email = self._parse_message(first_msg, replies)
+        return first_email
+
+    def _parse_message(
+        self, msg: Dict, replies: Optional[List[Message]] = []
+    ) -> Message:
         payload = msg.get("payload")
         headers = payload.get("headers")
 
-        formatted_msg = {"id": msg_id, "timestamp": timestamp}
+        # only need ID if this is the first message in the thread. if it has replies, ignore id
+        id = None
+        if replies:
+            id = msg.get("id")
+
+        sender = None
+        recipients = []
+        subject = ""
+        email_content = ""
+        timestamp = ""
 
         # Append metadata like email sender, recipient, subject and time
         if headers:
@@ -117,16 +149,30 @@ class GmailConnector(ConversationConnector):
                 name = header.get("name")
                 value = header.get("value")
                 if name.lower() == "from":
-                    formatted_msg["sender"] = value
+                    sender = MessageSender(id=value)
                 elif name.lower() == "to":
                     # str is of the form "a@abc.com, b@def.com"
-                    formatted_msg["recipients"] = value.split(", ")
+                    emails = value.split(", ")
+                    recipients = [MessageRecipient(id=email) for email in emails]
                 elif name.lower() == "subject":
-                    formatted_msg["subject"] = value
+                    subject = value
+                elif name.lower() == "date":
+                    # gmail dates can be either in GMT or with timezone - so try both
+                    gmt_pattern = r" GMT$"
+                    if re.search(gmt_pattern, value):
+                        timestamp = time.mktime(
+                            datetime.strptime(
+                                value, "%a, %d %b %Y %H:%M:%S GMT"
+                            ).timetuple()
+                        )
+                    else:
+                        timestamp = time.mktime(
+                            datetime.strptime(
+                                value, "%a, %d %b %Y %H:%M:%S %z"
+                            ).timetuple()
+                        )
 
-        # Append email content
         parts = payload.get("parts")
-        formatted_msg["content"] = "Subject:" + formatted_msg["subject"]
         for part in parts:
             mimeType = part.get("mimeType")
             body = part.get("body")
@@ -136,37 +182,32 @@ class GmailConnector(ConversationConnector):
                 if data:
                     padding = 4 - (len(data) % 4)
                     data = str(data) + "=" * padding
-                    formatted_msg["content"] += str(base64.urlsafe_b64decode(data))
+                    decoded_content = base64.urlsafe_b64decode(data).decode("utf-8")
+                    # Gmail adds replies to the content, we need to manually remove it
+                    match = re.search(EMAIL_QUOTE_START_PATTERN, decoded_content)
+                    if match:
+                        email_content = decoded_content[: match.start()]
+                    else:
+                        email_content = decoded_content
 
-        return formatted_msg
-
-    def _get_messages(self, service, msg_ids: List[str]) -> List[Dict]:
-        msgs = []
-        for msg_id in msg_ids:
-            try:
-                msg = self._get_message(service, msg_id)
-                msgs.append(msg)
-            except Exception as e:
-                continue
-
-        return msgs
-
-    def _map_message_to_email(
-        self,
-        msg: Dict,
-    ) -> Email:
-        return Email(
-            id=msg["id"],
-            sender=MessageSender(id=msg["sender"]),
-            recipients=[
-                MessageRecipient(
-                    id=recipient,
-                    message_recipient_type=MessageRecipientType.user,
-                )
-                for recipient in msg["recipients"]
+        content = {
+            "subject": subject,
+            "sender": sender.dict(exclude_none=True),
+            "recipients": [
+                recipient.dict(exclude_none=True) for recipient in recipients
             ],
-            content=msg["content"],
-            timestamp=msg["timestamp"],
+            "timestamp": timestamp,
+            "email_content": email_content,
+            "replies": [reply.dict(exclude_none=True) for reply in replies],
+        }
+        return Message(
+            id=id,
+            content=yaml.dump(
+                content,
+                sort_keys=False,
+                default_style=None,
+                default_flow_style=False,
+            ),
         )
 
     async def load_messages(
@@ -203,8 +244,11 @@ class GmailConnector(ConversationConnector):
         else:
             oldest = oldest_message_timestamp
 
-        msg_ids, next_page_cursor = self._get_message_ids(service, page_cursor, oldest)
-        msgs = self._get_messages(service, msg_ids)
-        emails = [self._map_message_to_email(msg) for msg in msgs]
+        thread_ids, next_page_cursor = self._get_thread_ids(
+            service, page_cursor, oldest
+        )
+        emails = [
+            self._get_email_from_thread(service, thread_id) for thread_id in thread_ids
+        ]
 
         return GetConversationsResponse(messages=emails, page_cursor=next_page_cursor)
