@@ -7,7 +7,6 @@ from models.models import (
     ConnectorId,
     ConversationConnector,
     AuthorizationResult,
-    SlackMessage,
 )
 from appstatestore.statestore import StateStore
 from slack_sdk.web import WebClient
