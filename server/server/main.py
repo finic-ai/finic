@@ -340,7 +340,7 @@ async def add_oauth_connection(
 
         if connector is None:
             raise Exception("Connector not found")
-        
+
         result = await connector.authorize(account_id, auth_code, metadata)
         response = AuthorizationResponse(result=result)
         logger.log_api_call(config, Event.add_oauth_connection, request, response, None)

@@ -47,14 +47,6 @@ const connectors = [
     active: true,
   },
   {
-    name: "Gmail",
-    id: "gmail",
-    icon: GmailIcon,
-    label: null,
-    labelColor: "info",
-    active: true,
-  },
-  {
     name: "Confluence",
     id: "confluence",
     icon: ConfluenceIcon,
@@ -108,6 +100,14 @@ const connectors = [
     icon: TbWorld,
     label: null,
     labelColor: "info",
+    active: true,
+  },
+  {
+    name: "Gmail",
+    id: "gmail",
+    icon: GmailIcon,
+    label: "Alpha",
+    labelColor: "warning",
     active: true,
   },
   {
