@@ -192,16 +192,16 @@ const DashboardSidebar: FC = function () {
                   >
                     Website
                   </Sidebar.Item>
-                  {/* <Sidebar.Item
-                    href="/connectors/website"
+                  <Sidebar.Item
+                    href="/connectors/sharepoint"
                     className={
-                      "/connectors/website" === currentPage
+                      "/connectors/sharepoint" === currentPage
                         ? "bg-gray-100 dark:bg-gray-700"
                         : ""
                     }
                   >
-                    Website
-                  </Sidebar.Item> */}
+                    Sharepoint
+                  </Sidebar.Item>
                 </Sidebar.Collapse>
                 {/* <Sidebar.Item
                   href="/vectorstore"

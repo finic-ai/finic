@@ -138,6 +138,20 @@ class SharepointConnector(DocumentConnector):
             creds = response.json()
 
             creds_string = json.dumps(creds)
+
+            headers = {
+                'Authorization': 'Bearer ' + creds.get('access_token')
+            }
+
+            response = requests.get('https://graph.microsoft.com/v1.0/organization', headers=headers)
+            response_json = response.json()
+
+            org_name = None
+
+            orgs = response_json.get('value')
+
+            if len(orgs) > 0:
+                org_name = orgs[0].get('displayName')
             
 
         except Exception as e:
@@ -151,6 +165,7 @@ class SharepointConnector(DocumentConnector):
             connector_id=self.connector_id,
             account_id=account_id,
             metadata={
+                'org': org_name
             }
         )
         return AuthorizationResult(authorized=True, connection=new_connection)
@@ -160,6 +175,14 @@ class SharepointConnector(DocumentConnector):
 
 
     async def load(self, connection_filter: ConnectionFilter) -> GetDocumentsResponse:
+        connector_credentials = StateStore().get_connector_credential(self.connector_id, self.config)
+        try: 
+            client_id = connector_credentials['client_id']
+            client_secret = connector_credentials['client_secret']
+            redirect_uri = "https://link.psychic.dev/oauth/redirect"
+        except Exception as e:
+            raise Exception("Connector is not enabled")
+        
         account_id = connection_filter.account_id
         uris = connection_filter.uris
         section_filter = connection_filter.section_filter_id
@@ -167,13 +190,46 @@ class SharepointConnector(DocumentConnector):
         credential_string = connection.credential
         credential_json = json.loads(credential_string)
 
+        print(credential_json)
+
         access_token = credential_json.get('access_token')
+
+        # check if access token is expired and refresh it
+
+
+
 
         headers = {
             'Authorization': 'Bearer ' + access_token
         }
 
         response = requests.get('https://graph.microsoft.com/v1.0/sites?search=*', headers=headers)
+        if response.status_code == 401:
+            # refresh token
+            refresh_token = credential_json.get('refresh_token')
+            data = {
+                'client_id': client_id,
+                'scope': 'https://graph.microsoft.com/.default',
+                'refresh_token': refresh_token,
+                'grant_type': 'refresh_token',
+                'client_secret': client_secret,
+            }
+            response = requests.post(f"https://login.microsoftonline.com/common/oauth2/v2.0/token", headers=headers, data=data)
+            creds = response.json()
+            creds_string = json.dumps(creds)
+            new_connection = StateStore().add_connection(
+                config=self.config,
+                credential=creds_string,
+                connector_id=self.connector_id,
+                account_id=account_id,
+                metadata={
+                }
+            )
+            access_token = creds.get('access_token')
+            headers = {
+                'Authorization': 'Bearer ' + access_token
+            }
+            response = requests.get('https://graph.microsoft.com/v1.0/sites?search=*', headers=headers)
         response_data = response.json()
         all_sites = response_data.get('value')
 

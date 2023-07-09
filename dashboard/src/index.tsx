@@ -35,6 +35,7 @@ import { useUserStateContext } from "./context/UserStateContext";
 import ReadmeConnectorPage from "./pages/connectors/readme";
 import WebsiteConnectorPage from "./pages/connectors/website";
 import GmailConnectorPage from "./pages/connectors/gmail";
+import SharepointConnectorPage from "./pages/connectors/sharepoint";
 
 const container = document.getElementById("root");
 
@@ -182,6 +183,10 @@ function App() {
                 <Route
                   path="/connectors/zendesk"
                   element={<ZendeskConnectorPage />}
+                />
+                <Route
+                  path="/connectors/sharepoint"
+                  element={<SharepointConnectorPage />}
                 />
                 <Route path="/oauth/redirect" element={<RedirectPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
