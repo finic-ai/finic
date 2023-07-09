@@ -75,7 +75,9 @@ const ProductsTable: FC = function () {
     { id: "salesforce", name: "Salesforce" },
     { id: "gdrive", name: "Google Drive" },
     { id: "github", name: "Github" },
-    { id: "web", name: "Website" }
+    { id: "web", name: "Website" },
+    { id: "gmail", name: "Gmail" },
+    { id: "sharepoint", name: "Sharepoint" }
   ];
 
   useEffect(() => {
