@@ -1,15 +1,14 @@
 from models.models import (
     Document,
-    Email,
     ConnectorId,
     ConnectorStatus,
     AuthorizationResult,
     Connection,
     ConnectionFilter,
+    Message,
     Settings,
     SectionFilter,
     GetDocumentsResponse,
-    SlackMessage,
 )
 from pydantic import BaseModel
 from typing import List, Optional, Dict, TypeVar, Union
@@ -90,7 +89,7 @@ class GetConversationsRequest(BaseModel):
 
 
 class GetConversationsResponse(BaseModel):
-    messages: List[Union[Email, SlackMessage]]
+    messages: List[Message]
     page_cursor: Optional[str]
 
 

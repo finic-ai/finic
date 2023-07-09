@@ -1,11 +1,13 @@
+import json
 from typing import Dict, List
 from models.models import (
+    Message,
     SlackChannelRecipient,
-    SlackMessage,
     SlackMessageSender,
     SlackThreadRecipient,
 )
 from slack_sdk.web import WebClient
+import yaml
 
 
 class SlackParser:
@@ -31,7 +33,7 @@ class SlackParser:
                 + message_id.replace(".", "")
             )
 
-    def parse_message(self, message: Dict, channel: Dict) -> List[SlackMessage]:
+    def parse_message(self, message: Dict, channel: Dict) -> List[Message]:
         link = self.get_slack_permalink(channel["id"], message["ts"])
         user_id = message["user"]
         if user_id in self.users_cache:
@@ -43,16 +45,23 @@ class SlackParser:
             self.users_cache[user_id] = user_name
 
         msgs = []
+        content = {
+            "sender": json.dumps(
+                (SlackMessageSender(id=message["user"], name=user_name).dict())
+            ),
+            "recipients": [
+                json.dumps(
+                    SlackChannelRecipient(id=channel["id"], name=channel["name"]).dict()
+                )
+            ],
+            "slack_message_content": self.parse_message_content(message),
+            "timestamp": message["ts"],
+            "replies": [],
+        }
         msgs.append(
-            SlackMessage(
+            Message(
                 id=message["ts"],
-                sender=SlackMessageSender(id=message["user"], name=user_name),
-                recipients=[
-                    SlackChannelRecipient(id=channel["id"], name=channel["name"])
-                ],
-                content=self.parse_message_content(message),
-                timestamp=message["ts"],
-                replies=[],
+                content=yaml.dump(content),
                 uri=link,
             )
         )
@@ -69,16 +78,16 @@ class SlackParser:
                 link = self.get_slack_permalink(channel["id"], reply["ts"])
                 user_response = self.client.users_info(user=message["user"])
                 user = user_response["user"]
+                msg_content = {
+                    "sender": SlackMessageSender(id=reply["user"], name=user["name"]),
+                    "recipients": [SlackThreadRecipient(id=message["thread_ts"])],
+                    "slack_message_content": self.parse_message_content(reply),
+                    "timestamp": reply["ts"],
+                }
                 msgs.append(
-                    SlackMessage(
+                    Message(
                         id=reply["ts"],
-                        sender=SlackMessageSender(
-                            id=reply["user"],
-                            name=user["name"],
-                            recipients=[SlackThreadRecipient(id=message["thread_ts"])],
-                            content=self.parse_message_content(reply),
-                            timestamp=reply["ts"],
-                        ),
+                        content=msg_content,
                     )
                 )
 

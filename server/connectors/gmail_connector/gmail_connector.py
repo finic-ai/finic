@@ -9,7 +9,7 @@ from models.models import (
     AppConfig,
     ConnectorId,
     AuthorizationResult,
-    Email,
+    Message,
     MessageRecipient,
     MessageRecipientType,
     MessageSender,
@@ -22,6 +22,7 @@ from google.auth.transport.requests import Request
 from typing import List, Dict, Optional, Tuple
 import json
 import re
+import yaml
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
@@ -104,7 +105,7 @@ class GmailConnector(ConversationConnector):
         else:
             return thread_ids, None
 
-    def _get_email_from_thread(self, service, thread_id: str) -> Email:
+    def _get_email_from_thread(self, service, thread_id: str) -> Message:
         thread = (
             service.users()
             .threads()
@@ -116,6 +117,7 @@ class GmailConnector(ConversationConnector):
 
         replies = []
 
+        # find and parse all replies to the first email first, since to create the final message we need the replies parsed
         for msg in msgs:
             if msg == first_msg:
                 continue
@@ -126,15 +128,17 @@ class GmailConnector(ConversationConnector):
 
         return first_email
 
-    def _parse_message(self, msg: Dict, replies: Optional[List[Email]] = []) -> Email:
+    def _parse_message(
+        self, msg: Dict, replies: Optional[List[Message]] = []
+    ) -> Message:
         payload = msg.get("payload")
         headers = payload.get("headers")
         id = msg.get("id")
 
-        sender = ""
+        sender = None
         recipients = []
         subject = ""
-        content = ""
+        email_content = ""
         timestamp = ""
 
         # Append metadata like email sender, recipient, subject and time
@@ -143,16 +147,33 @@ class GmailConnector(ConversationConnector):
                 name = header.get("name")
                 value = header.get("value")
                 if name.lower() == "from":
-                    sender = value
+                    sender = MessageSender(id=value)
                 elif name.lower() == "to":
                     # str is of the form "a@abc.com, b@def.com"
-                    recipients = value.split(", ")
+                    emails = value.split(", ")
+                    recipients = [
+                        MessageRecipient(
+                            id=email, message_recipient_type=MessageRecipientType.user
+                        )
+                        for email in emails
+                    ]
                 elif name.lower() == "subject":
                     subject = value
                 elif name.lower() == "date":
-                    timestamp = str(
-                        datetime.strptime(value, "%a, %d %b %Y %H:%M:%S %z")
-                    )
+                    # gmail dates can be either in GMT or with timezone - so try both
+                    gmt_pattern = r" GMT$"
+                    if re.search(gmt_pattern, value):
+                        timestamp = time.mktime(
+                            datetime.strptime(
+                                value, "%a, %d %b %Y %H:%M:%S GMT"
+                            ).timetuple()
+                        )
+                    else:
+                        timestamp = time.mktime(
+                            datetime.strptime(
+                                value, "%a, %d %b %Y %H:%M:%S %z"
+                            ).timetuple()
+                        )
 
         parts = payload.get("parts")
         for part in parts:
@@ -164,28 +185,25 @@ class GmailConnector(ConversationConnector):
                 if data:
                     padding = 4 - (len(data) % 4)
                     data = str(data) + "=" * padding
-                    decoded_content = str(base64.urlsafe_b64decode(data).decode())
+                    decoded_content = base64.urlsafe_b64decode(data).decode("utf-8")
                     # Gmail adds replies to the content, we need to manually remove it
                     match = re.search(EMAIL_QUOTE_START_PATTERN, decoded_content)
                     if match:
-                        content = decoded_content[: match.start()]
+                        email_content = decoded_content[: match.start()]
                     else:
-                        content = decoded_content
+                        email_content = decoded_content
 
-        return Email(
+        content = {
+            "subject": subject,
+            "email_content": email_content,
+            "sender": json.dumps(sender.dict()),
+            "recipients": json.dumps([recipient.dict() for recipient in recipients]),
+            "timestamp": timestamp,
+            "replies": json.dumps([reply.dict() for reply in replies]),
+        }
+        return Message(
             id=id,
-            sender=MessageSender(id=sender),
-            recipients=[
-                MessageRecipient(
-                    id=recipient,
-                    message_recipient_type=MessageRecipientType.user,
-                )
-                for recipient in recipients
-            ],
-            subject=subject,
-            content=content,
-            timestamp=timestamp,
-            replies=replies,
+            content=yaml.dump(content),
         )
 
     async def load_messages(
