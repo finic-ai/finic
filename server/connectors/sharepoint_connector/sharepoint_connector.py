@@ -7,8 +7,74 @@ from appstatestore.statestore import StateStore
 import base64
 from models.api import GetDocumentsResponse
 from urllib.parse import urlencode, urlunparse, urlparse, ParseResult
+import tempfile
+from docx import Document as DocxDocument
+import PyPDF2
 
 
+
+def read_docx(file_path):
+    doc = DocxDocument(file_path)
+    full_text = []
+    for para in doc.paragraphs:
+        full_text.append(para.text)
+    return '\n'.join(full_text)
+
+def read_pdf(file_path):
+    with open(file_path, 'rb') as file:
+        pdf_reader = PyPDF2.PdfFileReader(file)
+        count = pdf_reader.numPages
+        content = ''
+        for i in range(count):
+            page = pdf_reader.getPage(i)
+            content += page.extract_text()
+    return content
+
+def get_items(drive_id, item_id, headers):
+    response = requests.get(f'https://graph.microsoft.com/v1.0/drives/{drive_id}/items/{item_id}/children', headers=headers)
+    response_data = response.json()
+    return response_data.get('value')
+
+
+def get_content(doc_title, doc_url, headers):
+
+    response = requests.get(doc_url, headers=headers)
+    with tempfile.NamedTemporaryFile(suffix=".tmp", delete=False) as temp:
+        temp.write(response.content)
+        temp_file_path = temp.name
+
+    doc_content = ''
+    if doc_title.endswith('.docx'):
+        doc_content = read_docx(temp_file_path)
+    elif doc_title.endswith('.pdf'):
+        doc_content = read_pdf(temp_file_path)
+    os.remove(temp_file_path)
+
+    return doc_content
+
+
+def parse_items(items, drive_id, headers, account_id):
+    docs = []
+    for item in items:
+        if item.get('folder', None):  # if the item is a folder
+            # recursively get the documents in the folder
+            sub_items = get_items(drive_id, item['id'], headers)
+            docs.extend(parse_items(sub_items, drive_id, headers, account_id))
+        else:
+            # if the item is a file
+            doc_title = item['name']
+            doc_url = item['@microsoft.graph.downloadUrl']
+            doc_content = get_content(doc_title, doc_url, headers)
+            web_url = item['webUrl']
+            doc = Document(
+                title=doc_title, 
+                uri=web_url, 
+                content=doc_content,
+                connector_id=ConnectorId.sharepoint,
+                account_id=account_id
+            )
+            docs.append(doc)
+    return docs
 
 class SharepointConnector(DocumentConnector):
     connector_id: ConnectorId = ConnectorId.sharepoint
@@ -26,7 +92,6 @@ class SharepointConnector(DocumentConnector):
         try: 
             client_id = connector_credentials['client_id']
             client_secret = connector_credentials['client_secret']
-            authorization_url = f"https://app.intercom.com/oauth?client_id={client_id}"
             redirect_uri = "https://link.psychic.dev/oauth/redirect"
         except Exception as e:
             raise Exception("Connector is not enabled")
@@ -68,10 +133,7 @@ class SharepointConnector(DocumentConnector):
                 'client_secret': client_secret,
             }
 
-            print(data)
-
             response = requests.post(f"https://login.microsoftonline.com/common/oauth2/v2.0/token", headers=headers, data=data)
-            print(response)
 
             creds = response.json()
 
@@ -107,37 +169,32 @@ class SharepointConnector(DocumentConnector):
 
         access_token = credential_json.get('access_token')
 
-        print(access_token)
-
         headers = {
             'Authorization': 'Bearer ' + access_token
         }
 
         response = requests.get('https://graph.microsoft.com/v1.0/sites?search=*', headers=headers)
-        x = response.json()
-        print(x)
-        root_site_id = ""
+        response_data = response.json()
+        all_sites = response_data.get('value')
 
-        response = requests.get(f'https://graph.microsoft.com/v1.0/sites/{root_site_id}/drives', headers=headers)
-        drives = response.json()
+        all_drives = []
+        if all_sites:
+            for site in all_sites:
+                site_id = site.get('id')
+                response = requests.get(f'https://graph.microsoft.com/v1.0/sites/{site_id}/drives', headers=headers)
+                response_data = response.json()
+                drives = response_data.get('value')
+                all_drives.extend(drives)
 
-        drive_id = drives['value'][0]['id']
+        
+        all_docs = []
+        if all_drives:
+            for drive in all_drives:
+                drive_id = drive.get('id')
+                items = get_items(drive_id, 'root', headers)  # getting the children of the root
+                all_docs.extend(parse_items(items, drive_id, headers, account_id))
 
-        print(drives)
-
-
-
-
-
-        documents: List[Document] = [Document(
-            connector_id=self.connector_id,
-            account_id=account_id,
-            title= 'Test',
-            content= 'This is an example help article. You can edit it by clicking the edit button in the top right corner. You can also add new articles by clicking the "Add Article" button in the top left corner.',
-            uri= 'https://www.intercom.com/Help-Article-Example-1d1b1b1b1b1b4c4c4c4c4c4c4c4c4c4c',
-        )]
-
-        return GetDocumentsResponse(documents=documents, next_page_cursor=None)
+        return GetDocumentsResponse(documents=all_docs, next_page_cursor=None)
 
 
 

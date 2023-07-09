@@ -25,6 +25,7 @@ import IntercomIcon from "./icons/IntercomIcon";
 import HubspotIcon from "./icons/HubspotIcon";
 import ReadmeIcon from "./icons/ReadmeIcon";
 import SalesforceIcon from "./icons/SalesforceIcon";
+import SharepointIcon from "./icons/SharepointIcon";
 import { start } from "repl";
 import GmailIcon from "./icons/GmailIcon";
 
@@ -89,7 +90,7 @@ const connectors = [
   {
     name: "Sharepoint",
     id: "sharepoint",
-    icon: ReadmeIcon,
+    icon: SharepointIcon,
     label: null,
     labelColor: "info",
     active: true,

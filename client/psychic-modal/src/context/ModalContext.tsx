@@ -303,8 +303,6 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
       payload.metadata = metadata;
     }
     try {
-      console.log("hello");
-      console.log(payload);
       const response = await fetch(url, {
         method: "POST",
         headers: {
