@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, TypeVar
+from typing import List, Optional, Dict
 from enum import Enum
 from strenum import StrEnum
 
@@ -76,58 +76,18 @@ class ConnectorStatus(BaseModel):
 
 class MessageSender(BaseModel):
     id: str
-
-
-class EmailSender(MessageSender):
-    pass
-
-
-class SlackMessageSender(MessageSender):
-    name: str
-
-
-class MessageRecipientType(StrEnum):
-    user = "user"
-    slack_channel = "slack_channel"
-    slack_thread = "slack_thread"
+    name: Optional[str]
 
 
 class MessageRecipient(BaseModel):
     id: str
-    message_recipient_type: MessageRecipientType
-
-
-class SlackThreadRecipient(MessageRecipient):
-    message_recipient_type = MessageRecipientType.slack_thread
-
-
-class SlackChannelRecipient(MessageRecipient):
-    name: str
-    message_recipient_type = MessageRecipientType.slack_channel
+    name: Optional[str]
 
 
 class Message(BaseModel):
-    id: str
-    sender: MessageSender
-    recipients: List[MessageRecipient]
     content: str
-    timestamp: str
+    id: Optional[str] = None
     uri: Optional[str] = None
-
-
-class SlackMessage(Message):
-    replies: List["SlackMessage"] = []
-
-
-SlackMessage.update_forward_refs()
-
-
-class Email(Message):
-    subject: Optional[str] = None
-    replies: List["Email"] = []
-
-
-Email.update_forward_refs()
 
 
 class AuthorizationResult(BaseModel):
@@ -147,9 +107,6 @@ class Document(BaseModel):
 class GetDocumentsResponse(BaseModel):
     documents: List[Document]
     next_page_cursor: Optional[str] = None
-
-
-T = TypeVar("T", bound=Message)
 
 
 class GetConversationsResponse(BaseModel):
