@@ -21,6 +21,7 @@ from typing import Dict
 import json
 import requests
 from bs4 import BeautifulSoup
+from document_processors import PIIRedactor
 
 from .zendesk_parser import ZendeskParser
 
@@ -195,7 +196,7 @@ class ZendeskConnector(DocumentConnector, TicketConnector):
         return GetDocumentsResponse(documents=documents)
 
     async def load_tickets(
-        self, connection_filter: ConnectionFilter
+        self, connection_filter: ConnectionFilter, redact_pii: bool = False
     ) -> GetTicketsResponse:
         account_id = connection_filter.account_id
         uris = connection_filter.uris
@@ -215,14 +216,19 @@ class ZendeskConnector(DocumentConnector, TicketConnector):
         )
 
         tickets = []
-        for ticket in raw_tickets:
+        for raw_ticket in raw_tickets:
+            content = raw_ticket["content"]
+
+            if redact_pii:
+                pii_redactor = PIIRedactor()
+                content = pii_redactor.redact(content)
             tickets.append(
                 Document(
-                    title=ticket["title"],
-                    content=ticket["content"],
+                    title=raw_ticket["title"],
+                    content=content,
                     connector_id=self.connector_id,
                     account_id=account_id,
-                    uri=ticket["uri"],
+                    uri=raw_ticket["uri"],
                 )
             )
 

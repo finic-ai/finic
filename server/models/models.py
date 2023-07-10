@@ -165,7 +165,7 @@ class ConversationConnector(DataConnector):
 class TicketConnector(DataConnector):
     @abstractmethod
     async def load_tickets(
-        self, connection_filter: ConnectionFilter
+        self, connection_filter: ConnectionFilter, redact_pii: bool = False
     ) -> GetTicketsResponse:
         pass
 

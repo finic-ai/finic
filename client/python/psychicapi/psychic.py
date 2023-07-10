@@ -256,11 +256,13 @@ class Psychic:
         *,
         account_id: str,
         connector_id: ConnectorId,
+        page_cursor: Optional[str] = None,
         oldest_timestamp: Optional[int] = None,
     ):
         body = {
             "connector_id": connector_id.value,
             "account_id": account_id,
+            "page_cursor": page_cursor,
         }
         if oldest_timestamp is not None:
             body["oldest_timestamp"] = oldest_timestamp

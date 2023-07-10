@@ -485,7 +485,8 @@ async def get_tickets(
                     account_id=account_id,
                     page_cursor=request.page_cursor,
                     page_size=request.page_size,
-                )
+                ),
+                redact_pii=request.redact_pii,
             )
             tickets.extend(result.tickets)
         response = result

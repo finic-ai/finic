@@ -44,6 +44,24 @@ while True:
 print(all_docs)
 ```
 
+### Retrieve messages from a connection
+
+To retrieve messages from connectors like `slack` and `gmail`, use the `get_conversations` function.
+
+```
+page_cursor = None
+all_messages = []
+while True:
+    messages_response = psychic.get_documents(account_id="account_id", connector_id=ConnectorId.notion, page_cursor=page_cursor)
+    if messages_response is None:
+        break
+    all_messages.extend(messages_response.messages)
+    page_cursor = messages_response.next_page_cursor
+    if page_cursor is None:
+        break
+print(all_messages)
+```
+
 ## Advanced Filtering
 
 ### Filtering by section(s)

@@ -45,9 +45,7 @@ class SlackParser:
 
         msgs = []
         content = {
-            "sender":
-                MessageSender(id=message["user"], name=user_name).dict()
-            ,
+            "sender": MessageSender(id=message["user"], name=user_name).dict(),
             "recipients": [
                 MessageRecipient(id=channel["id"], name=channel["name"]).dict()
             ],

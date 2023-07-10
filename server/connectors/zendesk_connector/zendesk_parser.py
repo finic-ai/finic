@@ -100,23 +100,24 @@ class ZendeskParser:
             content_ison = {
                 "subject": ticket["subject"],
                 "description": ticket["description"],
-                "timestamp": ticket["created_at"],
                 "status": ticket["status"],
             }
 
             comments = self.get_ticket_comments(ticket["id"])
             parsed_comments = []
-            for comment in comments:
-                parsed_comments.append(
-                    {
-                        "author": "Customer"
-                        if comment["author_id"] == customer_id
-                        else "Agent",
-                        "content": comment["body"],
-                    }
-                )
+            # the first comment is just the description of the ticket so we skip it
+            if len(comments) > 1:
+                for comment in comments[1:]:
+                    parsed_comments.append(
+                        {
+                            "author": "Customer"
+                            if comment["author_id"] == customer_id
+                            else "Agent",
+                            "content": comment["body"],
+                        }
+                    )
             content_ison["comments"] = parsed_comments
-            content_yaml = yaml.dump(content_ison)
+            content_yaml = yaml.dump(content_ison, sort_keys=False)
 
             parsed_tickets.append(
                 {

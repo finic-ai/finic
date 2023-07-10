@@ -72,6 +72,7 @@ class GetDocumentsRequest(BaseModel):
 class GetTicketsRequest(BaseModel):
     connector_id: Optional[ConnectorId]
     account_id: str
+    redact_pii: Optional[bool] = False
     page_cursor: Optional[str] = None
     page_size: Optional[int] = 100
 

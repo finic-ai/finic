@@ -19,7 +19,11 @@ class GoogleDriveParser:
             try:
                 file = (
                     self.service.files()
-                    .get(fileId=id, fields="id, name, webViewLink, mimeType", supportsAllDrives=True)
+                    .get(
+                        fileId=id,
+                        fields="id, name, webViewLink, mimeType",
+                        supportsAllDrives=True,
+                    )
                     .execute()
                 )
                 files.append(file)
@@ -31,7 +35,11 @@ class GoogleDriveParser:
         try:
             file = (
                 self.service.files()
-                .get(fileId=id, fields="id, name, webViewLink, mimeType", supportsAllDrives=True)
+                .get(
+                    fileId=id,
+                    fields="id, name, webViewLink, mimeType",
+                    supportsAllDrives=True,
+                )
                 .execute()
             )
             return file
@@ -46,7 +54,7 @@ class GoogleDriveParser:
                     self.service.files()
                     .list(
                         fields="nextPageToken, files(id, name, mimeType, webViewLink)",
-                        supportsAllDrives=True
+                        supportsAllDrives=True,
                     )
                     .execute()
                 )
@@ -57,8 +65,8 @@ class GoogleDriveParser:
                     .list(
                         q=query,
                         fields="nextPageToken, files(id, name, mimeType, webViewLink)",
-                        supportsAllDrives=True, 
-                        includeItemsFromAllDrives=True
+                        supportsAllDrives=True,
+                        includeItemsFromAllDrives=True,
                     )
                     .execute()
                 )
@@ -155,8 +163,9 @@ class GoogleDriveParser:
                     file_metadata = (
                         self.service.files()
                         .get(
-                            fileId=item["id"], fields="id, name, webViewLink, mimeType",
-                            supportsAllDrives=True
+                            fileId=item["id"],
+                            fields="id, name, webViewLink, mimeType",
+                            supportsAllDrives=True,
                         )
                         .execute()
                     )
