@@ -52,7 +52,7 @@ To retrieve messages from connectors like `slack` and `gmail`, use the `get_conv
 page_cursor = None
 all_messages = []
 while True:
-    messages_response = psychic.get_documents(account_id="account_id", connector_id=ConnectorId.notion, page_cursor=page_cursor)
+    messages_response = psychic.get_conversations(account_id="account_id", connector_id=ConnectorId.gmail, page_cursor=page_cursor)
     if messages_response is None:
         break
     all_messages.extend(messages_response.messages)
@@ -60,6 +60,24 @@ while True:
     if page_cursor is None:
         break
 print(all_messages)
+```
+
+### Retrieve tickets from a connection
+
+To retrieve messages from connectors like `zendesk`, use the `get_tickets` function.
+
+```
+page_cursor = None
+all_tickets = []
+while True:
+    tickets_response = psychic.get_tickets(account_id="account_id", connector_id=ConnectorId.zendesk, redact_pii=True, page_cursor=page_cursor)
+    if tickets_response is None:
+        break
+    all_tickets.extend(tickets_response.tickets)
+    page_cursor = tickets_response.next_page_cursor
+    if page_cursor is None:
+        break
+print(all_tickets)
 ```
 
 ## Advanced Filtering

@@ -107,6 +107,16 @@ class GetDocumentsResponse:
         self.documents = documents
         self.next_page_cursor = next_page_cursor
 
+class GetTicketsResponse:
+    tickets: List[Dict]
+    next_page_cursor: Optional[str] = None
+
+    def __init__(
+        self, tickets: List[Dict], next_page_cursor: Optional[str] = None
+    ) -> None:
+        self.tickets = tickets
+        self.next_page_cursor = next_page_cursor
+
 
 class ChunkingOptions:
     min_chunk_size: Optional[int] = None
@@ -281,6 +291,75 @@ class Psychic:
             next_page_cursor = data["next_page_cursor"]
             return GetConversationsResponse(
                 messages=messages, next_page_cursor=next_page_cursor
+            )
+
+        else:
+            self.handle_http_error(response)
+
+    def get_conversations(
+        self,
+        *,
+        account_id: str,
+        connector_id: ConnectorId,
+        page_cursor: Optional[str] = None,
+        oldest_timestamp: Optional[int] = None,
+    ):
+        body = {
+            "connector_id": connector_id.value,
+            "account_id": account_id,
+            "page_cursor": page_cursor,
+        }
+        if oldest_timestamp is not None:
+            body["oldest_timestamp"] = oldest_timestamp
+
+        response = requests.post(
+            self.api_url + "get-conversations",
+            json=body,
+            headers={
+                "Authorization": "Bearer " + self.secret_key,
+                "Accept": "application/json",
+            },
+        )
+        if response.status_code == 200:
+            data = response.json()
+            messages = data["messages"]
+            next_page_cursor = data["next_page_cursor"]
+            return GetConversationsResponse(
+                messages=messages, next_page_cursor=next_page_cursor
+            )
+
+        else:
+            self.handle_http_error(response)
+
+    def get_tickets(
+        self,
+        *,
+        account_id: str,
+        connector_id: ConnectorId,
+        redact_pii: Optional[bool] = False,
+        page_cursor: Optional[str] = None,
+    ):
+        body = {
+            "connector_id": connector_id.value,
+            "account_id": account_id,
+            "redact_pii": redact_pii,
+            "page_cursor": page_cursor,
+        }
+
+        response = requests.post(
+            self.api_url + "get-tickets",
+            json=body,
+            headers={
+                "Authorization": "Bearer " + self.secret_key,
+                "Accept": "application/json",
+            },
+        )
+        if response.status_code == 200:
+            data = response.json()
+            tickets = data["tickets"]
+            next_page_cursor = data["next_page_cursor"]
+            return GetTicketsResponse(
+                tickets=tickets, next_page_cursor=next_page_cursor
             )
 
         else:

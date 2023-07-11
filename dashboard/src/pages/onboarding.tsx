@@ -12,7 +12,7 @@ import { ConnectorPlayground } from "./create-connection";
 import Text from "../components/text";
 
 const OnboardingPage: FC = function () {
-  const { appId } = useUserStateContext();
+  const { appId, bearer } = useUserStateContext();
 
   return (
     <NavbarSidebarLayout isFooter={false}>
@@ -50,7 +50,7 @@ const OnboardingPage: FC = function () {
                 </Text>
                 <div className="flex flex-row items-center space-x-4">
                   <Text>Your Secret Key:</Text>
-                  <TextInput className="w-[310px]" readOnly value={appId} />
+                  <TextInput className="w-[310px]" readOnly value={bearer} />
                 </div>
                 <Tabs.Group style="underline">
                   <Tabs.Item active title="Using LangChain">
