@@ -11,7 +11,7 @@ import {
   HiCog,
   HiPlay,
   HiCloudDownload,
-  HiSparkles,
+  HiSparkles
 } from "react-icons/hi";
 import { FaGithub, FaReadme } from "react-icons/fa";
 
@@ -21,7 +21,7 @@ import isSmallScreen from "../helpers/is-small-screen";
 const DashboardSidebar: FC = function () {
   const {
     isOpenOnSmallScreens: isSidebarOpenOnSmallScreens,
-    isPageWithSidebar,
+    isPageWithSidebar
   } = useSidebarContext();
 
   const [currentPage, setCurrentPage] = useState("");
@@ -41,7 +41,7 @@ const DashboardSidebar: FC = function () {
   return (
     <div
       className={classNames("lg:!block", {
-        hidden: !isSidebarOpenOnSmallScreens,
+        hidden: !isSidebarOpenOnSmallScreens
       })}
     >
       <Sidebar
@@ -81,6 +81,16 @@ const DashboardSidebar: FC = function () {
                     }
                   >
                     Notion
+                  </Sidebar.Item>
+                  <Sidebar.Item
+                    href="/connectors/github"
+                    className={
+                      "/connectors/google-drive" === currentPage
+                        ? "bg-gray-100 dark:bg-gray-700"
+                        : ""
+                    }
+                  >
+                    Github
                   </Sidebar.Item>
                   <Sidebar.Item
                     href="/connectors/google-drive"

@@ -10,6 +10,7 @@ class ConnectorId(StrEnum):
     confluence = "confluence"
     dropbox = "dropbox"
     gdrive = "gdrive"
+    github = "github"
     gmail = "gmail"
     hubspot = "hubspot"
     intercom = "intercom"
