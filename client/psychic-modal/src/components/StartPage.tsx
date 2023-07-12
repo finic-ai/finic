@@ -94,7 +94,7 @@ const StartPage: React.FC = () => {
         <p className="text-sm text-gray-500">
           By selecting “Continue” you agree to the{" "}
           <a
-            href="https://www.psyhic.dev/privacy-policy"
+            href="https://www.psychic.dev/privacy-policy"
             target="_blank"
             className="underline text-blue-500"
           >
