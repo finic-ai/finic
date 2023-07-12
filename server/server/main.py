@@ -67,18 +67,24 @@ bearer_scheme = HTTPBearer()
 
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
-    app_config = StateStore().get_config(credentials.credentials)
+    try:
+        app_config = StateStore().get_config(credentials.credentials)
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or missing secret key")
     if credentials.scheme != "Bearer" or app_config is None:
-        raise HTTPException(status_code=401, detail="Invalid or missing token")
+        raise HTTPException(status_code=401, detail="Invalid or missing secret key")
     return app_config
 
 
 def validate_public_key(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ):
-    app_config = StateStore().get_config_from_public_key(credentials.credentials)
+    try:
+        app_config = StateStore().get_config_from_public_key(credentials.credentials)
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or missing public key")
     if credentials.scheme != "Bearer" or app_config is None:
-        raise HTTPException(status_code=401, detail="Invalid or missing token")
+        raise HTTPException(status_code=401, detail="Invalid or missing public key")
     return app_config
 
 
