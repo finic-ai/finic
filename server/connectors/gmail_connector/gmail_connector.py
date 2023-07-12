@@ -121,7 +121,11 @@ class GmailConnector(ConversationConnector):
             if msg == first_msg:
                 continue
 
-            replies.append(self._parse_message(msg))
+            try:
+                replies.append(self._parse_message(msg))
+            except Exception as e:
+                print(e)
+                continue
 
         first_email = self._parse_message(first_msg, replies)
         return first_email
@@ -157,12 +161,19 @@ class GmailConnector(ConversationConnector):
                 elif name.lower() == "subject":
                     subject = value
                 elif name.lower() == "date":
-                    # gmail dates can be either in GMT or with timezone - so try both
+                    # gmail dates can be either in GMT, or with UTC and timezone, or with just timezone
                     gmt_pattern = r" GMT$"
+                    utc_pattern = r" \(UTC\)$"
                     if re.search(gmt_pattern, value):
                         timestamp = time.mktime(
                             datetime.strptime(
                                 value, "%a, %d %b %Y %H:%M:%S GMT"
+                            ).timetuple()
+                        )
+                    elif re.search(utc_pattern, value):
+                        timestamp = time.mktime(
+                            datetime.strptime(
+                                value, "%a, %d %b %Y %H:%M:%S %z (UTC)"
                             ).timetuple()
                         )
                     else:
