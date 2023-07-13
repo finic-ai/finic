@@ -101,9 +101,18 @@ class StateStore:
 
         custom_credentials = None
         is_enabled = False
+        connector_config = None
         if len(response.data) > 0:
             is_enabled = True
-            custom_credentials = json.loads(response.data[0]["credential"])
+            credentials = response.data[0]["credential"]
+            if credentials:
+                custom_credentials = json.loads(response.data[0]["credential"])
+            else:
+                custom_credentials = {}
+            connector_config = response.data[0]["config"]
+            if not connector_config:
+                connector_config = {}
+
 
         # check the connections table for all connections with the given connector_id and app_id
         response = (
@@ -142,6 +151,7 @@ class StateStore:
         return ConnectorStatus(
             is_enabled=is_enabled,
             custom_credentials=custom_credentials,
+            custom_config=connector_config,
             connections=connections,
             redirect_uris=redirect_uris,
         )
@@ -219,6 +229,41 @@ class StateStore:
 
         if len(response.data) > 0 and response.data[0]["config"]:
             return response.data[0]["config"]
+        return None
+    
+    def update_connector_custom_config(
+        self, connector_id: ConnectorId, config: AppConfig, new_config: Dict
+    ) -> Optional[Dict]:
+
+        insert_data = {
+            "app_id": config.app_id,
+            "user_id": config.user_id,
+            "connector_id": connector_id,
+            "config": new_config,
+            "credential": None
+        }
+
+        # check if a row exists in enabled_connectors. If it does, use the existing credential
+        response = (
+            self.supabase.table("enabled_connectors")
+            .select("*")
+            .filter("app_id", "eq", config.app_id)
+            .filter("connector_id", "eq", connector_id)
+            .execute()
+        )
+        
+
+        if len(response.data) > 0:
+            insert_data["credential"] = response.data[0]["credential"]
+
+
+        # upsert into enabled_connectors
+        response = (
+            self.supabase.table("enabled_connectors")
+                .upsert(insert_data)
+                .execute()
+        )
+
         return None
 
     def add_connection(

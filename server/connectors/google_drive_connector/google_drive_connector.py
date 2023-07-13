@@ -26,7 +26,7 @@ from collections import deque
 from .google_drive_parser import GoogleDriveParser
 
 
-SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 
 def download_pdf(service, file_id) -> Optional[io.BytesIO]:

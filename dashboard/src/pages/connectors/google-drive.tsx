@@ -42,6 +42,7 @@ const GoogleDriveConnectorPage: FC = function () {
   const [clientSecret, setClientSecret] = useState("");
   const [developerKey, setDeveloperKey] = useState("");
   const [redirectUri, setRedirectUri] = useState("");
+  const [scope, setScope] = useState("https://www.googleapis.com/auth/drive.readonly")
   const [possibleRedirectUris, setPossibleRedirectUris] = useState([
     "https://link.psychic.dev/oauth/redirect",
   ] as string[]);
@@ -74,6 +75,9 @@ const GoogleDriveConnectorPage: FC = function () {
     var payload = {
       connector_id: "gdrive",
       credential: credential,
+      custom_config: {
+        scope: scope,
+      },
     };
 
     try {
@@ -128,10 +132,14 @@ const GoogleDriveConnectorPage: FC = function () {
         const isAuthorized = jsonData.status.is_enabled;
         const customCredentials = jsonData.status.custom_credentials;
         const connections = jsonData.status.connections;
+        const customConfig = jsonData.status.custom_config;
         if (customCredentials) {
           setClientSecret(JSON.stringify(customCredentials.client_secrets));
           setDeveloperKey(customCredentials.developer_key);
           setRedirectUri(customCredentials.redirect_uri);
+        }
+        if (customConfig && customConfig.scope) {
+          setScope(customConfig.scope);
         }
         setPossibleRedirectUris(jsonData.status.redirect_uris);
         setAuthorized(isAuthorized);
@@ -241,6 +249,8 @@ const GoogleDriveConnectorPage: FC = function () {
                         developerKey={developerKey}
                         setDeveloperKey={setDeveloperKey}
                         possibleRedirectUris={possibleRedirectUris}
+                        scope={scope}
+                        setScope={setScope}
                       />
                     </div>
                   </div>
@@ -271,6 +281,8 @@ interface AuthorizeModalProps {
   developerKey: string;
   setDeveloperKey: (developerKey: string) => void;
   possibleRedirectUris: string[];
+  scope: string;
+  setScope: (scope: string) => void;
 }
 
 const AuthorizeModal: FC<AuthorizeModalProps> = function ({
@@ -284,6 +296,8 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
   developerKey,
   setDeveloperKey,
   possibleRedirectUris,
+  scope,
+  setScope,
 }: AuthorizeModalProps) {
   console.log(authorized);
 
@@ -331,6 +345,23 @@ const AuthorizeModal: FC<AuthorizeModalProps> = function ({
                 onChange={(e) => setRedirectUri(e.target.value)}
               >
                 {possibleRedirectUris.map((uri) => {
+                  return (
+                    <option key={uri} value={uri}>
+                      {uri}
+                    </option>
+                  );
+                })}
+              </Select>
+            </div>
+          </div>
+          <div className="lg:col-span-2">
+            <div>
+              <Label htmlFor="apiKeys.label">Scope</Label>
+              <Select
+                value={scope}
+                onChange={(e) => setScope(e.target.value)}
+              >
+                {["https://www.googleapis.com/auth/drive.readonly", "https://www.googleapis.com/auth/drive.file"].map((uri) => {
                   return (
                     <option key={uri} value={uri}>
                       {uri}

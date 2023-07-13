@@ -36,6 +36,7 @@ class GetConnectionsResponse(BaseModel):
 
 class EnableConnectorRequest(BaseModel):
     connector_id: ConnectorId
+    custom_config: Optional[Dict]
     credential: Optional[Dict]
 
 

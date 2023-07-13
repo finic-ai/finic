@@ -249,16 +249,6 @@ const ProductsTable: FC = function () {
               onChange={() => setWhitelabel(!whitelabel)}
             />
           </div>
-          <div className="flex justify-beginning">
-            <Button color="primary" onClick={updateSettings}>
-              {loading && <Spinner className="mr-3" />}
-              Save
-            </Button>
-          </div>
-          {/* Success message text */}
-          {saved && (
-            <div className="text-green-500 text-sm ml-2 mt-1">Saved!</div>
-          )}
 
           <h3 className="font-semibold text-gray-900 dark:text-white sm:text-xl">
             24-hr Sync Options
@@ -275,13 +265,16 @@ const ProductsTable: FC = function () {
             />
           </div>
           <div className="flex justify-beginning">
-            <Button color="primary" onClick={updateSync}>
+            <Button color="primary" onClick={() => {
+              updateSync()
+              updateSettings()
+              }}>
               {webhookLoading && <Spinner className="mr-3" />}
               Save
             </Button>
           </div>
         </div>
-        {webhookSaved && (
+        {webhookSaved && saved && (
           <div className="text-green-500 text-sm ml-2 mt-1">Saved!</div>
         )}
       </form>
