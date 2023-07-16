@@ -82,7 +82,7 @@ const connectors = [
     id: "dropbox",
   },
   {
-    name: "Github Issues",
+    name: "Github",
     id: "github",
   },
   {
@@ -177,6 +177,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     "hubspot",
     "salesforce",
     "gdrive",
+    "github",
     "gmail",
     "sharepoint",
   ];

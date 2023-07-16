@@ -36,6 +36,7 @@ import ReadmeConnectorPage from "./pages/connectors/readme";
 import WebsiteConnectorPage from "./pages/connectors/website";
 import GmailConnectorPage from "./pages/connectors/gmail";
 import SharepointConnectorPage from "./pages/connectors/sharepoint";
+import GithubConnectorPage from "./pages/connectors/github";
 
 const container = document.getElementById("root");
 
@@ -48,7 +49,7 @@ if (
   !window.location.host.includes("localhost")
 ) {
   posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
-    api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+    api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST
   });
 }
 
@@ -76,13 +77,13 @@ function App() {
           app_id: "tdxqbjpq",
           name: name, // Full name
           email: session.user.email, // Email address
-          created_at: session.user.created_at, // Signup date as a Unix timestamp
+          created_at: session.user.created_at // Signup date as a Unix timestamp
         });
       }
     });
 
     const {
-      data: { subscription },
+      data: { subscription }
     } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setSession(session);
     });
@@ -143,6 +144,10 @@ function App() {
                 <Route
                   path="/connectors/dropbox"
                   element={<DropboxConnectorPage />}
+                />
+                <Route
+                  path="/connectors/github"
+                  element={<GithubConnectorPage />}
                 />
                 <Route
                   path="/connectors/google-drive"

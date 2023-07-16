@@ -1,3 +1,4 @@
+from connectors.github_connector.github_connector import GithubConnector
 from .notion_connector import NotionConnector
 from .google_drive_connector import GoogleDriveConnector
 from .zendesk_connector import ZendeskConnector
@@ -34,6 +35,8 @@ def get_document_connector_for_id(
         return DropboxConnector(config)
     elif connector_id == ConnectorId.gdrive:
         return GoogleDriveConnector(config)
+    elif connector_id == ConnectorId.github:
+        return GithubConnector(config)
     elif connector_id == ConnectorId.hubspot:
         return HubspotConnector(config)
     elif connector_id == ConnectorId.intercom:
@@ -80,6 +83,8 @@ def get_connector_for_id(
         return ClickupConnector(config)
     elif connector_id == ConnectorId.dropbox:
         return DropboxConnector(config)
+    elif connector_id == ConnectorId.github:
+        return GithubConnector(config)
     elif connector_id == ConnectorId.gdrive:
         return GoogleDriveConnector(config)
     elif connector_id == ConnectorId.gmail:
@@ -94,12 +99,12 @@ def get_connector_for_id(
         return ReadmeConnector(config)
     elif connector_id == ConnectorId.salesforce:
         return SalesforceConnector(config)
+    elif connector_id == ConnectorId.sharepoint:
+        return SharepointConnector(config)
+    elif connector_id == ConnectorId.slack:
+        return SlackConnector(config)
     elif connector_id == ConnectorId.web:
         return WebsiteConnector(config)
     elif connector_id == ConnectorId.zendesk:
         return ZendeskConnector(config)
-    elif connector_id == ConnectorId.slack:
-        return SlackConnector(config)
-    elif connector_id == ConnectorId.sharepoint:
-        return SharepointConnector(config)
     return None
