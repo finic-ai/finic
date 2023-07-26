@@ -73,7 +73,8 @@ class GoogleDriveConnector(DocumentConnector):
         client_secrets = cred["client_secrets"]
         developer_key = cred["developer_key"]
 
-        redirect_uri = client_secrets["web"]["redirect_uris"][0]
+        # redirect_uri = client_secrets["web"]["redirect_uris"][0]
+        redirect_uri = "https://link.psychic.dev/oauth/redirect"
 
         if custom_config and custom_config.get("scope"):
             scopes = custom_config["scope"]
