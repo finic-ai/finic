@@ -24,6 +24,7 @@ import ModalHeader from "./components/ModalHeader";
 import WebAuthFlow from "./components/auth/WebAuthForm";
 import GmailAuthFlow from "./components/auth/GmailAuthFlow";
 import SharepointAuthFlow from "./components/auth/SharepointAuthFlow";
+import GithubAuthFlow from "./components/auth/GithubAuthFlow";
 
 const PSYCHIC_URL = process.env.REACT_APP_PSYCHIC_URL;
 
@@ -58,7 +59,7 @@ const App: React.FC = () => {
         } else if (selectedConnectorId == "gmail") {
           return <GmailAuthFlow />;
         } else if (selectedConnectorId == "github") {
-          return <div>Github</div>;
+          return <GithubAuthFlow />;
         } else if (selectedConnectorId == "hubspot") {
           return <HubspotAuthFlow />;
         } else if (selectedConnectorId == "intercom") {

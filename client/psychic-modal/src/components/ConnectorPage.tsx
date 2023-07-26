@@ -136,12 +136,12 @@ const connectors = [
     active: true,
   },
   {
-    name: "Github Issues",
+    name: "Github",
     id: "github",
     icon: GithubIcon,
-    label: "In Development",
+    label: "Alpha",
     labelColor: "warning",
-    active: false,
+    active: true,
   },
 ];
 
