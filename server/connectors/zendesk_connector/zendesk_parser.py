@@ -85,7 +85,7 @@ class ZendeskParser:
             print(
                 f"Error: Unable to fetch articles. Status code: {response.status_code}"
             )
-            return []
+            return [], None  # Return a tuple of an empty list and None
 
         data = response.json()
         raw_tickets = data["tickets"]
@@ -128,7 +128,7 @@ class ZendeskParser:
             )
 
         return parsed_tickets, next_page
-
+        
     def get_ticket_comments(self, ticket_id: str) -> list:
         base_url = f"https://{self.subdomain}.zendesk.com/api/v2/tickets/{ticket_id}/comments.json"
         response = self.call_zendesk_api(base_url)
