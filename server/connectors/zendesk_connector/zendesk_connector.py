@@ -213,25 +213,31 @@ class ZendeskConnector(DocumentConnector, TicketConnector):
 
         parser = ZendeskParser(subdomain, credential_json)
 
-        raw_tickets, next_page_cursor = parser.get_all_tickets(
-            None, connection_filter.page_cursor
-        )
-
         tickets = []
-        for raw_ticket in raw_tickets:
-            content = raw_ticket["content"]
-
-            if redact_pii:
-                pii_redactor = PIIRedactor()
-                content = pii_redactor.redact(content)
-            tickets.append(
-                Document(
-                    title=raw_ticket["title"],
-                    content=content,
-                    connector_id=self.connector_id,
-                    account_id=account_id,
-                    uri=raw_ticket["uri"],
-                )
+        next_page_cursor = None
+        while True:
+            raw_tickets, next_page_cursor = parser.get_all_tickets(
+                None, next_page_cursor
             )
+
+            for raw_ticket in raw_tickets:
+                content = raw_ticket["content"]
+
+                if redact_pii:
+                    pii_redactor = PIIRedactor()
+                    content = pii_redactor.redact(content)
+                tickets.append(
+                    Document(
+                        title=raw_ticket["title"],
+                        content=content,
+                        connector_id=self.connector_id,
+                        account_id=account_id,
+                        uri=raw_ticket["uri"],
+                    )
+                )
+
+            # Break the loop if there is no next page
+            if not next_page_cursor:
+                break
 
         return GetTicketsResponse(tickets=tickets, next_page_cursor=next_page_cursor)
