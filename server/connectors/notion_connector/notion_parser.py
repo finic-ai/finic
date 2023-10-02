@@ -1,7 +1,8 @@
+import json
+from typing import Dict, List, Optional, Tuple
+
 import requests
 from models.models import Document, Section
-from typing import Dict, List, Optional, Tuple
-import json
 
 BASE_URL = "https://api.notion.com"
 
@@ -68,17 +69,10 @@ class NotionParser:
                     ):
                         unprocessed_pages.append(page["id"])
 
-            for page in all_pages:
-                # check if the parent is a database and with an id in database_ids
-                if (
-                    page["parent"]["type"] == "database_id"
-                    and page["parent"]["database_id"] in database_ids
-                ):
-                    if (
-                        page.get("id") not in processed_pages
-                        and page.get("id") not in unprocessed_pages
-                    ):
-                        unprocessed_pages.append(page["id"])
+            # process nested databases
+            for db_id in database_ids:
+                if db_id not in processed_pages and db_id not in unprocessed_pages:
+                    unprocessed_pages.append(db_id)
 
         return results
 
