@@ -24,6 +24,8 @@
 </a>
 </p>
 
+**Psychic cloud is deprecated as of October 1, 2023 due to lack of demand, and the original authors are moving onto a new project. If you are interested in helping maintain or improve the open source project, email founders@psychic.dev. If you need support, try the public slack channel.**
+
 [Psychic](https://psychic.dev/) is an open source integration platform to extract and transform unstructured data from SaaS applications like Notion, Slack, Zendesk, Confluence, and Google Drive. Instead of building one integration for each data sources, you can build one integration that works for all data sources. **Psychic is designed for startups that use LLMs and need to retrieve documents to use as context**. 
 
 There are 3 parts of the platform
