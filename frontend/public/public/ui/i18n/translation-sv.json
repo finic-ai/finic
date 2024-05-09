@@ -1,0 +1,1189 @@
+{
+  "action": {
+    "addParagraph": "Lägg till stycke",
+    "add": "Lägg till",
+    "apply": "Tillämpa",
+    "applyAll": "Tillämpa alla",
+    "calendar": "Kalender",
+    "calibrate": "Kalibrera",
+    "cancel": "Avbryt",
+    "confirm": "Bekräfta",
+    "clear": "Klar",
+    "clearAll": "Rensa alla",
+    "close": "Stänga",
+    "undo": "Ångra",
+    "redo": "Göra om",
+    "comment": "Kommentar",
+    "reply": "Lägg till svar",
+    "copy": "Kopiera",
+    "cut": "Skära",
+    "paste": "Klistra",
+    "pasteWithoutFormatting": "Klistra in utan att formatera",
+    "delete": "Radera",
+    "group": "Grupp",
+    "ungroup": "Dela upp gruppen",
+    "download": "Ladda ner",
+    "edit": "Redigera",
+    "extract": "Extrahera",
+    "enterFullscreen": "Fullskärm",
+    "exitFullscreen": "Avsluta helskärm",
+    "fit": "Passa",
+    "fitToPage": "Anpassa till sida",
+    "fitToWidth": "Passar till bredden",
+    "more": "Mer",
+    "openFile": "Öppna fil",
+    "pagePrev": "Föregående sida",
+    "pageNext": "Nästa sida",
+    "pageSet": "Ställ in sida",
+    "print": "Skriva ut",
+    "proceed": "Fortsätt",
+    "name": "namn",
+    "rename": "Döp om",
+    "ok": "OK",
+    "rotate": "Sidorientering",
+    "rotate3D": "Rotera",
+    "rotateClockwise": "Rotera klockvis",
+    "rotateCounterClockwise": "Rotera moturs",
+    "save": "Spara",
+    "post": "Posta",
+    "create": "Skapa",
+    "update": "Uppdatering",
+    "showMoreResults": "Visa fler resultat",
+    "sign": "Tecken",
+    "style": "Stil",
+    "submit": "Skicka in",
+    "zoom": "Zoom",
+    "zoomIn": "Zooma in",
+    "zoomOut": "Zooma ut",
+    "zoomSet": "Ställ in zoom",
+    "zoomControls": "Zoomkontroller",
+    "draw": "Dra",
+    "type": "Typ",
+    "upload": "Ladda upp",
+    "link": "Länk",
+    "fileAttachmentDownload": "Ladda ner bifogad fil",
+    "prevResult": "Tidigare resultat",
+    "nextResult": "Nästa resultat",
+    "prev": "Tidigare",
+    "next": "Nästa",
+    "startFormEditing": "Starta formulärredigering",
+    "exitFormEditing": "Avsluta formulärredigeringsläge",
+    "exit": "Utgång",
+    "addOption": "Lägg till alternativ",
+    "formFieldEdit": "Redigera formulärfält",
+    "viewShortCutKeysFor3D": "Visa kortkommandon",
+    "markAllRead": "Markera allt som läst",
+    "insertPage": "Sidinsättning",
+    "insert": "Föra in",
+    "pageManipulation": "Sidmanipulation",
+    "replace": "Byta ut",
+    "setDestination": "Ställ in destination",
+    "showLess": "visa mindre",
+    "showMore": "...Mer",
+    "chooseFile": "Välj en fil",
+    "changeDate": "Byt datum",
+    "browse": "Bläddra bland filer",
+    "selectYourOption": "Välj ditt alternativ",
+    "open": "Öppna",
+    "deselectAll": "Avmarkera alla",
+    "select": "Välj",
+    "moveToTop": "Flytta till toppen",
+    "moveToBottom": "Flytta till botten",
+    "backToMenu": "Tillbaka till menyn",
+    "redactPages": "Redigera sidor",
+    "playAudio": "Spela upp ljud",
+    "pauseAudio": "Pausa ljud",
+    "selectAll": "Välj alla",
+    "unselect": "Avmarkera",
+    "addMark": "Lägg till Mark",
+    "viewFile": "Visa fil",
+    "multiReplyAnnotations": "Svara på valda kommentarer ({{count}})",
+    "comparePages": "Jämför sidor",
+    "startComparison": "Starta jämförelse",
+    "showComparison": "Visa jämförelse",
+    "back": "Tillbaka",
+    "clearSignature": "Tydlig signatur",
+    "newDocument": "Nytt dokument"
+  },
+  "annotation": {
+    "areaMeasurement": "Område",
+    "arc": "Båge",
+    "arcMeasurement": "Bågmätning",
+    "arrow": "Pil",
+    "callout": "Ropa ut",
+    "crop": "Beskär sida",
+    "caret": "Markör",
+    "dateFreeText": "Kalender",
+    "formFillCheckmark": "Bock",
+    "formFillCross": "Korsa",
+    "distanceMeasurement": "Distans",
+    "countMeasurement": "Räkna mätning",
+    "ellipse": "Ellips",
+    "eraser": "Suddgummi",
+    "fileattachment": "Bifogad fil",
+    "freehand": "Fri hand",
+    "freeHandHighlight": "Free Hand Highlight",
+    "freetext": "Fri text",
+    "markInsertText": "Infoga text",
+    "markReplaceText": "Byt ut text",
+    "highlight": "Markera",
+    "image": "Bild",
+    "line": "Linje",
+    "perimeterMeasurement": "Omkrets",
+    "polygon": "Polygon",
+    "polygonCloud": "Moln",
+    "polyline": "Polyline",
+    "rectangle": "Rektangel",
+    "redact": "Redigera",
+    "formFillDot": "Punkt",
+    "signature": "Signatur",
+    "squiggly": "Snyggt",
+    "stamp": "Stämpel",
+    "stickyNote": "Notera",
+    "strikeout": "Överstrykning",
+    "underline": "Understrykning",
+    "custom": "Beställnings",
+    "rubberStamp": "Gummistämpel",
+    "note": "Notera",
+    "textField": "Textfält",
+    "signatureFormField": "Signaturfält",
+    "checkBoxFormField": "Kryssruta Fält",
+    "radioButtonFormField": "Radioknappfält",
+    "listBoxFormField": "Listboxfält",
+    "comboBoxFormField": "Kombinationsrutafält",
+    "link": "Länk",
+    "other": "Övrig",
+    "3D": "3D",
+    "sound": "Ljud",
+    "changeView": "Ändra vy",
+    "newImage": "Ny bild"
+  },
+  "rubberStamp": {
+    "Approved": "Godkänd",
+    "AsIs": "I befintligt skick",
+    "Completed": "Avslutad",
+    "Confidential": "Konfidentiell",
+    "Departmental": "Avdelnings",
+    "Draft": "Förslag",
+    "Experimental": "Experimentell",
+    "Expired": "Utgånget",
+    "Final": "Slutlig",
+    "ForComment": "För kommentar",
+    "ForPublicRelease": "För offentlig publicering",
+    "InformationOnly": "Endast information",
+    "NotApproved": "Ej godkänd",
+    "NotForPublicRelease": "Ej för offentlig publicering",
+    "PreliminaryResults": "Preliminära resultat",
+    "Sold": "Såld",
+    "TopSecret": "Topp hemligt",
+    "Void": "Tomhet",
+    "SHSignHere": "Signera här",
+    "SHWitness": "Bevittna",
+    "SHInitialHere": "Inledande här",
+    "SHAccepted": "Accepterad",
+    "SBRejected": "avvisade"
+  },
+  "component": {
+    "attachmentPanel": "Bilagor",
+    "leftPanel": "Panel",
+    "toolsHeader": "Verktyg",
+    "searchOverlay": "Sök",
+    "searchPanel": "Sök",
+    "menuOverlay": "Meny",
+    "notesPanel": "Kommentarer",
+    "outlinePanel": "Översikt",
+    "outlinesPanel": "Konturer",
+    "newOutlineTitle": "Ny dispositionstitel",
+    "outlineTitle": "Översiktstitel",
+    "destination": "Destination",
+    "bookmarkPanel": "Bokmärke",
+    "bookmarksPanel": "Bokmärken",
+    "bookmarkTitle": "Bokmärkets titel",
+    "bookmarkPage": "Sida",
+    "signaturePanel": "Signaturer",
+    "layersPanel": "Skikten",
+    "thumbnailsPanel": "Miniatyrer",
+    "toolsButton": "Verktyg",
+    "redaction": "Redaktion",
+    "viewControlsOverlay": "Visa kontroller",
+    "calibration": "Kalibrering",
+    "zoomOverlay": "Zoomöverlägg",
+    "textPopup": "Text popup",
+    "createStampButton": "Skapa ny stämpel",
+    "filter": "Filtrera",
+    "multiSelectButton": "Flera val",
+    "pageReplaceModalTitle": "Ersätt sida",
+    "files": "Filer",
+    "editText": "Redigera text",
+    "redactionPanel": "Redaktionspanel",
+    "noteGroupSection": {
+      "open": "Visa alla kommentarer",
+      "close": "Stäng alla anteckningar"
+    },
+    "comparePanel": "Jämför panel",
+    "watermarkPanel": "Vattenstämpelpanel"
+  },
+  "message": {
+    "toolsOverlayNoPresets": "Inga förinställningar",
+    "badDocument": "Det gick inte att ladda dokumentet. Dokumentet är antingen korrupt eller ogiltigt.",
+    "customPrintPlaceholder": "t.ex. 3, 4-10",
+    "encryptedAttemptsExceeded": "Det gick inte att läsa in krypterade dokument. För många försök.",
+    "encryptedUserCancelled": "Det gick inte att läsa in krypterade dokument. Lösenordsinmatningen avbröts.",
+    "enterPassword": "Detta dokument är lösenordsskyddat. Vänligen ange ett lösenord",
+    "incorrectPassword": "Felaktigt lösenord, försök kvar: {{ remainingAttempts }}",
+    "noAnnotations": "Börja göra anteckningar för att lämna en kommentar.",
+    "noAnnotationsReadOnly": "Detta dokument har inga kommentarer.",
+    "noAnnotationsFilter": "Börja göra kommentarer och filter visas här.",
+    "noBookmarks": "Inga bokmärken tillgängliga",
+    "noOutlines": "Inga dispositioner tillgängliga",
+    "noAttachments": "Detta dokument har inga bilagor.",
+    "noResults": "Inga resultat funna.",
+    "numResultsFound": "resultat hittades",
+    "notSupported": "Den filtypen stöds inte.",
+    "passwordRequired": "Lösenord krävs",
+    "enterPasswordPlaceholder": "Skriv in lösenord",
+    "preparingToPrint": "Förbereder utskrift...",
+    "annotationReplyCount": "{{count}} Svara",
+    "annotationReplyCount_plural": "{{count}} svar",
+    "printTotalPageCount": "Totalt: {{count}} sida",
+    "printTotalPageCount_plural": "Totalt: {{count}} sidor",
+    "processing": "Bearbetar...",
+    "searching": "Sökande...",
+    "searchCommentsPlaceholder": "Sök kommentarer",
+    "searchDocumentPlaceholder": "Sök dokument",
+    "signHere": "Skriv under här",
+    "insertTextHere": "Infoga text här",
+    "imageSignatureAcceptedFileTypes": "Endast {{acceptedFileTypes}} accepteras",
+    "enterMeasurement": "Ange mått mellan de två punkterna",
+    "errorEnterMeasurement": "Numret du har angett är ogiltigt, du kan ange värden som 7,5 eller 7 1/2",
+    "linkURLorPage": "Länka URL eller en sida",
+    "warning": "Varning",
+    "svgMalicious": "SVG-skript ignoreras för säkerhets skull",
+    "enterContentEditingMode": "Du är på väg att gå in i innehållsredigeringsläge.",
+    "existingAnnotationWarning": "Befintliga kommentarer kanske inte matchar texten efter att den har redigerats.",
+    "changesCannotBeUndone": "Eventuella ändringar kan inte ångras.",
+    "doNotShowAgain": "Visa mig inte det här igen",
+    "doNotAskAgain": "Fråga inte igen",
+    "enterReplacementText": "Ange texten du vill ersätta",
+    "sortBy": "Sortera",
+    "emptyCustomStampInput": "Stämpeltexten får inte vara tom",
+    "unpostedComment": "Ej postad kommentar",
+    "lockedLayer": "Lagret är låst",
+    "layerVisibililtyNoChange": "Lagrets synlighet kan inte ändras",
+    "untitled": "Ofrälse",
+    "selectHowToLoadFile": "Välj hur du ska ladda ditt dokument",
+    "openFileByUrl": "Öppna fil via URL:",
+    "enterUrlHere": "Ange URL här",
+    "openLocalFile": "Öppna lokal fil:",
+    "selectFile": "Välj fil",
+    "selectPageToReplace": "Välj sidorna i dokumentet som du vill ersätta med.",
+    "embeddedFiles": "Inbäddade filer",
+    "pageNum": "Sidonummer",
+    "viewBookmark": "Visa bokmärke på sidan",
+    "error": "Fel",
+    "errorPageNumber": "Ogiltigt sidnummer. Gränsen är",
+    "errorLoadingDocument": "Det uppstod ett problem med att läsa det här dokumentet och vissa sidor kanske inte visas. Detta indikerar att dokumentet kan vara skadat. Det totala antalet sidor är {{totalPageCount}} och antalet sidor som visas är {{displayedPageCount}}."
+  },
+  "option": {
+    "type": {
+      "caret": "Markör",
+      "custom": "Beställnings",
+      "ellipse": "Ellips",
+      "fileattachment": "Bifogad fil",
+      "freehand": "Fri hand",
+      "callout": "Ropa ut",
+      "freetext": "Fri text",
+      "line": "Linje",
+      "polygon": "Polygon",
+      "polyline": "Polyline",
+      "rectangle": "Rektangel",
+      "redact": "Redigera",
+      "signature": "Signatur",
+      "stamp": "Stämpel",
+      "stickyNote": "Fästis",
+      "highlight": "Markera",
+      "strikeout": "Överstrykning",
+      "underline": "Understrykning",
+      "squiggly": "Snyggt",
+      "3D": "3D",
+      "other": "Övrig",
+      "initials": "Initialer",
+      "saved": "Sparad"
+    },
+    "notesOrder": {
+      "dropdownLabel": "Sorteringsordningslista",
+      "position": "Placera",
+      "time": "Tid",
+      "status": "Status",
+      "author": "Författare",
+      "type": "Typ",
+      "color": "Färg",
+      "createdDate": "Skapat Datum",
+      "modifiedDate": "Ändrat datum"
+    },
+    "toolbarGroup": {
+      "dropdownLabel": "Verktygsfältsgrupper",
+      "toolbarGroup-View": "Se",
+      "toolbarGroup-Annotate": "Kommentera",
+      "toolbarGroup-Shapes": "Former",
+      "toolbarGroup-Insert": "Föra in",
+      "toolbarGroup-Measure": "Mäta",
+      "toolbarGroup-Edit": "Redigera",
+      "toolbarGroup-EditText": "Redigera text",
+      "toolbarGroup-FillAndSign": "Fyll och signera",
+      "toolbarGroup-Forms": "Blanketter",
+      "toolbarGroup-Redact": "Redigera"
+    },
+    "annotationColor": {
+      "StrokeColor": "Stroke",
+      "FillColor": "Fylla",
+      "TextColor": "Text"
+    },
+    "colorPalette": {
+      "colorLabel": "Färg"
+    },
+    "displayMode": {
+      "layout": "Sidlayout",
+      "pageTransition": "Sidövergång"
+    },
+    "documentControls": {
+      "selectTooltip": "Välj flera sidor",
+      "closeTooltip": "Stäng multiselect"
+    },
+    "bookmarkOutlineControls": {
+      "edit": "Redigera",
+      "done": "Gjort",
+      "reorder": "Ordna om"
+    },
+    "layout": {
+      "cover": "Omslagssida",
+      "double": "Dubbel sida",
+      "single": "En sida"
+    },
+    "mathSymbols": "Matematiska symboler",
+    "notesPanel": {
+      "separator": {
+        "today": "I dag",
+        "yesterday": "I går",
+        "unknown": "Okänd"
+      },
+      "noteContent": {
+        "noName": "(inget namn)",
+        "noDate": "(inget datum)"
+      }
+    },
+    "pageTransition": {
+      "continuous": "Kontinuerlig sida",
+      "default": "Sida för sida",
+      "reader": "Läsare"
+    },
+    "print": {
+      "all": "Allt",
+      "current": "Nuvarande sida",
+      "pages": "Sidor att skriva ut",
+      "specifyPages": "Ange sidor",
+      "view": "Nuvarande åsikt",
+      "pageQuality": "Utskriftskvalitet",
+      "qualityNormal": "Vanligt",
+      "qualityHigh": "Hög",
+      "includeAnnotations": "Inkludera kommentarer",
+      "includeComments": "Inkludera kommentarer",
+      "printSettings": "Utskriftsinställningar",
+      "printGrayscale": "Skriv ut gråskala"
+    },
+    "printInfo": {
+      "author": "Författare",
+      "subject": "Ämne",
+      "date": "Datum"
+    },
+    "redaction": {
+      "markForRedaction": "Markera för redigering"
+    },
+    "searchPanel": {
+      "caseSensitive": "Skiftlägeskänsliga",
+      "wholeWordOnly": "Hela världen",
+      "wildcard": "Jokertecken",
+      "replace": "Byta ut",
+      "replaceAll": "Ersätt alla",
+      "replaceText": "Byt ut text",
+      "confirmMessageReplaceAll": "Är du säker på att du vill ersätta all text?",
+      "confirmMessageReplaceOne": "Är du säker på att du vill ersätta den här texten?",
+      "moreOptions": "Fler alternativ",
+      "lessOptions": "Mindre alternativ",
+      "confirm": "Bekräfta"
+    },
+    "toolsOverlay": {
+      "currentStamp": "Nuvarande stämpel",
+      "currentSignature": "Aktuell signatur",
+      "signatureAltText": "Signatur"
+    },
+    "stampOverlay": {
+      "addStamp": "Lägg till ny stämpel"
+    },
+    "signatureOverlay": {
+      "addSignature": "Lägg till ny signatur",
+      "addSignatureOrInitials": "Signatur/Initialer"
+    },
+    "signatureModal": {
+      "modalName": "Skapa ny signatur",
+      "dragAndDrop": "Dra och släpp din bild här",
+      "or": "Eller",
+      "pickImage": "Välj en signatur",
+      "selectImage": "Välj din bild här",
+      "typeSignature": "Skriv signatur*",
+      "typeInitial": "Typ initialer*",
+      "drawSignature": "Rita signatur*",
+      "drawInitial": "Rita initialer*",
+      "pickInitialsFile": "Välj initialer",
+      "noSignatures": "Det finns för närvarande inga sparade signaturer."
+    },
+    "pageReplacementModal": {
+      "dragAndDrop": "Dra och släpp din fil här",
+      "selectFile": "Välj din fil här",
+      "or": "Eller",
+      "yourFiles": "Dina filer",
+      "chooseFile": "Välj en fil",
+      "localFile": "Lokal fil",
+      "pageReplaceInputLabel": "Ersätt sida(r)",
+      "pageReplaceInputFromSource": "med sida(r)",
+      "warning": {
+        "title": "Vill du avsluta ersättningssidan?",
+        "message": "Om du avslutar avbryts alla val du har gjort hittills. Är du säker på att du fortfarande vill avsluta?"
+      }
+    },
+    "filterAnnotModal": {
+      "color": "Färg",
+      "includeReplies": "Inkludera svar",
+      "filters": "Filter",
+      "user": "Användare",
+      "type": "Typ",
+      "status": "Status",
+      "filterSettings": "Filterinställningar",
+      "filterDocument": "Filtrera dokument och kommentarspanel"
+    },
+    "state": {
+      "accepted": "Accepterad",
+      "rejected": "avvisade",
+      "completed": "Avslutad",
+      "cancelled": "Inställt",
+      "set": "Ange status:",
+      "setBy": "satt av",
+      "none": "Ingen",
+      "marked": "Markant",
+      "unmarked": "Omärkt"
+    },
+    "measurementOverlay": {
+      "scale": "Skalförhållande",
+      "angle": "Vinkel",
+      "distance": "Distans",
+      "perimeter": "Omkrets",
+      "area": "Område",
+      "distanceMeasurement": "Avståndsmätning",
+      "perimeterMeasurement": "Omkretsmätning",
+      "arcMeasurement": "Bågmätning",
+      "areaMeasurement": "Area Mätning",
+      "countMeasurement": "Räkna mätning",
+      "radius": "Radie",
+      "count": "Räkna",
+      "length": "Längd"
+    },
+    "measurementOption": {
+      "scale": "Skala"
+    },
+    "measurement": {
+      "scaleModal": {
+        "calibrate": "Kalibrera",
+        "custom": "Beställnings",
+        "fractionalUnits": "Fraktionella enheter",
+        "precision": "Precision",
+        "preset": "Förinställa",
+        "paperUnits": "Pappersenheter",
+        "displayUnits": "Visa enheter",
+        "fractionUnitsTooltip": "Bråkenheter gäller endast in och ft-in",
+        "incorrectSyntax": "Felaktig syntax"
+      },
+      "scaleOverlay": {
+        "addNewScale": "Lägg till ny skala",
+        "selectTwoPoints": "Välj två punkter med en känd dimension att kalibrera",
+        "inputKnowDimension": "Mata in känd dimension och enheter för kalibrering",
+        "multipleScales": "Flera vågar"
+      },
+      "deleteScaleModal": {
+        "deleteScale": "Ta bort skala",
+        "scaleIsOn-delete-info": "Denna våg används för närvarande på",
+        "page-delete-info": "sida",
+        "appliedTo-delete-info": "och ansökte till",
+        "measurement": "mått",
+        "measurements": "mätningar",
+        "deletionIs": "Borttagning är",
+        "irreversible": "irreversibel",
+        "willDeleteMeasurement": "och raderar associerade mätningar.",
+        "confirmDelete": "Är du säker på att du vill ta bort den här skalan?",
+        "ifChangeScale": "Om du ändrar skalan för den valda mätningen eller verktyget, skala",
+        "notUsedWillDelete": " kommer inte längre att användas av några mått eller verktyg och kommer att raderas. Radering är oåterkallelig.",
+        "ifToContinue": "Är du säker på att du vill fortsätta?"
+      }
+    },
+    "contentEdit": {
+      "deletionModal": {
+        "title": "Ta bort innehåll",
+        "message": "Är du säker på att du vill ta bort det valda innehållet? Detta kan inte ångras."
+      }
+    },
+    "stylePopup": {
+      "textStyle": "Textstil",
+      "colors": "Färger",
+      "invalidFontSize": "Teckenstorleken måste vara mindre än",
+      "labelText": "Etiketttext",
+      "labelTextPlaceholder": "Lägg till etiketttext"
+    },
+    "styleOption": {
+      "style": "Stil",
+      "solid": "Fast",
+      "cloudy": "Molnig"
+    },
+    "slider": {
+      "opacity": "Opacitet",
+      "thickness": "Stroke",
+      "text": "Textstorlek"
+    },
+    "shared": {
+      "page": "Sida",
+      "precision": "Precision",
+      "enableSnapping": "Aktivera snapping för mätverktyg"
+    },
+    "watermark": {
+      "title": "Vattenstämpel",
+      "addWatermark": "Lägg till vattenstämpel",
+      "size": "Storlek",
+      "location": "Välj en plats för att redigera vattenstämplar",
+      "text": "Text",
+      "style": "Stil",
+      "resetAllSettings": "Återställ alla inställningar",
+      "font": "Font",
+      "addNew": "Lägg till ny",
+      "locations": {
+        "center": "Centrum",
+        "topLeft": "Övre vänstra",
+        "topRight": "Överst till höger",
+        "topCenter": "Top Center",
+        "bottomLeft": "Nedre vänstra",
+        "bottomRight": "Nere till höger",
+        "bottomCenter": "Nedre mitten"
+      }
+    },
+    "thumbnailPanel": {
+      "delete": "Radera",
+      "rotateClockwise": "Medurs",
+      "rotateCounterClockwise": "Moturs",
+      "moreOptions": "Fler alternativ"
+    },
+    "thumbnailsControlOverlay": {
+      "move": "Flytta sidor"
+    },
+    "richText": {
+      "bold": "Djärv",
+      "italic": "Kursiv",
+      "underline": "Understrykning",
+      "strikeout": "Överstrykning",
+      "alignLeft": "Vänsterjustera text",
+      "alignRight": "Högerjustera text",
+      "alignCenter": "Textjustera mitten",
+      "justifyCenter": "Textjustera mitten",
+      "alignTop": "Rikta upp toppen",
+      "alignMiddle": "Justera mitten",
+      "alignBottom": "Rikta in botten"
+    },
+    "customStampModal": {
+      "modalName": "Skapa ny stämpel",
+      "stampText": "Stämpel text",
+      "timestampText": "Tidsstämpel text",
+      "Username": "Användarnamn",
+      "Date": "Datum",
+      "Time": "Tid",
+      "fontStyle": "typsnitt",
+      "dateFormat": "Datumformat",
+      "month": "Månad",
+      "day": "Dag",
+      "year": "År",
+      "hour": "Timme",
+      "minute": "Minut",
+      "second": "Andra",
+      "textColor": "Text färg",
+      "backgroundColor": "Bakgrundsfärg"
+    },
+    "pageRedactModal": {
+      "addMark": "Lägg till Mark",
+      "pageSelection": "Sidval",
+      "current": "Nuvarande sida",
+      "specify": "Ange sidor",
+      "odd": "Endast udda sidor",
+      "even": "Endast jämna sidor",
+      "header": "Markera sidoredaktion"
+    },
+    "lineStyleOptions": {
+      "title": "Stil"
+    },
+    "settings": {
+      "settings": "inställningar",
+      "searchSettings": "Sökinställningar",
+      "general": "Allmän",
+      "language": "Språk",
+      "theme": "Tema",
+      "darkMode": "Mörkt läge",
+      "lightMode": "Ljusläge",
+      "advancedSetting": "Avancerade inställningar",
+      "viewing": "Visning",
+      "disableFadePageNavigationComponent": "Inaktivera Fade Page Navigation Component",
+      "disableFadePageNavigationComponentDesc": "Håll alltid sidnavigeringskomponenten på skärmen. Standardbeteendet är att blekna det efter en viss period av inaktivitet.",
+      "disableNativeScrolling": "Inaktivera Native Scrolling",
+      "disableNativeScrollingDesc": "Inaktivera inbyggd rullning av mobila enheter om det tidigare hade aktiverats. Observera att rullningsbeteendet för inbyggd mobil enhet är avstängt som standard.",
+      "annotations": "Anteckningar",
+      "disableToolDefaultStyleUpdateFromAnnotationPopup": "Inaktivera verktygets standardformatuppdatering från anteckningspopup",
+      "disableToolDefaultStyleUpdateFromAnnotationPopupDesc": "Inaktiverar synkronisering av uppdateringar av anteckningsstil till det associerade verktyget som skapade anteckningen. Så om en kommentars stil ändras kommer verktygets standardstilar inte att uppdateras.",
+      "notesPanel": "Anteckningspanel",
+      "disableNoteSubmissionWithEnter": "Inaktivera anteckningsinlämning med Enter",
+      "disableNoteSubmissionWithEnterDesc": "Inaktivera möjligheten att skicka anteckningar genom att endast trycka på Enter om det tidigare varit aktiverat. Detta kommer att återställa anteckningsinlämning till standarden som är Ctrl/Cmd + Enter.",
+      "disableAutoExpandCommentThread": "Inaktivera automatisk expandering av kommentarstråd",
+      "disableAutoExpandCommentThreadDesc": "Inaktiverar automatisk expansion av alla kommentarstrådar i anteckningspanelen.",
+      "disableReplyCollapse": "Inaktivera Svarskomprimering",
+      "disableReplyCollapseDesc": "Inaktiverar komprimering av svaren i anteckningspanelen.",
+      "disableTextCollapse": "Inaktivera textkomprimering",
+      "disableTextCollapseDesc": "Inaktiverar komprimering av anteckningens text i anteckningspanelen.",
+      "search": "Sök",
+      "disableClearSearchOnPanelClose": "Inaktivera Rensa sökning på panelstäng",
+      "disableClearSearchOnPanelCloseDesc": "Inaktivera rensning av sökresultat när användaren stänger sökpanelen. När inaktiverad bevaras sökresultat även om användaren stänger och öppnar sökpanelen igen. Observera att mobila enheter aldrig rensar sökresultat även om den här inställningen är aktiverad. Detta beror på att panelen måste stängas för att se sökresultaten på dokumentet.",
+      "pageManipulation": "Sidmanipulation",
+      "disablePageDeletionConfirmationModal": "Inaktivera bekräftelsemodal för borttagning av sida",
+      "disablePageDeletionConfirmationModalDesc": "Inaktivera bekräftelsemodal när du tar bort en sida från miniatyrvyn",
+      "disableMultiselect": "Inaktivera Multiselect",
+      "disableMultiselectDesc": "Inaktivera multival i den vänstra miniatyrpanelen",
+      "miscellaneous": "Diverse",
+      "keyboardShortcut": "Tangentbordsgenväg",
+      "command": "Kommando",
+      "description": "Beskrivning",
+      "action": "Handling",
+      "rotateDocumentClockwise": "Rotera dokumentet medurs",
+      "rotateDocumentCounterclockwise": "Rotera dokumentet moturs",
+      "copyText": "Kopiera markerad text eller anteckningar",
+      "pasteText": "Klistra in text eller kommentarer",
+      "undoChange": "Ångra en anteckningsändring",
+      "redoChange": "Gör om en anteckningsändring",
+      "openFile": "Öppna filväljaren",
+      "openSearch": "Öppna sököverlägget",
+      "zoomIn": "Zooma in",
+      "zoomOut": "Zooma ut",
+      "fitScreenWidth": "Anpassa dokumentet till skärmens bredd på en liten skärm (< 640px), annars anpassa det till dess ursprungliga storlek",
+      "print": "Skriva ut",
+      "bookmarkOpenPanel": "Bokmärk snabbt en sida och öppna bokmärkespanelen",
+      "goToPreviousPage": "Gå till föregående sida",
+      "goToNextPage": "Gå till nästa sida",
+      "goToPreviousPageArrowUp": "Gå till föregående sida i enkellayoutläge (ArrowUp)",
+      "goToNextPageArrowDown": "Gå till nästa sida i enkellayoutläge (ArrowDown)",
+      "holdSwitchPan": "Håll ned för att växla till panoreringsläge och släpp för att återgå till föregående verktyg",
+      "selectAnnotationEdit": "Välj verktyget AnnotationEdit",
+      "selectPan": "Välj panoreringsverktyget",
+      "selectCreateArrowTool": "Välj verktyget AnnotationCreateArrow",
+      "selectCreateCalloutTool": "Välj verktyget AnnotationCreateCallout",
+      "selectEraserTool": "Välj verktyget Annotation Eraser",
+      "selectCreateFreeHandTool": "Välj verktyget AnnotationCreateFreeHand",
+      "selectCreateStampTool": "Välj verktyget AnnotationCreateStamp",
+      "selectCreateLineTool": "Välj verktyget AnnotationCreateLine",
+      "selectCreateStickyTool": "Välj verktyget AnnotationCreateSticky",
+      "selectCreateEllipseTool": "Välj verktyget AnnotationCreateEllipse",
+      "selectCreateRectangleTool": "Välj verktyget AnnotationCreateRectangle",
+      "selectCreateRubberStampTool": "Välj verktyget AnnotationCreateRubberStamp",
+      "selectCreateFreeTextTool": "Välj verktyget AnnotationCreateFreeText",
+      "openSignatureModal": "Öppna signaturmodalen eller överlägget",
+      "selectCreateTextSquigglyTool": "Välj verktyget AnnotationCreateTextSquiggly",
+      "selectCreateTextHighlightTool": "Välj verktyget AnnotationCreateTextHighlight",
+      "selectCreateTextStrikeoutTool": "Välj verktyget AnnotationCreateTextStrikeout",
+      "selectCreateTextUnderlineTool": "Välj verktyget AnnotationCreateTextUnderline",
+      "editKeyboardShorcut": "Redigera tangentbordsgenväg",
+      "setShorcut": "Ställ in genväg",
+      "pressKeyToSet": "Tryck på tangenten eller tangenterna för att ställa in ny genväg.",
+      "shortcutAlreadyExists": "Kortkommandot ovan finns redan."
+    }
+  },
+  "warning": {
+    "deletePage": {
+      "deleteTitle": "Ta bort sida",
+      "deleteMessage": "Är du säker på att du vill ta bort de valda sidorna. Detta kan inte ångras",
+      "deleteLastPageMessage": "Du kan inte ta bort alla sidor i dokumentet."
+    },
+    "extractPage": {
+      "title": "Extrahera sida",
+      "message": "Är du säker på att du vill extrahera de valda sidorna?",
+      "confirmBtn": "Extrahera",
+      "secondaryBtn": "Extrahera och ta bort"
+    },
+    "redaction": {
+      "applyTile": "Använd redaktion",
+      "applyMessage": "Denna åtgärd tar permanent bort alla objekt som valts för redigering. Det kan inte bli ogjort."
+    },
+    "deleteBookmark": {
+      "title": "Ta bort bokmärke?",
+      "message": "Är du säker på att du vill ta bort dessa bokmärken? Du kan inte ångra den här åtgärden."
+    },
+    "deleteOutline": {
+      "title": "Ta bort Outline?",
+      "message": "Är du säker på att du vill ta bort dessa konturer?\n\nAtt ta bort en kontur som har kapslade konturer kommer att resultera i att hela den inre strukturen tas bort och, om det behövs, måste återskapas."
+    },
+    "selectPage": {
+      "selectTitle": "Inga sidor valda",
+      "selectMessage": "Välj sidor och försök igen."
+    },
+    "colorPicker": {
+      "deleteTitle": "Ta bort anpassad färg",
+      "deleteMessage": "Vill du ta bort den valda anpassade färgen? Den kommer att tas bort från din färgpalett."
+    },
+    "multiDeleteAnnotation": {
+      "title": "Ta bort anteckningar?",
+      "message": "Att radera tar bort alla kommentarer, svar och gruppering och kan inte ångras.\n\n Är du säker på att du vill ta bort dessa kommentarer?"
+    },
+    "closeFile": {
+      "title": "Stäng utan att ladda ner?",
+      "message": "Det har gjorts ändringar i det här dokumentet, är du säker på att du vill stänga det utan att ladda ner ditt arbete? Du kan inte ångra den här åtgärden.",
+      "rejectDownloadButton": "Stäng utan nedladdning"
+    },
+    "connectToURL": {
+      "title": "Säkerhetsvarning",
+      "message": "Det här dokumentet försöker ansluta till:\n\n{{- uri}}.\n\n Om du litar på det här dokumentet klickar du på Bekräfta för att öppna det."
+    }
+  },
+  "shortcut": {
+    "arrow": "(A)",
+    "callout": "(C)",
+    "copy": "(Ctrl C)",
+    "delete": "(Av)",
+    "ellipse": "(O)",
+    "eraser": "(OCH)",
+    "freehand": "(F)",
+    "freetext": "(T)",
+    "highlight": "(H)",
+    "line": "(L)",
+    "pan": "(P)",
+    "rectangle": "(R)",
+    "rotateClockwise": "(Ctrl Skift +)",
+    "rotateCounterClockwise": "(Ctrl Shift -)",
+    "select": "(Esc)",
+    "signature": "(S)",
+    "squiggly": "(G)",
+    "image": "(jag)",
+    "redo": "(Ctrl Shift Z)",
+    "redo_windows": "(Ctrl Y)",
+    "undo": "(Ctrl Z)",
+    "stickyNote": "(N)",
+    "strikeout": "(K)",
+    "underline": "(I)",
+    "zoomIn": "(Ctrl +)",
+    "zoomOut": "(Ctrl -)",
+    "richText": {
+      "bold": "(Ctrl B)",
+      "italic": "(Ctrl I)",
+      "underline": "(Ctrl U)",
+      "strikeout": "(Ctrl K)"
+    },
+    "rotate3D": "Skift + Dra",
+    "zoom3D": "Skift + Scroll"
+  },
+  "tool": {
+    "pan": "Panorera",
+    "select": "Välj",
+    "Marquee": "Marquee Zoom",
+    "Link": "Länk URL eller sida",
+    "Standard": "Standard",
+    "Custom": "Beställnings"
+  },
+  "link": {
+    "url": "URL",
+    "page": "Sida",
+    "enterurl": "Ange URL som du vill länka till",
+    "enterpage": "Välj sidnumret du vill länka till",
+    "urlLink": "URL-länk"
+  },
+  "Model3D": {
+    "add3D": "Lägg till 3D-objekt",
+    "enterurl": "Ange URL-adressen till 3D-objektet i glTF-format",
+    "enterurlOrLocalFile": "Ange URL:en eller ladda upp ett 3D-objekt i glTF-format",
+    "formatError": "Endast formatet glTF (.glb) stöds"
+  },
+  "OpenFile": {
+    "enterUrlOrChooseFile": "Ange en URL eller välj en fil att ladda in i WebViewer",
+    "enterUrl": "Ange filens URL",
+    "extension": "Filtillägg",
+    "existingFile": "Filen är redan öppen",
+    "addTab": "Lägg till flik"
+  },
+  "datePicker": {
+    "previousMonth": "Förra månaden",
+    "nextMonth": "Nästa månad",
+    "months": {
+      "0": "januari",
+      "1": "februari",
+      "2": "Mars",
+      "3": "april",
+      "4": "Maj",
+      "5": "juni",
+      "6": "juli",
+      "7": "augusti",
+      "8": "september",
+      "9": "oktober",
+      "10": "november",
+      "11": "december"
+    },
+    "monthsShort": {
+      "0": "Jan",
+      "1": "feb",
+      "2": "Mar",
+      "3": "apr",
+      "4": "Maj",
+      "5": "jun",
+      "6": "jul",
+      "7": "aug",
+      "8": "Sept",
+      "9": "okt",
+      "10": "nov",
+      "11": "dec"
+    },
+    "weekdays": {
+      "0": "söndag",
+      "1": "måndag",
+      "2": "tisdag",
+      "3": "onsdag",
+      "4": "torsdag",
+      "5": "fredag",
+      "6": "lördag"
+    },
+    "weekdaysShort": {
+      "0": "Sol",
+      "1": "Min",
+      "2": "tis",
+      "3": "ons",
+      "4": "Samla",
+      "5": "fre",
+      "6": "lö"
+    },
+    "today": "I dag",
+    "invalidDateTime": "Ogiltigt datum/tid: Indata ska matcha formatet"
+  },
+  "formField": {
+    "formFieldPopup": {
+      "fieldName": "Fält namn",
+      "fieldValue": "Standardvärde",
+      "readOnly": "Endast läs",
+      "multiSelect": "Flera val",
+      "required": "Nödvändig",
+      "multiLine": "Flerlinje",
+      "apply": "Tillämpa",
+      "cancel": "Avbryt",
+      "flags": "Fältflaggor",
+      "options": "alternativ",
+      "radioGroups": "Alternativknappar med samma fältnamn hör hemma i samma grupp.",
+      "nameRequired": "Fältnamn krävs",
+      "fieldIndicator": "Fältindikatorer",
+      "documentFieldIndicator": "Dokumentfältindikatorer",
+      "indicatorPlaceHolders": {
+        "TextFormField": "Infoga text här",
+        "CheckBoxFormField": "Kolla upp",
+        "RadioButtonFormField": "Fylla",
+        "ListBoxFormField": "Välj",
+        "ComboBoxFormField": "Välj",
+        "SignatureFormField": {
+          "fullSignature": "Signera här",
+          "initialsSignature": "Inledande här"
+        }
+      },
+      "size": "Storlek",
+      "width": "Bredd",
+      "height": "Höjd",
+      "invalidField": {
+        "duplicate": "Fältnamn finns redan",
+        "empty": "Fältnamn får inte vara tomt"
+      }
+    },
+    "apply": "Använd fält",
+    "type": "Fälttyp",
+    "types": {
+      "text": "Text",
+      "signature": "Signatur",
+      "checkbox": "Kryssruta",
+      "radio": "Radio knapp",
+      "listbox": "Listruta",
+      "combobox": "Kombinationsrutan"
+    }
+  },
+  "digitalSignatureModal": {
+    "certification": "certifiering",
+    "Certification": "Certifiering",
+    "signature": "signatur",
+    "Signature": "Signatur",
+    "valid": "giltig",
+    "invalid": "ogiltig",
+    "unknown": "okänd",
+    "title": "{{typ}} egenskaper",
+    "header": {
+      "documentIntegrity": "Dokumentintegritet",
+      "identitiesTrust": "Identiteter och tillit",
+      "generalErrors": "Allmänna fel",
+      "digestStatus": "Sammanfattningsstatus"
+    },
+    "documentPermission": {
+      "noChangesAllowed": "{{editor}} har specificerat att inga ändringar är tillåtna för detta dokument",
+      "formfillingSigningAllowed": "{{editor}} har specificerat att formulärfyllning och signering är tillåtna för detta dokument. Inga andra ändringar är tillåtna.",
+      "annotatingFormfillingSigningAllowed": "{{editor}} har specificerat att formulärfyllning, signering och kommentar är tillåtna för detta dokument. Inga andra ändringar är tillåtna.",
+      "unrestricted": "{{editor}} har specificerat att det inte finns några begränsningar för detta dokument."
+    },
+    "digestAlgorithm": {
+      "preamble": "Sammanfattningsalgoritmen som användes för att signera signaturen:",
+      "unknown": "Sammanfattningsalgoritmen som användes för att signera signaturen är okänd."
+    },
+    "trustVerification": {
+      "none": "Inget detaljerat resultat för förtroendeverifiering tillgängligt.",
+      "current": "Förtroendeverifiering försökte med avseende på aktuell tid",
+      "signing": "Förtroendeverifiering försökte med avseende på signeringstid: {{trustVerificationTime}}",
+      "timestamp": "Förtroendeverifiering försökte med avseende på säker inbäddad tidsstämpel: {{trustVerificationTime}}"
+    },
+    "signerIdentity": {
+      "preamble": "Undertecknarens identitet är",
+      "valid": "giltig.",
+      "unknown": "okänd."
+    },
+    "summaryBox": {
+      "summary": "Digital {{type}} är {{status}}",
+      "signedBy": ", signerad av {{name}}"
+    }
+  },
+  "digitalSignatureVerification": {
+    "certifier": "intyga",
+    "certified": "auktoriserad",
+    "Certified": "Auktoriserad",
+    "Certification": "Certifiering",
+    "signer": "undertecknare",
+    "signed": "signerad",
+    "Signed": "Signerad",
+    "Signature": "Signatur",
+    "by": "förbi",
+    "on": "på",
+    "disallowedChange": "Ej tillåten ändring: {{typ}}, objnum: {{objnum}}",
+    "unsignedSignatureField": "Osignerat signaturfält: {{fieldName}}",
+    "signatureProperties": "Signaturegenskaper",
+    "trustVerification": {
+      "current": "Verifieringstiden som användes var den aktuella tiden",
+      "signing": "Verifieringstiden är från klockan på undertecknarens dator",
+      "timestamp": "Verifieringstiden är från den säkra tidsstämpeln som är inbäddad i dokumentet",
+      "verifiedTrust": "Resultat av förtroendeverifiering: Verifierat",
+      "noTrustVerification": "Inget detaljerat resultat för förtroendeverifiering tillgängligt."
+    },
+    "permissionStatus": {
+      "noPermissionsStatus": "Ingen behörighetsstatus att rapportera.",
+      "permissionsVerificationDisabled": "Behörighetsverifiering har inaktiverats.",
+      "hasAllowedChanges": "Dokumentet har ändringar som är tillåtna av signaturernas behörighetsinställningar.",
+      "invalidatedByDisallowedChanges": "Dokumentet har ändringar som inte är tillåtna av inställningarna för signaturbehörigheter.",
+      "unmodified": "Dokumentet har inte ändrats sedan det gjordes"
+    },
+    "trustStatus": {
+      "trustVerified": "Etablerade förtroende för {{verificationType}} framgångsrikt.",
+      "untrusted": "Förtroende kunde inte etableras.",
+      "trustVerificationDisabled": "Förtroendeverifiering har inaktiverats.",
+      "noTrustStatus": "Ingen förtroendestatus att rapportera."
+    },
+    "digestStatus": {
+      "digestInvalid": "Sammanfattningen är felaktig.",
+      "digestVerified": "Sammanfattningen är korrekt.",
+      "digestVerificationDisabled": "Sammanfattningsverifiering har inaktiverats.",
+      "weakDigestAlgorithmButDigestVerifiable": "Sammanfattningen är korrekt, men sammanfattningsalgoritmen är svag och inte säker.",
+      "noDigestStatus": "Ingen sammanfattningsstatus att rapportera.",
+      "unsupportedEncoding": "Ingen installerad SignatureHandler kunde känna igen signaturens kodning"
+    },
+    "documentStatus": {
+      "noError": "Inget generellt fel att rapportera.",
+      "corruptFile": "SignatureHandler rapporterade filkorruption.",
+      "unsigned": "Signaturen har ännu inte undertecknats kryptografiskt.",
+      "badByteRanges": "SignatureHandler rapporterar korruption i ByteRanges i den digitala signaturen.",
+      "corruptCryptographicContents": "SignatureHandler rapporterar korruption i innehållet i den digitala signaturen."
+    },
+    "signatureDetails": {
+      "signatureDetails": "Signaturdetaljer",
+      "contactInformation": "Kontaktinformation",
+      "location": "Plats",
+      "reason": "Anledning",
+      "signingTime": "Signeringstid",
+      "noContactInformation": "Ingen kontaktinformation tillhandahållen",
+      "noLocation": "Ingen plats angiven",
+      "noReason": "Ingen anledning anges",
+      "noSigningTime": "Ingen signeringstid hittades"
+    },
+    "panelMessages": {
+      "noSignatureFields": "Detta dokument har inga signaturfält",
+      "certificateDownloadError": "Ett fel uppstod vid försök att ladda ner ett betrodd certifikat",
+      "localCertificateError": "Det finns vissa problem med att läsa ett lokalt certifikat"
+    },
+    "verificationStatus": {
+      "valid": "{{verificationType}} är giltig.",
+      "failed": "{{verificationType}} misslyckades."
+    }
+  },
+  "cropPopUp": {
+    "title": "Sidor att beskära",
+    "allPages": "Allt",
+    "singlePage": "Nuvarande sida",
+    "multiPage": "Ange sida",
+    "cropDimensions": "Beskärningsmått",
+    "dimensionInput": {
+      "unitOfMeasurement": "Enhet",
+      "autoTrim": "Förinställningar"
+    },
+    "cropModal": {
+      "applyTitle": "Tillämpa beskärning?",
+      "applyMessage": "Den här åtgärden beskär alla valda sidor permanent. Det kan inte bli ogjort.",
+      "cancelTitle": "Vill du avbryta beskärningen?",
+      "cancelMessage": "Är du säker på att du vill avbryta beskärningen av alla markerade sidor?"
+    }
+  },
+  "textEditingPanel": {
+    "paragraph": "Paragraf",
+    "text": "Text"
+  },
+  "redactionPanel": {
+    "noMarkedRedactions": "Börja redigera genom att markera text, regioner, sidor eller göra en sökning.",
+    "redactionSearchPlaceholder": "Lägg till genom nyckelordssökning eller mönster",
+    "redactionCounter": "Markerad för redigering",
+    "clearMarked": "Klar",
+    "redactAllMarked": "Redigera alla",
+    "redactionItem": {
+      "regionRedaction": "Regionredigering",
+      "fullPageRedaction": "Helsidesredigering",
+      "fullVideoFrameRedaction": "Videoredigering",
+      "audioRedaction": "Ljudredigering",
+      "fullVideoFrameAndAudioRedaction": "Video- och ljudredigering",
+      "image": "Bild"
+    },
+    "expand": "Bygga ut",
+    "collapse": "Kollaps",
+    "searchResults": "Sökresultat",
+    "search": {
+      "creditCards": "Kreditkort",
+      "phoneNumbers": "Telefonnummer",
+      "images": "Bilder",
+      "emails": "E-postmeddelanden",
+      "pattern": "Mönster",
+      "start": "Börja göra din sökning"
+    }
+  },
+  "wv3dPropertiesPanel": {
+    "propertiesHeader": "Egenskaper",
+    "miscValuesHeader": "Allt",
+    "emptyPanelMessage": "Välj ett element för att se dess egenskaper"
+  },
+  "watermarkPanel": {
+    "textWatermark": "Text vattenstämpel",
+    "uploadImage": "Ladda upp bild",
+    "browse": "Bläddra",
+    "watermarkOptions": "Vattenstämpelalternativ",
+    "watermarks": "Vattenstämplar"
+  },
+  "languageModal": {
+    "selectLanguage": "Välj språk"
+  },
+  "officeEditor": {
+    "bold": "Djärv",
+    "italic": "Kursiv",
+    "underline": "Understrykning",
+    "textColor": "Text färg",
+    "leftAlign": "Vänsterjustera",
+    "centerAlign": "Centrera",
+    "rightAlign": "Högerjustera",
+    "justify": "Rättfärdiga",
+    "lineSpacing": "Rad- och styckeavstånd",
+    "bulletList": "Punktlista",
+    "numberList": "Numrerad lista",
+    "insertLink": "Infoga länk",
+    "insertImage": "Infoga bild",
+    "notSupportedOnMobile": "Office-redigering stöds inte på mobila enheter."
+  },
+  "insertPageModal": {
+    "title": "Lägg till ny sida",
+    "tabs": {
+      "blank": "Tom",
+      "upload": "Ladda upp"
+    },
+    "pagePlacements": {
+      "header": "Sidplacering",
+      "above": "Ovan sidan",
+      "below": "Nedan sida"
+    },
+    "pageLocations": {
+      "header": "Sidans plats",
+      "specify": "Ange sida",
+      "specifyLocation": "Ange sidplats",
+      "amount": "Antal sidor",
+      "total": "Total",
+      "pages": "Sidor"
+    },
+    "pageDimensions": {
+      "header": "Sidmått",
+      "subHeader": "Förinställningar",
+      "presets": {
+        "letter": "Brev",
+        "halfLetter": "Halv bokstav",
+        "juniorLegal": "Junior juridisk",
+        "custom": "Beställnings"
+      },
+      "units": "Enheter"
+    },
+    "browse": "Bläddra bland filer",
+    "fileSelected": {
+      "title": "Välj Sidor att lägga till"
+    },
+    "button": "Lägg till sida(r)",
+    "selectPages": "Välj Sidor att lägga till",
+    "page": "Sida",
+    "warning": {
+      "title": "Avsluta infoga ny sida?",
+      "message": "Om du avslutar avbryts alla val du har gjort hittills. Är du säker på att du fortfarande vill avsluta?"
+    }
+  },
+  "multiViewer": {
+    "dragAndDrop": "Dra och släpp din fil här för att jämföra",
+    "or": "Eller",
+    "browse": "Bläddra bland filer",
+    "startSync": "Starta synkronisering",
+    "stopSync": "Stoppa synkronisering",
+    "closeDocument": "Stäng dokument",
+    "save": "Spara dokument",
+    "comparePanel": {
+      "Find": "Hitta i dokument",
+      "changesList": "Ändringslista",
+      "change": "Förändra",
+      "old": "Gammal",
+      "new": "Ny",
+      "page": "Sida",
+      "textContent": "Textinnehåll",
+      "delete": "radera",
+      "insert": "Föra in",
+      "edit": "redigera"
+    }
+  },
+  "saveModal": {
+    "close": "Stänga",
+    "saveAs": "Spara som",
+    "general": "Allmän",
+    "fileName": "Filnamn",
+    "fileType": "Filtyp",
+    "fileLocation": "Filplats",
+    "browse": "Bläddra",
+    "pageRange": "Sidintervall",
+    "all": "Allt",
+    "currentView": "Nuvarande åsikt",
+    "currentPage": "Nuvarande sida",
+    "specifyPage": "Ange sida",
+    "properties": "Egenskaper",
+    "includeAnnotation": "Inkludera anteckningar",
+    "includeComments": "Inkludera kommentarer",
+    "watermark": "Vattenstämpel",
+    "addWatermark": "Lägg till vattenstämpel",
+    "save": "Spara fil",
+    "pageError": "Ogiltig sida. Giltiga sidintervall är mellan 1 -"
+  }
+}

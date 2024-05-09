@@ -1,0 +1,1 @@
+from .newsletter import Newsletter
