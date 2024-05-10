@@ -75,7 +75,6 @@ function LoginPage() {
 
   return (
     <Routes>
-      <Route path="/terms-of-service" element={<PrivacyPolicy />} />
       <Route
         path="*"
         element={
