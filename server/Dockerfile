@@ -9,7 +9,7 @@ ENV POETRY_CACHE_DIR=/opt/.cache
 VOLUME ./.poetry-data-cache /opt/poetry-data
 VOLUME ./.poetry-cache /opt/.cache
 
-RUN python3.10 -m pip install poetry
+RUN python3.10 -m pip install poetry==1.7.1
 WORKDIR /workspace
 RUN poetry config virtualenvs.create false
 
