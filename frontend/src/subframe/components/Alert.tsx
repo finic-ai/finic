@@ -33,7 +33,7 @@ const AlertRoot = React.forwardRef<HTMLElement, AlertRootProps>(
     return (
       <div
         className={SubframeCore.twClassNames(
-          "group/3a65613d flex w-full flex-col items-start gap-2 rounded border border-solid border-neutral-border bg-default-background pt-3 pr-3 pb-3 pl-4",
+          "group/3a65613d flex w-full flex-col items-start gap-2 rounded-md border border-solid border-neutral-border bg-default-background pt-3 pr-3 pb-3 pl-4",
           {
             "border border-solid border-warning-200 bg-warning-100":
               variant === "warning",
@@ -52,7 +52,7 @@ const AlertRoot = React.forwardRef<HTMLElement, AlertRootProps>(
         <div className="flex w-full items-center gap-4">
           <SubframeCore.Icon
             className={SubframeCore.twClassNames(
-              "text-heading-3 font-heading-3 text-neutral-800",
+              "text-subheader font-subheader text-neutral-800",
               {
                 "text-warning-800": variant === "warning",
                 "text-success-800": variant === "success",
@@ -81,7 +81,7 @@ const AlertRoot = React.forwardRef<HTMLElement, AlertRootProps>(
             {description ? (
               <span
                 className={SubframeCore.twClassNames(
-                  "w-full whitespace-pre-wrap text-caption font-caption text-subtext-color",
+                  "w-full whitespace-pre-wrap text-label font-label text-subtext-color",
                   {
                     "text-warning-800": variant === "warning",
                     "text-success-800": variant === "success",

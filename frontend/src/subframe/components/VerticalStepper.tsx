@@ -77,7 +77,7 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
           ) : null}
           <SubframeCore.Icon
             className={SubframeCore.twClassNames(
-              "hidden text-heading-3 font-heading-3 text-default-font",
+              "hidden text-subheader font-subheader text-default-font",
               { "inline-flex text-brand-700": variant === "completed" }
             )}
             name="FeatherCheck"

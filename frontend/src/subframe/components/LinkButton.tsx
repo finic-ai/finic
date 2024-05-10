@@ -46,8 +46,8 @@ const LinkButtonRoot = React.forwardRef<HTMLElement, LinkButtonRootProps>(
           className={SubframeCore.twClassNames(
             "text-body font-body text-subtext-color group-hover/a4ee726a:text-subtext-color group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400",
             {
-              "text-caption font-caption": size === "small",
-              "text-heading-3 font-heading-3": size === "large",
+              "text-label font-label": size === "small",
+              "text-subheader font-subheader": size === "large",
               "text-white group-hover/a4ee726a:text-white":
                 variant === "inverse",
               "text-brand-700 group-hover/a4ee726a:text-brand-700":
@@ -61,8 +61,8 @@ const LinkButtonRoot = React.forwardRef<HTMLElement, LinkButtonRootProps>(
             className={SubframeCore.twClassNames(
               "text-body font-body text-subtext-color group-hover/a4ee726a:text-subtext-color group-hover/a4ee726a:underline group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:no-underline",
               {
-                "text-caption font-caption": size === "small",
-                "text-heading-3 font-heading-3": size === "large",
+                "text-label font-label": size === "small",
+                "text-subheader font-subheader": size === "large",
                 "text-white group-hover/a4ee726a:text-white":
                   variant === "inverse",
                 "text-brand-700 group-hover/a4ee726a:text-brand-700":
@@ -77,8 +77,8 @@ const LinkButtonRoot = React.forwardRef<HTMLElement, LinkButtonRootProps>(
           className={SubframeCore.twClassNames(
             "text-body font-body text-subtext-color group-hover/a4ee726a:text-subtext-color group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400",
             {
-              "text-caption font-caption": size === "small",
-              "text-heading-3 font-heading-3": size === "large",
+              "text-label font-label": size === "small",
+              "text-subheader font-subheader": size === "large",
               "text-white group-hover/a4ee726a:text-white":
                 variant === "inverse",
               "text-brand-700 group-hover/a4ee726a:text-brand-700":

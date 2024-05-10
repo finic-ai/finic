@@ -42,7 +42,7 @@ const IconButtonRoot = React.forwardRef<HTMLElement, IconButtonRootProps>(
     return (
       <button
         className={SubframeCore.twClassNames(
-          "group/af9405b1 flex h-8 w-8 cursor-pointer items-center justify-center gap-2 rounded border-none bg-transparent hover:bg-neutral-50 active:bg-neutral-100 disabled:cursor-default disabled:bg-neutral-200 hover:disabled:cursor-default hover:disabled:bg-neutral-200 active:disabled:cursor-default active:disabled:bg-neutral-200",
+          "group/af9405b1 flex h-8 w-8 cursor-pointer items-center justify-center gap-2 rounded-md border-none bg-transparent hover:bg-neutral-50 active:bg-neutral-100 disabled:cursor-default disabled:bg-neutral-200 hover:disabled:cursor-default hover:disabled:bg-neutral-200 active:disabled:cursor-default active:disabled:bg-neutral-200",
           {
             "h-6 w-6": size === "small",
             "h-10 w-10": size === "large",

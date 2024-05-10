@@ -33,7 +33,7 @@ const ToastRoot = React.forwardRef<HTMLElement, ToastRootProps>(
     return (
       <div
         className={SubframeCore.twClassNames(
-          "group/2c7966c2 flex w-80 items-center gap-4 rounded bg-default-background pt-3 pr-4 pb-3 pl-4 shadow-overlay",
+          "group/2c7966c2 flex w-80 items-center gap-4 rounded-md bg-default-background pt-3 pr-4 pb-3 pl-4 shadow-overlay",
           className
         )}
         ref={ref as any}
@@ -41,7 +41,7 @@ const ToastRoot = React.forwardRef<HTMLElement, ToastRootProps>(
       >
         <SubframeCore.Icon
           className={SubframeCore.twClassNames(
-            "text-heading-3 font-heading-3 text-neutral-700",
+            "text-subheader font-subheader text-neutral-700",
             {
               "text-success-700": variant === "success",
               "text-error-700": variant === "error",
@@ -65,7 +65,7 @@ const ToastRoot = React.forwardRef<HTMLElement, ToastRootProps>(
             </span>
           ) : null}
           {description ? (
-            <span className="w-full text-caption font-caption text-subtext-color">
+            <span className="w-full text-label font-label text-subtext-color">
               {description}
             </span>
           ) : null}

@@ -72,7 +72,7 @@ const ToggleGroupRoot = React.forwardRef<HTMLElement, ToggleGroupRootProps>(
       <SubframeCore.ToggleGroup.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "flex items-start gap-px overflow-hidden rounded border border-solid border-neutral-border bg-neutral-border",
+            "flex items-start gap-px overflow-hidden rounded-md border border-solid border-neutral-border bg-neutral-border",
             className
           )}
           ref={ref as any}

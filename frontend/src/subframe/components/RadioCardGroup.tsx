@@ -23,7 +23,7 @@ const RadioCard = React.forwardRef<HTMLElement, RadioCardProps>(
       <SubframeCore.RadioGroup.Item asChild={true} {...otherProps}>
         <button
           className={SubframeCore.twClassNames(
-            "group/502d4919 flex w-full cursor-pointer items-center gap-4 rounded border border-solid border-neutral-200 bg-default-background pt-3 pr-4 pb-3 pl-4 hover:bg-neutral-50 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-200 aria-[checked=true]:bg-brand-50 hover:aria-[checked=true]:bg-brand-50 disabled:cursor-default disabled:border disabled:border-solid disabled:border-neutral-100 disabled:bg-neutral-50 hover:disabled:cursor-default hover:disabled:bg-neutral-50",
+            "group/502d4919 flex w-full cursor-pointer items-center gap-4 rounded-md border border-solid border-neutral-200 bg-default-background pt-3 pr-4 pb-3 pl-4 hover:bg-neutral-50 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-200 aria-[checked=true]:bg-brand-50 hover:aria-[checked=true]:bg-brand-50 disabled:cursor-default disabled:border disabled:border-solid disabled:border-neutral-100 disabled:bg-neutral-50 hover:disabled:cursor-default hover:disabled:bg-neutral-50",
             className
           )}
           ref={ref as any}

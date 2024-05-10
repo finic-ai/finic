@@ -41,6 +41,16 @@ export const completeOnboarding = async (
           first_name: firstName,
           last_name: lastName,
           applicant_type: applicantType,
+          loan_amount: loanAmount,
+          company_name: companyName,
+          company_website: companyWebsite,
+          buyer_first_name: buyerFirstName,
+          buyer_last_name: buyerLastName,
+          buyer_email: buyerEmail,
+          buyer_linkedin: buyerLinkedin,
+          owner_first_name: ownerFirstName,
+          owner_last_name: ownerLastName,
+          owner_email: ownerEmail,
         }),
       }
     );

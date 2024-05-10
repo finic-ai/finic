@@ -69,7 +69,7 @@ const TextAreaRoot = React.forwardRef<HTMLElement, TextAreaRootProps>(
         {children ? (
           <div
             className={SubframeCore.twClassNames(
-              "flex h-full w-full grow shrink-0 basis-0 flex-col items-start rounded border border-solid border-neutral-border bg-default-background pl-1 group-focus-within/4ec05ee8:border group-focus-within/4ec05ee8:border-solid group-focus-within/4ec05ee8:border-brand-primary",
+              "flex h-full w-full grow shrink-0 basis-0 flex-col items-start rounded-md border border-solid border-neutral-border bg-default-background pl-1 group-focus-within/4ec05ee8:border group-focus-within/4ec05ee8:border-solid group-focus-within/4ec05ee8:border-brand-primary",
               {
                 "border border-solid border-neutral-100 bg-neutral-100 group-hover/4ec05ee8:border group-hover/4ec05ee8:border-solid group-hover/4ec05ee8:border-neutral-border group-focus-within/4ec05ee8:bg-default-background":
                   variant === "filled",
@@ -83,7 +83,7 @@ const TextAreaRoot = React.forwardRef<HTMLElement, TextAreaRootProps>(
         {helpText ? (
           <span
             className={SubframeCore.twClassNames(
-              "text-caption font-caption text-subtext-color",
+              "text-label font-label text-subtext-color",
               { "text-error-700": error }
             )}
           >

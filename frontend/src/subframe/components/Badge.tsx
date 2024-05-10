@@ -28,7 +28,7 @@ const BadgeRoot = React.forwardRef<HTMLElement, BadgeRootProps>(
     return (
       <div
         className={SubframeCore.twClassNames(
-          "group/97bdb082 flex h-5 items-center gap-1 rounded border border-solid border-brand-200 bg-brand-100 pr-2 pl-2",
+          "group/97bdb082 flex h-5 items-center gap-1 rounded-md border border-solid border-brand-200 bg-brand-100 pr-2 pl-2",
           {
             "border border-solid border-success-200 bg-success-100":
               variant === "success",
@@ -46,7 +46,7 @@ const BadgeRoot = React.forwardRef<HTMLElement, BadgeRootProps>(
       >
         <SubframeCore.Icon
           className={SubframeCore.twClassNames(
-            "text-caption font-caption text-brand-700",
+            "text-label font-label text-brand-700",
             {
               "text-success-700": variant === "success",
               "text-warning-700": variant === "warning",
@@ -59,7 +59,7 @@ const BadgeRoot = React.forwardRef<HTMLElement, BadgeRootProps>(
         {children ? (
           <span
             className={SubframeCore.twClassNames(
-              "whitespace-nowrap text-caption font-caption text-brand-800",
+              "whitespace-nowrap text-label font-label text-brand-800",
               {
                 "text-success-800": variant === "success",
                 "text-warning-800": variant === "warning",

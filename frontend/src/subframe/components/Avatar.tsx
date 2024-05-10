@@ -34,7 +34,7 @@ const AvatarRoot = React.forwardRef<HTMLElement, AvatarRootProps>(
         className={SubframeCore.twClassNames(
           "group/bec25ae6 flex h-8 w-8 flex-col items-center justify-center gap-2 overflow-hidden rounded-full bg-brand-100 relative",
           {
-            rounded: square,
+            "rounded-md": square,
             "h-5 w-5": size === "x-small",
             "h-6 w-6": size === "small",
             "h-12 w-12": size === "large",

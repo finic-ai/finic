@@ -35,7 +35,7 @@ const IconWithBackgroundRoot = React.forwardRef<
       className={SubframeCore.twClassNames(
         "group/c5d68c0e flex h-5 w-5 items-center justify-center gap-2 rounded-full bg-brand-100",
         {
-          rounded: square,
+          "rounded-md": square,
           "h-6 w-6": size === "small",
           "h-8 w-8": size === "medium",
           "h-12 w-12": size === "large",

@@ -22,7 +22,7 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
     <SubframeCore.Select.Item value={value} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "group/969e345b flex h-8 w-full cursor-pointer items-center gap-1 rounded pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-brand-50",
+          "group/969e345b flex h-8 w-full cursor-pointer items-center gap-1 rounded-md pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-brand-50",
           className
         )}
         ref={ref as any}
@@ -78,7 +78,7 @@ const Content = React.forwardRef<HTMLElement, ContentProps>(function Content(
     <SubframeCore.Select.Content asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "flex w-full flex-col items-start overflow-hidden rounded border border-solid border-neutral-border bg-white pt-1 pr-1 pb-1 pl-1 shadow-overlay",
+          "flex w-full flex-col items-start overflow-hidden rounded-md border border-solid border-neutral-border bg-white pt-1 pr-1 pb-1 pl-1 shadow-overlay",
           className
         )}
         ref={ref as any}
@@ -191,7 +191,7 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
           ) : null}
           <div
             className={SubframeCore.twClassNames(
-              "flex h-8 w-full flex-none flex-col items-start rounded border border-solid border-neutral-border bg-default-background group-focus-within/bb88f90b:border group-focus-within/bb88f90b:border-solid group-focus-within/bb88f90b:border-brand-primary group-disabled/bb88f90b:bg-neutral-100",
+              "flex h-8 w-full flex-none flex-col items-start rounded-md border border-solid border-neutral-border bg-default-background group-focus-within/bb88f90b:border group-focus-within/bb88f90b:border-solid group-focus-within/bb88f90b:border-brand-primary group-disabled/bb88f90b:bg-neutral-100",
               {
                 "border border-solid border-neutral-100 bg-neutral-100 group-hover/bb88f90b:border group-hover/bb88f90b:border-solid group-hover/bb88f90b:border-neutral-border group-hover/bb88f90b:bg-neutral-100":
                   variant === "filled",
@@ -204,7 +204,7 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
           {helpText ? (
             <span
               className={SubframeCore.twClassNames(
-                "text-caption font-caption text-subtext-color",
+                "text-label font-label text-subtext-color",
                 { "text-error-700": error }
               )}
             >

@@ -28,7 +28,7 @@ const DropdownItem = React.forwardRef<HTMLElement, DropdownItemProps>(
       <SubframeCore.DropdownMenu.Item asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "group/adcae8d6 flex h-8 w-full cursor-pointer items-center gap-2 rounded pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-neutral-100",
+            "group/adcae8d6 flex h-8 w-full cursor-pointer items-center gap-2 rounded-md pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-neutral-100",
             className
           )}
           ref={ref as any}
@@ -61,7 +61,7 @@ const DropdownMenuRoot = React.forwardRef<HTMLElement, DropdownMenuRootProps>(
     return children ? (
       <div
         className={SubframeCore.twClassNames(
-          "flex min-w-[192px] flex-col items-start rounded border border-solid border-neutral-border bg-default-background pt-1 pr-1 pb-1 pl-1 shadow-overlay",
+          "flex min-w-[192px] flex-col items-start rounded-md border border-solid border-neutral-border bg-default-background pt-1 pr-1 pb-1 pl-1 shadow-overlay",
           className
         )}
         ref={ref as any}

@@ -21,7 +21,7 @@ const SkeletonTextRoot = React.forwardRef<HTMLElement, SkeletonTextRootProps>(
     return (
       <SubframeCore.Skeleton
         className={SubframeCore.twClassNames(
-          "group/a9aae3f0 flex h-5 w-full flex-col items-start gap-2 rounded bg-neutral-200",
+          "group/a9aae3f0 flex h-5 w-full flex-col items-start gap-2 rounded-md bg-neutral-200",
           {
             "h-10 w-full": size === "header",
             "h-9 w-full": size === "section-header",

@@ -100,12 +100,12 @@ const HeaderCell = React.forwardRef<HTMLElement, HeaderCellProps>(
           ref={ref as any}
         >
           {children ? (
-            <span className="whitespace-nowrap text-caption-bold font-caption-bold text-subtext-color">
+            <span className="whitespace-nowrap text-label-bold font-label-bold text-subtext-color">
               {children}
             </span>
           ) : null}
           <SubframeCore.Icon
-            className="text-caption font-caption text-subtext-color"
+            className="text-label font-label text-subtext-color"
             name={icon}
           />
         </div>

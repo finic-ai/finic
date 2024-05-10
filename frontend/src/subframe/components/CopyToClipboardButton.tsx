@@ -40,7 +40,7 @@ const CopyToClipboardButtonRoot = React.forwardRef<
           >
             <div
               className={SubframeCore.twClassNames(
-                "group/e8c76626 flex h-6 w-6 cursor-pointer flex-col items-center justify-center gap-2 rounded hover:bg-neutral-100",
+                "group/e8c76626 flex h-6 w-6 cursor-pointer flex-col items-center justify-center gap-2 rounded-md hover:bg-neutral-100",
                 className
               )}
               ref={ref as any}

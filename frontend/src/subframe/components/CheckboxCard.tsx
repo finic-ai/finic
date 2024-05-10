@@ -28,7 +28,7 @@ const CheckboxCardRoot = React.forwardRef<HTMLElement, CheckboxCardRootProps>(
       <SubframeCore.Checkbox.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "group/de0b4dfb flex cursor-pointer items-center gap-4 rounded border border-solid border-neutral-border bg-default-background pt-3 pr-4 pb-3 pl-4 hover:border hover:border-solid hover:border-neutral-border hover:bg-neutral-50 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-200 aria-[checked=true]:bg-brand-50 disabled:cursor-default disabled:border disabled:border-solid disabled:border-neutral-200 disabled:bg-neutral-100",
+            "group/de0b4dfb flex cursor-pointer items-center gap-4 rounded-md border border-solid border-neutral-border bg-default-background pt-3 pr-4 pb-3 pl-4 hover:border hover:border-solid hover:border-neutral-border hover:bg-neutral-50 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-200 aria-[checked=true]:bg-brand-50 disabled:cursor-default disabled:border disabled:border-solid disabled:border-neutral-200 disabled:bg-neutral-100",
             className
           )}
           ref={ref as any}

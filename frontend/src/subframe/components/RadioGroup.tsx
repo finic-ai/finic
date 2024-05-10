@@ -91,7 +91,7 @@ const RadioGroupRoot = React.forwardRef<HTMLElement, RadioGroupRootProps>(
           {helpText ? (
             <span
               className={SubframeCore.twClassNames(
-                "text-caption font-caption text-subtext-color",
+                "text-label font-label text-subtext-color",
                 { "text-error-700": error }
               )}
             >

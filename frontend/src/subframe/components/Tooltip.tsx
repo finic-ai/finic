@@ -20,16 +20,14 @@ const TooltipRoot = React.forwardRef<HTMLElement, TooltipRootProps>(
     return (
       <div
         className={SubframeCore.twClassNames(
-          "flex flex-col items-start gap-2 rounded border border-solid border-neutral-900 bg-neutral-800 pt-1 pr-2 pb-1 pl-2 shadow-overlay",
+          "flex flex-col items-start gap-2 rounded-md border border-solid border-neutral-900 bg-neutral-800 pt-1 pr-2 pb-1 pl-2 shadow-overlay",
           className
         )}
         ref={ref as any}
         {...otherProps}
       >
         {children ? (
-          <span className="text-caption font-caption text-white">
-            {children}
-          </span>
+          <span className="text-label font-label text-white">{children}</span>
         ) : null}
       </div>
     );

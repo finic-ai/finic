@@ -96,7 +96,7 @@ const AccordionRoot = React.forwardRef<HTMLElement, AccordionRootProps>(
       <SubframeCore.Collapsible.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "group/d2e81e20 flex w-full flex-col items-start rounded",
+            "group/d2e81e20 flex w-full flex-col items-start rounded-md",
             className
           )}
           ref={ref as any}

@@ -27,7 +27,7 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
   return (
     <div
       className={SubframeCore.twClassNames(
-        "group/02cd1448 flex w-full cursor-pointer items-center gap-2 rounded pt-2 pr-3 pb-2 pl-3 hover:bg-neutral-50",
+        "group/02cd1448 flex w-full cursor-pointer items-center gap-2 rounded-md pt-2 pr-3 pb-2 pl-3 hover:bg-neutral-50",
         { "bg-neutral-100": selected },
         className
       )}

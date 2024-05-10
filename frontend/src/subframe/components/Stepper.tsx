@@ -58,7 +58,7 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
           {stepNumber ? (
             <span
               className={SubframeCore.twClassNames(
-                "text-caption-bold font-caption-bold text-subtext-color",
+                "text-label-bold font-label-bold text-subtext-color",
                 {
                   "text-brand-700":
                     variant === "active" || variant === "completed",
