@@ -1,11 +1,7 @@
 import io
 from fastapi import UploadFile
 from typing import List, Optional, Tuple
-from models.models import (
-    AppConfig,
-    User,
-    Business,
-)
+from models.models import AppConfig, User, Business, Lender
 from supabase import create_client, Client
 import os
 from storage3.utils import StorageException
@@ -80,12 +76,10 @@ class Database:
         completed_onboarding: Optional[bool] = None,
         first_name: Optional[str] = None,
         last_name: Optional[str] = None,
-        type: Optional[str] = None,
     ) -> Optional[User]:
         payload = {
             "first_name": first_name,
             "last_name": last_name,
-            "type": type,
             "completed_onboarding": completed_onboarding,
         }
         response = (
@@ -113,3 +107,55 @@ class Database:
             row = response.data[0]
             return Business(**row)
         return None
+
+    async def get_businesses_for_user(self, user_id: str) -> List[Business]:
+        response = (
+            self.supabase.table("businesses")
+            .select("*")
+            .filter("borrower_id", "eq", user_id)
+            .execute()
+        )
+        return [Business(**row) for row in response.data]
+
+    async def get_lenders(
+        self, sort_by, descending: bool = False, limit: int = 3
+    ) -> List[Lender]:
+        response = (
+            self.supabase.table("lenders")
+            .select("*")
+            .order(sort_by, desc=descending)
+            .filter("active", "eq", True)
+            .limit(limit)
+            .execute()
+        )
+
+        return [Lender(**row) for row in response.data]
+
+    async def get_lenders_by_naics_code(
+        self, naics_code: int, sort_by: str, descending: bool = False
+    ) -> List[Lender]:
+        # get the rows from lenders_naics_stats table, filter by naics code, sort by the sort_by column
+        # then join with the lenders table to get the lender details
+
+        response = (
+            self.supabase.table("lenders_naics_stats")
+            .select("*, lenders(id, name, type, website, contact_name, contact_email)")
+            .filter("naics", "eq", naics_code)
+            .filter("lenders.active", "eq", True)
+            .order(sort_by, desc=descending)
+            .execute()
+        )
+
+        flattened_data = []
+        for item in response.data:
+            flat_item = {
+                **item,
+                **item.pop("lenders"),
+            }  # This merges the dictionary from 'lenders' into the main dictionary
+            flat_item["avg_interest_rate_in_sector"] = item["mean_interest_rate"]
+            flat_item["num_loans_in_sector"] = item["count"]
+            flattened_data.append(flat_item)
+
+        print(response.data)
+
+        return [Lender(**row) for row in flattened_data]

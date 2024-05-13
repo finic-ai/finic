@@ -3,30 +3,9 @@ export const completeOnboarding = async (
   loanAmount: number,
   firstName: string,
   lastName: string,
-  applicantType: string,
-  buyerResume: File,
-  buyer2021TaxReturn: File,
-  buyer2022TaxReturn: File,
-  buyer2023TaxReturn: File,
-  buyerForm413: File,
   companyName: string,
   companyWebsite: string,
-  cim: File,
-  business2021TaxReturn: File,
-  business2022TaxReturn: File,
-  business2023TaxReturn: File,
-  business2024PnL: File,
-  business2024BalanceSheet: File,
-  loi: File,
-  buyerCreditScore: File,
-  buyerFirstName?: string,
-  buyerLastName?: string,
-  buyerEmail?: string,
-
-  buyerLinkedin?: string,
-  ownerFirstName?: string,
-  ownerLastName?: string,
-  ownerEmail?: string
+  state: string
 ): Promise<any> => {
   try {
     const response = await fetch(
@@ -40,17 +19,10 @@ export const completeOnboarding = async (
         body: JSON.stringify({
           first_name: firstName,
           last_name: lastName,
-          applicant_type: applicantType,
           loan_amount: loanAmount,
           company_name: companyName,
           company_website: companyWebsite,
-          buyer_first_name: buyerFirstName,
-          buyer_last_name: buyerLastName,
-          buyer_email: buyerEmail,
-          buyer_linkedin: buyerLinkedin,
-          owner_first_name: ownerFirstName,
-          owner_last_name: ownerLastName,
-          owner_email: ownerEmail,
+          company_state: state,
         }),
       }
     );
@@ -62,26 +34,42 @@ export const completeOnboarding = async (
   }
 };
 
-export const submitListingForApproval = async (
-  apiKey: string,
-  listingId: string
-): Promise<any> => {
+export const getLenders = async (apiKey: string): Promise<any> => {
   try {
     const response = await fetch(
-      import.meta.env.VITE_APP_SERVER_URL + "/submit-listing-for-approval",
+      import.meta.env.VITE_APP_SERVER_URL + "/get-lenders",
       {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ listing_id: listingId }),
       }
     );
     const data = await response.json();
     return data;
   } catch (error: any) {
     console.error(`Error submitting listing for approval: ${error.message}`);
+    return error;
+  }
+};
+
+export const getRecommendedLenders = async (apiKey: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-recommended-lenders",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(`Error getting recommended lenders: ${error.message}`);
     return error;
   }
 };

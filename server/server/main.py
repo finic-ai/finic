@@ -36,6 +36,8 @@ import io
 import datetime
 import logging
 import sentry_sdk
+from webscraper import WebScraper
+from recommendations import Recommendations
 
 sentry_sdk.init(
     dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
@@ -127,50 +129,22 @@ async def complete_onboarding(
     config: AppConfig = Depends(validate_token),
 ):
     try:
+        print("request", request)
         user = await db.set_user_fields(
             config,
             completed_onboarding=True,
             first_name=request.first_name,
             last_name=request.last_name,
-            type=request.applicant_type,
         )
 
+        naics_code = await WebScraper().get_naics_code(request.company_website)
         business = Business(
             id=str(uuid.uuid4()),
             borrower_id=user.id,
-            buyer_first_name=(
-                user.first_name
-                if request.applicant_type == "acquirer"
-                else request.buyer_first_name
-            ),
-            buyer_last_name=(
-                user.last_name
-                if request.applicant_type == "acquirer"
-                else request.buyer_last_name
-            ),
-            buyer_email=(
-                user.email
-                if request.applicant_type == "acquirer"
-                else request.buyer_email
-            ),
-            buyer_linkedin=request.buyer_linkedin,
-            owner_first_name=(
-                user.first_name
-                if request.applicant_type == "business_owner"
-                else request.first_name
-            ),
-            owner_last_name=(
-                user.first_name
-                if request.applicant_type == "business_owner"
-                else request.first_name
-            ),
-            owner_email=(
-                user.email
-                if request.applicant_type == "business_owner"
-                else request.owner_email
-            ),
             company_name=request.company_name,
             company_website=request.company_website,
+            company_state=request.company_state,
+            naics_code=naics_code,
         )
         await db.upsert_business(business=business)
 
@@ -184,6 +158,38 @@ async def complete_onboarding(
 
         response = CompleteOnboardingResponse(success=True)
         return response
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/get-recommended-lenders")
+async def get_recommended_lenders(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        businesses = await db.get_businesses_for_user(config.user_id)
+        business = businesses[0]
+
+        recommendations = Recommendations(db=db)
+
+        lenders = await recommendations.get_recommended_lenders(
+            naics_code=business.naics_code
+        )
+
+        return lenders
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/get-lenders")
+async def get_lenders(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        lenders = await db.get_lenders()
+        return lenders
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
