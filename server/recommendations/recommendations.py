@@ -41,19 +41,19 @@ class Recommendations:
             naics_code, "mean_interest_rate", descending=False
         )
 
-        lenders = low_interest_rates[:3]
+        lenders = low_interest_rates[:5]
 
         most_loans = await self.db.get_lenders_by_naics_code(
             naics_code, "count", descending=True
         )
 
-        lenders += most_loans[:3]
+        lenders += most_loans[:5]
 
         # Remove duplicates
 
         lenders = list({lender.id: lender for lender in lenders}.values())
 
-        if len(lenders) < 3:
+        if len(lenders) < 5:
             all_lenders = await self.db.get_lenders(
                 sort_by="num_loans", descending=True
             )
