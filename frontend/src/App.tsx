@@ -38,8 +38,6 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  console.log("session", session);
-
   return (
     <Router>
       <UserStateProvider session={session}>
