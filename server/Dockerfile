@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.10
+FROM --platform=linux/amd64 python:3.11
 ENV POETRY_HOME=/opt/poetry
 ENV POETRY_VENV=/opt/poetry-venv
 ENV POETRY_DATA_DIR=/opt/poetry-data
@@ -9,7 +9,7 @@ ENV POETRY_CACHE_DIR=/opt/.cache
 VOLUME ./.poetry-data-cache /opt/poetry-data
 VOLUME ./.poetry-cache /opt/.cache
 
-RUN python3.10 -m pip install poetry==1.7.1
+RUN python3.11 -m pip install poetry==1.7.1
 WORKDIR /workspace
 RUN poetry config virtualenvs.create false
 
