@@ -29,8 +29,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
   { children, className, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
-  const { isLoggedIn, avatarUrl, fullName, isSeller, authState } =
-    useUserStateContext();
+  const { isLoggedIn, avatarUrl, firstName, authState } = useUserStateContext();
   return (
     <div
       className={SubframeCore.twClassNames(
@@ -60,7 +59,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
                 {avatarUrl ? (
                   <Avatar image={avatarUrl} />
                 ) : (
-                  <Avatar>{fullName ? fullName[0] : ""}</Avatar>
+                  <Avatar>{firstName ? firstName : ""}</Avatar>
                 )}
               </SubframeCore.DropdownMenu.Trigger>
               <SubframeCore.DropdownMenu.Portal>
