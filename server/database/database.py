@@ -148,6 +148,8 @@ class Database:
 
         flattened_data = []
         for item in response.data:
+            if not item or not item.get("lenders"):
+                continue
             flat_item = {
                 **item,
                 **item.pop("lenders"),
@@ -155,7 +157,5 @@ class Database:
             flat_item["avg_interest_rate_in_sector"] = item["mean_interest_rate"]
             flat_item["num_loans_in_sector"] = item["count"]
             flattened_data.append(flat_item)
-
-        print(response.data)
 
         return [Lender(**row) for row in flattened_data]

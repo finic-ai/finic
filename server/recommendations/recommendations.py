@@ -43,11 +43,15 @@ class Recommendations:
 
         lenders = low_interest_rates[:5]
 
+        print(lenders)
+
         most_loans = await self.db.get_lenders_by_naics_code(
             naics_code, "count", descending=True
         )
 
         lenders += most_loans[:5]
+
+        print(lenders)
 
         # Remove duplicates
 

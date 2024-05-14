@@ -15,6 +15,7 @@ import { IconButton } from "../components/IconButton";
 import { DropdownMenu } from "../components/DropdownMenu";
 import { Avatar } from "../components/Avatar";
 import { useUserStateContext } from "../../context/UserStateContext";
+import supabase from "../../lib/supabaseClient";
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -73,7 +74,13 @@ const DefaultPageLayoutRoot = React.forwardRef<
                     {/* <DropdownMenu.DropdownItem icon="FeatherMailPlus">
                       Refer a company
                     </DropdownMenu.DropdownItem> */}
-                    <DropdownMenu.DropdownItem icon="FeatherLogOut">
+                    <DropdownMenu.DropdownItem
+                      icon="FeatherLogOut"
+                      onClick={() => {
+                        console.log("Logging out");
+                        supabase.auth.signOut({ scope: "global" });
+                      }}
+                    >
                       Log out
                     </DropdownMenu.DropdownItem>
                   </DropdownMenu>
