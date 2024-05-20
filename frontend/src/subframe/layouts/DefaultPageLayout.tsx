@@ -57,11 +57,14 @@ const DefaultPageLayoutRoot = React.forwardRef<
             />
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                {avatarUrl ? (
-                  <Avatar image={avatarUrl} />
-                ) : (
-                  <Avatar>{firstName ? firstName : ""}</Avatar>
-                )}
+                <Avatar
+                  className="cursor-pointer"
+                  image={
+                    avatarUrl
+                      ? avatarUrl
+                      : "https://res.cloudinary.com/subframe/image/upload/v1715365107/uploads/132/axxegsbktgi1g9ud3683.png"
+                  }
+                />
               </SubframeCore.DropdownMenu.Trigger>
               <SubframeCore.DropdownMenu.Portal>
                 <SubframeCore.DropdownMenu.Content
