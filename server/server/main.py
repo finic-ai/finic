@@ -28,6 +28,7 @@ import requests
 from models.api import (
     CompleteOnboardingRequest,
     CompleteOnboardingResponse,
+    ApplyForLoanRequest,
 )
 import uuid
 from models.models import AppConfig, Business
@@ -38,6 +39,7 @@ import logging
 import sentry_sdk
 from webscraper import WebScraper
 from recommendations import Recommendations
+from email_sender import EmailSender
 
 sentry_sdk.init(
     dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
@@ -137,14 +139,13 @@ async def complete_onboarding(
             last_name=request.last_name,
         )
 
-        naics_code = await WebScraper().get_naics_code(request.company_website)
         business = Business(
             id=str(uuid.uuid4()),
             borrower_id=user.id,
             company_name=request.company_name,
             company_website=request.company_website,
             company_state=request.company_state,
-            naics_code=naics_code,
+            loan_amount=request.loan_amount,
         )
         await db.upsert_business(business=business)
 
@@ -163,21 +164,24 @@ async def complete_onboarding(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/get-recommended-lenders")
-async def get_recommended_lenders(
+@app.post("/get-applications")
+async def get_applications(
     config: AppConfig = Depends(validate_token),
 ):
     try:
         businesses = await db.get_businesses_for_user(config.user_id)
         business = businesses[0]
 
-        recommendations = Recommendations(db=db)
+        applications = await db.get_loan_applications(business=business)
 
-        lenders = await recommendations.get_recommended_lenders(
-            naics_code=business.naics_code
-        )
+        if len(applications) == 0:
+            recommendations = Recommendations(db=db)
+            lenders = await recommendations.get_recommended_lenders(business=business)
+            applications = await db.upsert_loan_applications(
+                lenders=lenders, business=business, borrower_id=config.user_id
+            )
 
-        return lenders
+        return applications
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -190,6 +194,57 @@ async def get_lenders(
     try:
         lenders = await db.get_lenders()
         return lenders
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/apply-for-loan")
+async def apply_for_loan(
+    lender_id: str = Form(...),
+    under_loi: bool = Form(None),
+    linkedin_url: str = Form(None),
+    files: List[UploadFile] = File([]),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        businesses = await db.get_businesses_for_user(config.user_id)
+        business = businesses[0]
+
+        print("business", business)
+
+        # check if biz exists yet
+        business_complete = await db.bucket_exists(business)
+        if not business_complete:
+            # check if we have received files
+            if len(files) == 0:
+                raise IncompleteOnboardingError()
+            else:
+                await db.upload_business_files(business=business, files=files)
+                # update business with linkedin_url and under_loi
+                business.buyer_linkedin = linkedin_url
+                business.under_loi = under_loi
+                await db.upsert_business(business=business)
+
+        lender = await db.get_lender(lender_id)
+
+        application = await db.upsert_loan_application(
+            business=business, lender=lender, borrower_id=config.user_id
+        )
+
+        email_sender = EmailSender()
+        business_files = await db.get_business_files(business=business)
+        borrower = await db.get_user(config.user_id)
+        email_sender.send_application_email(
+            business=business,
+            borrower=borrower,
+            lender=lender,
+            business_files=business_files,
+        )
+
+        return {"application": application}
+    except IncompleteOnboardingError as e:
+        raise HTTPException(status_code=401, detail="buyer onboarding required")
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

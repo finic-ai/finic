@@ -1,7 +1,15 @@
 import io
 from fastapi import UploadFile
 from typing import List, Optional, Tuple
-from models.models import AppConfig, User, Business, Lender
+from models.models import (
+    AppConfig,
+    User,
+    Business,
+    Lender,
+    LoanApplication,
+    LoanStatus,
+    BusinessFiles,
+)
 from supabase import create_client, Client
 import os
 from storage3.utils import StorageException
@@ -42,12 +50,12 @@ class Database:
             return AppConfig(user_id=row["id"])
         return None
 
-    async def get_user(self, app_id: str) -> Optional[User]:
-        print("app_id", app_id)
+    async def get_user(self, user_id: str) -> Optional[User]:
+        print("app_id", user_id)
         response = (
             self.supabase.table("lending_users")
             .select("*")
-            .filter("app_id", "eq", app_id)
+            .filter("id", "eq", user_id)
             .execute()
         )
         print("response", response)
@@ -121,41 +129,160 @@ class Database:
         self, sort_by, descending: bool = False, limit: int = 3
     ) -> List[Lender]:
         response = (
-            self.supabase.table("lenders")
+            self.supabase.table("lender")
             .select("*")
             .order(sort_by, desc=descending)
-            .filter("active", "eq", True)
             .limit(limit)
             .execute()
         )
 
         return [Lender(**row) for row in response.data]
 
-    async def get_lenders_by_naics_code(
-        self, naics_code: int, sort_by: str, descending: bool = False
-    ) -> List[Lender]:
-        # get the rows from lenders_naics_stats table, filter by naics code, sort by the sort_by column
-        # then join with the lenders table to get the lender details
-
+    async def get_lender(self, lender_id: str) -> Optional[Lender]:
         response = (
-            self.supabase.table("lenders_naics_stats")
-            .select("*, lenders(id, name, type, website, contact_name, contact_email)")
-            .filter("naics", "eq", naics_code)
-            .filter("lenders.active", "eq", True)
-            .order(sort_by, desc=descending)
+            self.supabase.table("lender")
+            .select("*")
+            .filter("id", "eq", lender_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Lender(**row)
+        return None
+
+    async def upsert_loan_application(
+        self,
+        business: Business,
+        lender: Lender,
+        borrower_id: str,
+    ):
+        loan_application = LoanApplication(
+            lender_id=lender.id,
+            business_id=business.id,
+            borrower_id=borrower_id,
+            status=LoanStatus.applied,
+            lender_name=lender.name,
+        )
+
+        loan_dict = loan_application.dict()
+        # remove the lender field
+        loan_dict.pop("lender")
+        response = self.supabase.table("loan_applications").upsert(loan_dict).execute()
+        if len(response.data) > 0:
+            row = response.data[0]
+            return LoanApplication(**row)
+
+    async def bucket_exists(self, business: Business) -> bool:
+        try:
+            self.supabase.storage.get_bucket(business.id)
+            return True
+        except StorageException as e:
+            return False
+
+    async def upload_business_files(
+        self, business: Business, files: List[UploadFile]
+    ) -> bool:
+        res = self.supabase.storage.create_bucket(business.id)
+
+        # upload the files
+
+        new_file_names = [
+            "buyer_resume.pdf",
+            "buyer_credit_score.pdf",
+            "buyer_2021_tax_return.pdf",
+            "buyer_2022_tax_return.pdf",
+            "buyer_2023_tax_return.pdf",
+            "buyer_form_413.pdf",
+            "cim.pdf",
+            "business_2021_tax_return.pdf",
+            "business_2022_tax_return.pdf",
+            "business_2023_tax_return.pdf",
+            "business_2024_pnl.pdf",
+            "business_2024_balance_sheet.pdf",
+            "loi.pdf",
+        ]
+
+        i = 0
+        print(len(files))
+        for file in files:
+            filename = new_file_names[i]
+            print(filename)
+            file_bytes = await file.read()
+            self.supabase.storage.from_(business.id).upload(
+                file=file_bytes, path=filename
+            )
+            i += 1
+
+        print("finished uploading files")
+
+        return True
+
+    async def get_business_files(self, business: Business) -> BusinessFiles:
+        bucket = self.supabase.storage.from_(business.id).list()
+        print(bucket)
+        filenames = [file["name"] for file in bucket]
+
+        # download the files
+        business_files = BusinessFiles()
+        for filename in filenames:
+            file_bytes = self.supabase.storage.from_(business.id).download(filename)
+            filename_without_ext = filename.split(".")[0]
+            setattr(business_files, filename_without_ext, file_bytes)
+        return business_files
+
+    async def get_loan_applications(self, business: Business) -> List[LoanApplication]:
+        # get all loans with business_id = business.id and then join with the lenders table to get the lender details
+        # order by lender.avg_interest_rate
+        response = (
+            self.supabase.table("loan_applications")
+            .select(
+                "*, lender(id, name, type, website, contact_name, contact_email, avg_interest_rate, num_loans, logo_url, has_referral_fee)"
+            )
+            .filter("business_id", "eq", business.id)
             .execute()
         )
 
-        flattened_data = []
-        for item in response.data:
-            if not item or not item.get("lenders"):
-                continue
-            flat_item = {
-                **item,
-                **item.pop("lenders"),
-            }  # This merges the dictionary from 'lenders' into the main dictionary
-            flat_item["avg_interest_rate_in_sector"] = item["mean_interest_rate"]
-            flat_item["num_loans_in_sector"] = item["count"]
-            flattened_data.append(flat_item)
+        result = [LoanApplication(**row) for row in response.data]
 
-        return [Lender(**row) for row in flattened_data]
+        print(result)
+
+        # sort the loan applications by lender avg interest rate
+        result.sort(key=lambda x: x.lender.avg_interest_rate)
+        return result
+
+    async def upsert_loan_applications(
+        self, lenders: List[Lender], business: Business, borrower_id: str
+    ):
+        upsert_data = [
+            {
+                "lender_id": lender.id,
+                "business_id": business.id,
+                "borrower_id": borrower_id,
+                "status": LoanStatus.not_yet_applied,
+                "lender_name": lender.name,
+            }
+            for lender in lenders
+        ]
+        response = (
+            self.supabase.table("loan_applications")
+            .upsert(
+                upsert_data,
+            )
+            .execute()
+        )
+
+        result = [LoanApplication(**row) for row in response.data]
+
+        # add the lender details to the loan application using the lenders list
+        for loan_application in result:
+            lender = next(
+                (
+                    lender
+                    for lender in lenders
+                    if lender.id == loan_application.lender_id
+                ),
+                None,
+            )
+            loan_application.lender = lender
+
+        return result

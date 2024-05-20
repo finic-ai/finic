@@ -18,6 +18,7 @@ import datetime
 from firecrawl import FirecrawlApp
 from pydantic import BaseModel
 from database import Database
+from enum import Enum
 
 
 def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
@@ -31,36 +32,102 @@ class NAICSCodeSchema(BaseModel):
     naics_code: int
 
 
+class Region(str, Enum):
+    midwest = "midwest"
+    new_england = "new_england"
+    southeast = "southeast"
+    great_lakes = "great_lakes"
+    northwest = "northwest"
+    southwest = "southwest"
+    south = "south"
+
+    def initialize_with_state(state: str):
+        if state in [
+            "Pennsylvania",
+            "Delaware",
+            "New Jersey",
+            "New York",
+            "Connecticut",
+            "Rhode Island",
+            "Massachusetts",
+            "Vermont",
+            "New Hampshire",
+            "Maine",
+        ]:
+            return Region.new_england
+        elif state in [
+            "Illinois",
+            "Indiana",
+            "Michigan",
+            "Ohio",
+            "Wisconsin",
+            "Kentucky",
+            "Virginia",
+            "West Virginia",
+            "Maryland",
+        ]:
+            return Region.great_lakes
+        elif state in [
+            "North Dakota",
+            "South Dakota",
+            "Nebraska",
+            "Kansas",
+            "Minnesota",
+            "Iowa",
+            "Missouri",
+            "Colorado",
+        ]:
+            return Region.midwest
+        elif state in ["Washington", "Oregon", "Idaho", "Montana", "Wyoming"]:
+            return Region.northwest
+        elif state in ["California", "Nevada", "Utah", "Arizona", "New Mexico"]:
+            return Region.southwest
+        elif state in ["Texas", "Oklahoma", "Louisiana"]:
+            return Region.south
+        else:
+            return Region.southeast
+
+
+class StateLocations(BaseModel):
+    states: Optional[List[str]] = []
+    regions: Optional[List[Region]] = []
+
+
 class Recommendations:
     def __init__(self, db: Database):
         self.db = db
 
-    async def get_recommended_lenders(self, naics_code: int) -> List[Lender]:
+    async def get_recommended_lenders(self, business: Business) -> List[Lender]:
 
-        low_interest_rates = await self.db.get_lenders_by_naics_code(
-            naics_code, "mean_interest_rate", descending=False
+        lenders = await self.db.get_lenders(
+            sort_by="avg_interest_rate", descending=False, limit=64
         )
 
-        lenders = low_interest_rates[:5]
+        top_lenders = []
 
-        print(lenders)
+        for lender in lenders:
+            # if contact name or email is missing, skip
+            if not lender.contact_name or not lender.contact_email:
+                continue
+            # if no referral fee, skip
+            if not lender.has_referral_fee and lender.has_referral_fee is not None:
+                continue
+            if lender.state_locations:
+                print(lender.name)
+                print(lender.state_locations)
+                locations = StateLocations.parse_obj(
+                    json.loads(lender.state_locations.replace("'", '"'))
+                )
+                print(locations)
+                region = Region.initialize_with_state(business.company_state)
+                if (
+                    not business.company_state in locations.states
+                    and region not in locations.regions
+                ):
+                    continue
+                continue
+            top_lenders.append(lender)
+            if len(top_lenders) == 10:
+                break
 
-        most_loans = await self.db.get_lenders_by_naics_code(
-            naics_code, "count", descending=True
-        )
-
-        lenders += most_loans[:5]
-
-        print(lenders)
-
-        # Remove duplicates
-
-        lenders = list({lender.id: lender for lender in lenders}.values())
-
-        if len(lenders) < 5:
-            all_lenders = await self.db.get_lenders(
-                sort_by="num_loans", descending=True
-            )
-            lenders += all_lenders
-
-        return lenders
+        return top_lenders

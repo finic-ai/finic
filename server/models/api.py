@@ -16,3 +16,7 @@ class CompleteOnboardingRequest(BaseModel):
 
 class CompleteOnboardingResponse(BaseModel):
     success: bool
+
+
+class ApplyForLoanRequest(BaseModel):
+    lender_id: str
