@@ -121,7 +121,7 @@ class EmailSender:
             I'm reaching out to you on behalf of a client who is interested in applying for prequalification for an SBA loan.
             {borrower.first_name} {borrower.last_name} is not yet under LOI, but is looking to purchase a business with an SBA loan of ${formatted_loan_amount}. 
             The business is called {business.company_name} and is located in {business.company_state}. Their website is {business.company_website}.<br><br>
-            I have attached {borrower.first_name}'s resume, credit score, tax returns, and Personal Financial Statement.
+            I have attached {borrower.first_name}'s resume and financials, as well as the business's financials.
             I have also cc'ed {borrower.first_name}, who can answer any follow up questions about the application.<br><br>"""
 
         attachments = []
