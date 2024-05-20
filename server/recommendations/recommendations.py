@@ -113,19 +113,15 @@ class Recommendations:
             if not lender.has_referral_fee and lender.has_referral_fee is not None:
                 continue
             if lender.state_locations:
-                print(lender.name)
-                print(lender.state_locations)
                 locations = StateLocations.parse_obj(
                     json.loads(lender.state_locations.replace("'", '"'))
                 )
-                print(locations)
                 region = Region.initialize_with_state(business.company_state)
                 if (
                     not business.company_state in locations.states
                     and region not in locations.regions
                 ):
                     continue
-                continue
             top_lenders.append(lender)
             if len(top_lenders) == 10:
                 break

@@ -164,6 +164,23 @@ async def complete_onboarding(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/get-recommended-lenders")
+async def get_recommended_lenders(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        businesses = await db.get_businesses_for_user(config.user_id)
+        business = businesses[0]
+
+        recommendations = Recommendations(db=db)
+        lenders = await recommendations.get_recommended_lenders(business=business)
+
+        return lenders
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/get-applications")
 async def get_applications(
     config: AppConfig = Depends(validate_token),
