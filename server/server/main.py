@@ -235,6 +235,7 @@ async def apply_for_loan(
         if not business_complete:
             # check if we have received files
             if len(files) == 0:
+                print("no files received", files)
                 raise IncompleteOnboardingError()
             else:
                 await db.upload_business_files(business=business, files=files)
@@ -243,15 +244,22 @@ async def apply_for_loan(
                 business.under_loi = under_loi
                 await db.upsert_business(business=business)
 
+        print("business", business)
         lender = await db.get_lender(lender_id)
+
+        print("lender", lender)
 
         application = await db.upsert_loan_application(
             business=business, lender=lender, borrower_id=config.user_id
         )
 
+        print("application", application)
+
         email_sender = EmailSender()
         business_files = await db.get_business_files(business=business)
+        print("business_files", business_files)
         borrower = await db.get_user(config.user_id)
+        print("borrower", borrower)
         email_sender.send_application_email(
             business=business,
             borrower=borrower,
