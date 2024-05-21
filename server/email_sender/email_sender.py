@@ -140,7 +140,7 @@ class EmailSender:
 
         emails = [lender.contact_email, borrower.email]
         # TODO: remove this line
-        emails = ["ayan@psychic.dev"]
+        # emails = ["ayan@psychic.dev"]
         return self.send_email_with_attachments(
             to_emails=emails, subject=subject, message=message, attachments=attachments
         )
