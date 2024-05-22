@@ -48,13 +48,13 @@ const DefaultPageLayoutRoot = React.forwardRef<
           />
           <div className="flex w-full grow shrink-0 basis-0 items-center gap-4">
             <div className="flex w-full grow shrink-0 basis-0 items-start justify-center gap-2" />
-            <IconButton
+            {/* <IconButton
               disabled={false}
               variant="neutral-tertiary"
               size="large"
               icon="FeatherHelpCircle"
               loading={false}
-            />
+            /> */}
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
                 <Avatar

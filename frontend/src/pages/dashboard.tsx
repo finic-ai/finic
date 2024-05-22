@@ -37,6 +37,7 @@ import { Badge } from "@/subframe/components/Badge";
 import { Button } from "@/subframe/components/Button";
 import { Dialog } from "@/subframe/components/Dialog";
 import { IconWithBackground } from "@/subframe/components/IconWithBackground";
+import { LinkButton } from "@/subframe/components/LinkButton";
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
   api_host: "https://app.posthog.com",
@@ -223,9 +224,15 @@ function Dashboard() {
 
   return (
     <DefaultPageLayout>
-      <div className="flex h-full w-full flex-col items-start gap-4 bg-default-background pt-12 pr-24 pb-12 pl-24">
+      <div className="flex h-full w-full flex-col items-start gap-4 bg-default-background pt-12 pr-40 pb-12 pl-40">
         <span className="text-subheader font-subheader text-default-font">
           Recommended Lenders
+        </span>
+        <span className="text-body font-body text-default-font">
+          These are the top 10 recommended lenders based on your requested loan
+          amount, company location, and company sector. Loan amounts and average
+          interest rates are calculated using public data released by the SBA on
+          SBA 7a loans over the past year.
         </span>
         <Table
           header={
@@ -336,9 +343,16 @@ function LenderRow({
         </div>
       </Table.Cell>
       <Table.Cell>
-        <span className="whitespace-nowrap text-body font-body text-neutral-500">
+        <LinkButton
+          onClick={() => {
+            const url = application.lender.website.startsWith("http")
+              ? application.lender.website
+              : `https://${application.lender.website}`;
+            window.open(url, "_blank");
+          }}
+        >
           {application.lender.website}
-        </span>
+        </LinkButton>
       </Table.Cell>
       <Table.Cell>
         <span className="whitespace-nowrap text-body font-body text-neutral-500">
@@ -354,6 +368,7 @@ function LenderRow({
           %
         </span>
       </Table.Cell>
+
       <Table.Cell>
         <div className="flex w-full grow shrink-0 basis-0 items-center justify-end gap-2">
           <Button

@@ -236,7 +236,7 @@ class Database:
         response = (
             self.supabase.table("loan_applications")
             .select(
-                "*, lender(id, name, type, website, contact_name, contact_email, avg_interest_rate, num_loans, logo_url, has_referral_fee)"
+                "*, lender(id, name, type, website, contact_name, contact_email, avg_interest_rate, avg_fixed_rate, avg_variable_rate, num_loans, logo_url, has_referral_fee)"
             )
             .filter("business_id", "eq", business.id)
             .execute()

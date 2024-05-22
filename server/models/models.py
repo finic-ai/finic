@@ -58,6 +58,8 @@ class Lender(BaseModel):
     type: str
     name: str
     avg_interest_rate: Optional[float] = None
+    avg_fixed_rate: Optional[float] = None
+    avg_variable_rate: Optional[float] = None
     num_loans: Optional[int] = None
     state_locations: Optional[str] = None
     logo_url: Optional[str] = None

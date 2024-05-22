@@ -102,7 +102,9 @@ class EmailSender:
         lender: Lender,
         business_files: BusinessFiles,
     ) -> bool:
-        subject = f"Dealwise - SBA Loan Application: {borrower.first_name}"
+        subject = (
+            f"Dealwise - SBA Loan Application: {borrower.first_name} <> {lender.name}"
+        )
         lender_first_name = lender.contact_name.split(" ")[0]
 
         formatted_loan_amount = "{:,.2f}".format(business.loan_amount)
