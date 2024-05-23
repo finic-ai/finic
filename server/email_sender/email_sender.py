@@ -59,6 +59,7 @@ class EmailSender:
     def __init__(self):
         self.sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
         self.from_email = From(email="ayan@godealwise.com", name="Ayan Bandyopadhyay")
+        self.test_borrower_ids = ["058b8065-0a23-46b5-adfa-9ef11e83eedc"]
 
     def send_email_with_attachments(
         self,
@@ -140,7 +141,18 @@ class EmailSender:
 
         emails = [lender.contact_email, borrower.email]
         # TODO: remove this line
-        # emails = ["ayan@psychic.dev"]
+        is_test_mode = (
+            os.environ.get("ENVIRONMENT") == "development"
+            or borrower.id in self.test_borrower_ids
+        )
+        if is_test_mode:
+            emails = ["ayan@psychic.dev"]
+            print("development env")
+
         return self.send_email_with_attachments(
-            to_emails=emails, subject=subject, message=message, attachments=attachments
+            to_emails=emails,
+            subject=subject,
+            message=message,
+            attachments=attachments,
+            cc_team=(not is_test_mode),
         )
