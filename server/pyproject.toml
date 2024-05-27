@@ -30,6 +30,7 @@ sentry-sdk = {extras = ["fastapi"], version = "^1.40.0"}
 openai = "^1.12.0"
 babel = "^2.14.0"
 firecrawl-py = "^0.0.8"
+pypdf = "^4.2.0"
 
 [tool.poetry.scripts]
 start = "server.main:start"

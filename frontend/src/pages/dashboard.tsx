@@ -63,6 +63,7 @@ function Dashboard() {
 
   async function apply(
     lenderId: string,
+    businessId: string,
     underLoi?: boolean,
     linkedinUrl?: string,
     files?: Array<File>
@@ -70,7 +71,9 @@ function Dashboard() {
     setLoadingLender(lenderId);
     const responseApplication = await applyForLoan(
       bearer,
+      userId,
       lenderId,
+      businessId,
       underLoi,
       linkedinUrl,
       files
@@ -194,7 +197,7 @@ function Dashboard() {
           files.push(loiFile);
         }
 
-        apply(lenderId, underLoi, linkedinUrl, files);
+        apply(lenderId, businessId, underLoi, linkedinUrl, files);
       });
       setLoadingLender(null);
       return;
@@ -325,7 +328,6 @@ function LenderRow({
 }) {
   const [loading, setLoading] = useState(false);
   const { bearer, setCompletedOnboarding, userId } = useUserStateContext();
-  console.log(application.lender);
   return (
     <Table.Row>
       <Table.Cell>
@@ -373,7 +375,7 @@ function LenderRow({
         <div className="flex w-full grow shrink-0 basis-0 items-center justify-end gap-2">
           <Button
             onClick={() => {
-              apply(application.lender.id);
+              apply(application.lender.id, application.business_id);
             }}
             loading={loadingLender == application.lender.id}
             disabled={loadingLender || application.status != "not_yet_applied"}

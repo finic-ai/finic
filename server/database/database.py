@@ -23,6 +23,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import httpx
 import datetime
+from pypdf import PdfWriter, PdfReader
+import fitz
 
 
 def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
@@ -30,6 +32,10 @@ def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
     if date:
         return date.strftime(supabase_format)
     return datetime.datetime.now().strftime(supabase_format)
+
+
+def get_file_size(file: io.BytesIO) -> int:
+    return file.getbuffer().nbytes
 
 
 class Database:
@@ -51,14 +57,12 @@ class Database:
         return None
 
     async def get_user(self, user_id: str) -> Optional[User]:
-        print("app_id", user_id)
         response = (
             self.supabase.table("lending_users")
             .select("*")
             .filter("id", "eq", user_id)
             .execute()
         )
-        print("response", response)
         if len(response.data) > 0:
             row = response.data[0]
             return User(**row)
@@ -179,6 +183,15 @@ class Database:
         except StorageException as e:
             return False
 
+    async def num_files_in_bucket(self, user_id: str, business: Business) -> int:
+        try:
+            bucket = self.supabase.storage.from_("loan_docs").list(
+                f"{user_id}/{business.id}"
+            )
+            return len(bucket)
+        except StorageException as e:
+            return 0
+
     async def upload_business_files(
         self, business: Business, files: List[UploadFile]
     ) -> bool:
@@ -217,17 +230,25 @@ class Database:
 
         return True
 
-    async def get_business_files(self, business: Business) -> BusinessFiles:
-        bucket = self.supabase.storage.from_(business.id).list()
-        print(bucket)
+    async def get_business_files(
+        self, user_id: str, business: Business
+    ) -> BusinessFiles:
+        bucket = self.supabase.storage.from_("loan_docs").list(
+            f"{user_id}/{business.id}"
+        )
+
         filenames = [file["name"] for file in bucket]
 
         # download the files
         business_files = BusinessFiles()
         for filename in filenames:
-            file_bytes = self.supabase.storage.from_(business.id).download(filename)
+            file_bytes = self.supabase.storage.from_("loan_docs").download(
+                f"{user_id}/{business.id}/{filename}"
+            )
+            print("type of file_bytes:", type(file_bytes))
             filename_without_ext = filename.split(".")[0]
-            setattr(business_files, filename_without_ext, file_bytes)
+            setattr(business_files, filename_without_ext, io.BytesIO(file_bytes))
+
         return business_files
 
     async def get_loan_applications(self, business: Business) -> List[LoanApplication]:

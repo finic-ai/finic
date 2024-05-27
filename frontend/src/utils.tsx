@@ -1,3 +1,5 @@
+import supabase from "./lib/supabaseClient";
+
 export const completeOnboarding = async (
   apiKey: string,
   loanAmount: number,
@@ -76,7 +78,9 @@ export const getApplications = async (apiKey: string): Promise<any> => {
 
 export const applyForLoan = async (
   apiKey: string,
+  userId: string,
   lenderId: string,
+  businessId: string,
   underLoi?: boolean,
   linkedinUrl?: string,
   files?: Array<File>
@@ -92,11 +96,37 @@ export const applyForLoan = async (
       formData.append("linkedin_url", linkedinUrl);
     }
 
-    console.log("files", files);
     if (files) {
-      files.forEach((file) => {
-        formData.append("files", file);
-      });
+      // Upload files to supabase bucket
+
+      const newFileNames = [
+        "buyer_resume",
+        "buyer_credit_score",
+        "buyer_2021_tax_return",
+        "buyer_2022_tax_return",
+        "buyer_2023_tax_return",
+        "buyer_form_413",
+        "cim",
+        "business_2021_tax_return",
+        "business_2022_tax_return",
+        "business_2023_tax_return",
+        "business_2024_pnl",
+        "business_2024_balance_sheet",
+        "loi",
+      ];
+
+      await Promise.all(
+        files.map(async (file, index) => {
+          const extension = file.name.split(".").pop();
+          const newFileName = `${newFileNames[index]}.${extension}`;
+          const { data, error } = await supabase.storage
+            .from("loan_docs")
+            .upload(`${userId}/${businessId}/${newFileName}`, file);
+          if (error) {
+            console.error(`Error uploading file: ${error.message}`);
+          }
+        })
+      );
     }
 
     const response = await fetch(
@@ -112,9 +142,7 @@ export const applyForLoan = async (
     const data = await response.json();
     if (!response.ok) {
       console.log(data);
-      if (response.status == 400) {
-        return { error: "Subscription required" };
-      } else if (response.status == 401) {
+      if (response.status == 401) {
         return { error: "Incomplete onboarding" };
       } else {
         return { error: data.detail };

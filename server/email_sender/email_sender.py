@@ -14,6 +14,12 @@ from database import Database
 import json
 import re
 import base64
+import uuid
+import io
+import zipfile
+
+
+MAX_ZIP_SIZE = 25 * 1024 * 1024  # 20 MB
 
 
 def extract_reply(text, address):
@@ -55,6 +61,51 @@ def extract_recipient_id(html):
     return ""
 
 
+def create_zip_file(
+    files: List[io.BytesIO], filenames: List[str], split: bool
+) -> List[io.BytesIO]:
+
+    if split:
+        # add files to the zip file until the size exceeds 20MB. Then create a new zip file
+        zip_files = []
+        current_zip = io.BytesIO()
+        current_zip_size = 0
+
+        z = zipfile.ZipFile(current_zip, "w", zipfile.ZIP_DEFLATED)
+
+        for i, file in enumerate(files):
+            print({"filename": filenames[i]})
+            print("type of file", type(file))
+            file_data = file.getvalue()
+            file_size = len(file_data)
+            if current_zip_size + file_size > MAX_ZIP_SIZE:
+                z.close()
+                current_zip.seek(0)
+                zip_files.append(current_zip)
+                current_zip = io.BytesIO()
+                z = zipfile.ZipFile(current_zip, "w", zipfile.ZIP_DEFLATED)
+                current_zip_size = 0
+
+            z.writestr(filenames[i], file_data)
+            current_zip_size += file_size
+
+        z.close()
+        if current_zip.tell() > 0:
+            current_zip.seek(0)
+            print("current_zip.tell()", current_zip.tell())
+            print("type of current_zip", type(current_zip))
+            zip_files.append(current_zip)
+
+        return zip_files
+    else:
+        zip_file = io.BytesIO()
+        with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as z:
+            for i, file in enumerate(files):
+                z.writestr(filenames[i], file.getvalue())
+        zip_file.seek(0)
+        return [zip_file]
+
+
 class EmailSender:
     def __init__(self):
         self.sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
@@ -90,6 +141,7 @@ class EmailSender:
             message.add_attachment(attachment)
 
         try:
+            payload = message.get()
             response = self.sg.send(message)
             return True
         except Exception as e:
@@ -125,34 +177,107 @@ class EmailSender:
             I have attached {borrower.first_name}'s resume and financials, as well as the business's financials.
             I have also cc'ed {borrower.first_name}, who can answer any follow up questions about the application.<br><br>"""
 
-        attachments = []
-
-        # Loop over BusinessFiles keys and values
-        for key, value in business_files.dict().items():
-            if value:
-                attachments.append(
-                    Attachment(
-                        file_content=base64.b64encode(value).decode(),
-                        file_name=key + ".pdf",
-                        file_type="application/pdf",
-                        disposition="attachment",
-                    )
-                )
-
         emails = [lender.contact_email, borrower.email]
-        # TODO: remove this line
         is_test_mode = (
             os.environ.get("ENVIRONMENT") == "development"
             or borrower.id in self.test_borrower_ids
         )
         if is_test_mode:
             emails = ["ayan@psychic.dev"]
-            print("development env")
 
-        return self.send_email_with_attachments(
-            to_emails=emails,
-            subject=subject,
-            message=message,
-            attachments=attachments,
-            cc_team=(not is_test_mode),
-        )
+        attachments = []
+
+        attachment_size = 0
+
+        exceeded_attachment_size = False
+        # Loop over BusinessFiles keys and values
+        filenames = [
+            key + ".pdf" for key, value in business_files.__dict__.items() if value
+        ]
+        files = [value for key, value in business_files.__dict__.items() if value]
+
+        file_size = sum([file.getbuffer().nbytes for file in files])
+        print("file size", file_size)
+        # for key, value in business_files.__dict__.items():
+        #     if value:
+        #         attachment_size += value.getbuffer().nbytes
+        #         if attachment_size > 20 * 1024 * 1024:
+        #             print("Attachment size exceeded 25MB")
+        #             exceeded_attachment_size = True
+        #             break
+        #         attachments.append(
+        #             Attachment(
+        #                 file_content=base64.b64encode(value.getvalue()).decode(),
+        #                 file_name=key + ".pdf",
+        #                 file_type="application/pdf",
+        #                 disposition="attachment",
+        #             )
+        #         )
+
+        for file in files:
+            print(file.__dict__)
+
+        zip_files = create_zip_file(files, filenames, True)
+
+        # if zip_file.getbuffer().nbytes > 20 * 1024 * 1024:
+        #     print("Attachment size exceeded 20MB")
+        #     exceeded_attachment_size = True
+        #     # split into 2 zip files based on file size
+
+        #     first_zip_file = create_zip_file(
+        #         files[: len(files) // 2], filenames[: len(files) // 2]
+        #     )
+        #     second_zip_file = create_zip_file(
+        #         files[len(files) // 2 :], filenames[len(files) // 2 :]
+        #     )
+
+        print("type of zip_files", type(zip_files))
+        print("type of first_zip_file", type(zip_files[0]))
+        print("type of second_zip_file", type(zip_files[1]))
+
+        if len(zip_files) > 1:
+            self.send_email_with_attachments(
+                to_emails=emails,
+                subject=subject,
+                message=message
+                + " Because the attachment size exceeded 20MB, I have split the attachments into two separate emails. Please find the first attachment below.",
+                attachments=[
+                    Attachment(
+                        file_content=base64.b64encode(zip_files[0].getvalue()).decode(),
+                        file_name="attachments.zip",
+                        file_type="application/zip",
+                        disposition="attachment",
+                    )
+                ],
+                cc_team=(not is_test_mode),
+            )
+
+            self.send_email_with_attachments(
+                to_emails=emails,
+                subject=subject,
+                message="Please find the second attachment below.",
+                attachments=[
+                    Attachment(
+                        file_content=base64.b64encode(zip_files[1].getvalue()).decode(),
+                        file_name="attachments.zip",
+                        file_type="application/zip",
+                        disposition="attachment",
+                    )
+                ],
+                cc_team=(not is_test_mode),
+            )
+        else:
+            self.send_email_with_attachments(
+                to_emails=emails,
+                subject=subject,
+                message=message,
+                attachments=[
+                    Attachment(
+                        file_content=base64.b64encode(zip_files[0].getvalue()).decode(),
+                        file_name="attachments.zip",
+                        file_type="application/zip",
+                        disposition="attachment",
+                    )
+                ],
+                cc_team=(not is_test_mode),
+            )

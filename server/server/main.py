@@ -100,7 +100,6 @@ async def validate_token(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ):
     try:
-        print("credentials.credentials", credentials.credentials)
         app_config = await db.get_config(credentials.credentials)
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or missing public key")
@@ -113,7 +112,6 @@ async def validate_optional_token(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ):
     try:
-        print("credentials.credentials", credentials.credentials)
         app_config = await db.get_config(credentials.credentials)
     except Exception:
         return None
@@ -131,7 +129,6 @@ async def complete_onboarding(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        print("request", request)
         user = await db.set_user_fields(
             config,
             completed_onboarding=True,
@@ -221,43 +218,40 @@ async def apply_for_loan(
     lender_id: str = Form(...),
     under_loi: bool = Form(None),
     linkedin_url: str = Form(None),
-    files: List[UploadFile] = File([]),
     config: AppConfig = Depends(validate_token),
 ):
     try:
         businesses = await db.get_businesses_for_user(config.user_id)
         business = businesses[0]
 
-        print("business", business)
-
         # check if biz exists yet
-        business_complete = await db.bucket_exists(business)
+        business_complete = business.under_loi is not None
         if not business_complete:
             # check if we have received files
-            if len(files) == 0:
-                print("no files received", files)
+
+            num_files = await db.num_files_in_bucket(
+                user_id=config.user_id, business=business
+            )
+            if num_files == 0:
                 raise IncompleteOnboardingError()
             else:
-                await db.upload_business_files(business=business, files=files)
                 # update business with linkedin_url and under_loi
                 business.buyer_linkedin = linkedin_url
                 business.under_loi = under_loi
                 await db.upsert_business(business=business)
 
-        print("business", business)
         lender = await db.get_lender(lender_id)
-
-        print("lender", lender)
 
         application = await db.upsert_loan_application(
             business=business, lender=lender, borrower_id=config.user_id
         )
 
-        print("application", application)
-
         email_sender = EmailSender()
-        business_files = await db.get_business_files(business=business)
-        print("business_files", business_files)
+        print("getting business files")
+        business_files = await db.get_business_files(
+            user_id=config.user_id, business=business
+        )
+        # print("business_files", business_files)
         borrower = await db.get_user(config.user_id)
         print("borrower", borrower)
         email_sender.send_application_email(
