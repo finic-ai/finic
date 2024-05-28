@@ -13,6 +13,7 @@ import React from "react";
 import * as SubframeCore from "@subframe/core";
 import { IconButton } from "../components/IconButton";
 import { DropdownMenu } from "../components/DropdownMenu";
+import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
 import { useUserStateContext } from "../../context/UserStateContext";
 import supabase from "../../lib/supabaseClient";
@@ -47,7 +48,24 @@ const DefaultPageLayoutRoot = React.forwardRef<
             src="https://res.cloudinary.com/subframe/image/upload/v1711487223/uploads/132/rop23mbpjbrfzsg50l7o.png"
           />
           <div className="flex w-full grow shrink-0 basis-0 items-center gap-4">
-            <div className="flex w-full grow shrink-0 basis-0 items-start justify-center gap-2" />
+            <div className="flex w-full grow shrink-0 basis-0 items-start justify-center gap-2">
+              <Button
+                onClick={() => {
+                  window.location.href = "/";
+                }}
+                variant="neutral-tertiary"
+              >
+                Find Lenders
+              </Button>
+              <Button
+                onClick={() => {
+                  window.location.href = "/diligence";
+                }}
+                variant="neutral-tertiary"
+              >
+                Diligence assistant
+              </Button>
+            </div>
             {/* <IconButton
               disabled={false}
               variant="neutral-tertiary"
