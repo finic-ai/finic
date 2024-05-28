@@ -76,7 +76,6 @@ function DiligenceAssistant() {
         </span> */}
 
         <ChatWindow />
-        <div>test</div>
       </div>
     </DefaultPageLayout>
   );

@@ -1,6 +1,6 @@
 function ChatWindow() {
   return (
-    <div className="flex h-[97vh] w-full flex-col">
+    <div className="flex h-[80vh] w-full flex-col">
       {/* Prompt Messages */}
       <div className="flex-1 overflow-y-auto bg-slate-300 text-sm leading-6 text-slate-900 shadow-md dark:bg-slate-800 dark:text-slate-300 sm:text-base sm:leading-7">
         <div className="flex flex-row px-4 py-8 sm:px-6">
