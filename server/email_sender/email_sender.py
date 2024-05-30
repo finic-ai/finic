@@ -133,7 +133,7 @@ class EmailSender:
             html_content=message,
         )
         message.reply_to = ReplyTo(
-            email="team@godealwise.com",
+            email="ayan@godealwise.com",
             name="Dealwise Team",
         )
 
