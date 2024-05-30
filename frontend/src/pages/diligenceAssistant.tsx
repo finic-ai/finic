@@ -51,7 +51,7 @@ const NewComponent = () => {
 
 function DiligenceAssistant() {
   const [loadingLender, setLoadingLender] = useState<string | null>(null);
-  const [file];
+  const [file, setFile] = useState<File | null>(null);
   const contextRef = useRef<FormContext>(null);
   const navigate = useNavigate();
 
