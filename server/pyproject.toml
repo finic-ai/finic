@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "rag-stack"
+name = "dealwise-lending"
 version = "0.1.0"
 description = ""
 authors = ["ayan <ayan@psychic.dev>"]
@@ -19,7 +19,6 @@ python-multipart = "^0.0.9"
 gpt4all = "^1.0.5"
 pymupdf = "^1.22.5"
 supabase = "^1.0.3"
-poetry-dotenv-plugin = "^0.2.0"
 pyproject-hooks="1.1.0"
 bs4 = "^0.0.1"
 tiktoken = "^0.5.1"
@@ -31,6 +30,8 @@ openai = "^1.12.0"
 babel = "^2.14.0"
 firecrawl-py = "^0.0.8"
 pypdf = "^4.2.0"
+poetry-dotenv-plugin = "^0.2.0"
+vellum-ai = "^0.6.1"
 
 [tool.poetry.scripts]
 start = "server.main:start"

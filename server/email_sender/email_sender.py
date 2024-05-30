@@ -233,7 +233,7 @@ class EmailSender:
 
         print("type of zip_files", type(zip_files))
         print("type of first_zip_file", type(zip_files[0]))
-        print("type of second_zip_file", type(zip_files[1]))
+        # print("type of second_zip_file", type(zip_files[1]))
 
         if len(zip_files) > 1:
             self.send_email_with_attachments(

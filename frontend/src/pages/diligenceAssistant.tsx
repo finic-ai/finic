@@ -28,7 +28,7 @@ import {
 } from "@feathery/react";
 import Field from "@feathery/react/dist/utils/api/Field";
 import { SubframeSides } from "@subframe/core/dist/cjs/assets/icons/final";
-import { applyForLoan, getApplications } from "../utils";
+import { getDiligenceDocs } from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
 import { DefaultPageLayout } from "../subframe";
 import { Avatar } from "@/subframe/components/Avatar";
@@ -51,6 +51,7 @@ const NewComponent = () => {
 
 function DiligenceAssistant() {
   const [loadingLender, setLoadingLender] = useState<string | null>(null);
+  const [file];
   const contextRef = useRef<FormContext>(null);
   const navigate = useNavigate();
 
@@ -60,22 +61,44 @@ function DiligenceAssistant() {
   // formCompletion is a state but of function type
   const [formCompletion, setFormCompletion] = useState(() => () => {});
 
-  const { bearer, email, userId } = useUserStateContext();
+  const { bearer, email, userId, firstName } = useUserStateContext();
+
+  const [messages, setMessages] = useState([
+    {
+      message: `Hello ${firstName}! I'm the Dealwise Due Diligence assistant. How can I help you today?`,
+      isUser: false,
+    },
+  ]);
+
+  useEffect(() => {
+    async function fetchDocs() {
+      const response = await getDiligenceDocs(bearer);
+      const filepaths = response.filepaths;
+      const vectorized = response.vectorized;
+      setApplications(applications);
+    }
+    fetchDocs();
+  }, []);
+
+  async function submitMessage(message: string) {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        message,
+        isUser: true,
+      },
+      { message: "Loading...", isUser: false, loading: true },
+    ]);
+  }
 
   return (
     <DefaultPageLayout>
       <div className="flex h-full w-full flex-col items-start gap-4 bg-default-background pt-12 pr-40 pb-12 pl-40">
         <span className="text-subheader font-subheader text-default-font">
-          Recommended Lenders
+          Diligence Assistant
         </span>
-        {/* <span className="text-body font-body text-default-font">
-          These are the top 10 recommended lenders based on your requested loan
-          amount, company location, and company sector. Loan amounts and average
-          interest rates are calculated using public data released by the SBA on
-          SBA 7a loans over the past year.
-        </span> */}
 
-        <ChatWindow />
+        <ChatWindow messages={messages} submitMessage={submitMessage} />
       </div>
     </DefaultPageLayout>
   );

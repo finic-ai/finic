@@ -13,12 +13,8 @@ from models.models import (
 from supabase import create_client, Client
 import os
 from storage3.utils import StorageException
-import csv
-import json
+
 from io import StringIO
-import asyncio
-import requests
-import openai
 from bs4 import BeautifulSoup
 import pandas as pd
 import httpx
@@ -230,6 +226,10 @@ class Database:
 
         return True
 
+    async def get_file(self, file_path: str) -> io.BytesIO:
+        file_bytes = self.supabase.storage.from_("loan_docs").download(file_path)
+        return io.BytesIO(file_bytes)
+
     async def get_business_files(
         self, user_id: str, business: Business
     ) -> BusinessFiles:
@@ -250,6 +250,20 @@ class Database:
             setattr(business_files, filename_without_ext, io.BytesIO(file_bytes))
 
         return business_files
+
+    async def get_business_file_paths(
+        self, user_id: str, business: Business
+    ) -> List[str]:
+        try:
+            bucket = self.supabase.storage.from_("loan_docs").list(
+                f"{user_id}/{business.id}"
+            )
+
+            filenames = [file["name"] for file in bucket]
+
+            return [f"{user_id}/{business.id}/{filename}" for filename in filenames]
+        except StorageException as e:
+            return []
 
     async def get_loan_applications(self, business: Business) -> List[LoanApplication]:
         # get all loans with business_id = business.id and then join with the lenders table to get the lender details

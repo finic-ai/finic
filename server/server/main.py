@@ -29,6 +29,8 @@ from models.api import (
     CompleteOnboardingRequest,
     CompleteOnboardingResponse,
     ApplyForLoanRequest,
+    GetDiligenceDocsResponse,
+    GetDiligenceDocsRequest,
 )
 import uuid
 from models.models import AppConfig, Business
@@ -40,6 +42,7 @@ import sentry_sdk
 from webscraper import WebScraper
 from recommendations import Recommendations
 from email_sender import EmailSender
+from ai import AI
 
 sentry_sdk.init(
     dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
@@ -66,23 +69,11 @@ bearer_scheme = HTTPBearer()
 db = Database()
 
 
-class SubscriptionRequiredError(Exception):
-    pass
-
-
 class IncompleteOnboardingError(Exception):
     pass
 
 
-class ListingAlreadyApprovedError(Exception):
-    pass
-
-
-class InvalidSendbirdWebhookSignatureError(Exception):
-    pass
-
-
-class SendbirdWebhookNoRecipientError(Exception):
+class EmptyVectorDatabaseError(Exception):
     pass
 
 
@@ -147,7 +138,7 @@ async def complete_onboarding(
         await db.upsert_business(business=business)
 
         form_submission_link = (
-            f"https://form.feathery.io/?_slug=bZapMh&_id={config.user_id}"
+            f"https://form.feathery.io/?_slug=cQalFV&_id={config.user_id}"
         )
         slack_message = f"New borrower: {request.first_name} {request.last_name} ({user.email}). Form submission : {form_submission_link}"
         url = "https://hook.us1.make.com/u2j67wjp0oyasths8yp2rl9ak2cxwrz0"
@@ -264,6 +255,48 @@ async def apply_for_loan(
         return {"application": application}
     except IncompleteOnboardingError as e:
         raise HTTPException(status_code=401, detail="buyer onboarding required")
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/get-diligence-docs")
+async def get_diligence_docs(
+    request: GetDiligenceDocsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        businesses = await db.get_businesses_for_user(config.user_id)
+        business = businesses[0]
+
+        ai = AI()
+        filenames = ai.get_vectordb_filenames(business_id=business.id)
+        storage_filepaths = await db.get_business_file_paths(
+            user_id=config.user_id, business=business
+        )
+
+        if len(filenames) == 0:
+
+            cim_filepath = f"{config.user_id}/{business.id}/cim.pdf"
+            if cim_filepath in storage_filepaths and not request.vectorize:
+                return GetDiligenceDocsResponse(
+                    filepaths=[cim_filepath], vectorized=False
+                )
+            elif cim_filepath in storage_filepaths and request.vectorize:
+                ai.vectorize_file(business_id=business.id, filepath=cim_filepath)
+                return GetDiligenceDocsResponse(
+                    filepaths=[cim_filepath], vectorized=True
+                )
+            else:
+                return GetDiligenceDocsResponse(
+                    filepaths=storage_filepaths, vectorized=False
+                )
+
+        vectordb_filepaths = [
+            f"{config.user_id}/{business.id}/{filename}" for filename in filenames
+        ]
+        return GetDiligenceDocsResponse(filepaths=vectordb_filepaths, vectorized=True)
+
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

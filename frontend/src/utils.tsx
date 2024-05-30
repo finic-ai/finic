@@ -154,3 +154,22 @@ export const applyForLoan = async (
     return error;
   }
 };
+
+export const getDiligenceDocs = async (apiKey: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-diligence-docs",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(`Error getting diligence docs: ${error.message}`);
+    return error;
+  }
+};

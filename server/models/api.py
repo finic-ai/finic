@@ -20,3 +20,12 @@ class CompleteOnboardingResponse(BaseModel):
 
 class ApplyForLoanRequest(BaseModel):
     lender_id: str
+
+
+class GetDiligenceDocsResponse(BaseModel):
+    filepaths: List[str]
+    vectorized: bool
+
+
+class GetDiligenceDocsRequest(BaseModel):
+    vectorize: bool
