@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@feathery/react": "^2.0.197",
+    "@feathery/react": "2.1.26",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",
     "@nivo/line": "^0.84.0",

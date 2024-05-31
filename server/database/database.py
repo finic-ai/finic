@@ -9,6 +9,7 @@ from models.models import (
     LoanApplication,
     LoanStatus,
     BusinessFiles,
+    BusinessFile,
 )
 from supabase import create_client, Client
 import os
@@ -261,7 +262,6 @@ class Database:
             file_bytes = self.supabase.storage.from_("loan_docs").download(
                 f"{user_id}/{business.id}/{filename}"
             )
-            print("type of file_bytes:", type(file_bytes))
             filename_without_ext = filename.split(".")[0]
             ext = filename.split(".")[1]
             if ext == "pdf":
@@ -274,12 +274,16 @@ class Database:
                 content_type = (
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
+            elif ext == "docx":
+                content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            elif ext == "doc":
+                content_type = "application/msword"
             else:
                 content_type = "application/octet-stream"
             setattr(
                 business_files,
                 filename_without_ext,
-                BusinessFiles(
+                BusinessFile(
                     content_type=content_type,
                     filename=filename,
                     content=io.BytesIO(file_bytes),

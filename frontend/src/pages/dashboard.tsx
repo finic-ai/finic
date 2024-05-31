@@ -26,7 +26,7 @@ import {
   FormContext,
   updateUserId,
 } from "@feathery/react";
-import Field from "@feathery/react/dist/utils/api/Field";
+import Field from "@feathery/react/dist/types/Form";
 import { SubframeSides } from "@subframe/core/dist/cjs/assets/icons/final";
 import { applyForLoan, getApplications } from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
@@ -221,6 +221,10 @@ function Dashboard() {
       const retrievedApplications = await getApplications(bearer);
       console.log("applications", retrievedApplications);
       setApplications(retrievedApplications);
+
+      if (userId) {
+        updateUserId(userId, true);
+      }
     };
     if (bearer) fetchApplications();
   }, [bearer]);
@@ -257,7 +261,7 @@ function Dashboard() {
           ))}
         </Table>
         <Form
-          formName="Complete Lending Application"
+          formId="9fEzRf"
           contextRef={contextRef}
           popupOptions={{
             show: showPopup,
@@ -378,7 +382,7 @@ function LenderRow({
               apply(application.lender.id, application.business_id);
             }}
             loading={loadingLender == application.lender.id}
-            disabled={loadingLender || application.status != "not_yet_applied"}
+            // disabled={loadingLender || application.status != "not_yet_applied"}
             variant="brand-primary"
           >
             {application.status == "not_yet_applied"

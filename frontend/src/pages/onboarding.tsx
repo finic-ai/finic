@@ -26,7 +26,7 @@ import {
   FormContext,
   updateUserId,
 } from "@feathery/react";
-import Field from "@feathery/react/dist/utils/api/Field";
+import Field from "@feathery/react/dist/types/Form";
 import { SubframeSides } from "@subframe/core/dist/cjs/assets/icons/final";
 import { completeOnboarding } from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
@@ -47,7 +47,7 @@ function Onboarding() {
 
   const { bearer, setCompletedOnboarding, userId } = useUserStateContext();
 
-  async function finishOnboarding(fields: Record<string, Field>) {
+  async function finishOnboarding(fields: Record<string, any>) {
     const loanAmount = fields["loan-amt"].value!.valueOf();
     const firstName = fields["firstname"].value!.toString();
     const lastName = fields["lastname"].value!.toString();
@@ -107,7 +107,7 @@ function Onboarding() {
   return (
     <div>
       <Form
-        formName="Dealwise Lending Onboarding"
+        formId="cQalFV"
         contextRef={contextRef}
         onAction={(context) => {
           const stepProperties = context.getStepProperties();

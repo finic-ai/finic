@@ -76,7 +76,7 @@ def create_zip_file(
 
         for i, file in enumerate(files):
             print({"filename": filenames[i]})
-            print("type of file", type(file))
+            print("type of file: ", type(file))
             file_data = file.content.getvalue()
             file_size = len(file_data)
             if current_zip_size + file_size > MAX_ZIP_SIZE:
@@ -155,7 +155,6 @@ class EmailSender:
         borrower: User,
         lender: Lender,
         business_files: BusinessFiles,
-        ƒ,
     ) -> bool:
         subject = f"Dealwise - SBA Loan: {borrower.first_name} <> {lender.name}"
         lender_first_name = lender.contact_name.split(" ")[0]
