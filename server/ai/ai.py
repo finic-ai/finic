@@ -8,7 +8,8 @@ from models.models import (
     Lender,
     LoanApplication,
     LoanStatus,
-    BusinessFiles,
+    VellumDocument,
+    ProcessingState,
 )
 from supabase import create_client, Client
 import os
@@ -30,19 +31,49 @@ class AI:
         vellum_api_key = os.environ.get("VELLUM_API_KEY")
         self.vellum_client = Vellum(api_key=vellum_api_key)
 
-    def get_vectordb_filenames(self, business_id: str) -> List[str]:
+    def get_vectordb_filenames(self, business: Business) -> List[VellumDocument]:
 
-        docs = self.vellum_client.documents.list(document_index_id=business_id)
+        if not business.has_vectordb:
+            return []
 
-        return [doc.label for doc in docs.results]
+        docs = self.vellum_client.documents.list(document_index_id=business.id)
 
-    async def vectorize_file(self, db: Database, business_id: str, filepath: str):
+        return [
+            VellumDocument(
+                filename=doc.label,
+                processing_state=ProcessingState(doc.processing_state),
+            )
+            for doc in docs.results
+        ]
+
+    async def create_vectordb_index(self, db: Database, business: Business) -> str:
+        if business.has_vectordb:
+            return business.id
+
+        response = self.vellum_client.document_indexes.create()
+        business.has_vectordb = True
+        business.id = response.index_id
+        await db.upsert_business(business)
+        return response.index_id
+
+    async def vectorize_file(
+        self, db: Database, business: Business, filepath: str
+    ) -> str:
+        # if we dont already a vectordb document for this business, create one
+        if not business.has_vectordb:
+            business.has_vectordb = True
+            await db.upsert_business(business)
         file = await db.get_file(filepath)
         # label is the name of the file without the directory
         label = os.path.basename(filepath)
-        self.vellum_client.documents.upload(
-            document_index_id=business_id,
-            external_id=label,
-            label=label,
-            file=file,
-        )
+        try:
+            response = self.vellum_client.documents.upload(
+                add_to_index_names=[business.id],
+                external_id=label,
+                label=label,
+                contents=file,
+            )
+            return response.document_id
+        except Exception as e:
+            print(e)
+            raise e

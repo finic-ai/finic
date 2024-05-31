@@ -46,6 +46,8 @@ def get_linkedin_url(user_id):
             if "linkedin.com" in href:
                 linkedin_url = href
                 break
+        if linkedin_url.startswith("//"):
+            linkedin_url = f"https:{linkedin_url}"
         return linkedin_url
     return None
 
@@ -53,7 +55,7 @@ def get_linkedin_url(user_id):
 # Main loop to get user IDs and LinkedIn URLs
 all_linkedin_urls = []
 
-BATCH_1 = [1, 100]
+BATCH_1 = [101, 200]
 batch = BATCH_1
 import time
 import random

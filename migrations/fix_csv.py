@@ -5,9 +5,11 @@
 import csv
 import os
 
+filename = "linkedin_urls101-200.csv"
+
 
 def fix_csv():
-    with open("linkedin_urls1-100.csv", mode="r") as file:
+    with open(filename, mode="r") as file:
         reader = csv.reader(file)
         rows = list(reader)
         for i, row in enumerate(rows):
@@ -16,7 +18,7 @@ def fix_csv():
             url = row[0]
             if url.startswith("//"):
                 rows[i][0] = f"https:{url}"
-    with open("linkedin_urls1-100.csv", mode="w") as file:
+    with open(filename, mode="w") as file:
         writer = csv.writer(file)
         writer.writerows(rows)
 

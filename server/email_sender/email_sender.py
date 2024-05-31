@@ -7,6 +7,7 @@ from models.models import (
     BusinessFiles,
     Business,
     Lender,
+    BusinessFile,
 )
 
 from typing import List, Any, Optional, Tuple
@@ -62,7 +63,7 @@ def extract_recipient_id(html):
 
 
 def create_zip_file(
-    files: List[io.BytesIO], filenames: List[str], split: bool
+    files: List[BusinessFile], filenames: List[str], split: bool
 ) -> List[io.BytesIO]:
 
     if split:
@@ -76,7 +77,7 @@ def create_zip_file(
         for i, file in enumerate(files):
             print({"filename": filenames[i]})
             print("type of file", type(file))
-            file_data = file.getvalue()
+            file_data = file.content.getvalue()
             file_size = len(file_data)
             if current_zip_size + file_size > MAX_ZIP_SIZE:
                 z.close()
@@ -86,7 +87,7 @@ def create_zip_file(
                 z = zipfile.ZipFile(current_zip, "w", zipfile.ZIP_DEFLATED)
                 current_zip_size = 0
 
-            z.writestr(filenames[i], file_data)
+            z.writestr(file.filename, file_data)
             current_zip_size += file_size
 
         z.close()
@@ -154,6 +155,7 @@ class EmailSender:
         borrower: User,
         lender: Lender,
         business_files: BusinessFiles,
+        ƒ,
     ) -> bool:
         subject = f"Dealwise - SBA Loan: {borrower.first_name} <> {lender.name}"
         lender_first_name = lender.contact_name.split(" ")[0]
@@ -194,9 +196,12 @@ class EmailSender:
         filenames = [
             key + ".pdf" for key, value in business_files.__dict__.items() if value
         ]
-        files = [value for key, value in business_files.__dict__.items() if value]
 
-        file_size = sum([file.getbuffer().nbytes for file in files])
+        files: List[BusinessFile] = [
+            value for key, value in business_files.__dict__.items() if value
+        ]
+
+        file_size = sum([file.content.getbuffer().nbytes for file in files])
         print("file size", file_size)
         # for key, value in business_files.__dict__.items():
         #     if value:

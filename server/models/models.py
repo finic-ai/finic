@@ -29,25 +29,32 @@ class Business(BaseModel):
     company_state: str
     naics_code: Optional[int] = None
     under_loi: Optional[bool] = None
+    has_vectordb: Optional[bool] = None
 
 
-class BusinessFiles(BaseModel):
-    buyer_resume: Optional[io.BytesIO] = None
-    buyer_credit_score: Optional[io.BytesIO] = None
-    buyer_2021_tax_return: Optional[io.BytesIO] = None
-    buyer_2022_tax_return: Optional[io.BytesIO] = None
-    buyer_2023_tax_return: Optional[io.BytesIO] = None
-    buyer_form_413: Optional[io.BytesIO] = None
-    cim: Optional[io.BytesIO] = None
-    business_2021_tax_return: Optional[io.BytesIO] = None
-    business_2022_tax_return: Optional[io.BytesIO] = None
-    business_2023_tax_return: Optional[io.BytesIO] = None
-    business_2024_pnl: Optional[io.BytesIO] = None
-    business_2024_balance_sheet: Optional[io.BytesIO] = None
-    loi: Optional[io.BytesIO] = None
+class BusinessFile(BaseModel):
+    content: io.BytesIO
+    filename: str
+    content_type: str
 
     class Config:
         arbitrary_types_allowed = True
+
+
+class BusinessFiles(BaseModel):
+    buyer_resume: Optional[BusinessFile] = None
+    buyer_credit_score: Optional[BusinessFile] = None
+    buyer_2021_tax_return: Optional[BusinessFile] = None
+    buyer_2022_tax_return: Optional[BusinessFile] = None
+    buyer_2023_tax_return: Optional[BusinessFile] = None
+    buyer_form_413: Optional[BusinessFile] = None
+    cim: Optional[BusinessFile] = None
+    business_2021_tax_return: Optional[BusinessFile] = None
+    business_2022_tax_return: Optional[BusinessFile] = None
+    business_2023_tax_return: Optional[BusinessFile] = None
+    business_2024_pnl: Optional[BusinessFile] = None
+    business_2024_balance_sheet: Optional[BusinessFile] = None
+    loi: Optional[BusinessFile] = None
 
 
 class Lender(BaseModel):
@@ -80,3 +87,18 @@ class LoanApplication(BaseModel):
     status: LoanStatus
     lender_name: str
     lender: Optional[Lender] = None
+
+
+class ProcessingState(str, Enum):
+    not_started = "NOT_STARTED"
+    queued = "QUEUED"
+    processing = "PROCESSING"
+    processed = "PROCESSED"
+    failed = "FAILED"
+
+
+class VellumDocument(BaseModel):
+    filename: str
+    filepath: str
+    processing_state: ProcessingState
+    signed_url: Optional[str] = None

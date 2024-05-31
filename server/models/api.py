@@ -1,8 +1,7 @@
 from typing import List, Optional, Any
-from models.models import (
-    Business,
-)
+from models.models import Business, VellumDocument
 from pydantic import BaseModel
+from enum import Enum
 
 
 class CompleteOnboardingRequest(BaseModel):
@@ -23,8 +22,7 @@ class ApplyForLoanRequest(BaseModel):
 
 
 class GetDiligenceDocsResponse(BaseModel):
-    filepaths: List[str]
-    vectorized: bool
+    doc: Optional[VellumDocument] = None
 
 
 class GetDiligenceDocsRequest(BaseModel):

@@ -19,6 +19,9 @@ import datetime
 from pydantic import BaseModel
 
 
+FILENAME = "Lender CRM - Top 50 Lenders (8).csv"
+
+
 def get_supabase_timestamp():
     supabase_format = "%Y-%m-%dT%H:%M:%S.%f%z"
     return datetime.datetime.now().strftime(supabase_format)
@@ -46,6 +49,67 @@ class Lender(BaseModel):
     has_referral_fee: Optional[bool] = True
 
 
+class Region(str, Enum):
+    midwest = "midwest"
+    new_england = "new_england"
+    southeast = "southeast"
+    great_lakes = "great_lakes"
+    northwest = "northwest"
+    southwest = "southwest"
+    south = "south"
+
+    def initialize_with_state(state: str):
+        if state in [
+            "Pennsylvania",
+            "Delaware",
+            "New Jersey",
+            "New York",
+            "Connecticut",
+            "Rhode Island",
+            "Massachusetts",
+            "Vermont",
+            "New Hampshire",
+            "Maine",
+        ]:
+            return Region.new_england
+        elif state in [
+            "Illinois",
+            "Indiana",
+            "Michigan",
+            "Ohio",
+            "Wisconsin",
+            "Kentucky",
+            "Virginia",
+            "West Virginia",
+            "Maryland",
+        ]:
+            return Region.great_lakes
+        elif state in [
+            "North Dakota",
+            "South Dakota",
+            "Nebraska",
+            "Kansas",
+            "Minnesota",
+            "Iowa",
+            "Missouri",
+            "Colorado",
+        ]:
+            return Region.midwest
+        elif state in ["Washington", "Oregon", "Idaho", "Montana", "Wyoming"]:
+            return Region.northwest
+        elif state in ["California", "Nevada", "Utah", "Arizona", "New Mexico"]:
+            return Region.southwest
+        elif state in ["Texas", "Oklahoma", "Louisiana"]:
+            return Region.south
+        else:
+            return Region.southeast
+
+
+class StateLocations(BaseModel):
+    states: Optional[List[str]] = []
+    regions: Optional[List[Region]] = []
+
+
 class Database:
     def __init__(self):
         supabase_url = "https://api.godealwise.com"
@@ -55,9 +119,7 @@ class Database:
     def update_lenders(self):
         lenders = []
         # Load the CSV file Lender CRM - Top 50 Lenders (6).csv
-        df = pd.read_csv(
-            "Lender CRM - Top 50 Lenders (6).csv", on_bad_lines="warn", low_memory=False
-        )
+        df = pd.read_csv(FILENAME, on_bad_lines="warn", low_memory=False)
 
         # replace all NaN values with None
         df = df.replace({np.nan: None})
@@ -82,6 +144,17 @@ class Database:
                 logo_url=row["logo_url"],
                 has_referral_fee=row["has_referral_fee"],
             )
+            # validate state locations
+            if lender.state_locations:
+                try:
+                    StateLocations.parse_obj(
+                        json.loads(lender.state_locations.replace("'", '"'))
+                    )
+                except Exception as e:
+                    print(f"Error parsing state locations: {e}")
+                    print(lender.state_locations)
+                    return
+
             lenders.append(lender.dict())
 
         # upsert the lenders data to the 'lender' table

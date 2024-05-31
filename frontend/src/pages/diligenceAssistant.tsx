@@ -28,7 +28,7 @@ import {
 } from "@feathery/react";
 import Field from "@feathery/react/dist/utils/api/Field";
 import { SubframeSides } from "@subframe/core/dist/cjs/assets/icons/final";
-import { getDiligenceDocs } from "../utils";
+import { getDiligenceDocs, downloadFile } from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
 import { DefaultPageLayout } from "../subframe";
 import { Avatar } from "@/subframe/components/Avatar";
@@ -39,6 +39,7 @@ import { Dialog } from "@/subframe/components/Dialog";
 import { IconWithBackground } from "@/subframe/components/IconWithBackground";
 import { LinkButton } from "@/subframe/components/LinkButton";
 import ChatWindow from "../chatComponents/chatWindow";
+import WebViewer from "@pdftron/webviewer";
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
   api_host: "https://app.posthog.com",
@@ -50,35 +51,103 @@ const NewComponent = () => {
 };
 
 function DiligenceAssistant() {
-  const [loadingLender, setLoadingLender] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [doc, setDoc] = useState<any>(null);
+  const [file, setFile] = useState<string | null>(null);
   const contextRef = useRef<FormContext>(null);
   const navigate = useNavigate();
+  const viewer = useRef<any>(null);
 
   const [applications, setApplications] = useState<any[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   // formCompletion is a state but of function type
   const [formCompletion, setFormCompletion] = useState(() => () => {});
+  const [docViewer, setDocViewer] = useState<any>(null);
 
   const { bearer, email, userId, firstName } = useUserStateContext();
 
-  const [messages, setMessages] = useState([
-    {
-      message: `Hello ${firstName}! I'm the Dealwise Due Diligence assistant. How can I help you today?`,
-      isUser: false,
-    },
-  ]);
+  // array of { message: string; isUser: boolean; }'
+  const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchDocs() {
-      const response = await getDiligenceDocs(bearer);
-      const filepaths = response.filepaths;
-      const vectorized = response.vectorized;
+      const response = await getDiligenceDocs(bearer, false);
+      console.log(response);
+      console.log(response);
+      setLoading(false);
+      setDoc(response.doc);
       setApplications(applications);
     }
     fetchDocs();
+    console.log("viewer", viewer.current);
+    WebViewer(
+      {
+        path: "/public",
+        licenseKey: import.meta.env.VITE_APRYSE_API_KEY,
+        // initialDoc:
+        //   "https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf",
+      },
+      viewer.current
+    ).then((instance) => {
+      const { documentViewer } = instance.Core;
+      setDocViewer(documentViewer);
+      // you can now call WebViewer APIs here...
+      // documentViewer.loadDocument()
+    });
   }, []);
+
+  useEffect(() => {
+    async function updateFile() {
+      if (doc && doc.filepath && !file) {
+        console.log("downloading file");
+        const file = await downloadFile(doc.filepath);
+        setFile(file);
+      }
+      if (doc && doc.processing_state != "PROCESSED") {
+        setMessages([
+          {
+            message: "Your CIM is being processed. Please wait.",
+            isUser: false,
+            loading: true,
+          },
+        ]);
+        if (
+          doc.processing_state == "PROCESSING" ||
+          doc.processing_state == "QUEUED"
+        ) {
+          await new Promise((resolve) => setTimeout(resolve, 10000));
+          const response = await getDiligenceDocs(bearer, false);
+          setDoc(response.doc);
+        } else if (doc.processing_state == "NOT_STARTED") {
+          const response = await getDiligenceDocs(bearer, true);
+          setDoc(response.doc);
+        }
+      } else if (doc && doc.processing_state == "PROCESSED") {
+        setMessages([
+          {
+            message:
+              "Your CIM has been processed. I can help you with any questions you have about the business.",
+            isUser: false,
+            loading: false,
+          },
+        ]);
+      }
+    }
+    updateFile();
+  }, [doc]);
+
+  useEffect(() => {
+    async function loadDoc() {
+      if (docViewer && file) {
+        docViewer.loadDocument(file);
+        // wait 5 seconds for the document to load
+        // await new Promise((resolve) => setTimeout(resolve, 5000));
+        // docViewer.setCurrentPage(10);
+      }
+    }
+    loadDoc();
+  }, [docViewer, file]);
 
   async function submitMessage(message: string) {
     setMessages((prevMessages) => [
@@ -98,7 +167,15 @@ function DiligenceAssistant() {
           Diligence Assistant
         </span>
 
-        <ChatWindow messages={messages} submitMessage={submitMessage} />
+        <>
+          {/* side by side */}
+          <div className="flex flex-row w-full gap-4">
+            {!loading && doc && (
+              <ChatWindow messages={messages} submitMessage={submitMessage} />
+            )}
+            <div className="w-full h-[80vh] flex-grow" ref={viewer}></div>
+          </div>
+        </>
       </div>
     </DefaultPageLayout>
   );

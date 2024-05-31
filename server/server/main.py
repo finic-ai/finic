@@ -20,6 +20,8 @@ from typing import List, Optional
 from models.models import (
     AppConfig,
     Business,
+    VellumDocument,
+    ProcessingState,
 )
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
@@ -270,32 +272,37 @@ async def get_diligence_docs(
         business = businesses[0]
 
         ai = AI()
-        filenames = ai.get_vectordb_filenames(business_id=business.id)
+        vellum_documents = ai.get_vectordb_filenames(business_id=business)
         storage_filepaths = await db.get_business_file_paths(
             user_id=config.user_id, business=business
         )
 
-        if len(filenames) == 0:
+        if len(vellum_documents) == 0:
 
             cim_filepath = f"{config.user_id}/{business.id}/cim.pdf"
             if cim_filepath in storage_filepaths and not request.vectorize:
                 return GetDiligenceDocsResponse(
-                    filepaths=[cim_filepath], vectorized=False
+                    doc=VellumDocument(
+                        filename="cim.pdf",
+                        filepath=cim_filepath,
+                        processing_state=ProcessingState.not_started,
+                    )
                 )
             elif cim_filepath in storage_filepaths and request.vectorize:
-                ai.vectorize_file(business_id=business.id, filepath=cim_filepath)
+                await ai.vectorize_file(
+                    db=db, business_id=business.id, filepath=cim_filepath
+                )
                 return GetDiligenceDocsResponse(
-                    filepaths=[cim_filepath], vectorized=True
+                    doc=VellumDocument(
+                        filename="cim.pdf",
+                        filepath=cim_filepath,
+                        processing_state=ProcessingState.queued,
+                    )
                 )
             else:
-                return GetDiligenceDocsResponse(
-                    filepaths=storage_filepaths, vectorized=False
-                )
+                return GetDiligenceDocsResponse(doc=None)
 
-        vectordb_filepaths = [
-            f"{config.user_id}/{business.id}/{filename}" for filename in filenames
-        ]
-        return GetDiligenceDocsResponse(filepaths=vectordb_filepaths, vectorized=True)
+        return GetDiligenceDocsResponse(doc=vellum_documents[0])
 
     except Exception as e:
         print(e)

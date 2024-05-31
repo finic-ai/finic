@@ -33,8 +33,9 @@ function ChatMessage({
 
       <div className="flex w-full flex-col items-start lg:flex-row lg:justify-between">
         {loading ? (
-          <div className="mt-4 flex justify-center" aria-hidden="true">
-            <div className="flex animate-pulse space-x-2">
+          <div className=" flex justify-center" aria-hidden="true">
+            <p>{message}</p>
+            <div className="ml-2 mt-2 flex animate-pulse space-x-2">
               <div className="h-2 w-2 rounded-full bg-slate-600"></div>
               <div className="h-2 w-2 rounded-full bg-slate-600"></div>
               <div className="h-2 w-2 rounded-full bg-slate-600"></div>

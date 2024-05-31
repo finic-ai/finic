@@ -125,6 +125,19 @@ class Database:
         )
         return [Business(**row) for row in response.data]
 
+    async def upsert_business(self, business: Business) -> Optional[Business]:
+        response = (
+            self.supabase.table("businesses")
+            .upsert(
+                business.dict(),
+            )
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Business(**row)
+        return None
+
     async def get_lenders(
         self, sort_by, descending: bool = False, limit: int = 3
     ) -> List[Lender]:
@@ -230,6 +243,9 @@ class Database:
         file_bytes = self.supabase.storage.from_("loan_docs").download(file_path)
         return io.BytesIO(file_bytes)
 
+    async def get_signed_url(self, file_path: str) -> str:
+        return self.supabase.storage.from_("loan_docs").create_signed_url(file_path, 60)
+
     async def get_business_files(
         self, user_id: str, business: Business
     ) -> BusinessFiles:
@@ -247,7 +263,28 @@ class Database:
             )
             print("type of file_bytes:", type(file_bytes))
             filename_without_ext = filename.split(".")[0]
-            setattr(business_files, filename_without_ext, io.BytesIO(file_bytes))
+            ext = filename.split(".")[1]
+            if ext == "pdf":
+                content_type = "application/pdf"
+            elif ext == "png":
+                content_type = "image/png"
+            elif ext == "jpg":
+                content_type = "image/jpeg"
+            elif ext == "xlsx":
+                content_type = (
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+            else:
+                content_type = "application/octet-stream"
+            setattr(
+                business_files,
+                filename_without_ext,
+                BusinessFiles(
+                    content_type=content_type,
+                    filename=filename,
+                    content=io.BytesIO(file_bytes),
+                ),
+            )
 
         return business_files
 

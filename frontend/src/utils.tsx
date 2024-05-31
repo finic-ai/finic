@@ -155,7 +155,10 @@ export const applyForLoan = async (
   }
 };
 
-export const getDiligenceDocs = async (apiKey: string): Promise<any> => {
+export const getDiligenceDocs = async (
+  apiKey: string,
+  vectorize: boolean
+): Promise<any> => {
   try {
     const response = await fetch(
       import.meta.env.VITE_APP_SERVER_URL + "/get-diligence-docs",
@@ -163,7 +166,9 @@ export const getDiligenceDocs = async (apiKey: string): Promise<any> => {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({ vectorize: vectorize ? true : false }),
       }
     );
     const data = await response.json();
@@ -173,3 +178,15 @@ export const getDiligenceDocs = async (apiKey: string): Promise<any> => {
     return error;
   }
 };
+
+export async function downloadFile(url: string) {
+  const { data, error } = await supabase.storage
+    .from("loan_docs")
+    .download(url);
+  if (error) {
+    console.error(`Error downloading file: ${error.message}`);
+    return null;
+  }
+  const fileUrl = window.URL.createObjectURL(data);
+  return fileUrl;
+}
