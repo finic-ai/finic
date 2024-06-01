@@ -47,6 +47,15 @@ function Onboarding() {
 
   const { bearer, setCompletedOnboarding, userId } = useUserStateContext();
 
+  useEffect(() => {
+    const fetchApplications = async () => {
+      if (userId) {
+        updateUserId(userId, true);
+      }
+    };
+    if (userId) fetchApplications();
+  }, [userId]);
+
   async function finishOnboarding(fields: Record<string, any>) {
     const loanAmount = fields["loan-amt"].value!.valueOf();
     const firstName = fields["firstname"].value!.toString();
