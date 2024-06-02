@@ -16,6 +16,10 @@ function ChatMessage({
 }) {
   console.log("loading", loading);
   console.log("sources", sources);
+  if (!Array.isArray(sources)) {
+    sources = [sources];
+  }
+
   if (isUser) {
     return (
       <div className="flex flex-row px-4 py-8 sm:px-6">
@@ -56,6 +60,7 @@ function ChatMessage({
                 {sources.map((source, index) => (
                   <LinkButton
                     onClick={() => {
+                      console.log("source clicked", source);
                       onSourceClick && onSourceClick(source);
                     }}
                   >
