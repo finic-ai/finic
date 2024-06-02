@@ -81,7 +81,7 @@ class AI:
             index = await self.create_vectordb_index(db=db, business=business)
             print(index)
 
-        file = await db.get_file(filepath)
+        file = await db.get_diligence_file(filepath)
         # label is the name of the file without the directory
         label = os.path.basename(filepath)
         try:

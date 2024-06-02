@@ -244,6 +244,10 @@ class Database:
         file_bytes = self.supabase.storage.from_("loan_docs").download(file_path)
         return io.BytesIO(file_bytes)
 
+    async def get_diligence_file(self, file_path: str) -> io.BytesIO:
+        file_bytes = self.supabase.storage.from_("diligence_docs").download(file_path)
+        return io.BytesIO(file_bytes)
+
     async def get_signed_url(self, file_path: str) -> str:
         return self.supabase.storage.from_("loan_docs").create_signed_url(file_path, 60)
 
