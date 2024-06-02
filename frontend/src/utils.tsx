@@ -190,3 +190,42 @@ export async function downloadFile(url: string) {
   const fileUrl = window.URL.createObjectURL(data);
   return fileUrl;
 }
+
+export async function uploadDiligenceDocument(
+  apiKey: string,
+  userId: string,
+  businessId: string,
+  file: File
+) {
+  const { data, error } = await supabase.storage
+    .from("diligence_docs")
+    .upload(`${userId}/${businessId}/cim.pdf`, file);
+
+  if (error) {
+    console.error(`Error uploading file: ${error.message}`);
+    return null;
+  }
+  return data;
+}
+
+export const chat = async (apiKey: string, messages: any): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/chat",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: messages }),
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    return data.message;
+  } catch (error: any) {
+    console.error(`Error chatting: ${error.message}`);
+    return error;
+  }
+};

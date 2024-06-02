@@ -102,3 +102,16 @@ class VellumDocument(BaseModel):
     filepath: str
     processing_state: ProcessingState
     signed_url: Optional[str] = None
+
+
+class MessageSender(str, Enum):
+    user = "USER"
+    system = "SYSTEM"
+    assistant = "ASSISTANT"
+    function = "FUNCTION"
+
+
+class Message(BaseModel):
+    text: str
+    sender: MessageSender
+    loading: Optional[bool] = None

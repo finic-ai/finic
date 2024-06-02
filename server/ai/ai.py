@@ -10,6 +10,8 @@ from models.models import (
     LoanStatus,
     VellumDocument,
     ProcessingState,
+    Message,
+    MessageSender,
 )
 from supabase import create_client, Client
 import os
@@ -23,6 +25,8 @@ from pypdf import PdfWriter, PdfReader
 import fitz
 import vellum
 from vellum.client import Vellum
+import vellum.types as types
+import json
 from database import Database
 
 
@@ -31,7 +35,9 @@ class AI:
         vellum_api_key = os.environ.get("VELLUM_API_KEY")
         self.vellum_client = Vellum(api_key=vellum_api_key)
 
-    def get_vectordb_filenames(self, business: Business) -> List[VellumDocument]:
+    def get_vectordb_filenames(
+        self, user_id: str, business: Business
+    ) -> List[VellumDocument]:
 
         if not business.has_vectordb:
             return []
@@ -41,32 +47,45 @@ class AI:
         return [
             VellumDocument(
                 filename=doc.label,
+                filepath=f"{user_id}/{business.id}/{doc.external_id}",
                 processing_state=ProcessingState(doc.processing_state),
             )
             for doc in docs.results
         ]
 
     async def create_vectordb_index(self, db: Database, business: Business) -> str:
-        if business.has_vectordb:
-            return business.id
 
-        response = self.vellum_client.document_indexes.create()
+        response = self.vellum_client.document_indexes.create(
+            label=business.company_name,
+            name=business.id,
+            indexing_config={
+                "vectorizer": {
+                    "model_name": "intfloat/multilingual-e5-large",
+                },
+                "chunking": {
+                    "chunker_name": "reducto-chunker",
+                },
+            },
+        )
         business.has_vectordb = True
-        business.id = response.index_id
         await db.upsert_business(business)
-        return response.index_id
+        return response.id
 
     async def vectorize_file(
         self, db: Database, business: Business, filepath: str
     ) -> str:
         # if we dont already a vectordb document for this business, create one
         if not business.has_vectordb:
-            business.has_vectordb = True
-            await db.upsert_business(business)
+            # if True:
+            print("creating vectordb index")
+            index = await self.create_vectordb_index(db=db, business=business)
+            print(index)
+
         file = await db.get_file(filepath)
         # label is the name of the file without the directory
         label = os.path.basename(filepath)
         try:
+            print("uploading file")
             response = self.vellum_client.documents.upload(
                 add_to_index_names=[business.id],
                 external_id=label,
@@ -77,3 +96,35 @@ class AI:
         except Exception as e:
             print(e)
             raise e
+
+    async def chat(self, messages: List[Message], business: Business):
+        result = self.vellum_client.execute_workflow(
+            workflow_deployment_name="dilligence-chatbot",
+            release_tag="LATEST",
+            inputs=[
+                types.WorkflowRequestInputRequest_ChatHistory(
+                    type="CHAT_HISTORY",
+                    name="chat_history",
+                    value=[
+                        types.ChatMessageRequest(role=message.sender, text=message.text)
+                        for message in messages
+                    ],
+                ),
+                types.WorkflowRequestInputRequest_String(
+                    type="STRING",
+                    name="search_index",
+                    value=business.id,
+                ),
+            ],
+        )
+        if result.data.state == "REJECTED":
+            raise Exception(result.data.error.message)
+
+        for output in result.data.outputs:
+            print(output)
+
+        string_output = result.data.outputs[0].value
+
+        # Parse to json
+        output = json.loads(string_output)
+        return output

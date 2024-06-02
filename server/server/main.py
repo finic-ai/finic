@@ -30,7 +30,7 @@ import requests
 from models.api import (
     CompleteOnboardingRequest,
     CompleteOnboardingResponse,
-    ApplyForLoanRequest,
+    ChatRequest,
     GetDiligenceDocsResponse,
     GetDiligenceDocsRequest,
 )
@@ -264,7 +264,6 @@ async def apply_for_loan(
 
 @app.post("/get-diligence-docs")
 async def get_diligence_docs(
-    request: GetDiligenceDocsRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
@@ -272,38 +271,52 @@ async def get_diligence_docs(
         business = businesses[0]
 
         ai = AI()
-        vellum_documents = ai.get_vectordb_filenames(business_id=business)
-        storage_filepaths = await db.get_business_file_paths(
+        vellum_documents = ai.get_vectordb_filenames(
+            user_id=config.user_id, business=business
+        )
+        storage_filepaths = await db.get_diligence_file_paths(
             user_id=config.user_id, business=business
         )
 
         if len(vellum_documents) == 0:
 
             cim_filepath = f"{config.user_id}/{business.id}/cim.pdf"
-            if cim_filepath in storage_filepaths and not request.vectorize:
-                return GetDiligenceDocsResponse(
-                    doc=VellumDocument(
-                        filename="cim.pdf",
-                        filepath=cim_filepath,
-                        processing_state=ProcessingState.not_started,
-                    )
-                )
-            elif cim_filepath in storage_filepaths and request.vectorize:
-                await ai.vectorize_file(
-                    db=db, business_id=business.id, filepath=cim_filepath
-                )
+            if cim_filepath in storage_filepaths:
+                await ai.vectorize_file(db=db, business=business, filepath=cim_filepath)
                 return GetDiligenceDocsResponse(
                     doc=VellumDocument(
                         filename="cim.pdf",
                         filepath=cim_filepath,
                         processing_state=ProcessingState.queued,
-                    )
+                    ),
+                    business_id=business.id,
                 )
             else:
-                return GetDiligenceDocsResponse(doc=None)
+                return GetDiligenceDocsResponse(doc=None, business_id=business.id)
 
-        return GetDiligenceDocsResponse(doc=vellum_documents[0])
+        return GetDiligenceDocsResponse(
+            doc=vellum_documents[0], business_id=business.id
+        )
 
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/chat")
+async def chat(
+    request: ChatRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        businesses = await db.get_businesses_for_user(config.user_id)
+        business = businesses[0]
+
+        ai = AI()
+
+        response = await ai.chat(request.messages, business)
+
+        return {"message": response}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

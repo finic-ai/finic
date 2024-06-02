@@ -306,6 +306,20 @@ class Database:
         except StorageException as e:
             return []
 
+    async def get_diligence_file_paths(
+        self, user_id: str, business: Business
+    ) -> List[str]:
+        try:
+            bucket = self.supabase.storage.from_("diligence_docs").list(
+                f"{user_id}/{business.id}"
+            )
+
+            filenames = [file["name"] for file in bucket]
+
+            return [f"{user_id}/{business.id}/{filename}" for filename in filenames]
+        except StorageException as e:
+            return []
+
     async def get_loan_applications(self, business: Business) -> List[LoanApplication]:
         # get all loans with business_id = business.id and then join with the lenders table to get the lender details
         # order by lender.avg_interest_rate

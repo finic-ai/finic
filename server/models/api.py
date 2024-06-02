@@ -1,5 +1,5 @@
 from typing import List, Optional, Any
-from models.models import Business, VellumDocument
+from models.models import Business, VellumDocument, Message
 from pydantic import BaseModel
 from enum import Enum
 
@@ -23,7 +23,12 @@ class ApplyForLoanRequest(BaseModel):
 
 class GetDiligenceDocsResponse(BaseModel):
     doc: Optional[VellumDocument] = None
+    business_id: str
 
 
 class GetDiligenceDocsRequest(BaseModel):
     vectorize: bool
+
+
+class ChatRequest(BaseModel):
+    messages: List[Message]

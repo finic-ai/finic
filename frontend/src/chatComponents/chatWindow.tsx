@@ -1,15 +1,21 @@
 import React, { useState, useRef, useEffect, lazy } from "react";
+import { LinkButton } from "@/subframe/components/LinkButton";
 
 function ChatMessage({
   message,
   isUser,
+  onSourceClick,
   loading,
+  sources,
 }: {
   message: string;
   isUser: boolean;
+  onSourceClick?: (source: any) => void;
   loading?: boolean;
+  sources?: any[];
 }) {
   console.log("loading", loading);
+  console.log("sources", sources);
   if (isUser) {
     return (
       <div className="flex flex-row px-4 py-8 sm:px-6">
@@ -42,7 +48,23 @@ function ChatMessage({
             </div>
           </div>
         ) : (
-          <p>{message}</p>
+          <div className="flex flex-col max-w-3xl ">
+            <p>{message}</p>
+            {sources && (
+              <div>
+                <div className="font-bold">Sources:</div>
+                {sources.map((source, index) => (
+                  <LinkButton
+                    onClick={() => {
+                      onSourceClick && onSourceClick(source);
+                    }}
+                  >
+                    {`${source.name}, page ${source.page}`}
+                  </LinkButton>
+                ))}
+              </div>
+            )}
+          </div>
         )}
         <div className="mt-4 flex flex-row justify-start gap-x-2 text-slate-500 lg:mt-0">
           <button className="hover:text-blue-600" type="button">
@@ -119,9 +141,16 @@ function SuggestionButton({
 function ChatWindow({
   messages,
   submitMessage,
+  onSourceClick,
 }: {
-  messages: { message: string; isUser: boolean; loading?: boolean }[];
+  messages: {
+    text: string;
+    sender: string;
+    sources?: any[];
+    loading?: boolean;
+  }[];
   submitMessage: (message: string) => Promise<void>;
+  onSourceClick?: (source: any) => void;
 }) {
   const [userEntry, setUserEntry] = useState("");
   const divRef = useRef<HTMLDivElement>(null);
@@ -145,9 +174,11 @@ function ChatWindow({
         {messages.map((message, index) => (
           <ChatMessage
             key={index}
-            message={message.message}
-            isUser={message.isUser}
+            message={message.text}
+            isUser={message.sender === "USER"}
+            onSourceClick={onSourceClick}
             loading={message.loading}
+            sources={message.sources}
           />
         ))}
       </div>
