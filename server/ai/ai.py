@@ -42,7 +42,9 @@ class AI:
         if not business.has_vectordb:
             return []
 
-        docs = self.vellum_client.documents.list(document_index_id=business.id)
+        docs = self.vellum_client.documents.list(
+            document_index_id=f"index-{business.id}"
+        )
 
         return [
             VellumDocument(
@@ -57,7 +59,7 @@ class AI:
 
         response = self.vellum_client.document_indexes.create(
             label=business.company_name,
-            name=business.id,
+            name=f"index-{business.id}",
             indexing_config={
                 "vectorizer": {
                     "model_name": "intfloat/multilingual-e5-large",
@@ -87,7 +89,7 @@ class AI:
         try:
             print("uploading file")
             response = self.vellum_client.documents.upload(
-                add_to_index_names=[business.id],
+                add_to_index_names=[f"index-{business.id}"],
                 external_id=label,
                 label=label,
                 contents=file,
@@ -113,7 +115,7 @@ class AI:
                 types.WorkflowRequestInputRequest_String(
                     type="STRING",
                     name="search_index",
-                    value=business.id,
+                    value=f"index-{business.id}",
                 ),
             ],
         )
