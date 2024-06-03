@@ -90,7 +90,7 @@ class AI:
             print("uploading file")
             response = self.vellum_client.documents.upload(
                 add_to_index_names=[f"index-{business.id}"],
-                external_id=label,
+                external_id=filepath,
                 label=label,
                 contents=file,
             )
