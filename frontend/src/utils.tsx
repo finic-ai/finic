@@ -181,7 +181,7 @@ export const getDiligenceDocs = async (
 
 export async function downloadFile(url: string) {
   const { data, error } = await supabase.storage
-    .from("loan_docs")
+    .from("diligence_docs")
     .download(url);
   if (error) {
     console.error(`Error downloading file: ${error.message}`);
