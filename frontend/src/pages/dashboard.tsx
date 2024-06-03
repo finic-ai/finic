@@ -382,7 +382,7 @@ function LenderRow({
               apply(application.lender.id, application.business_id);
             }}
             loading={loadingLender == application.lender.id}
-            // disabled={loadingLender || application.status != "not_yet_applied"}
+            disabled={loadingLender || application.status != "not_yet_applied"}
             variant="brand-primary"
           >
             {application.status == "not_yet_applied"
