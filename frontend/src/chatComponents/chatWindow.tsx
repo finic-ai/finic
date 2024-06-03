@@ -16,7 +16,7 @@ function ChatMessage({
 }) {
   console.log("loading", loading);
   console.log("sources", sources);
-  if (!Array.isArray(sources)) {
+  if (sources && !Array.isArray(sources)) {
     sources = [sources];
   }
 
