@@ -63,7 +63,7 @@ function Onboarding() {
     const response = await completeOnboarding(bearer, firstName, lastName);
     console.log(response);
     if (response.success) {
-      window.location.reload();
+      setCompletedOnboarding(true);
     }
   }
 
@@ -79,7 +79,7 @@ function Onboarding() {
           console.log(context.trigger.id);
 
           if (
-            context.trigger.id !== "16452140-4a7c-4bf4-940e-88131692997f" &&
+            context.trigger.id !== "ee670472-f4e8-43fc-b78e-0de67d9c8d34" &&
             (context as any).beforeClickActions
           ) {
             return;
