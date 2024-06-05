@@ -124,27 +124,15 @@ function Onboarding() {
           console.log(context.getStepProperties());
           console.log(context.trigger.id);
 
-          if (context.trigger.id == "55060c5b-62fe-4875-8df2-3eba4c22702a") {
-            console.log("finished form");
+          if (
+            context.trigger.id !== "16452140-4a7c-4bf4-940e-88131692997f" &&
+            (context as any).beforeClickActions
+          ) {
+            return;
           }
-        }}
-        onFormComplete={(context) => {
-          const fields = context.fields;
-          setLoading(true);
-          finishOnboarding(fields);
+          finishOnboarding(context.fields);
         }}
       />
-
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg flex items-center justify-center space-x-4">
-            <span className="text-2xl font-semibold">
-              Finding the best lenders for you
-            </span>
-            <Spinner size="xl" />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -28,7 +28,7 @@ import {
 } from "@feathery/react";
 import Field from "@feathery/react/dist/types/Form";
 import { SubframeSides } from "@subframe/core/dist/cjs/assets/icons/final";
-import { applyForLoan, getApplications } from "../utils";
+import { applyForLoan, getApplications, createBusiness } from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
 import { DefaultPageLayout } from "../subframe";
 import { Avatar } from "@/subframe/components/Avatar";
@@ -56,10 +56,32 @@ function Dashboard() {
   const [applications, setApplications] = useState<any[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showLoanOnboarding, setShowLoanOnboarding] = useState(false);
   // formCompletion is a state but of function type
-  const [formCompletion, setFormCompletion] = useState(() => () => {});
+  const [applicationInProgress, setApplicationInProgress] = useState<any>(null);
 
   const { bearer, email, userId } = useUserStateContext();
+
+  async function initializeBusiness(
+    bearer: string,
+    loanAmount: number,
+    phoneNumber: string,
+    companyName: string,
+    companyWebsite: string,
+    state: string
+  ) {
+    const response = await createBusiness(
+      bearer,
+      loanAmount,
+      phoneNumber,
+      companyName,
+      companyWebsite,
+      state
+    );
+    console.log("response", response);
+    setApplications(response);
+    setShowLoanOnboarding(false);
+  }
 
   async function apply(
     lenderId: string,
@@ -83,122 +105,8 @@ function Dashboard() {
       responseApplication.error &&
       responseApplication.error == "Incomplete onboarding"
     ) {
+      setApplicationInProgress({ lenderId, businessId });
       setShowPopup(true);
-      setFormCompletion(() => async () => {
-        var underLoi = contextRef.current?.fields["under-loi"].value;
-        if (underLoi === null) {
-          underLoi = undefined;
-        } else if (underLoi === "Yes") {
-          underLoi = true;
-        } else {
-          underLoi = false;
-        }
-        var linkedinUrl =
-          contextRef.current?.fields["linkedin"].value?.toString();
-        var files: Array<File> = [];
-
-        const resumeValue = contextRef.current?.fields["resume"]
-          .value as Promise<File>[];
-        if (resumeValue.length > 0) {
-          const resumeFile = await resumeValue[0];
-          files.push(resumeFile);
-        }
-
-        const creditScoreValue = contextRef.current?.fields["credit-score-file"]
-          .value as Promise<File>[];
-        if (creditScoreValue.length > 0) {
-          const creditScoreFile = await creditScoreValue[0];
-          files.push(creditScoreFile);
-        }
-
-        const buyer2021TaxReturnValue = contextRef.current?.fields[
-          "buyer-2021-tax-return_1"
-        ].value as Promise<File>[];
-        if (buyer2021TaxReturnValue.length > 0) {
-          const buyer2021TaxReturnFile = await buyer2021TaxReturnValue[0];
-          files.push(buyer2021TaxReturnFile);
-        }
-
-        const buyer2022TaxReturnValue = contextRef.current?.fields[
-          "buyer-2022-tax-return_1"
-        ].value as Promise<File>[];
-        if (buyer2022TaxReturnValue.length > 0) {
-          const buyer2022TaxReturnFile = await buyer2022TaxReturnValue[0];
-          files.push(buyer2022TaxReturnFile);
-        }
-
-        const buyer2023TaxReturnValue = contextRef.current?.fields[
-          "buyer-2023-tax-return_1"
-        ].value as Promise<File>[];
-        if (buyer2023TaxReturnValue.length > 0) {
-          const buyer2023TaxReturnFile = await buyer2023TaxReturnValue[0];
-          files.push(buyer2023TaxReturnFile);
-        }
-
-        const buyerForm413Value = contextRef.current?.fields["buyer-form-413_1"]
-          .value as Promise<File>[];
-        if (buyerForm413Value.length > 0) {
-          const buyerForm413File = await buyerForm413Value[0];
-          files.push(buyerForm413File);
-        }
-
-        const cimValue = contextRef.current?.fields["cim_1"]
-          .value as Promise<File>[];
-        if (cimValue.length > 0) {
-          const cimFile = await cimValue[0];
-          files.push(cimFile);
-        }
-
-        const business2021TaxReturnValue = contextRef.current?.fields[
-          "business-2021-tax-return_1"
-        ].value as Promise<File>[];
-        if (business2021TaxReturnValue.length > 0) {
-          const business2021TaxReturnFile = await business2021TaxReturnValue[0];
-          files.push(business2021TaxReturnFile);
-        }
-
-        const business2022TaxReturnValue = contextRef.current?.fields[
-          "business-2022-tax-return_1"
-        ].value as Promise<File>[];
-        if (business2022TaxReturnValue.length > 0) {
-          const business2022TaxReturnFile = await business2022TaxReturnValue[0];
-          files.push(business2022TaxReturnFile);
-        }
-
-        const business2023TaxReturnValue = contextRef.current?.fields[
-          "business-2023-tax-return_1"
-        ].value as Promise<File>[];
-        if (business2023TaxReturnValue.length > 0) {
-          const business2023TaxReturnFile = await business2023TaxReturnValue[0];
-          files.push(business2023TaxReturnFile);
-        }
-
-        const business2024PnlValue = contextRef.current?.fields[
-          "business-2024-pnl_1"
-        ].value as Promise<File>[];
-        if (business2024PnlValue.length > 0) {
-          const business2024PnlFile = await business2024PnlValue[0];
-          files.push(business2024PnlFile);
-        }
-
-        const business2024BalanceSheetValue = contextRef.current?.fields[
-          "business-2024-balance-sheet_1"
-        ].value as Promise<File>[];
-        if (business2024BalanceSheetValue.length > 0) {
-          const business2024BalanceSheetFile =
-            await business2024BalanceSheetValue[0];
-          files.push(business2024BalanceSheetFile);
-        }
-
-        const loiValue = contextRef.current?.fields["loi_1"]
-          .value as Promise<File>[];
-        if (loiValue.length > 0) {
-          const loiFile = await loiValue[0];
-          files.push(loiFile);
-        }
-
-        apply(lenderId, businessId, underLoi, linkedinUrl, files);
-      });
       setLoadingLender(null);
       return;
     } else {
@@ -220,6 +128,14 @@ function Dashboard() {
     const fetchApplications = async () => {
       const retrievedApplications = await getApplications(bearer);
       console.log("applications", retrievedApplications);
+      if (
+        retrievedApplications.error &&
+        retrievedApplications.error == "Incomplete onboarding"
+      ) {
+        console.log(retrievedApplications.error);
+        setShowLoanOnboarding(true);
+        return;
+      }
       setApplications(retrievedApplications);
 
       if (userId) {
@@ -231,55 +147,189 @@ function Dashboard() {
 
   return (
     <DefaultPageLayout>
+      {showLoanOnboarding && (
+        <Form
+          formId="P780pM"
+          onAction={async (context) => {
+            if (
+              context.trigger.id !== "d8f38042-700a-43b4-97a2-1f36af9d5221" ||
+              (context as any).beforeClickActions
+            ) {
+              return;
+            }
+            console.log(context);
+            const fields = context.fields;
+            const loanAmount = fields["loanamount"].value as number;
+            const phoneNumber = fields["phonenumber"].value!.toString();
+            const companyName = fields["companyname"].value!.toString();
+            const companyWebsite = fields["companywebsite"].value!.toString();
+            const state = fields["companystate"].value!.toString();
+            const response = await initializeBusiness(
+              bearer,
+              loanAmount,
+              phoneNumber,
+              companyName,
+              companyWebsite,
+              state
+            );
+          }}
+        />
+      )}
       <div className="flex h-full w-full flex-col items-start gap-4 bg-default-background pt-12 pr-40 pb-12 pl-40">
-        <span className="text-subheader font-subheader text-default-font">
-          Recommended Lenders
-        </span>
-        <span className="text-body font-body text-default-font">
-          These are the top 10 recommended lenders based on your requested loan
-          amount, company location, and company sector. Loan amounts and average
-          interest rates are calculated using public data released by the SBA on
-          SBA 7a loans over the past year.
-        </span>
-        <Table
-          header={
-            <Table.HeaderRow>
-              <Table.HeaderCell>Lender</Table.HeaderCell>
-              <Table.HeaderCell>Website</Table.HeaderCell>
-              <Table.HeaderCell>Number of 7a loans</Table.HeaderCell>
-              <Table.HeaderCell>Avg. interest rate</Table.HeaderCell>
-            </Table.HeaderRow>
-          }
-        >
-          {applications.map((application) => (
-            <LenderRow
-              key={application.lender_id}
-              application={application}
-              loadingLender={loadingLender}
-              apply={apply}
-            />
-          ))}
-        </Table>
+        {applications.length > 0 && (
+          <>
+            <span className="text-subheader font-subheader text-default-font">
+              Recommended Lenders
+            </span>
+            <span className="text-body font-body text-default-font">
+              These are the top 10 recommended lenders based on your requested
+              loan amount, company location, and company sector. Loan amounts
+              and average interest rates are calculated using public data
+              released by the SBA on SBA 7a loans over the past year.
+            </span>
+            <Table
+              header={
+                <Table.HeaderRow>
+                  <Table.HeaderCell>Lender</Table.HeaderCell>
+                  <Table.HeaderCell>Website</Table.HeaderCell>
+                  <Table.HeaderCell>Number of 7a loans</Table.HeaderCell>
+                  <Table.HeaderCell>Avg. interest rate</Table.HeaderCell>
+                </Table.HeaderRow>
+              }
+            >
+              {applications.map((application) => (
+                <LenderRow
+                  key={application.lender_id}
+                  application={application}
+                  loadingLender={loadingLender}
+                  apply={apply}
+                />
+              ))}
+            </Table>
+          </>
+        )}
+
         <Form
           formId="9fEzRf"
-          contextRef={contextRef}
           popupOptions={{
             show: showPopup,
             onHide: () => setShowPopup(false),
           }}
-          onAction={(context) => {
-            const stepProperties = context.getStepProperties();
-
-            console.log(context.getStepProperties());
-            console.log(context.trigger.id);
-
-            if (context.trigger.id == "55060c5b-62fe-4875-8df2-3eba4c22702a") {
-              console.log("finished form");
-            }
-          }}
-          onFormComplete={(context) => {
+          onFormComplete={async (context) => {
             const fields = context.fields;
-            formCompletion();
+            var underLoi: any = fields["under-loi"].value;
+            if (underLoi === null) {
+              underLoi = undefined;
+            } else if (underLoi === "Yes") {
+              underLoi = true;
+            } else {
+              underLoi = false;
+            }
+            var linkedinUrl = fields["linkedin"].value?.toString();
+            var files: Array<File> = [];
+
+            const resumeValue = fields["resume"].value as Promise<File>[];
+            if (resumeValue.length > 0) {
+              const resumeFile = await resumeValue[0];
+              files.push(resumeFile);
+            }
+
+            const creditScoreValue = fields["credit-score-file"]
+              .value as Promise<File>[];
+            if (creditScoreValue.length > 0) {
+              const creditScoreFile = await creditScoreValue[0];
+              files.push(creditScoreFile);
+            }
+
+            const buyer2021TaxReturnValue = fields["buyer-2021-tax-return_1"]
+              .value as Promise<File>[];
+            if (buyer2021TaxReturnValue.length > 0) {
+              const buyer2021TaxReturnFile = await buyer2021TaxReturnValue[0];
+              files.push(buyer2021TaxReturnFile);
+            }
+
+            const buyer2022TaxReturnValue = fields["buyer-2022-tax-return_1"]
+              .value as Promise<File>[];
+            if (buyer2022TaxReturnValue.length > 0) {
+              const buyer2022TaxReturnFile = await buyer2022TaxReturnValue[0];
+              files.push(buyer2022TaxReturnFile);
+            }
+
+            const buyer2023TaxReturnValue = fields["buyer-2023-tax-return_1"]
+              .value as Promise<File>[];
+            if (buyer2023TaxReturnValue.length > 0) {
+              const buyer2023TaxReturnFile = await buyer2023TaxReturnValue[0];
+              files.push(buyer2023TaxReturnFile);
+            }
+
+            const buyerForm413Value = fields["buyer-form-413_1"]
+              .value as Promise<File>[];
+            if (buyerForm413Value.length > 0) {
+              const buyerForm413File = await buyerForm413Value[0];
+              files.push(buyerForm413File);
+            }
+
+            const cimValue = fields["cim_1"].value as Promise<File>[];
+            if (cimValue.length > 0) {
+              const cimFile = await cimValue[0];
+              files.push(cimFile);
+            }
+
+            const business2021TaxReturnValue = fields[
+              "business-2021-tax-return_1"
+            ].value as Promise<File>[];
+            if (business2021TaxReturnValue.length > 0) {
+              const business2021TaxReturnFile =
+                await business2021TaxReturnValue[0];
+              files.push(business2021TaxReturnFile);
+            }
+
+            const business2022TaxReturnValue = fields[
+              "business-2022-tax-return_1"
+            ].value as Promise<File>[];
+            if (business2022TaxReturnValue.length > 0) {
+              const business2022TaxReturnFile =
+                await business2022TaxReturnValue[0];
+              files.push(business2022TaxReturnFile);
+            }
+
+            const business2023TaxReturnValue = fields[
+              "business-2023-tax-return_1"
+            ].value as Promise<File>[];
+            if (business2023TaxReturnValue.length > 0) {
+              const business2023TaxReturnFile =
+                await business2023TaxReturnValue[0];
+              files.push(business2023TaxReturnFile);
+            }
+
+            const business2024PnlValue = fields["business-2024-pnl_1"]
+              .value as Promise<File>[];
+            if (business2024PnlValue.length > 0) {
+              const business2024PnlFile = await business2024PnlValue[0];
+              files.push(business2024PnlFile);
+            }
+
+            const business2024BalanceSheetValue = fields[
+              "business-2024-balance-sheet_1"
+            ].value as Promise<File>[];
+            if (business2024BalanceSheetValue.length > 0) {
+              const business2024BalanceSheetFile =
+                await business2024BalanceSheetValue[0];
+              files.push(business2024BalanceSheetFile);
+            }
+
+            const loiValue = fields["loi_1"].value as Promise<File>[];
+            if (loiValue.length > 0) {
+              const loiFile = await loiValue[0];
+              files.push(loiFile);
+            }
+            apply(
+              applicationInProgress.lenderId,
+              applicationInProgress.businessId,
+              underLoi,
+              linkedinUrl,
+              files
+            );
           }}
         />
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

@@ -85,12 +85,17 @@ class Database:
         completed_onboarding: Optional[bool] = None,
         first_name: Optional[str] = None,
         last_name: Optional[str] = None,
+        phone_number: Optional[str] = None,
     ) -> Optional[User]:
-        payload = {
-            "first_name": first_name,
-            "last_name": last_name,
-            "completed_onboarding": completed_onboarding,
-        }
+        payload = {}
+        if completed_onboarding is not None:
+            payload["completed_onboarding"] = completed_onboarding
+        if first_name:
+            payload["first_name"] = first_name
+        if last_name:
+            payload["last_name"] = last_name
+        if phone_number:
+            payload["phone_number"] = phone_number
         response = (
             self.supabase.table("lending_users")
             .update(
