@@ -2,12 +2,8 @@ import supabase from "./lib/supabaseClient";
 
 export const completeOnboarding = async (
   apiKey: string,
-  loanAmount: number,
   firstName: string,
-  lastName: string,
-  companyName: string,
-  companyWebsite: string,
-  state: string
+  lastName: string
 ): Promise<any> => {
   try {
     const response = await fetch(
@@ -21,10 +17,6 @@ export const completeOnboarding = async (
         body: JSON.stringify({
           first_name: firstName,
           last_name: lastName,
-          loan_amount: loanAmount,
-          company_name: companyName,
-          company_website: companyWebsite,
-          company_state: state,
         }),
       }
     );

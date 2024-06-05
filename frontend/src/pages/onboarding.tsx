@@ -57,56 +57,10 @@ function Onboarding() {
   }, [userId]);
 
   async function finishOnboarding(fields: Record<string, any>) {
-    const loanAmount = fields["loan-amt"].value!.valueOf();
     const firstName = fields["firstname"].value!.toString();
     const lastName = fields["lastname"].value!.toString();
-    // const applicantTypeRaw = fields["applicants"].value!.toString();
-    // var applicantType = "acquirer";
-    // if (applicantTypeRaw == "Acquirer") {
-    //   applicantType = "acquirer";
-    // } else if (applicantTypeRaw == "Business Owner") {
-    //   applicantType = "business_owner";
-    // } else if (applicantTypeRaw == "Business Broker") {
-    //   applicantType = "business_broker";
-    // }
-    // const buyerResume = fields["buyer-resume"].value!.valueOf();
-    // const buyer2021TaxReturn = fields["buyer-2021-tax-return"].value!.valueOf();
-    // const buyer2022TaxReturn = fields["buyer-2022-tax-return"].value!.valueOf();
-    // const buyer2023TaxReturn = fields["buyer-2023-tax-return"].value!.valueOf();
-    // const buyerForm413 = fields["buyer-form-413"].value!.valueOf();
-    const companyName = fields["biz-name"].value!.valueOf();
-    const companyWebsite = fields["biz-website"].value!.valueOf();
-    const state = fields["biz-state"].value!.valueOf();
 
-    // const cim = fields["cim"].value!.valueOf();
-    // const business2021TaxReturn =
-    //   fields["business-2021-tax-return"].value!.valueOf();
-    // const business2022TaxReturn =
-    //   fields["business-2022-tax-return"].value!.valueOf();
-    // const business2023TaxReturn =
-    //   fields["business-2023-tax-return"].value!.valueOf();
-    // const business2024PnL = fields["business-2024-pnl"].value!.valueOf();
-    // const business2024BalanceSheet =
-    //   fields["business-2024-balance-sheet"].value!.valueOf();
-    // const loi = fields["loi"].value!.valueOf();
-    // const buyerCreditScore = fields["buyer-credit-score"].value!.valueOf();
-    // const buyerFirstName = fields["buyer-first-name"].value?.valueOf();
-    // const buyerLastName = fields["buyer-last-name"].value?.valueOf();
-    // const buyerEmail = fields["buyer-email"].value?.valueOf();
-    // const buyerLinkedin = fields["buyer-linkedin"].value?.valueOf();
-    // const ownerFirstName = fields["owner-first-name"].value?.valueOf();
-    // const ownerLastName = fields["owner-last-name"].value?.valueOf();
-    // const ownerEmail = fields["owner-email"].value?.valueOf();
-
-    const response = await completeOnboarding(
-      bearer,
-      loanAmount as number,
-      firstName,
-      lastName,
-      companyName as string,
-      companyWebsite as string,
-      state as string
-    );
+    const response = await completeOnboarding(bearer, firstName, lastName);
     console.log(response);
     if (response.success) {
       window.location.reload();
