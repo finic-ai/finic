@@ -7,7 +7,11 @@ from enum import Enum
 class CompleteOnboardingRequest(BaseModel):
     first_name: str
     last_name: str
+
+
+class CreateBusinessRequest(BaseModel):
     loan_amount: float
+    phone_number: str
     company_name: str
     company_website: str
     company_state: str

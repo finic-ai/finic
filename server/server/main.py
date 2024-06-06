@@ -33,6 +33,7 @@ from models.api import (
     ChatRequest,
     GetDiligenceDocsResponse,
     GetDiligenceDocsRequest,
+    CreateBusinessRequest,
 )
 import uuid
 from models.models import AppConfig, Business
@@ -129,9 +130,23 @@ async def complete_onboarding(
             last_name=request.last_name,
         )
 
+        response = CompleteOnboardingResponse(success=True)
+        return response
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/create-business")
+async def create_business(
+    request: CreateBusinessRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        user = await db.get_user(config.user_id)
         business = Business(
             id=str(uuid.uuid4()),
-            borrower_id=user.id,
+            borrower_id=config.user_id,
             company_name=request.company_name,
             company_website=request.company_website,
             company_state=request.company_state,
@@ -139,16 +154,26 @@ async def complete_onboarding(
         )
         await db.upsert_business(business=business)
 
-        form_submission_link = (
-            f"https://form.feathery.io/?_slug=cQalFV&_id={config.user_id}"
+        # update user with phone number
+        await db.set_user_fields(config, phone_number=request.phone_number)
+
+        recommendations = Recommendations(db=db)
+        lenders = await recommendations.get_recommended_lenders(business=business)
+        applications = await db.upsert_loan_applications(
+            lenders=lenders, business=business, borrower_id=config.user_id
         )
-        slack_message = f"New borrower: {request.first_name} {request.last_name} ({user.email}). Form submission : {form_submission_link}"
+
+        FORM_ID = "P780pM"
+
+        form_submission_link = (
+            f"https://form.feathery.io/?_slug={FORM_ID}&_id={config.user_id}"
+        )
+        slack_message = f"New borrower: {user.first_name} {user.last_name} ({user.email}) ({request.phone_number}). Form submission : {form_submission_link}"
         url = "https://hook.us1.make.com/u2j67wjp0oyasths8yp2rl9ak2cxwrz0"
         data = {"message": slack_message}
         response = requests.post(url, json=data)
 
-        response = CompleteOnboardingResponse(success=True)
-        return response
+        return applications
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -177,6 +202,8 @@ async def get_applications(
 ):
     try:
         businesses = await db.get_businesses_for_user(config.user_id)
+        if len(businesses) == 0:
+            raise IncompleteOnboardingError()
         business = businesses[0]
 
         applications = await db.get_loan_applications(business=business)
@@ -189,6 +216,8 @@ async def get_applications(
             )
 
         return applications
+    except IncompleteOnboardingError as e:
+        raise HTTPException(status_code=401, detail="no business found")
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
