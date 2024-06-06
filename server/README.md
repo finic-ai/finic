@@ -1,6 +1,6 @@
 # Dealwise server
 
 ```
-poetry start
-poetry run shell
+poetry shell
+poetry run start
 ```

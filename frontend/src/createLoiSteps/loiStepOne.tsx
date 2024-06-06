@@ -11,6 +11,8 @@ import { RadioCardGroup } from "@/subframe/components/RadioCardGroup";
 import { Accordion } from "@/subframe/components/Accordion";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useUserStateContext } from "../context/UserStateContext";
+import { createLoi } from "../utils";
 
 type Inputs = {
   businessName: string,
@@ -26,6 +28,7 @@ interface LoiStepOneProps {
 }
 
 function LoiStepOne({ setActiveStep }: LoiStepOneProps) {
+  const { bearer, email, userId } = useUserStateContext();
   const [ hasLegalEntity, setHasLegalEntity ] = useState<string | null>('no');
 
   const {
@@ -41,6 +44,7 @@ function LoiStepOne({ setActiveStep }: LoiStepOneProps) {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     setActiveStep(1);
     console.log(data)
+    createLoi(bearer, userId, data)
   }
   
   return (

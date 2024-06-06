@@ -29,7 +29,7 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
 });
 
 function CreateLoiPage() {
-  const [ activeStep, setActiveStep ] = useState(2);
+  const [ activeStep, setActiveStep ] = useState(1);
   
   return (
     <DefaultPageLayout>

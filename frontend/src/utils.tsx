@@ -263,3 +263,35 @@ export const createBusiness = async (
     return error;
   }
 };
+
+export const createLoi = async (
+  apiKey: string,
+  userId: string,
+  fields: any
+): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/upsert-loi",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          business_name: fields.businessName,
+          buyer_name: fields.buyerName,
+          legal_entity: fields.legalEntity || null,
+          biz_revenue: parseInt(fields.bizRevenue),
+          biz_ebitda: parseInt(fields.bizEbitda),
+          financials_period: fields.financialsPeriod,
+        })
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(`Error creating LOI: ${error.message}`);
+    return error;
+  }
+};

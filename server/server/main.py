@@ -34,12 +34,14 @@ from models.api import (
     GetDiligenceDocsResponse,
     GetDiligenceDocsRequest,
     CreateBusinessRequest,
+    CreateLoiRequest
 )
 import uuid
-from models.models import AppConfig, Business
+from models.models import AppConfig, Business, LOI
 from database import Database
 import io
 import datetime
+import pdb
 import logging
 import sentry_sdk
 from webscraper import WebScraper
@@ -350,6 +352,34 @@ async def chat(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/upsert-loi")
+async def upsert_loi(
+    request: CreateLoiRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        request_dict = vars(request)
+        if request.id is not None:
+            loi = await db.get_loi(request.id)
+            for attr, value in request_dict.items():
+                if value not in [None, "id"]:
+                    setattr(loi, attr, value)
+        else:
+            loi = LOI(
+                id=str(uuid.uuid4()),
+                created_by=config.user_id,
+                status = "draft"
+            )
+            for attr, value in request_dict.items():
+                if value is not None:
+                    setattr(loi, attr, value)
+
+        await db.upsert_loi(loi)
+
+        return {"loi_id": loi.id}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/sentry-debug")
 async def trigger_error():

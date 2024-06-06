@@ -8,6 +8,7 @@ from models.models import (
     Lender,
     LoanApplication,
     LoanStatus,
+    LOI,
     BusinessFiles,
     BusinessFile,
 )
@@ -130,19 +131,6 @@ class Database:
             .execute()
         )
         return [Business(**row) for row in response.data]
-
-    async def upsert_business(self, business: Business) -> Optional[Business]:
-        response = (
-            self.supabase.table("businesses")
-            .upsert(
-                business.dict(),
-            )
-            .execute()
-        )
-        if len(response.data) > 0:
-            row = response.data[0]
-            return Business(**row)
-        return None
 
     async def get_lenders(
         self, sort_by, descending: bool = False, limit: int = 3
@@ -385,3 +373,16 @@ class Database:
             loan_application.lender = lender
 
         return result
+    
+    async def upsert_loi(self, loi: LOI) -> Optional[LOI]:
+        response = (
+            self.supabase.table("letters_of_intent")
+            .upsert(
+                loi.dict(),
+            )
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return LOI(**row)
+        return None
