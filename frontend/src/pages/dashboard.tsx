@@ -231,91 +231,93 @@ function Dashboard() {
 
   return (
     <DefaultPageLayout>
-      <div className="flex h-full w-full flex-col items-start gap-4 bg-default-background pt-12 pr-40 pb-12 pl-40">
-        <span className="text-subheader font-subheader text-default-font">
-          Recommended Lenders
-        </span>
-        <span className="text-body font-body text-default-font">
-          These are the top 10 recommended lenders based on your requested loan
-          amount, company location, and company sector. Loan amounts and average
-          interest rates are calculated using public data released by the SBA on
-          SBA 7a loans over the past year.
-        </span>
-        <Table
-          header={
-            <Table.HeaderRow>
-              <Table.HeaderCell>Lender</Table.HeaderCell>
-              <Table.HeaderCell>Website</Table.HeaderCell>
-              <Table.HeaderCell>Number of 7a loans</Table.HeaderCell>
-              <Table.HeaderCell>Avg. interest rate</Table.HeaderCell>
-            </Table.HeaderRow>
-          }
-        >
-          {applications.map((application) => (
-            <LenderRow
-              key={application.lender_id}
-              application={application}
-              loadingLender={loadingLender}
-              apply={apply}
-            />
-          ))}
-        </Table>
-        <Form
-          formId="9fEzRf"
-          contextRef={contextRef}
-          popupOptions={{
-            show: showPopup,
-            onHide: () => setShowPopup(false),
-          }}
-          onAction={(context) => {
-            const stepProperties = context.getStepProperties();
-
-            console.log(context.getStepProperties());
-            console.log(context.trigger.id);
-
-            if (context.trigger.id == "55060c5b-62fe-4875-8df2-3eba4c22702a") {
-              console.log("finished form");
+      <div className="flex h-full w-full items-start gap-2">
+        <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start gap-4 bg-default-background pt-12 pr-24 pb-12 pl-24">
+          <span className="text-subheader font-subheader text-default-font">
+            Recommended Lenders
+          </span>
+          <span className="text-body font-body text-default-font">
+            These are the top 10 recommended lenders based on your requested loan
+            amount, company location, and company sector. Loan amounts and average
+            interest rates are calculated using public data released by the SBA on
+            SBA 7a loans over the past year.
+          </span>
+          <Table
+            header={
+              <Table.HeaderRow>
+                <Table.HeaderCell>Lender</Table.HeaderCell>
+                <Table.HeaderCell>Website</Table.HeaderCell>
+                <Table.HeaderCell>Number of 7a loans</Table.HeaderCell>
+                <Table.HeaderCell>Avg. interest rate</Table.HeaderCell>
+              </Table.HeaderRow>
             }
-          }}
-          onFormComplete={(context) => {
-            const fields = context.fields;
-            formCompletion();
-          }}
-        />
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <Dialog.Content className="h-auto w-auto flex-none">
-            <div className="flex max-w-[384px] flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
-              <div className="flex flex-col items-center gap-6">
-                <div className="flex flex-col items-center gap-4">
-                  <IconWithBackground
-                    variant="success"
-                    size="large"
-                    icon="FeatherSend"
-                  />
-                  <span className="text-subheader font-subheader text-default-font">
-                    Application Submitted
-                  </span>
-                  <span className="text-body font-body text-default-font">
-                    {`Your application has been sent. Please check your inbox at ${email} for
-                    a confirmation email.`}
-                  </span>
-                </div>
-                <div className="flex w-full items-center gap-2">
-                  <Button
-                    className="h-8 w-full grow shrink-0 basis-0"
-                    variant="brand-primary"
-                    size="medium"
-                    onClick={() => {
-                      setDialogOpen(false);
-                    }}
-                  >
-                    Close
-                  </Button>
+          >
+            {applications.map((application) => (
+              <LenderRow
+                key={application.lender_id}
+                application={application}
+                loadingLender={loadingLender}
+                apply={apply}
+              />
+            ))}
+          </Table>
+          <Form
+            formId="9fEzRf"
+            contextRef={contextRef}
+            popupOptions={{
+              show: showPopup,
+              onHide: () => setShowPopup(false),
+            }}
+            onAction={(context) => {
+              const stepProperties = context.getStepProperties();
+
+              console.log(context.getStepProperties());
+              console.log(context.trigger.id);
+
+              if (context.trigger.id == "55060c5b-62fe-4875-8df2-3eba4c22702a") {
+                console.log("finished form");
+              }
+            }}
+            onFormComplete={(context) => {
+              const fields = context.fields;
+              formCompletion();
+            }}
+          />
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog.Content className="h-auto w-auto flex-none">
+              <div className="flex max-w-[384px] flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
+                <div className="flex flex-col items-center gap-6">
+                  <div className="flex flex-col items-center gap-4">
+                    <IconWithBackground
+                      variant="success"
+                      size="large"
+                      icon="FeatherSend"
+                    />
+                    <span className="text-subheader font-subheader text-default-font">
+                      Application Submitted
+                    </span>
+                    <span className="text-body font-body text-default-font">
+                      {`Your application has been sent. Please check your inbox at ${email} for
+                      a confirmation email.`}
+                    </span>
+                  </div>
+                  <div className="flex w-full items-center gap-2">
+                    <Button
+                      className="h-8 w-full grow shrink-0 basis-0"
+                      variant="brand-primary"
+                      size="medium"
+                      onClick={() => {
+                        setDialogOpen(false);
+                      }}
+                    >
+                      Close
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Dialog.Content>
-        </Dialog>
+            </Dialog.Content>
+          </Dialog>
+        </div>
       </div>
     </DefaultPageLayout>
   );

@@ -163,6 +163,11 @@ module.exports = {
         256: "64rem",
         320: "80rem",
       },
+      screens: {
+        mobile: {
+          max: "767px",
+        },
+      },
     },
   },
 };

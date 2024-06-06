@@ -11,6 +11,7 @@
 
 import React from "react";
 import * as SubframeCore from "@subframe/core";
+import { Sidebar } from "../components/Sidebar";
 import { IconButton } from "../components/IconButton";
 import { DropdownMenu } from "../components/DropdownMenu";
 import { Button } from "../components/Button";
@@ -41,38 +42,38 @@ const DefaultPageLayoutRoot = React.forwardRef<
       ref={ref as any}
       {...otherProps}
     >
+      <Sidebar
+        className="h-full w-56 flex-none"
+        hideLogo={false}
+        logoImage="https://res.cloudinary.com/subframe/image/upload/v1711487224/uploads/132/s1sz3csmgplv8dnu1js7.png"
+      >
+        <Sidebar.Item selected={true}
+          onClick={() => {
+            window.location.href = "/diligence";
+          }}
+        >Diligence AI</Sidebar.Item>
+        <Sidebar.Item icon="FeatherBarChart"
+          onClick={() => {
+            window.location.href = "/lois";
+          }}>LOIs</Sidebar.Item>
+        <Sidebar.Item icon="FeatherDatabase" 
+          onClick={() => {
+            window.location.href = "/";
+          }}>Find a Lender</Sidebar.Item>
+        <Sidebar.Item icon="FeatherSettings">Settings</Sidebar.Item>
+      </Sidebar>
       <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start">
-        <div className="flex w-full items-center justify-between border-b border-solid border-neutral-border pt-2 pr-4 pb-2 pl-4">
-          <img
-            className="h-11 w-11 flex-none"
-            src="https://res.cloudinary.com/subframe/image/upload/v1711487223/uploads/132/rop23mbpjbrfzsg50l7o.png"
-          />
+        <div className="flex w-full items-center justify-between border-l-0 border-solid border-neutral-border pt-2 pr-4 pb-2 pl-4">
           <div className="flex w-full grow shrink-0 basis-0 items-center gap-4">
             <div className="flex w-full grow shrink-0 basis-0 items-start justify-center gap-2">
-              <Button
-                onClick={() => {
-                  window.location.href = "/";
-                }}
-                variant="neutral-tertiary"
-              >
-                Find Lenders
-              </Button>
-              <Button
-                onClick={() => {
-                  window.location.href = "/diligence";
-                }}
-                variant="neutral-tertiary"
-              >
-                Diligence assistant
-              </Button>
             </div>
-            {/* <IconButton
+            <IconButton
               disabled={false}
               variant="neutral-tertiary"
               size="large"
               icon="FeatherHelpCircle"
               loading={false}
-            /> */}
+            />
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
                 <Avatar
