@@ -282,6 +282,7 @@ export const upsertLoi = async (
         payload[key] = `${year}-${month}-${day}`;
       }
     }
+    console.log(payload)
     const response = await fetch(
       import.meta.env.VITE_APP_SERVER_URL + "/upsert-loi",
       {
@@ -311,10 +312,28 @@ export const getLois = async (apiKey: string, userId: string, loiId?: string): P
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user_id: userId,
-          loi_id: loiId || null,
-        })
+        body: loiId ? JSON.stringify({ loi_id: loiId }) : null
+      }
+    );
+    const data = await response.json();
+    return camelizeKeys(data);
+  } catch (error: any) {
+    console.error(`Error fetching LOIs: ${error.message}`);
+    return error;
+  }
+};
+
+export const deleteLoi = async (apiKey: string, loiId: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/delete-lois",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([loiId])
       }
     );
     const data = await response.json();

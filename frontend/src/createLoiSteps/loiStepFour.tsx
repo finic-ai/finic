@@ -24,6 +24,7 @@ type Inputs = {
   terminationFeeAmount: number,
   governingLaw: string,
   expirationDate: Date,
+  status: string,
 }
 
 interface LoiStepFourProps {
@@ -47,6 +48,7 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
   const terminationFeeType = watch('terminationFeeType')
   
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    data.status = "completed"
     const newLoi = await updateLoi(data)
     if ('id' in newLoi) {
       setActiveStep(0);

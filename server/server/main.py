@@ -82,6 +82,9 @@ class IncompleteOnboardingError(Exception):
 class EmptyVectorDatabaseError(Exception):
     pass
 
+class LOINotFoundException(Exception):
+    pass
+
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -355,11 +358,11 @@ async def chat(
     
 @app.post("/get-lois")
 async def get_lois(
-    request: GetLoiRequest = Body(...),
+    loi_id: str = Body(None),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        loi = await db.get_lois(user_id=config.user_id, loi_id=request.loi_id)
+        loi = await db.get_lois(user_id=config.user_id, loi_id=loi_id if loi_id is not None else None)
         return loi
     except Exception as e:
         print(e)
@@ -391,6 +394,26 @@ async def upsert_loi(
         await db.upsert_loi(loi)
 
         return loi
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/delete-lois")
+async def delete_lois(
+    loi_ids: List[str] = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        if len(loi_ids) > 0:
+            response = await db.delete_lois(loi_ids)
+            if len(response) == 0:
+                raise LOINotFoundException()
+        else:
+            raise HTTPException(status_code=422, detail="At least one LOI ID must be provided")
+        return response
+    except LOINotFoundException as e:
+        print(e)
+        raise HTTPException(status_code=404, detail="No LOIs matching the provided IDs were found")
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

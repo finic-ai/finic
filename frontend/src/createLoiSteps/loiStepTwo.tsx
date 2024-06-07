@@ -50,6 +50,7 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
 
   useEffect(() => {
     if (loi == null) return;
+    console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
       if (['purchasePrice', 'notePercent', 'noteInterestRate', 'noteTerm', 'noteStandby', 'transactionType'].includes(key)) {
         setValue(key as keyof Inputs, value as string | number);

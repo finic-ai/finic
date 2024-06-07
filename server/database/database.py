@@ -409,3 +409,33 @@ class Database:
             row = response.data[0]
             return LOI(**row)
         return None
+    
+    async def get_lois(self, user_id: str, loi_id: str = None) -> List[LOI]:
+        if loi_id:
+            response = (
+                self.supabase.table("letters_of_intent")
+                .select("*")
+                .filter("id", "eq", loi_id)
+                .filter("created_by", "eq", user_id)
+                .execute()
+            )
+            return [LOI(**row) for row in response.data]
+        
+        response = (
+            self.supabase.table("letters_of_intent")
+            .select("*")
+            .filter("created_by", "eq", user_id)
+            .execute()
+        )
+        return [LOI(**row) for row in response.data]
+
+    async def delete_lois(self, loi_ids: List[str]) -> Optional[List[LOI]]:
+        response = (
+            self.supabase.table("letters_of_intent")
+            .delete()
+            .in_("id", loi_ids)
+            .execute()
+        )
+        if getattr(response, 'error', None) is not None:
+            raise Exception(f"Failed to delete LOIs: {response.error.message}")
+        return [LOI(**row) for row in response.data]

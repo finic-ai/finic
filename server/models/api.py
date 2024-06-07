@@ -19,6 +19,7 @@ class CreateBusinessRequest(BaseModel):
 
 class CreateLoiRequest(BaseModel):
     id: Optional[str] = None
+    status: Optional[str] = None
     business_name: Optional[str] = None
     buyer_name: Optional[str] = None
     legal_entity: Optional[str] = None

@@ -15,7 +15,7 @@ import * as SubframeCore from "@subframe/core";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { IconButton } from "@/subframe/components/IconButton";
 import { HomeListItem } from "@/subframe/components/HomeListItem";
-import { getLois } from "../utils";
+import { getLois, deleteLoi } from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
 
 export type LOI = {
@@ -90,19 +90,6 @@ function LoiPage() {
           <span className="text-body font-body text-default-font">
             It takes just 5 minutes to create an LOI on Dealwise.
           </span>
-          <div className="flex w-full items-start gap-4">
-            <HomeCard
-              title="Answer Questions"
-              subtitle=""
-              icon="FeatherFormInput"
-            />
-            <HomeCard
-              title="Generate a LOI"
-              subtitle=""
-              icon="FeatherSparkles"
-            />
-            <HomeCard title="Download PDF" subtitle="" icon="FeatherFileDown" />
-          </div>
         </div>
         <div className="flex w-full flex-col items-start gap-4">
           <div className="flex w-full items-center gap-2 border-b border-solid border-neutral-border pt-2 pb-2">
@@ -159,11 +146,31 @@ function LoiPage() {
             </ToggleGroup>
           </div>
           <div className="flex w-full flex-col items-start gap-2">
+            {!lois || lois.length == 0 && <div className="flex w-full items-start gap-4">
+              <HomeCard
+                title="Answer Questions"
+                subtitle=""
+                icon="FeatherFormInput"
+                className="hover:bg-white cursor-default"
+              />
+              <HomeCard
+                title="Generate a LOI"
+                subtitle=""
+                icon="FeatherSparkles"
+                className="hover:bg-white cursor-default"
+              />
+              <HomeCard 
+                title="Download PDF" 
+                subtitle="" 
+                icon="FeatherFileDown" 
+                className="hover:bg-white cursor-default"
+              />
+            </div>}
             {lois && lois.map((loi) => (
               <HomeListItem
                 icon="FeatherStore"
                 title={loi.businessName}
-                subtitle={loi.expirationDate ? loi.expirationDate.toString() : undefined}
+                subtitle={loi.expirationDate ? `Expires ${loi.expirationDate.toString()}`: undefined}
                 metadata={getStatusLabel(loi.status)}
                 key={loi.id}
               >
@@ -190,7 +197,9 @@ function LoiPage() {
                         }}>
                           Edit
                         </DropdownMenu.DropdownItem>
-                        <DropdownMenu.DropdownItem icon="FeatherTrash">
+                        <DropdownMenu.DropdownItem icon="FeatherTrash" onClick={() => {
+                          deleteLoi(bearer, loi.id);
+                        }}>
                           Delete
                         </DropdownMenu.DropdownItem>
                       </DropdownMenu>
