@@ -53,7 +53,8 @@ function RootComponent() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/diligence" element={<DiligenceAssistant />} />
             <Route path="/lois" element={<LoiPage />} />
-            <Route path="/create-loi" element={<CreateLoiPage />} />
+            <Route path="/create-loi/" element={<CreateLoiPage />} />
+            <Route path="/create-loi/:loiId" element={<CreateLoiPage />} />
           </Routes>
         </>
       )}

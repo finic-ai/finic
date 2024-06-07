@@ -57,6 +57,9 @@ class GetDiligenceDocsResponse(BaseModel):
 class GetDiligenceDocsRequest(BaseModel):
     vectorize: bool
 
+class GetLoiRequest(BaseModel):
+    loi_id: Optional[str] = None
+
 
 class ChatRequest(BaseModel):
     messages: List[Message]

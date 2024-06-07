@@ -15,6 +15,37 @@ import * as SubframeCore from "@subframe/core";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { IconButton } from "@/subframe/components/IconButton";
 import { HomeListItem } from "@/subframe/components/HomeListItem";
+import { getLois } from "../utils";
+import { useUserStateContext } from "../context/UserStateContext";
+
+export type LOI = {
+  id: string,
+  status: string,
+  createdBy: string,
+  businessName: string,
+  buyerName: string,
+  legalEntity: string,
+  bizRevenue: number,
+  bizEbitda: number,
+  financialsPeriod: string,
+  purchasePrice: number,
+  notePercent: number,
+  noteInterestRate: number,
+  noteTerm: number,
+  noteStandby: number,
+  transactionType: string,
+  hasEarnout: string,
+  hasEscrow: string,
+  earnoutDescription: string,
+  escrowPercent: number,
+  closingDate: Date,
+  exclusivityStartDate: Date,
+  exclusivityEndDate: Date,
+  terminationFeeType: string,
+  terminationFeeAmount: number,
+  governingLaw: string,
+  expirationDate: Date,
+}
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
   api_host: "https://app.posthog.com",
@@ -22,6 +53,28 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
 init("8f535b4f-a447-4278-b242-bd77d408f7e2");
 
 function LoiPage() {
+  const { bearer, email, userId } = useUserStateContext();
+  const [ lois, setLois ] = useState<Array<LOI> | null>(null);
+
+  useEffect(() => {
+    const loadLoiData = async () => {
+      const lois = await getLois(bearer, userId);
+      console.log(lois);
+      setLois(lois);
+    };
+  
+    loadLoiData();
+  }, []);
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "draft":
+        return "Draft";
+      case "completed":
+        return "Completed";
+    }
+  }
+
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-8 bg-default-background pt-12 pb-12">
@@ -54,7 +107,7 @@ function LoiPage() {
         <div className="flex w-full flex-col items-start gap-4">
           <div className="flex w-full items-center gap-2 border-b border-solid border-neutral-border pt-2 pb-2">
             <span className="w-full grow shrink-0 basis-0 text-body-bold font-body-bold text-default-font">
-              5 LOIs
+              {`${lois ? lois.length : 0} LOIs`}
             </span>
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
@@ -106,183 +159,46 @@ function LoiPage() {
             </ToggleGroup>
           </div>
           <div className="flex w-full flex-col items-start gap-2">
-            <HomeListItem
-              icon="FeatherStore"
-              title="XYZ Company"
-              subtitle=""
-              metadata="In Progress (4/8)"
-            >
-              <SubframeCore.DropdownMenu.Root>
-                <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <IconButton size="medium" icon="FeatherMoreHorizontal" />
-                </SubframeCore.DropdownMenu.Trigger>
-                <SubframeCore.DropdownMenu.Portal>
-                  <SubframeCore.DropdownMenu.Content
-                    side="bottom"
-                    align="end"
-                    sideOffset={4}
-                    asChild={true}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon="FeatherStar">
-                        Favorite
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherDownload">
-                        Download
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherTrash">
-                        Delete
-                      </DropdownMenu.DropdownItem>
-                    </DropdownMenu>
-                  </SubframeCore.DropdownMenu.Content>
-                </SubframeCore.DropdownMenu.Portal>
-              </SubframeCore.DropdownMenu.Root>
-            </HomeListItem>
-            <HomeListItem
-              icon="FeatherBarChart3"
-              title="CloudCanopy"
-              subtitle=""
-              metadata="Created 1 week ago"
-            >
-              <SubframeCore.DropdownMenu.Root>
-                <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <IconButton size="medium" icon="FeatherMoreHorizontal" />
-                </SubframeCore.DropdownMenu.Trigger>
-                <SubframeCore.DropdownMenu.Portal>
-                  <SubframeCore.DropdownMenu.Content
-                    side="bottom"
-                    align="end"
-                    sideOffset={4}
-                    asChild={true}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon="FeatherStar">
-                        Favorite
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherTrash">
-                        Delete
-                      </DropdownMenu.DropdownItem>
-                    </DropdownMenu>
-                  </SubframeCore.DropdownMenu.Content>
-                </SubframeCore.DropdownMenu.Portal>
-              </SubframeCore.DropdownMenu.Root>
-            </HomeListItem>
-            <HomeListItem
-              icon="FeatherSmartphone"
-              title="Freshfare"
-              subtitle=""
-              metadata="Created 3 weeks ago"
-            >
-              <SubframeCore.DropdownMenu.Root>
-                <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <IconButton size="medium" icon="FeatherMoreHorizontal" />
-                </SubframeCore.DropdownMenu.Trigger>
-                <SubframeCore.DropdownMenu.Portal>
-                  <SubframeCore.DropdownMenu.Content
-                    side="bottom"
-                    align="end"
-                    sideOffset={4}
-                    asChild={true}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon="FeatherEdit">
-                        Edit
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherTrash">
-                        Delete
-                      </DropdownMenu.DropdownItem>
-                    </DropdownMenu>
-                  </SubframeCore.DropdownMenu.Content>
-                </SubframeCore.DropdownMenu.Portal>
-              </SubframeCore.DropdownMenu.Root>
-            </HomeListItem>
-            <HomeListItem
-              icon="FeatherShoppingCart"
-              title="TrendyTrail"
-              subtitle=""
-              metadata="In Progress (1/8)"
-            >
-              <SubframeCore.DropdownMenu.Root>
-                <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <IconButton size="medium" icon="FeatherMoreHorizontal" />
-                </SubframeCore.DropdownMenu.Trigger>
-                <SubframeCore.DropdownMenu.Portal>
-                  <SubframeCore.DropdownMenu.Content
-                    side="bottom"
-                    align="end"
-                    sideOffset={4}
-                    asChild={true}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon="FeatherStar">
-                        Favorite
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherTrash">
-                        Delete
-                      </DropdownMenu.DropdownItem>
-                    </DropdownMenu>
-                  </SubframeCore.DropdownMenu.Content>
-                </SubframeCore.DropdownMenu.Portal>
-              </SubframeCore.DropdownMenu.Root>
-            </HomeListItem>
-            <HomeListItem
-              icon="FeatherBell"
-              title="Notify"
-              subtitle=""
-              metadata="Created 3 months ago"
-            >
-              <SubframeCore.DropdownMenu.Root>
-                <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <IconButton size="medium" icon="FeatherMoreHorizontal" />
-                </SubframeCore.DropdownMenu.Trigger>
-                <SubframeCore.DropdownMenu.Portal>
-                  <SubframeCore.DropdownMenu.Content
-                    side="bottom"
-                    align="end"
-                    sideOffset={4}
-                    asChild={true}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon="FeatherStar">
-                        Favorite
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherTrash">
-                        Delete
-                      </DropdownMenu.DropdownItem>
-                    </DropdownMenu>
-                  </SubframeCore.DropdownMenu.Content>
-                </SubframeCore.DropdownMenu.Portal>
-              </SubframeCore.DropdownMenu.Root>
-            </HomeListItem>
-            <HomeListItem
-              icon="FeatherMic"
-              title="Chat House"
-              subtitle=""
-              metadata="Created 6 months ago"
-            >
-              <SubframeCore.DropdownMenu.Root>
-                <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <IconButton size="medium" icon="FeatherMoreHorizontal" />
-                </SubframeCore.DropdownMenu.Trigger>
-                <SubframeCore.DropdownMenu.Portal>
-                  <SubframeCore.DropdownMenu.Content
-                    side="bottom"
-                    align="end"
-                    sideOffset={4}
-                    asChild={true}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon="FeatherStar">
-                        Favorite
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherTrash">
-                        Delete
-                      </DropdownMenu.DropdownItem>
-                    </DropdownMenu>
-                  </SubframeCore.DropdownMenu.Content>
-                </SubframeCore.DropdownMenu.Portal>
-              </SubframeCore.DropdownMenu.Root>
-            </HomeListItem>
+            {lois && lois.map((loi) => (
+              <HomeListItem
+                icon="FeatherStore"
+                title={loi.businessName}
+                subtitle={loi.expirationDate ? loi.expirationDate.toString() : undefined}
+                metadata={getStatusLabel(loi.status)}
+                key={loi.id}
+              >
+                <SubframeCore.DropdownMenu.Root>
+                  <SubframeCore.DropdownMenu.Trigger asChild={true}>
+                    <IconButton size="medium" icon="FeatherMoreHorizontal" />
+                  </SubframeCore.DropdownMenu.Trigger>
+                  <SubframeCore.DropdownMenu.Portal>
+                    <SubframeCore.DropdownMenu.Content
+                      side="bottom"
+                      align="end"
+                      sideOffset={4}
+                      asChild={true}
+                    >
+                      <DropdownMenu>
+                        <DropdownMenu.DropdownItem icon="FeatherDownload">
+                          Download PDF
+                        </DropdownMenu.DropdownItem>
+                        <DropdownMenu.DropdownItem icon="FeatherFileDown">
+                          Download DOCX
+                        </DropdownMenu.DropdownItem>
+                        <DropdownMenu.DropdownItem icon="FeatherEdit" onClick={() => {
+                          window.location.href = `/create-loi/${loi.id}`;
+                        }}>
+                          Edit
+                        </DropdownMenu.DropdownItem>
+                        <DropdownMenu.DropdownItem icon="FeatherTrash">
+                          Delete
+                        </DropdownMenu.DropdownItem>
+                      </DropdownMenu>
+                    </SubframeCore.DropdownMenu.Content>
+                  </SubframeCore.DropdownMenu.Portal>
+                </SubframeCore.DropdownMenu.Root>
+              </HomeListItem>
+            ))}
           </div>
         </div>
       </div>

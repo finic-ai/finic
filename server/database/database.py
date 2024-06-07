@@ -374,11 +374,34 @@ class Database:
 
         return result
     
+    async def get_lois(self, user_id: str, loi_id: str = None) -> List[LOI]:
+        if loi_id:
+            response = (
+                self.supabase.table("letters_of_intent")
+                .select("*")
+                .filter("id", "eq", loi_id)
+                .filter("created_by", "eq", user_id)
+                .execute()
+            )
+            return [LOI(**row) for row in response.data]
+        
+        response = (
+            self.supabase.table("letters_of_intent")
+            .select("*")
+            .filter("created_by", "eq", user_id)
+            .execute()
+        )
+        return [LOI(**row) for row in response.data]
+
     async def upsert_loi(self, loi: LOI) -> Optional[LOI]:
+        loi_dict = loi.dict()
+        for key, value in loi_dict.items():
+            if isinstance(value, datetime.date):
+                loi_dict[key] = value.isoformat()
         response = (
             self.supabase.table("letters_of_intent")
             .upsert(
-                loi.dict(),
+                loi_dict,
             )
             .execute()
         )

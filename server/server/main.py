@@ -33,6 +33,7 @@ from models.api import (
     ChatRequest,
     GetDiligenceDocsResponse,
     GetDiligenceDocsRequest,
+    GetLoiRequest,
     CreateBusinessRequest,
     CreateLoiRequest
 )
@@ -351,6 +352,18 @@ async def chat(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/get-lois")
+async def get_lois(
+    request: GetLoiRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        loi = await db.get_lois(user_id=config.user_id, loi_id=request.loi_id)
+        return loi
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/upsert-loi")
 async def upsert_loi(
@@ -360,9 +373,10 @@ async def upsert_loi(
     try:
         request_dict = vars(request)
         if request.id is not None:
-            loi = await db.get_loi(request.id)
+            loi = await db.get_lois(user_id=config.user_id, loi_id=request.id)
+            loi = loi[0]
             for attr, value in request_dict.items():
-                if value not in [None, "id"]:
+                if value is not None and attr != "id":
                     setattr(loi, attr, value)
         else:
             loi = LOI(
@@ -376,7 +390,7 @@ async def upsert_loi(
 
         await db.upsert_loi(loi)
 
-        return {"loi_id": loi.id}
+        return loi
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
 import "../App.css";
 import posthog from "posthog-js";
 import { useUserStateContext } from "../context/UserStateContext";
@@ -19,17 +20,40 @@ import LoiStepOne from "../createLoiSteps/loiStepOne";
 import LoiStepTwo from "../createLoiSteps/loiStepTwo";
 import LoiStepThree from "../createLoiSteps/loiStepThree";
 import LoiStepFour from "../createLoiSteps/loiStepFour";
+import { LOI } from "../pages/loiPage.tsx"
 
-type Inputs = {
-  businessName: string
-}
+import { getLois, upsertLoi } from "../utils";
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
   api_host: "https://app.posthog.com",
 });
 
 function CreateLoiPage() {
-  const [ activeStep, setActiveStep ] = useState(1);
+  const navigate = useNavigate();
+  const { loiId } = useParams<{ loiId: string }>();
+
+  const { bearer, email, userId } = useUserStateContext();
+  const [ activeStep, setActiveStep ] = useState(0);
+  const [ loiData, setLoiData ] = useState<LOI | null>(null);
+
+  useEffect(() => {
+    const loadLoiData = async () => {
+      const lois = await getLois(bearer, userId, loiId);
+      setLoiData(lois[0]);
+    };
+    if (loiId){
+      loadLoiData();
+    }
+  }, []);
+
+  const handleUpsertLoi = async (data: any): Promise<{loi: LOI}> => {
+    const loi = await upsertLoi(bearer, userId, data, loiId);
+    setLoiData(loi);
+    if (!loiId) {
+      navigate(`/create-loi/${loi.id}`);
+    }
+    return loi
+  }
   
   return (
     <DefaultPageLayout>
@@ -63,27 +87,24 @@ function CreateLoiPage() {
             name="Post Close" 
             variant={activeStep > 2 ? "success": (activeStep == 2 ? "active": "default")} 
             stepNumber="3" 
-            onClick={() => activeStep > 1 && setActiveStep(1)}/>
+            onClick={() => activeStep > 2 && setActiveStep(2)}/>
           <Steps.Step 
             name="Misc" 
             variant={activeStep == 3 ? "active": "default"} 
             lastStep={true} 
-            stepNumber="4" 
-            onClick={() => activeStep > 1 && setActiveStep(1)}/>
+            stepNumber="4" />
         </Steps>
         <div className="flex w-full items-start gap-6">
           {(() => {
             switch (activeStep) {
               case 0:
-                return <LoiStepOne setActiveStep={setActiveStep} />;
+                return <LoiStepOne setActiveStep={setActiveStep} createLoi={handleUpsertLoi} loi={loiData}/>;
               case 1:
-                return <LoiStepTwo setActiveStep={setActiveStep} />;
+                return <LoiStepTwo setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
               case 2:
-                return <LoiStepThree setActiveStep={setActiveStep} />;
+                return <LoiStepThree setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
               case 3:
-                return <LoiStepFour setActiveStep={setActiveStep} />;
-              default:
-                return <LoiStepOne setActiveStep={setActiveStep} />;
+                return <LoiStepFour setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
             }
           })()}
           <div className="flex flex-col items-center justify-center gap-1">

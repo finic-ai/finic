@@ -11,8 +11,7 @@ import { RadioCardGroup } from "@/subframe/components/RadioCardGroup";
 import { Accordion } from "@/subframe/components/Accordion";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { useUserStateContext } from "../context/UserStateContext";
-import { createLoi } from "../utils";
+import { LOI } from "../pages/loiPage.tsx"
 
 type Inputs = {
   businessName: string,
@@ -25,10 +24,11 @@ type Inputs = {
 
 interface LoiStepOneProps {
   setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+  createLoi: (data: Inputs) => Promise<{loi: LOI}>;
+  loi: LOI | null;
 }
 
-function LoiStepOne({ setActiveStep }: LoiStepOneProps) {
-  const { bearer, email, userId } = useUserStateContext();
+function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
   const [ hasLegalEntity, setHasLegalEntity ] = useState<string | null>('no');
 
   const {
@@ -41,11 +41,21 @@ function LoiStepOne({ setActiveStep }: LoiStepOneProps) {
     formState: { errors },
   } = useForm<Inputs>()
   
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    setActiveStep(1);
-    console.log(data)
-    createLoi(bearer, userId, data)
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const newLoi = await createLoi(data)
+    if ('id' in newLoi) {
+      setActiveStep(1);
+    }
   }
+
+  useEffect(() => {
+    if (loi == null) return;
+    for (const [key, value] of Object.entries(loi)) {
+      if (['buyerName', 'businessName', 'legalEntity', 'bizRevenue', 'bizEbitda', 'financialsPeriod'].includes(key)) {
+        setValue(key as keyof Inputs, value as string | number);
+      }
+    }
+  }, [loi]);
   
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-6">

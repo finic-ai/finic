@@ -11,6 +11,7 @@ import { RadioCardGroup } from "@/subframe/components/RadioCardGroup";
 import { Accordion } from "@/subframe/components/Accordion";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { LOI } from "../pages/loiPage.tsx"
 
 type Inputs = {
   purchasePrice: number,
@@ -23,9 +24,11 @@ type Inputs = {
 
 interface LoiStepTwoProps {
   setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+  updateLoi: (data: Inputs) => Promise<{loi: LOI}>;
+  loi: LOI | null;
 }
 
-function LoiStepTwo({ setActiveStep }: LoiStepTwoProps) {
+function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
   const [ noteOnStandby, setNoteOnStandby ] = useState<string | null>('no');
 
   const {
@@ -38,10 +41,21 @@ function LoiStepTwo({ setActiveStep }: LoiStepTwoProps) {
     formState: { errors },
   } = useForm<Inputs>()
   
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    setActiveStep(2);
-    console.log(data)
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const newLoi = await updateLoi(data)
+    if ('id' in newLoi) {
+      setActiveStep(2);
+    }
   }
+
+  useEffect(() => {
+    if (loi == null) return;
+    for (const [key, value] of Object.entries(loi)) {
+      if (['purchasePrice', 'notePercent', 'noteInterestRate', 'noteTerm', 'noteStandby', 'transactionType'].includes(key)) {
+        setValue(key as keyof Inputs, value as string | number);
+      }
+    }
+  }, [loi]);
   
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-6">
@@ -103,12 +117,12 @@ function LoiStepTwo({ setActiveStep }: LoiStepTwoProps) {
               className="h-auto w-full flex-none"
               label="Interest rate on the note"
               helpText=""
-              htmlFor="notePercent"
+              htmlFor="noteInterestRate"
               iconRight="FeatherPercent"
             >
-              <TextField.Input {...register("notePercent", {required: true})}/>
+              <TextField.Input {...register("noteInterestRate", {required: true})}/>
             </TextField>
-            {errors.notePercent && <span className="text-body font-body text-error-700">This field is required</span>}
+            {errors.noteInterestRate && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
             <TextField

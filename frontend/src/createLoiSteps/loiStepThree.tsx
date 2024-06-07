@@ -6,10 +6,11 @@ import { TextArea } from "@/subframe/components/TextArea";
 import DatePicker from "react-datepicker";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { LOI } from "../pages/loiPage.tsx"
 
 type Inputs = {
-  hasEarnout: string,
-  hasEscrow: string,
+  hasEarnout: string | undefined,
+  hasEscrow: string | undefined,
   earnoutDescription: string,
   escrowPercent: number,
   closingDate: Date,
@@ -17,9 +18,11 @@ type Inputs = {
 
 interface LoiStepThreeProps {
   setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+  updateLoi: (data: Inputs) => Promise<{loi: LOI}>;
+  loi: LOI | null;
 }
 
-function LoiStepThree({ setActiveStep }: LoiStepThreeProps) {
+function LoiStepThree({ setActiveStep, updateLoi, loi }: LoiStepThreeProps) {
 
   const {
     register,
@@ -34,10 +37,29 @@ function LoiStepThree({ setActiveStep }: LoiStepThreeProps) {
   const hasEarnout = watch('hasEarnout')
   const hasEscrow = watch('hasEscrow')
   
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    setActiveStep(3);
-    console.log(data)
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    delete data.hasEarnout
+    delete data.hasEscrow
+    const newLoi = await updateLoi(data)
+    if ('id' in newLoi) {
+      setActiveStep(3);
+    }
   }
+
+  useEffect(() => {
+    if (loi == null) return;
+    console.log(loi)
+    for (const [key, value] of Object.entries(loi)) {
+      if (['earnoutDescription', 'escrowPercent'].includes(key)) {
+        setValue(key as keyof Inputs, value);
+      }
+      else if (key == 'closingDate') {
+        setValue('closingDate', value ? new Date(value) : null);
+      }
+    }
+    loi.earnoutDescription ? setValue('hasEarnout', 'yes') : setValue('hasEarnout', 'no');
+    loi.escrowPercent ? setValue('hasEscrow', 'yes') : setValue('hasEscrow', 'no');
+  }, [loi]);
   
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-6">

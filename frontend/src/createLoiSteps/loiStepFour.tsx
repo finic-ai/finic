@@ -13,6 +13,7 @@ import DatePicker from "react-datepicker";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import states from 'states-us';
+import { LOI } from "../pages/loiPage.tsx"
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -27,9 +28,11 @@ type Inputs = {
 
 interface LoiStepFourProps {
   setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+  updateLoi: (data: Inputs) => Promise<{loi: LOI}>;
+  loi: LOI | null;
 }
 
-function LoiStepFour({ setActiveStep }: LoiStepFourProps) {
+function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
 
   const {
     register,
@@ -43,10 +46,24 @@ function LoiStepFour({ setActiveStep }: LoiStepFourProps) {
 
   const terminationFeeType = watch('terminationFeeType')
   
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    // setActiveStep(2);
-    console.log(data)
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const newLoi = await updateLoi(data)
+    if ('id' in newLoi) {
+      setActiveStep(0);
+    }
   }
+
+  useEffect(() => {
+    if (loi == null) return;
+    for (const [key, value] of Object.entries(loi)) {
+      if (['terminationFeeType', 'terminationFeeAmount', 'governingLaw'].includes(key)) {
+        setValue(key as keyof Inputs, value);
+      }
+      else if (['exclusivityStartDate', 'exclusivityEndDate', 'expirationDate'].includes(key)) {
+        setValue(key as keyof Inputs, value ? new Date(value) : null);
+      }
+    }
+  }, [loi]);
   
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-6">
@@ -124,19 +141,29 @@ function LoiStepFour({ setActiveStep }: LoiStepFourProps) {
             {errors.terminationFeeAmount && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>: null}
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-            <label className="text-body-bold font-body-bold text-default-font" htmlFor="terminationFeeType">Under which state's law will this agreement be governed?</label>
-            <Select
-              placeholder="Select"
-              helpText=""
-            >
-              <div className="flex w-full flex-col items-start">
-                {states.map((state) => (
-                  <Select.Item key={state.abbreviation.toLowerCase()} value={state.abbreviation.toLowerCase()}>
-                    {state.name}
-                  </Select.Item>
-                ))}
-              </div>
-            </Select>
+            <label className="text-body-bold font-body-bold text-default-font" htmlFor="governingLaw">Under which state's law will this agreement be governed?</label>
+            <Controller
+              control={control}
+              name="governingLaw"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  placeholder="Select"
+                  helpText=""
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <div className="flex w-full flex-col items-start">
+                    {states.map((state) => (
+                      <Select.Item key={state.abbreviation.toLowerCase()} value={state.abbreviation.toLowerCase()}>
+                        {state.name}
+                      </Select.Item>
+                    ))}
+                  </div>
+                </Select>
+              )}
+            />
+            {errors.governingLaw && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
             <label className="text-body-bold font-body-bold text-default-font" htmlFor="expirationDate">
@@ -155,7 +182,7 @@ function LoiStepFour({ setActiveStep }: LoiStepFourProps) {
         </div>
         <div className="flex w-full items-center gap-2">
           <Button size="medium" type="submit">Next</Button>
-          <Button variant="neutral-tertiary" size="medium" onClick={() => setActiveStep(3)}>
+          <Button variant="neutral-tertiary" size="medium" onClick={() => setActiveStep(2)}>
             Back
           </Button>
         </div>

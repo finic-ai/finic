@@ -1,4 +1,5 @@
 import supabase from "./lib/supabaseClient";
+import { camelizeKeys, decamelizeKeys } from 'humps';
 
 export const completeOnboarding = async (
   apiKey: string,
@@ -264,12 +265,23 @@ export const createBusiness = async (
   }
 };
 
-export const createLoi = async (
+export const upsertLoi = async (
   apiKey: string,
   userId: string,
-  fields: any
+  fields: any,
+  loiId?: string,
 ): Promise<any> => {
   try {
+    const payload = {userId, ...(loiId ? {id: loiId} : {}), ...fields}
+    for (const key in payload) {
+      if (payload[key] instanceof Date) {
+        const date = payload[key];
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        payload[key] = `${year}-${month}-${day}`;
+      }
+    }
     const response = await fetch(
       import.meta.env.VITE_APP_SERVER_URL + "/upsert-loi",
       {
@@ -278,20 +290,37 @@ export const createLoi = async (
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(decamelizeKeys(payload))
+      }
+    );
+    const data = await response.json();
+    return camelizeKeys(data);
+  } catch (error: any) {
+    console.error(`Error creating LOI: ${error.message}`);
+    return error;
+  }
+};
+
+export const getLois = async (apiKey: string, userId: string, loiId?: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-lois",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          business_name: fields.businessName,
-          buyer_name: fields.buyerName,
-          legal_entity: fields.legalEntity || null,
-          biz_revenue: parseInt(fields.bizRevenue),
-          biz_ebitda: parseInt(fields.bizEbitda),
-          financials_period: fields.financialsPeriod,
+          user_id: userId,
+          loi_id: loiId || null,
         })
       }
     );
     const data = await response.json();
-    return data;
+    return camelizeKeys(data);
   } catch (error: any) {
-    console.error(`Error creating LOI: ${error.message}`);
+    console.error(`Error fetching LOIs: ${error.message}`);
     return error;
   }
 };
