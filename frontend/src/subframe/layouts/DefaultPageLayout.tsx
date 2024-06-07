@@ -18,6 +18,7 @@ import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
 import { useUserStateContext } from "../../context/UserStateContext";
 import supabase from "../../lib/supabaseClient";
+import { useLocation } from 'react-router-dom';
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -32,6 +33,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
   { children, className, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
+  const location = useLocation();
   const { isLoggedIn, avatarUrl, firstName, authState } = useUserStateContext();
   return (
     <div
@@ -47,33 +49,33 @@ const DefaultPageLayoutRoot = React.forwardRef<
         hideLogo={false}
         logoImage="https://res.cloudinary.com/subframe/image/upload/v1711487224/uploads/132/s1sz3csmgplv8dnu1js7.png"
       >
-        <Sidebar.Item selected={true}
+        <Sidebar.Item selected={location.pathname === "/diligence"}
           onClick={() => {
             window.location.href = "/diligence";
           }}
         >Diligence AI</Sidebar.Item>
-        <Sidebar.Item icon="FeatherBarChart"
+        {/* <Sidebar.Item icon="FeatherBarChart"
           onClick={() => {
             window.location.href = "/lois";
-          }}>LOIs</Sidebar.Item>
-        <Sidebar.Item icon="FeatherDatabase" 
+          }}>LOIs</Sidebar.Item> */}
+        <Sidebar.Item selected ={location.pathname === "/"} icon="FeatherDatabase" 
           onClick={() => {
             window.location.href = "/";
           }}>Find a Lender</Sidebar.Item>
-        <Sidebar.Item icon="FeatherSettings">Settings</Sidebar.Item>
+        {/* <Sidebar.Item icon="FeatherSettings">Settings</Sidebar.Item> */}
       </Sidebar>
       <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start">
         <div className="flex w-full items-center justify-between border-l-0 border-solid border-neutral-border pt-2 pr-4 pb-2 pl-4">
           <div className="flex w-full grow shrink-0 basis-0 items-center gap-4">
             <div className="flex w-full grow shrink-0 basis-0 items-start justify-center gap-2">
             </div>
-            <IconButton
+            {/* <IconButton
               disabled={false}
               variant="neutral-tertiary"
               size="large"
               icon="FeatherHelpCircle"
               loading={false}
-            />
+            /> */}
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
                 <Avatar
