@@ -8,6 +8,7 @@ from models.models import (
     Lender,
     LoanApplication,
     LoanStatus,
+    LOI,
     BusinessFiles,
     BusinessFile,
 )
@@ -130,19 +131,6 @@ class Database:
             .execute()
         )
         return [Business(**row) for row in response.data]
-
-    async def upsert_business(self, business: Business) -> Optional[Business]:
-        response = (
-            self.supabase.table("businesses")
-            .upsert(
-                business.dict(),
-            )
-            .execute()
-        )
-        if len(response.data) > 0:
-            row = response.data[0]
-            return Business(**row)
-        return None
 
     async def get_lenders(
         self, sort_by, descending: bool = False, limit: int = 3
@@ -385,3 +373,69 @@ class Database:
             loan_application.lender = lender
 
         return result
+    
+    async def get_lois(self, user_id: str, loi_id: str = None) -> List[LOI]:
+        if loi_id:
+            response = (
+                self.supabase.table("letters_of_intent")
+                .select("*")
+                .filter("id", "eq", loi_id)
+                .filter("created_by", "eq", user_id)
+                .execute()
+            )
+            return [LOI(**row) for row in response.data]
+        
+        response = (
+            self.supabase.table("letters_of_intent")
+            .select("*")
+            .filter("created_by", "eq", user_id)
+            .execute()
+        )
+        return [LOI(**row) for row in response.data]
+
+    async def upsert_loi(self, loi: LOI) -> Optional[LOI]:
+        loi_dict = loi.dict()
+        for key, value in loi_dict.items():
+            if isinstance(value, datetime.date):
+                loi_dict[key] = value.isoformat()
+        response = (
+            self.supabase.table("letters_of_intent")
+            .upsert(
+                loi_dict,
+            )
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return LOI(**row)
+        return None
+    
+    async def get_lois(self, user_id: str, loi_id: str = None) -> List[LOI]:
+        if loi_id:
+            response = (
+                self.supabase.table("letters_of_intent")
+                .select("*")
+                .filter("id", "eq", loi_id)
+                .filter("created_by", "eq", user_id)
+                .execute()
+            )
+            return [LOI(**row) for row in response.data]
+        
+        response = (
+            self.supabase.table("letters_of_intent")
+            .select("*")
+            .filter("created_by", "eq", user_id)
+            .execute()
+        )
+        return [LOI(**row) for row in response.data]
+
+    async def delete_lois(self, loi_ids: List[str]) -> Optional[List[LOI]]:
+        response = (
+            self.supabase.table("letters_of_intent")
+            .delete()
+            .in_("id", loi_ids)
+            .execute()
+        )
+        if getattr(response, 'error', None) is not None:
+            raise Exception(f"Failed to delete LOIs: {response.error.message}")
+        return [LOI(**row) for row in response.data]

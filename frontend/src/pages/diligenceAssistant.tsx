@@ -262,7 +262,7 @@ function DiligenceAssistant() {
 
   return (
     <DefaultPageLayout>
-      <div className="flex h-full w-full flex-col items-start gap-4 bg-default-background pt-12 pr-40 pb-12 pl-40">
+      <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start gap-4 bg-default-background pt-12 pr-40 pb-12 pl-40">
         <span className="text-subheader font-subheader text-default-font">
           Diligence Assistant
         </span>
