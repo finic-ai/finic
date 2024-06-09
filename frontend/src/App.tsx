@@ -7,13 +7,14 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { UserStateProvider } from "./context/UserStateContext";
 import RootComponent from "./RootComponent";
 import LoginPage from "./LoginPage";
+import QuickBooks from "./pages/quickbooks";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { Root } from "@subframe/core/dist/cjs/components/progress";
 import TagManager from "react-gtm-module";
 
 function App() {
   const [session, setSession] = useLocalStorage("session", null);
-  console.log(session)
+  console.log(session);
 
   const tagManagerArgs = {
     gtmId: "GTM-P8J3LCM2",
@@ -46,6 +47,7 @@ function App() {
           <RootComponent />
         ) : (
           <Routes>
+            <Route path="/quickbooks" element={<QuickBooks />} />
             <Route path="*" element={<LoginPage />} />
           </Routes>
         )}

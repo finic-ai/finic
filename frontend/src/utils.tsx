@@ -1,5 +1,5 @@
 import supabase from "./lib/supabaseClient";
-import { camelizeKeys, decamelizeKeys } from 'humps';
+import { camelizeKeys, decamelizeKeys } from "humps";
 
 export const completeOnboarding = async (
   apiKey: string,
@@ -265,24 +265,68 @@ export const createBusiness = async (
   }
 };
 
+export const getQuickbooksStatus = async (apiKey: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-quickbooks-status",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(`Error getting Quickbooks status: ${error.message}`);
+    return error;
+  }
+};
+
+export const getDiligenceDocUploadStatus = async (
+  apiKey: string
+): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-diligence-doc-upload-status",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(
+      `Error getting diligence doc upload status: ${error.message}`
+    );
+    return error;
+  }
+};
+
 export const upsertLoi = async (
   apiKey: string,
   userId: string,
   fields: any,
-  loiId?: string,
+  loiId?: string
 ): Promise<any> => {
   try {
-    const payload = {userId, ...(loiId ? {id: loiId} : {}), ...fields}
+    const payload = { userId, ...(loiId ? { id: loiId } : {}), ...fields };
     for (const key in payload) {
       if (payload[key] instanceof Date) {
         const date = payload[key];
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
         payload[key] = `${year}-${month}-${day}`;
       }
     }
-    console.log(payload)
+    console.log(payload);
     const response = await fetch(
       import.meta.env.VITE_APP_SERVER_URL + "/upsert-loi",
       {
@@ -291,7 +335,7 @@ export const upsertLoi = async (
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(decamelizeKeys(payload))
+        body: JSON.stringify(decamelizeKeys(payload)),
       }
     );
     const data = await response.json();
@@ -302,7 +346,11 @@ export const upsertLoi = async (
   }
 };
 
-export const getLois = async (apiKey: string, userId: string, loiId?: string): Promise<any> => {
+export const getLois = async (
+  apiKey: string,
+  userId: string,
+  loiId?: string
+): Promise<any> => {
   try {
     const response = await fetch(
       import.meta.env.VITE_APP_SERVER_URL + "/get-lois",
@@ -312,7 +360,7 @@ export const getLois = async (apiKey: string, userId: string, loiId?: string): P
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
-        body: loiId ? JSON.stringify({ loi_id: loiId }) : null
+        body: loiId ? JSON.stringify({ loi_id: loiId }) : null,
       }
     );
     const data = await response.json();
@@ -323,7 +371,10 @@ export const getLois = async (apiKey: string, userId: string, loiId?: string): P
   }
 };
 
-export const deleteLoi = async (apiKey: string, loiId: string): Promise<any> => {
+export const deleteLoi = async (
+  apiKey: string,
+  loiId: string
+): Promise<any> => {
   try {
     const response = await fetch(
       import.meta.env.VITE_APP_SERVER_URL + "/delete-lois",
@@ -333,13 +384,33 @@ export const deleteLoi = async (apiKey: string, loiId: string): Promise<any> => 
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify([loiId])
+        body: JSON.stringify([loiId]),
       }
     );
     const data = await response.json();
     return camelizeKeys(data);
   } catch (error: any) {
     console.error(`Error fetching LOIs: ${error.message}`);
+    return error;
+  }
+};
+
+export const getUsername = async (id: string): Promise<string> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id }),
+      }
+    );
+    const data = await response.json();
+    return data.username;
+  } catch (error: any) {
+    console.error(`Error getting username: ${error.message}`);
     return error;
   }
 };

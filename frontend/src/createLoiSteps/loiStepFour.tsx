@@ -18,12 +18,12 @@ import { LOI } from "../pages/loiPage.tsx"
 import "react-datepicker/dist/react-datepicker.css";
 
 type Inputs = {
-  exclusivityStartDate: Date,
-  exclusivityEndDate: Date,
+  exclusivityStartDate: Date | null,
+  exclusivityEndDate: Date | null,
   terminationFeeType: string,
   terminationFeeAmount: number,
   governingLaw: string,
-  expirationDate: Date,
+  expirationDate: Date | null,
   status: string,
 }
 

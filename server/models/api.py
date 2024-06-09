@@ -17,6 +17,7 @@ class CreateBusinessRequest(BaseModel):
     company_website: str
     company_state: str
 
+
 class CreateLoiRequest(BaseModel):
     id: Optional[str] = None
     status: Optional[str] = None
@@ -42,6 +43,7 @@ class CreateLoiRequest(BaseModel):
     governing_law: Optional[str] = None
     expiration_date: Optional[datetime.date] = None
 
+
 class CompleteOnboardingResponse(BaseModel):
     success: bool
 
@@ -58,9 +60,14 @@ class GetDiligenceDocsResponse(BaseModel):
 class GetDiligenceDocsRequest(BaseModel):
     vectorize: bool
 
+
 class GetLoiRequest(BaseModel):
     loi_id: Optional[str] = None
 
 
 class ChatRequest(BaseModel):
     messages: List[Message]
+
+
+class GetUsernameRequest(BaseModel):
+    id: str

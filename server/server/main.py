@@ -35,7 +35,8 @@ from models.api import (
     GetDiligenceDocsRequest,
     GetLoiRequest,
     CreateBusinessRequest,
-    CreateLoiRequest
+    CreateLoiRequest,
+    GetUsernameRequest,
 )
 import uuid
 from models.models import AppConfig, Business, LOI
@@ -49,6 +50,7 @@ from webscraper import WebScraper
 from recommendations import Recommendations
 from email_sender import EmailSender
 from ai import AI
+from data_connector import DataConnector
 
 sentry_sdk.init(
     dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
@@ -81,6 +83,7 @@ class IncompleteOnboardingError(Exception):
 
 class EmptyVectorDatabaseError(Exception):
     pass
+
 
 class LOINotFoundException(Exception):
     pass
@@ -338,35 +341,52 @@ async def get_diligence_docs(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/chat")
-async def chat(
-    request: ChatRequest = Body(...),
+@app.post("/get-quickbooks-status")
+async def get_quickbooks_status(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        businesses = await db.get_businesses_for_user(config.user_id)
-        business = businesses[0]
+        data_connector = DataConnector()
 
-        ai = AI()
+        connection = data_connector.get_quickbooks_connection(config.user_id)
+        status = False
+        if "credentials" in connection:
+            status = True
 
-        response = await ai.chat(request.messages, business)
-
-        return {"message": response}
+        return {"connected": status}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+
+@app.post("/get-diligence-doc-upload-status")
+async def get_diligence_doc_upload_status(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+
+        storage_filepaths = await db.get_diligence_file_paths(user_id=config.user_id)
+
+        return {"uploaded": len(storage_filepaths) == 13}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/get-lois")
 async def get_lois(
     loi_id: str = Body(None),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        loi = await db.get_lois(user_id=config.user_id, loi_id=loi_id if loi_id is not None else None)
+        loi = await db.get_lois(
+            user_id=config.user_id, loi_id=loi_id if loi_id is not None else None
+        )
         return loi
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/upsert-loi")
 async def upsert_loi(
@@ -382,11 +402,7 @@ async def upsert_loi(
                 if value is not None and attr != "id":
                     setattr(loi, attr, value)
         else:
-            loi = LOI(
-                id=str(uuid.uuid4()),
-                created_by=config.user_id,
-                status = "draft"
-            )
+            loi = LOI(id=str(uuid.uuid4()), created_by=config.user_id, status="draft")
             for attr, value in request_dict.items():
                 if value is not None:
                     setattr(loi, attr, value)
@@ -397,6 +413,7 @@ async def upsert_loi(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/delete-lois")
 async def delete_lois(
@@ -409,14 +426,31 @@ async def delete_lois(
             if len(response) == 0:
                 raise LOINotFoundException()
         else:
-            raise HTTPException(status_code=422, detail="At least one LOI ID must be provided")
+            raise HTTPException(
+                status_code=422, detail="At least one LOI ID must be provided"
+            )
         return response
     except LOINotFoundException as e:
         print(e)
-        raise HTTPException(status_code=404, detail="No LOIs matching the provided IDs were found")
+        raise HTTPException(
+            status_code=404, detail="No LOIs matching the provided IDs were found"
+        )
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/get-username")
+async def get_username(
+    request: GetUsernameRequest = Body(...),
+):
+    try:
+        user = await db.get_user(request.id)
+        return {"username": f"{user.first_name} {user.last_name}"}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/sentry-debug")
 async def trigger_error():

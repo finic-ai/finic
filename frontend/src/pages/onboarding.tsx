@@ -75,15 +75,16 @@ function Onboarding() {
         onAction={(context) => {
           const stepProperties = context.getStepProperties();
 
-          console.log(context.getStepProperties());
+          console.log(context);
           console.log(context.trigger.id);
 
           if (
-            context.trigger.id !== "ee670472-f4e8-43fc-b78e-0de67d9c8d34" &&
+            context.trigger.id !== "ee670472-f4e8-43fc-b78e-0de67d9c8d34" ||
             (context as any).beforeClickActions
           ) {
             return;
           }
+
           finishOnboarding(context.fields);
         }}
       />
