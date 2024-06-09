@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@feathery/react": "2.1.26",
+    "@nangohq/frontend": "^0.39.33",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",
     "@nivo/line": "^0.84.0",

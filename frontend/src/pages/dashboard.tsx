@@ -228,101 +228,32 @@ function Dashboard() {
             var linkedinUrl = fields["linkedin"].value?.toString();
             var files: Array<File> = [];
 
-            const resumeValue = fields["resume"].value as Promise<File>[];
-            if (resumeValue.length > 0) {
-              const resumeFile = await resumeValue[0];
-              files.push(resumeFile);
+            const fileKeys = [
+              "resume",
+              "credit-score-file",
+              "buyer-2021-tax-return_1",
+              "buyer-2022-tax-return_1",
+              "buyer-2023-tax-return_1",
+              "buyer-form-413_1",
+              "cim_1",
+              "business-2021-tax-return_1",
+              "business-2022-tax-return_1",
+              "business-2023-tax-return_1",
+              "business-2024-pnl_1",
+              "business-2024-balance-sheet_1",
+              "loi_1",
+            ];
+
+            // for loop not foreach
+
+            for (const key of fileKeys) {
+              const value = fields[key].value as Promise<File>[];
+              if (value.length > 0) {
+                const file = await value[0];
+                files.push(file);
+              }
             }
 
-            const creditScoreValue = fields["credit-score-file"]
-              .value as Promise<File>[];
-            if (creditScoreValue.length > 0) {
-              const creditScoreFile = await creditScoreValue[0];
-              files.push(creditScoreFile);
-            }
-
-            const buyer2021TaxReturnValue = fields["buyer-2021-tax-return_1"]
-              .value as Promise<File>[];
-            if (buyer2021TaxReturnValue.length > 0) {
-              const buyer2021TaxReturnFile = await buyer2021TaxReturnValue[0];
-              files.push(buyer2021TaxReturnFile);
-            }
-
-            const buyer2022TaxReturnValue = fields["buyer-2022-tax-return_1"]
-              .value as Promise<File>[];
-            if (buyer2022TaxReturnValue.length > 0) {
-              const buyer2022TaxReturnFile = await buyer2022TaxReturnValue[0];
-              files.push(buyer2022TaxReturnFile);
-            }
-
-            const buyer2023TaxReturnValue = fields["buyer-2023-tax-return_1"]
-              .value as Promise<File>[];
-            if (buyer2023TaxReturnValue.length > 0) {
-              const buyer2023TaxReturnFile = await buyer2023TaxReturnValue[0];
-              files.push(buyer2023TaxReturnFile);
-            }
-
-            const buyerForm413Value = fields["buyer-form-413_1"]
-              .value as Promise<File>[];
-            if (buyerForm413Value.length > 0) {
-              const buyerForm413File = await buyerForm413Value[0];
-              files.push(buyerForm413File);
-            }
-
-            const cimValue = fields["cim_1"].value as Promise<File>[];
-            if (cimValue.length > 0) {
-              const cimFile = await cimValue[0];
-              files.push(cimFile);
-            }
-
-            const business2021TaxReturnValue = fields[
-              "business-2021-tax-return_1"
-            ].value as Promise<File>[];
-            if (business2021TaxReturnValue.length > 0) {
-              const business2021TaxReturnFile =
-                await business2021TaxReturnValue[0];
-              files.push(business2021TaxReturnFile);
-            }
-
-            const business2022TaxReturnValue = fields[
-              "business-2022-tax-return_1"
-            ].value as Promise<File>[];
-            if (business2022TaxReturnValue.length > 0) {
-              const business2022TaxReturnFile =
-                await business2022TaxReturnValue[0];
-              files.push(business2022TaxReturnFile);
-            }
-
-            const business2023TaxReturnValue = fields[
-              "business-2023-tax-return_1"
-            ].value as Promise<File>[];
-            if (business2023TaxReturnValue.length > 0) {
-              const business2023TaxReturnFile =
-                await business2023TaxReturnValue[0];
-              files.push(business2023TaxReturnFile);
-            }
-
-            const business2024PnlValue = fields["business-2024-pnl_1"]
-              .value as Promise<File>[];
-            if (business2024PnlValue.length > 0) {
-              const business2024PnlFile = await business2024PnlValue[0];
-              files.push(business2024PnlFile);
-            }
-
-            const business2024BalanceSheetValue = fields[
-              "business-2024-balance-sheet_1"
-            ].value as Promise<File>[];
-            if (business2024BalanceSheetValue.length > 0) {
-              const business2024BalanceSheetFile =
-                await business2024BalanceSheetValue[0];
-              files.push(business2024BalanceSheetFile);
-            }
-
-            const loiValue = fields["loi_1"].value as Promise<File>[];
-            if (loiValue.length > 0) {
-              const loiFile = await loiValue[0];
-              files.push(loiFile);
-            }
             apply(
               applicationInProgress.lenderId,
               applicationInProgress.businessId,

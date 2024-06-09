@@ -168,7 +168,7 @@ class EmailSender:
             {borrower.first_name} {borrower.last_name} is under LOI to acquire a business, and wants to finance the acquisition with an SBA loan of ${formatted_loan_amount}. 
             The business is called {business.company_name} and is located in {business.company_state}. Their website is {business.company_website}.<br><br>
             I have attached {borrower.first_name}'s resume, financials, and LOI, as well as the business's financials. An executive summary of the business is also attached.
-            I have also cc'ed {borrower.first_name}, who can answer any follow up questions about the application.<br><br>"""
+            I have also cc'ed {borrower.first_name}, who can answer any follow up questions about the application. Please communicate with {borrower.first_name} directly in this email thread but keep the Dealwise team in the loop by using 'Reply All' <br><br>"""
         else:
             message = f"""Hi {lender_first_name},<br><br> 
 
@@ -176,7 +176,7 @@ class EmailSender:
             {borrower.first_name} {borrower.last_name} is not yet under LOI, but is looking to purchase a business with an SBA loan of ${formatted_loan_amount}. 
             The business is called {business.company_name} and is located in {business.company_state}. Their website is {business.company_website}.<br><br>
             I have attached {borrower.first_name}'s resume and financials, as well as the business's financials.
-            I have also cc'ed {borrower.first_name}, who can answer any follow up questions about the application.<br><br>"""
+            I have also cc'ed {borrower.first_name}, who can answer any follow up questions about the application. Please communicate with {borrower.first_name} directly in this email thread but keep the Dealwise team in the loop by using 'Reply All'<br><br>"""
 
         emails = [lender.contact_email, borrower.email]
         is_test_mode = (

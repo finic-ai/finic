@@ -32,6 +32,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
   ref
 ) {
   const { isLoggedIn, avatarUrl, firstName, authState } = useUserStateContext();
+  console.log(avatarUrl);
   return (
     <div
       className={SubframeCore.twClassNames(
@@ -63,7 +64,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
                 }}
                 variant="neutral-tertiary"
               >
-                Diligence assistant
+                Financial due diligence
               </Button>
             </div>
             {/* <IconButton

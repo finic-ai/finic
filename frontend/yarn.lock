@@ -953,6 +953,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@nangohq/frontend@^0.39.33":
+  version "0.39.33"
+  resolved "https://registry.yarnpkg.com/@nangohq/frontend/-/frontend-0.39.33.tgz#99805beaebf3105f5d6394098dfa9c62e86b0231"
+  integrity sha512-koJ+MT/SLy6cP5YfLKPtJDC+NyUtv7K6cY78C9gsgt12EwEligkvue6ODyy54DwtLlUeLT5H/f5CoyTKGU7+Dw==
+
 "@nivo/annotations@0.84.0":
   version "0.84.0"
   resolved "https://registry.npmjs.org/@nivo/annotations/-/annotations-0.84.0.tgz"

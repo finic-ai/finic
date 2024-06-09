@@ -12,7 +12,8 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { init, Form } from "@feathery/react";
 import Onboarding from "./pages/onboarding";
 import Dashboard from "./pages/dashboard";
-import DiligenceAssistant from "./pages/diligenceAssistant";
+import Quickbooks from "./pages/quickbooks";
+import DiligenceAssistant from "./pages/diligence";
 import posthog from "posthog-js";
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
@@ -50,6 +51,7 @@ function RootComponent() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/diligence" element={<DiligenceAssistant />} />
+            <Route path="/quickbooks" element={<Quickbooks />} />
           </Routes>
         </>
       )}

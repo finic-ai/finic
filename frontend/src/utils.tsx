@@ -263,3 +263,47 @@ export const createBusiness = async (
     return error;
   }
 };
+
+export const getQuickbooksStatus = async (apiKey: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-quickbooks-status",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(`Error getting Quickbooks status: ${error.message}`);
+    return error;
+  }
+};
+
+export const getDiligenceDocUploadStatus = async (
+  apiKey: string
+): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-diligence-doc-upload-status",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(
+      `Error getting diligence doc upload status: ${error.message}`
+    );
+    return error;
+  }
+};

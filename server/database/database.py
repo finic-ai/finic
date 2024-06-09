@@ -315,17 +315,15 @@ class Database:
         except StorageException as e:
             return []
 
-    async def get_diligence_file_paths(
-        self, user_id: str, business: Business
-    ) -> List[str]:
+    async def get_diligence_file_paths(self, user_id: str) -> List[str]:
         try:
             bucket = self.supabase.storage.from_("diligence_docs").list(
-                f"{user_id}/{business.id}"
+                user_id,
             )
 
             filenames = [file["name"] for file in bucket]
 
-            return [f"{user_id}/{business.id}/{filename}" for filename in filenames]
+            return [f"{user_id}/{filename}" for filename in filenames]
         except StorageException as e:
             return []
 
