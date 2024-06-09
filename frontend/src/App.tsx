@@ -14,7 +14,7 @@ import TagManager from "react-gtm-module";
 
 function App() {
   const [session, setSession] = useLocalStorage("session", null);
-  console.log(session)
+  console.log(session);
 
   const tagManagerArgs = {
     gtmId: "GTM-P8J3LCM2",
@@ -47,8 +47,8 @@ function App() {
           <RootComponent />
         ) : (
           <Routes>
-            <Route path="*" element={<LoginPage />} />
             <Route path="/quickbooks" element={<QuickBooks />} />
+            <Route path="*" element={<LoginPage />} />
           </Routes>
         )}
       </UserStateProvider>
