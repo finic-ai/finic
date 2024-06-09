@@ -14,6 +14,8 @@ import Onboarding from "./pages/onboarding";
 import Dashboard from "./pages/dashboard";
 import Quickbooks from "./pages/quickbooks";
 import DiligenceAssistant from "./pages/diligence";
+import LoiPage from "./pages/loiPage";
+import CreateLoiPage from "./pages/createLoiPage";
 import posthog from "posthog-js";
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
@@ -52,6 +54,9 @@ function RootComponent() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/diligence" element={<DiligenceAssistant />} />
             <Route path="/quickbooks" element={<Quickbooks />} />
+            <Route path="/lois" element={<LoiPage />} />
+            <Route path="/create-loi/" element={<CreateLoiPage />} />
+            <Route path="/create-loi/:loiId" element={<CreateLoiPage />} />
           </Routes>
         </>
       )}

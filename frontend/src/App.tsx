@@ -14,6 +14,7 @@ import TagManager from "react-gtm-module";
 
 function App() {
   const [session, setSession] = useLocalStorage("session", null);
+  console.log(session)
 
   const tagManagerArgs = {
     gtmId: "GTM-P8J3LCM2",
