@@ -27,12 +27,7 @@ import {
   updateUserId,
 } from "@feathery/react";
 import { SubframeSides } from "@subframe/core/dist/cjs/assets/icons/final";
-import {
-  getDiligenceDocs,
-  downloadFile,
-  uploadDiligenceDocument,
-  chat,
-} from "../utils";
+import { getUsername } from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
 import { DefaultPageLayout } from "../subframe";
 import { Avatar } from "@/subframe/components/Avatar";
@@ -61,10 +56,20 @@ function Quickbooks() {
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id") || "test";
 
-  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+
+  const [loading, setLoading] = useState(true);
   const [complete, setComplete] = useState(false);
 
-  const { bearer, email, userId, firstName, lastName } = useUserStateContext();
+  useEffect(() => {
+    async function fetchData() {
+      // You can await here
+      const result = await getUsername(id);
+      setUsername(result);
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
 
   return (
     <DefaultPageLayout>
@@ -74,11 +79,13 @@ function Quickbooks() {
             <span className="w-full text-section-header font-section-header text-default-font">
               Connect Quickbooks
             </span>
-            <span className="w-full text-body font-body text-subtext-color">
-              {firstName} {lastName} has invited you to connect your Quickbooks
-              for a Quality of Earnings report. Please log in with your
-              Quickbooks account below.
-            </span>
+            {!loading && (
+              <span className="w-full text-body font-body text-subtext-color">
+                {username} has invited you to connect your Quickbooks for a
+                Quality of Earnings report. Please log in with your Quickbooks
+                account below.
+              </span>
+            )}
           </div>
 
           <div className="flex w-full flex-col items-center gap-4">

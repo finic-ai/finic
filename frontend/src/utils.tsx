@@ -394,3 +394,23 @@ export const deleteLoi = async (
     return error;
   }
 };
+
+export const getUsername = async (id: string): Promise<string> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/get-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id }),
+      }
+    );
+    const data = await response.json();
+    return data.username;
+  } catch (error: any) {
+    console.error(`Error getting username: ${error.message}`);
+    return error;
+  }
+};
