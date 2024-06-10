@@ -7,15 +7,8 @@ import { DefaultPageLayout } from "../subframe";
 import { Button } from "@/subframe/components/Button";
 import { Breadcrumbs } from "@/subframe/components/Breadcrumbs";
 import { Steps } from "@/subframe/components/Steps";
-import { TextField } from "@/subframe/components/TextField";
-import { Select } from "@/subframe/components/Select";
-import { TextArea } from "@/subframe/components/TextArea";
-import { RadioGroup } from "@/subframe/components/RadioGroup";
-import { Checkbox } from "@/subframe/components/Checkbox";
-import { CheckboxGroup } from "@/subframe/components/CheckboxGroup";
-import { RadioCardGroup } from "@/subframe/components/RadioCardGroup";
-import { Accordion } from "@/subframe/components/Accordion";
-import { useForm, SubmitHandler } from "react-hook-form"
+import { DialogLayout } from "@/subframe/layouts/DialogLayout";
+import { HomeCard } from "@/subframe/components/HomeCard";
 import LoiStepOne from "../createLoiSteps/loiStepOne";
 import LoiStepTwo from "../createLoiSteps/loiStepTwo";
 import LoiStepThree from "../createLoiSteps/loiStepThree";
@@ -28,6 +21,55 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
   api_host: "https://app.posthog.com",
 });
 
+interface ConfirmationModalProps {
+  open: boolean;
+  docxFilePath: string; 
+  pdfFilePath: string;
+}
+
+function ConfirmationModal({ open, docxFilePath, pdfFilePath }: ConfirmationModalProps) {
+  const navigate = useNavigate();
+  return (
+    <DialogLayout open={open} onOpenChange={() => {}}>
+      <div className="flex h-full w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
+        <span className="text-subheader font-subheader text-default-font">
+          🎉 Your LOI is ready
+        </span>
+        <div className="flex w-full flex-col items-start gap-6">
+          <div className="flex w-full flex-col items-start gap-2">
+            <span className="text-body-bold font-body-bold text-default-font">
+              Click to Download
+            </span>
+            <div className="flex h-full w-full grow shrink-0 basis-0 items-start gap-2">
+              <HomeCard
+                title="DOCX"
+                subtitle="Fully Editable"
+                icon="FeatherFileEdit"
+                onClick={() => window.open(docxFilePath, '_blank')}
+              />
+              <HomeCard
+                title="PDF"
+                subtitle="Ready for Signing"
+                icon="FeatherFileText"
+                onClick={() => window.open(pdfFilePath, '_blank')}
+              />
+            </div>
+          </div>
+          <span className="text-label font-label text-subtext-color">
+            You can also access these files anytime from the LOI page.
+          </span>
+        </div>
+        <div className="flex w-full items-center justify-end gap-2">
+          <Button size="medium" icon={null} onClick={() => navigate('/lois')}>
+            Back to LOIs
+          </Button>
+        </div>
+      </div>
+    </DialogLayout>
+  );
+}
+
+
 function CreateLoiPage() {
   const navigate = useNavigate();
   const { loiId } = useParams<{ loiId: string }>();
@@ -35,6 +77,9 @@ function CreateLoiPage() {
   const { bearer, email, userId } = useUserStateContext();
   const [ activeStep, setActiveStep ] = useState(0);
   const [ loiData, setLoiData ] = useState<LOI | null>(null);
+  const [ confirmationModalOpen, setConfirmationModalOpen ] = useState(false);
+  const [ docxFilePath, setDocxFilePath ] = useState<string | null>(null);
+  const [ pdfFilePath, setPdfFilePath ] = useState<string | null>(null);
 
   useEffect(() => {
     const loadLoiData = async () => {
@@ -57,6 +102,7 @@ function CreateLoiPage() {
   
   return (
     <DefaultPageLayout>
+      <ConfirmationModal open={docxFilePath !== null && pdfFilePath !== null} docxFilePath="https://www.google.com" pdfFilePath="https://www.google.com"/>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-8 bg-default-background pt-12 pb-12">
         <div className="flex w-full flex-col items-start gap-2">
           <Breadcrumbs>
@@ -104,7 +150,7 @@ function CreateLoiPage() {
               case 2:
                 return <LoiStepThree setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
               case 3:
-                return <LoiStepFour setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
+                return <LoiStepFour setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData} setConfirmationModalOpen={setConfirmationModalOpen}/>;
             }
           })()}
           <div className="flex flex-col items-center justify-center gap-1">
@@ -120,7 +166,7 @@ function CreateLoiPage() {
               iconRight={null}
               loading={false}
             >
-              Preview
+              Preview Template
             </Button>
           </div>
         </div>

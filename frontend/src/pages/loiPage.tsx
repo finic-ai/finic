@@ -25,9 +25,8 @@ export type LOI = {
   businessName: string,
   buyerName: string,
   legalEntity: string,
-  bizRevenue: number,
-  bizEbitda: number,
-  financialsPeriod: string,
+  businessRevenue: number,
+  businessEbitda: number,
   purchasePrice: number,
   notePercent: number,
   noteInterestRate: number,
@@ -39,12 +38,18 @@ export type LOI = {
   earnoutDescription: string,
   escrowPercent: number,
   closingDate: Date,
-  exclusivityStartDate: Date,
-  exclusivityEndDate: Date,
+  exclusivityDays: number,
   terminationFeeType: string,
   terminationFeeAmount: number,
   governingLaw: string,
   expirationDate: Date,
+  businessAddress: string,
+  businessState: string,
+  businessEntityType: string,
+  sellerName: string,
+  equityRolloverPercent: number,
+  escrowCap: number,
+  escrowTippingBasket: number
 }
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {

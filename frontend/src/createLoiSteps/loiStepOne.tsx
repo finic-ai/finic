@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import "../App.css";
+import states from 'states-us';
 import { Button } from "@/subframe/components/Button";
 import { TextField } from "@/subframe/components/TextField";
 import { Select } from "@/subframe/components/Select";
@@ -13,12 +14,18 @@ import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { LOI } from "../pages/loiPage.tsx"
 
+const businessEntityTypes = ["C Corporation", "S Corporation", "Limited Liability Company", "Sole Proprietorship", "Limited Liability Partnership", "Limited Partnership", "Other"]
+
 type Inputs = {
   businessName: string,
+  businessAddress: string,
+  businessState: string,
+  businessEntityType: string,
+  sellerName: string,
   buyerName: string,
   legalEntity: string,
-  bizRevenue: number,
-  bizEbitda: number,
+  businessRevenue: number,
+  businessEbitda: number,
   financialsPeriod: string,
 }
 
@@ -36,12 +43,15 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
     handleSubmit,
     watch,
     control,
-    unregister,
+    resetField,
     setValue,
     formState: { errors },
   } = useForm<Inputs>()
   
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (hasLegalEntity == 'no') {
+      data.legalEntity = ''
+    }
     const newLoi = await createLoi(data)
     if ('id' in newLoi) {
       setActiveStep(1);
@@ -50,9 +60,13 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
 
   useEffect(() => {
     if (loi == null) return;
+    console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
-      if (['buyerName', 'businessName', 'legalEntity', 'bizRevenue', 'bizEbitda', 'financialsPeriod'].includes(key)) {
+      if (['buyerName', 'sellerName', 'businessName', 'businessAddress', 'businessState', 'businessEntityType', 'legalEntity', 'businessRevenue', 'businessEbitda', 'financialsPeriod'].includes(key)) {
         setValue(key as keyof Inputs, value as string | number);
+      }
+      if (key == 'legalEntity' && value != '') {
+        setHasLegalEntity('yes');
       }
     }
   }, [loi]);
@@ -80,13 +94,13 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
         </div>
         <div className="flex flex-col items-start gap-1">
           <label className="text-body-bold font-body-bold text-default-font" htmlFor="hasLegalEntity">
-            Do you have a legal entity?
+            Do you have a legal entity set up for the acquisition?
           </label>
           <ToggleGroup value={hasLegalEntity || undefined}>
             <ToggleGroup.Item icon={null} value="yes" onClick={() => setHasLegalEntity("yes")}>
               Yes
             </ToggleGroup.Item>
-            <ToggleGroup.Item icon={null} value="no" onClick={() => {setHasLegalEntity("no"); unregister('legalEntity')}}>
+            <ToggleGroup.Item icon={null} value="no" onClick={() => {setHasLegalEntity("no"); resetField('legalEntity')}}>
               No
             </ToggleGroup.Item>
           </ToggleGroup>
@@ -110,7 +124,7 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
         <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
           <TextField
             className="h-auto w-full flex-none"
-            label="Legal name of the business"
+            label="Business name"
             helpText=""
             htmlFor="businessName"
           >
@@ -118,52 +132,104 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
           </TextField>
           {errors.businessName && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>
+        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+          <TextField
+            className="h-auto w-full flex-none"
+            label="Seller's full name"
+            helpText=""
+            htmlFor="sellerName"
+          >
+            <TextField.Input {...register("sellerName", {required: true})}/>
+          </TextField>
+          {errors.sellerName && <span className="text-body font-body text-error-700">This field is required</span>}
+        </div>
+        <div className="flex w-full items-start gap-4">
+          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+            <label className="text-body-bold font-body-bold text-default-font" htmlFor="businessState">State of incorporation</label>
+            <Controller
+              control={control}
+              name="businessState"
+              rules={{ required: false }}
+              render={({ field }) => (
+                <Select
+                  className="h-auto w-full flex-none"
+                  placeholder="Select"
+                  helpText="Optional"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <div className="flex w-full flex-col items-start">
+                    {states.map((state) => (
+                      <Select.Item key={state.name} value={state.name}>
+                        {state.name}
+                      </Select.Item>
+                    ))}
+                  </div>
+                </Select>
+              )}
+            />
+          </div>
+          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+            <label className="text-body-bold font-body-bold text-default-font" htmlFor="businessEntityType">Entity type</label>
+            <Controller
+              control={control}
+              name="businessEntityType"
+              rules={{ required: false }}
+              render={({ field }) => (
+                <Select
+                  className="h-auto w-full flex-none"
+                  placeholder="Select"
+                  helpText="Optional"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <div className="flex w-full flex-col items-start">
+                    {businessEntityTypes.map((entityType) => (
+                      <Select.Item key={entityType} value={entityType}>
+                        {entityType}
+                      </Select.Item>
+                    ))}
+                  </div>
+                </Select>
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+          <TextArea
+            className="h-auto min-h-[96px] w-full flex-none"
+            label="Address"
+            helpText=""
+            htmlFor="businessAddress"
+          >
+            <TextArea.Input {...register("businessAddress", {required: false})} className="focus:ring-0"/>
+          </TextArea>
+        </div>
         <div className="flex w-full items-start gap-4">
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
             <TextField
               className="h-auto w-full flex-none"
               label="Revenue"
-              helpText=""
-              htmlFor="bizRevenue"
+              helpText="The 12-month run rate revenue used as the basis for the valuation."
+              htmlFor="businessRevenue"
               icon="FeatherDollarSign"
             >
-              <TextField.Input {...register("bizRevenue", {required: true})} type="number" className="focus:ring-0"/>
+              <TextField.Input {...register("businessRevenue", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
             </TextField>
-            {errors.bizRevenue && <span className="text-body font-body text-error-700">This field is required</span>}
+            {errors.businessRevenue && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
             <TextField
               className="h-auto w-full flex-none"
               label="EBITDA"
-              helpText=""
-              htmlFor="bizEbitda"
+              helpText="The 12-month run rate EBIDTA used as the basis for the valuation."
+              htmlFor="businessEbitda"
               icon="FeatherDollarSign"
             >
-              <TextField.Input {...register("bizEbitda", {required: true})} type="number" className="focus:ring-0"/>
+              <TextField.Input {...register("businessEbitda", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
             </TextField>
-            {errors.bizEbitda && <span className="text-body font-body text-error-700">This field is required</span>}
+            {errors.businessEbitda && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
-        </div>
-        <div className="flex flex-col items-start gap-1">
-          <label className="text-body-bold font-body-bold text-default-font" htmlFor="financialsPeriod">
-            Period for the provided revenue and EBITDA:
-          </label>
-          <Controller
-            control={control}
-            name="financialsPeriod"
-            rules={{ required: true }}
-            render={({ field }) => (
-            <ToggleGroup value={field.value} onValueChange={field.onChange}>
-              <ToggleGroup.Item icon={null} value="ttm">
-                Trailing 12 months
-              </ToggleGroup.Item>
-              <ToggleGroup.Item icon={null} value="fy">
-                FY 2023
-              </ToggleGroup.Item>
-            </ToggleGroup>
-          )}
-          />
-          {errors.financialsPeriod && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>
         <Button size="medium" type="submit">Next</Button>
       </div>

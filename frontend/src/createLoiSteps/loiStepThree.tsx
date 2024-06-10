@@ -14,6 +14,8 @@ type Inputs = {
   earnoutDescription: string,
   escrowPercent: number,
   closingDate: Date | null,
+  escrowCap: number,
+  escrowTippingBasket: number,
 }
 
 interface LoiStepThreeProps {
@@ -29,7 +31,6 @@ function LoiStepThree({ setActiveStep, updateLoi, loi }: LoiStepThreeProps) {
     handleSubmit,
     watch,
     control,
-    unregister,
     setValue,
     formState: { errors },
   } = useForm<Inputs>()
@@ -38,6 +39,14 @@ function LoiStepThree({ setActiveStep, updateLoi, loi }: LoiStepThreeProps) {
   const hasEscrow = watch('hasEscrow')
   
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (data.hasEarnout == 'no') {
+      data.earnoutDescription = ''
+    }
+    if (data.hasEscrow == 'no') {
+      data.escrowPercent = 0
+      data.escrowCap = 0
+      data.escrowTippingBasket = 0
+    }
     delete data.hasEarnout
     delete data.hasEscrow
     const newLoi = await updateLoi(data)
@@ -50,7 +59,7 @@ function LoiStepThree({ setActiveStep, updateLoi, loi }: LoiStepThreeProps) {
     if (loi == null) return;
     console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
-      if (['earnoutDescription', 'escrowPercent'].includes(key)) {
+      if (['earnoutDescription', 'escrowPercent', 'escrowCap', 'escrowTippingBasket'].includes(key)) {
         setValue(key as keyof Inputs, value);
       }
       else if (key == 'closingDate') {
@@ -113,40 +122,68 @@ function LoiStepThree({ setActiveStep, updateLoi, loi }: LoiStepThreeProps) {
           {errors.earnoutDescription && hasEarnout == 'yes' && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>: null}
         <div className="flex flex-col items-start gap-1">
-        <label className="text-body-bold font-body-bold text-default-font" htmlFor="hasEscrow">
-          Will funds be held in escrow?
-        </label>
-        <Controller
-          control={control}
-          name="hasEscrow"
-          rules={{ required: true }}
-          render={({ field }) => (
-          <ToggleGroup value={field.value} onValueChange={field.onChange}>
-            <ToggleGroup.Item icon={null} value="yes">
-              Yes
-            </ToggleGroup.Item>
-            <ToggleGroup.Item icon={null} value="no">
-              No
-            </ToggleGroup.Item>
-          </ToggleGroup>
-          )}
-        />
-        {errors.hasEscrow && <span className="text-body font-body text-error-700">This field is required</span>}
+          <label className="text-body-bold font-body-bold text-default-font" htmlFor="hasEscrow">
+            Will funds be held in escrow?
+          </label>
+          <Controller
+            control={control}
+            name="hasEscrow"
+            rules={{ required: true }}
+            render={({ field }) => (
+            <ToggleGroup value={field.value} onValueChange={field.onChange}>
+              <ToggleGroup.Item icon={null} value="yes">
+                Yes
+              </ToggleGroup.Item>
+              <ToggleGroup.Item icon={null} value="no">
+                No
+              </ToggleGroup.Item>
+            </ToggleGroup>
+            )}
+          />
+          {errors.hasEscrow && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>
-        {hasEscrow == 'yes' ? <div className="flex flex-col items-start gap-1 pl-4">
-          <label className="text-body-bold font-body-bold text-default-font" htmlFor="escrowPercent">What percent of the purchase price will be kept in escrow?</label>
-          <TextField
-            className="h-auto w-full flex-none"
-            helpText=""
-            htmlFor="escrowPercent"
-            iconRight="FeatherPercent"
-          >
-            <TextField.Input {...register("escrowPercent", {required: true})}/>
-          </TextField>
-          <span className={`text-body font-body ${errors.escrowPercent ? 'text-error-700' : 'text-transparent'}`}>
-            {errors.escrowPercent ? 'This field is required' : 'a'}
-          </span>
-        </div>: null}
+        {hasEscrow == 'yes' ? <div className="flex flex-col gap-2 pl-4">
+          <div className="flex flex-col items-start gap-1">
+            <TextField
+              className="h-auto w-full flex-none"
+              label="What percent of the purchase price will be kept in escrow?"
+              helpText=""
+              htmlFor="escrowPercent"
+              iconRight="FeatherPercent"
+            >
+              <TextField.Input {...register("escrowPercent", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
+            </TextField>
+            <span className={`text-body font-body ${errors.escrowPercent ? 'text-error-700' : 'text-transparent'}`}>
+              {errors.escrowPercent ? 'This field is required' : 'a'}
+            </span>
+          </div>
+          <div className="flex w-full items-start gap-4">
+            <div className="flex flex-col items-start gap-1">
+              <TextField
+                className="h-auto w-full flex-none"
+                label="Indemnification cap"
+                helpText="The maxmimum amount of an indemnification claim that the buyer can make against the escrow funds."
+                htmlFor="escrowCap"
+                icon="FeatherDollarSign"
+              >
+                <TextField.Input {...register("escrowCap", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
+              </TextField>
+              {errors.escrowCap && <span className="text-body font-body text-error-700">This field is required</span>}
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <TextField
+                className="h-auto w-full flex-none"
+                label="Tipping basket threshold"
+                helpText="The minimum indemnification amount that must be reached before escrow funds are used to compensate the buyer."
+                htmlFor="escrowTippingBasket"
+                icon="FeatherDollarSign"
+              >
+                <TextField.Input {...register("escrowTippingBasket", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
+              </TextField>
+              {errors.escrowTippingBasket && <span className="text-body font-body text-error-700">This field is required</span>}
+            </div>
+          </div>
+        </div> : null}
         <div className="flex w-full items-center gap-2">
           <Button size="medium" type="submit">Next</Button>
           <Button variant="neutral-tertiary" size="medium" onClick={() => setActiveStep(1)}>

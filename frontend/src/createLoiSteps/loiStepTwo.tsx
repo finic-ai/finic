@@ -20,6 +20,7 @@ type Inputs = {
   noteTerm: number,
   noteStandby: number,
   transactionType: string,
+  equityRolloverPercent: number,
 }
 
 interface LoiStepTwoProps {
@@ -30,18 +31,25 @@ interface LoiStepTwoProps {
 
 function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
   const [ noteOnStandby, setNoteOnStandby ] = useState<string | null>('no');
+  const [ equityRollover, setEquityRollover ] = useState<string | null>('no');
 
   const {
     register,
     handleSubmit,
     watch,
     control,
-    unregister,
+    resetField,
     setValue,
     formState: { errors },
   } = useForm<Inputs>()
   
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (noteOnStandby == 'no') {
+      data.noteStandby = 0
+    }
+    if (equityRollover == 'no') {
+      data.equityRolloverPercent = 0
+    }
     const newLoi = await updateLoi(data)
     if ('id' in newLoi) {
       setActiveStep(2);
@@ -52,8 +60,14 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
     if (loi == null) return;
     console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
-      if (['purchasePrice', 'notePercent', 'noteInterestRate', 'noteTerm', 'noteStandby', 'transactionType'].includes(key)) {
+      if (['purchasePrice', 'notePercent', 'noteInterestRate', 'noteTerm', 'noteStandby', 'transactionType', 'equityRolloverPercent'].includes(key)) {
         setValue(key as keyof Inputs, value as string | number);
+      }
+      if (key == 'noteStandby' && value as number > 0) {
+        setNoteOnStandby('yes')
+      }
+      if (key == 'equityRolloverPercent' && value as number > 0) {
+        setEquityRollover('yes')
       }
     }
   }, [loi]);
@@ -92,8 +106,9 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
             label="What is the purchase price?"
             helpText=""
             htmlFor="purchasePrice"
+            iconRight="FeatherDollarSign"
           >
-            <TextField.Input {...register("purchasePrice", {required: true})}/>
+            <TextField.Input {...register("purchasePrice", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
           </TextField>
           {errors.purchasePrice && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>
@@ -107,8 +122,9 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
             label="What percent of the purchase price will be in the form of a seller note?"
             helpText=""
             htmlFor="notePercent"
+            iconRight="FeatherPercent"
           >
-            <TextField.Input {...register("notePercent", {required: true})}/>
+            <TextField.Input {...register("notePercent", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
           </TextField>
           {errors.notePercent && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>
@@ -121,31 +137,31 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
               htmlFor="noteInterestRate"
               iconRight="FeatherPercent"
             >
-              <TextField.Input {...register("noteInterestRate", {required: true})}/>
+              <TextField.Input {...register("noteInterestRate", {required: true})} type="number" className="focus:ring-0"/>
             </TextField>
             {errors.noteInterestRate && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
             <TextField
               className="h-auto w-full flex-none"
-              label="Term of the note"
+              label="Term of the note (years)"
               helpText=""
               htmlFor="noteTerm"
             >
-              <TextField.Input {...register("noteTerm", {required: true})}/>
+              <TextField.Input {...register("noteTerm", {required: true})} type="number" className="focus:ring-0"/>
             </TextField>
             {errors.noteTerm && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
         </div>
         <div className="flex flex-col items-start gap-1">
-          <label className="text-body-bold font-body-bold text-default-font" htmlFor="Will the note be standby?">
+          <label className="text-body-bold font-body-bold text-default-font" htmlFor="noteOnStandby">
             Will the note be standby?
           </label>
           <ToggleGroup value={noteOnStandby || undefined}>
             <ToggleGroup.Item icon={null} value="yes" onClick={() => setNoteOnStandby("yes")}>
               Yes
             </ToggleGroup.Item>
-            <ToggleGroup.Item icon={null} value="no" onClick={() => {setNoteOnStandby("no"); unregister('noteStandby')}}>
+            <ToggleGroup.Item icon={null} value="no" onClick={() => {setNoteOnStandby("no"); resetField('noteStandby')}}>
               No
             </ToggleGroup.Item>
           </ToggleGroup>
@@ -154,13 +170,42 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
         {noteOnStandby == 'yes' ? <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1 pl-4">
           <TextField
             className="h-auto w-full flex-none"
-            label="How many months will the note be on standby?"
+            label="Years on standby"
             helpText=""
             htmlFor="noteStandby"
           >
-            <TextField.Input {...register("noteStandby", {required: true})}/>
+            <TextField.Input {...register("noteStandby", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
           </TextField>
           {errors.noteStandby && noteOnStandby && <span className="text-body font-body text-error-700">This field is required</span>}
+        </div>: null}
+        <span className="text-subheader font-subheader text-default-font">
+          Equity Rollover
+        </span>
+        <div className="flex flex-col items-start gap-1">
+          <label className="text-body-bold font-body-bold text-default-font" htmlFor="equityRollover">
+            Will the seller retain equity in the post-acquisition entity? (i.e. rollover equity)
+          </label>
+          <ToggleGroup value={equityRollover || undefined}>
+            <ToggleGroup.Item icon={null} value="yes" onClick={() => setEquityRollover("yes")}>
+              Yes
+            </ToggleGroup.Item>
+            <ToggleGroup.Item icon={null} value="no" onClick={() => {setEquityRollover("no"); resetField('equityRolloverPercent')}}>
+              No
+            </ToggleGroup.Item>
+          </ToggleGroup>
+          {!equityRollover && <span className="text-body font-body text-error-700">This field is required</span>}
+        </div>
+        {equityRollover == 'yes' ? <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1 pl-4">
+          <TextField
+            className="h-auto w-full flex-none"
+            label="Percent of purchase price"
+            helpText=""
+            htmlFor="equityRolloverPercent"
+            iconRight="FeatherPercent"
+          >
+            <TextField.Input {...register("equityRolloverPercent", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
+          </TextField>
+          {errors.equityRolloverPercent && equityRollover && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>: null}
         <div className="flex w-full items-center gap-2">
           <Button size="medium" type="submit">Next</Button>

@@ -375,12 +375,12 @@ async def get_diligence_doc_upload_status(
 
 @app.post("/get-lois")
 async def get_lois(
-    loi_id: str = Body(None),
+    request: GetLoiRequest = Body(None),
     config: AppConfig = Depends(validate_token),
 ):
     try:
         loi = await db.get_lois(
-            user_id=config.user_id, loi_id=loi_id if loi_id is not None else None
+            user_id=config.user_id, loi_id=request.loi_id if hasattr(request, 'loi_id') else None
         )
         return loi
     except Exception as e:
@@ -396,6 +396,10 @@ async def upsert_loi(
     try:
         request_dict = vars(request)
         if request.id is not None:
+            try:
+                uuid_obj = uuid.UUID(request.id, version=4)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid UUID format for request.id")
             loi = await db.get_lois(user_id=config.user_id, loi_id=request.id)
             loi = loi[0]
             for attr, value in request_dict.items():

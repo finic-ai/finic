@@ -18,29 +18,28 @@ import { LOI } from "../pages/loiPage.tsx"
 import "react-datepicker/dist/react-datepicker.css";
 
 type Inputs = {
-  exclusivityStartDate: Date | null,
-  exclusivityEndDate: Date | null,
+  exclusivityDays: number,
   terminationFeeType: string,
   terminationFeeAmount: number,
   governingLaw: string,
   expirationDate: Date | null,
-  status: string,
+  status: string
 }
 
 interface LoiStepFourProps {
   setActiveStep: React.Dispatch<React.SetStateAction<number>>;
   updateLoi: (data: Inputs) => Promise<{loi: LOI}>;
   loi: LOI | null;
+  setConfirmationModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
+function LoiStepFour({ setActiveStep, updateLoi, loi, setConfirmationModalOpen }: LoiStepFourProps) {
 
   const {
     register,
     handleSubmit,
     watch,
     control,
-    unregister,
     setValue,
     formState: { errors },
   } = useForm<Inputs>()
@@ -49,9 +48,12 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
   
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     data.status = "completed"
+    if (data.terminationFeeType == "none") {
+      data.terminationFeeAmount = 0
+    }
     const newLoi = await updateLoi(data)
     if ('id' in newLoi) {
-      setActiveStep(0);
+      setConfirmationModalOpen(true)
     }
   }
 
@@ -61,8 +63,11 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
       if (['terminationFeeType', 'terminationFeeAmount', 'governingLaw'].includes(key)) {
         setValue(key as keyof Inputs, value);
       }
-      else if (['exclusivityStartDate', 'exclusivityEndDate', 'expirationDate'].includes(key)) {
+      else if (['terminationFeeType', 'expirationDate'].includes(key)) {
         setValue(key as keyof Inputs, value ? new Date(value) : null);
+      }
+      else if (key == 'exclusivityDays') {
+        setValue(key as keyof Inputs, value as number);
       }
     }
   }, [loi]);
@@ -75,33 +80,21 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
           <span className="w-full text-body font-body text-subtext-color" />
         </div>
         <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start gap-6">
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-            <label className="text-body-bold font-body-bold text-default-font" htmlFor="exclusivityStartDate">
-              Exclusivity start date
-            </label>
-            <Controller
-                control={control}
-                name="exclusivityStartDate"
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <DatePicker selected={field.value} onChange={field.onChange} className="flex h-8 w-full flex-none items-center gap-1 rounded-md border border-solid border-neutral-border focus:ring-0 focus:border-brand-primary text-body font-body text-default-font"/>
-              )}
-              />
-            {errors.exclusivityStartDate && <span className="text-body font-body text-error-700">This field is required</span>}
-          </div>
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-            <label className="text-body-bold font-body-bold text-default-font" htmlFor="exclusivityEndDate">
-              Exclusivity end date
-            </label>
-            <Controller
-                control={control}
-                name="exclusivityEndDate"
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <DatePicker selected={field.value} onChange={field.onChange} className="flex h-8 w-full flex-none items-center gap-1 rounded-md border border-solid border-neutral-border focus:ring-0 focus:border-brand-primary text-body font-body text-default-font"/>
-              )}
-              />
-            {errors.exclusivityEndDate && <span className="text-body font-body text-error-700">This field is required</span>}
+          <div className="flex flex-col items-start gap-1">
+            <label className="text-body-bold font-body-bold text-default-font" htmlFor="terminationFeeType">How long should the exclusivity period be?</label>
+            <div className="flex flex-row items-center gap-1">
+              <TextField
+                className="h-auto w-full flex-none"
+                label=""
+                helpText=""
+                htmlFor="exclusivityDays"
+              >
+                
+                  <TextField.Input {...register("exclusivityDays", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
+              </TextField>
+              <div className="text-body font-body text-default-font">Days</div>
+            </div>
+            {errors.exclusivityDays && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
           <div className="flex flex-col items-start gap-1">
             <label className="text-body-bold font-body-bold text-default-font" htmlFor="terminationFeeType">
@@ -138,7 +131,7 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
               htmlFor="terminationFeeAmount"
               icon="FeatherDollarSign"
             >
-              <TextField.Input {...register("terminationFeeAmount", {required: true})}/>
+              <TextField.Input {...register("terminationFeeAmount", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
             </TextField>
             {errors.terminationFeeAmount && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>: null}
@@ -150,6 +143,7 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
               rules={{ required: true }}
               render={({ field }) => (
                 <Select
+                  className="h-auto w-full flex-none"
                   placeholder="Select"
                   helpText=""
                   value={field.value}
@@ -157,7 +151,7 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
                 >
                   <div className="flex w-full flex-col items-start">
                     {states.map((state) => (
-                      <Select.Item key={state.abbreviation.toLowerCase()} value={state.abbreviation.toLowerCase()}>
+                      <Select.Item key={state.name} value={state.name}>
                         {state.name}
                       </Select.Item>
                     ))}
@@ -183,7 +177,7 @@ function LoiStepFour({ setActiveStep, updateLoi, loi }: LoiStepFourProps) {
           </div>
         </div>
         <div className="flex w-full items-center gap-2">
-          <Button size="medium" type="submit">Next</Button>
+          <Button size="medium" type="submit">Finish</Button>
           <Button variant="neutral-tertiary" size="medium" onClick={() => setActiveStep(2)}>
             Back
           </Button>

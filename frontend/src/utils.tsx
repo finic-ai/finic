@@ -317,6 +317,7 @@ export const upsertLoi = async (
 ): Promise<any> => {
   try {
     const payload = { userId, ...(loiId ? { id: loiId } : {}), ...fields };
+    console.log(payload)
     for (const key in payload) {
       if (payload[key] instanceof Date) {
         const date = payload[key];
@@ -339,6 +340,10 @@ export const upsertLoi = async (
       }
     );
     const data = await response.json();
+    if (!response.ok) {
+      console.log(data);
+      throw new Error(data.detail);
+    }
     return camelizeKeys(data);
   } catch (error: any) {
     console.error(`Error creating LOI: ${error.message}`);

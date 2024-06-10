@@ -22,10 +22,8 @@ class TestLOI(LOI):
     buyer_title: Optional[str] = None
     seller_name: Optional[str] = None
     equity_rollover_percent: Optional[float] = None
-    bullet_payment_anniversary: Optional[int] = None
     escrow_cap: Optional[int] = None
     escrow_tipping_basket: Optional[int] = None
-    due_diligence_items: Optional[List[str]] = None
     exclusivity_days: Optional[int] = None
 
 class StanfordBasicLOI(LOIDocument):
@@ -61,8 +59,14 @@ Dear {loi.buyer_name}:
         p = self.document.add_paragraph(f"The following sets forth the terms and conditions upon which an acquisition company to be established by {loi.legal_entity if loi.legal_entity else loi.buyer_name} and its affiliates (”")
         p.add_run("Buyer").bold = True
         p.add_run("”) would acquire ")
-        p.add_run("all or substantially all of the assets of").bold = True 
-        p.add_run(f"{loi.business_name}, a {loi.business_entity_type} (the “")
+        if loi.transaction_type == "stock":
+            p.add_run("all of the outstanding shares of")
+        else:
+            p.add_run("all or substantially all of the assets of").bold = True 
+        p.add_run(f"{loi.business_name}")
+        if loi.business_entity_type != "Other" and loi.business_state:
+            p.add_run(", a {loi.business_entity_type}")
+        p.add_run("(the “")
         p.add_run("Company").bold = True
         p.add_run("”). The acquisition of the Company and the related transactions are collectively referred to herein as the “")
         p.add_run("Transaction").bold = True
@@ -75,7 +79,7 @@ Dear {loi.buyer_name}:
         r.underline = True
         p.add_run(f"  Our proposal for the cash-free, debt-free enterprise valuation of the Company upon which the various aspects of the Transaction would be based is ${loi.purchase_price:,.0f} (the “")
         p.add_run("Company Enterprise Valuation").bold = True
-        p.add_run(f"”). We have assumed in establishing the Company Enterprise Valuation that the Company will have run-rate revenue of approximately ${loi.biz_revenue:,.0f} and run-rate EBITDA of approximately ${loi.biz_ebitda:,.0f}, and that Buyer will receive a full step up in the tax basis of the assets in connection with the consummation of the Transaction.")
+        p.add_run(f"”). We have assumed in establishing the Company Enterprise Valuation that the Company will have run-rate revenue of approximately ${loi.business_revenue:,.0f} and run-rate EBITDA of approximately ${loi.business_ebitda:,.0f}, and that Buyer will receive a full step up in the tax basis of the assets in connection with the consummation of the Transaction.")
 
         ### 2. Purchase Price; Adjustment to PUrchase Price.
         note_amount = loi.purchase_price * loi.note_percent
@@ -96,9 +100,9 @@ Dear {loi.buyer_name}:
             next_num = "iii"
         
         if loi.note_percent > 0:
-            p.add_run(f", ({next_num}) ${note_amount:,.0f}, which will bear interest at a rate of {loi.note_interest_rate * 100:.0f}% per year for {int(loi.note_term)} years")
+            p.add_run(f", ({next_num}) ${note_amount:,.0f}, which will bear interest at a rate of {loi.note_interest_rate * 100:.0f}% per year for {inflect_engine.number_to_words(loi.note_term)} ({int(loi.note_term)}) years")
             if loi.bullet_payment_anniversary:
-                p.add_run(f" (interest will be payable quarterly in arrears) and be paid in a bullet payment on the {inflect_engine.ordinal(loi.bullet_payment_anniversary)} anniversary of the closing date")
+                p.add_run(f" (interest will be payable quarterly in arrears) and be paid in a bullet payment on the {inflect_engine.ordinal(loi.note_term)} anniversary of the closing date")
             elif loi.note_standby > 0:
                 p.add_run(f" and be repaid in equal monthly installments of principal and interest, following a {loi.note_standby}-year standby period where no payments of principal or interest are required")
             else:
@@ -139,12 +143,8 @@ Dear {loi.buyer_name}:
         r.underline = True
         p.add_run("  We have based this proposal upon our review to date, however, prior to becoming bound to the Definitive Agreement, we will need to complete the following additional matters of due diligence:")
         self.document.add_paragraph(f"\ta.\tManagement meetings and facility tours;")
-        self.document.add_paragraph(f"\tb.\tTypical financial and legal due diligence{';' if len(loi.due_diligence_items) > 0 else '; and'}")
-        self.document.add_paragraph(f"\tc.\tOther information required by financing sources{'; and' if len(loi.due_diligence_items) > 0 else '.'}")
-        next_letter = "d"
-        for i, item in enumerate(loi.due_diligence_items):
-            self.document.add_paragraph(f"\t{next_letter}.\t{item}")
-            next_letter = chr(ord(next_letter) + 1)
+        self.document.add_paragraph(f"\tb.\tTypical financial and legal due diligence; and")
+        self.document.add_paragraph(f"\tc.\tOther information required by financing sources.")
 
         ### 5. Due Diligence Access.
         p=self.document.add_paragraph(f"5.\t")
@@ -232,7 +232,7 @@ Sincerely,
 
 By: _______________________
 Name: {loi.buyer_name}
-Title: {loi.buyer_title}
+Title: _______________________
 
 
 

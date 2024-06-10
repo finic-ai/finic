@@ -415,6 +415,7 @@ class Database:
                 .select("*")
                 .filter("id", "eq", loi_id)
                 .filter("created_by", "eq", user_id)
+                .filter("status", "neq", "deleted")
                 .execute()
             )
             return [LOI(**row) for row in response.data]
@@ -423,6 +424,7 @@ class Database:
             self.supabase.table("letters_of_intent")
             .select("*")
             .filter("created_by", "eq", user_id)
+            .filter("status", "neq", "deleted")
             .execute()
         )
         return [LOI(**row) for row in response.data]
@@ -430,7 +432,7 @@ class Database:
     async def delete_lois(self, loi_ids: List[str]) -> Optional[List[LOI]]:
         response = (
             self.supabase.table("letters_of_intent")
-            .delete()
+            .update({"status": "deleted"})
             .in_("id", loi_ids)
             .execute()
         )
