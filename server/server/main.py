@@ -465,6 +465,8 @@ async def generate_proof_of_cash(
         # Send an alert to slack
 
         user = await db.get_user(config.user_id)
+        data_connector = DataConnector()
+        data_connector.get_quickbooks_connection(config.user_id)
         slack_message = f"Proof of cash requested: {user.first_name} {user.last_name} ({user.email}).\n"
         slack_message += f"User ID: {config.user_id}\n"
         slack_message += f"Bank statements: https://supabase.com/dashboard/project/gbifoxptaqxnlrfucmfo/storage/buckets/diligence_docs \n"

@@ -296,7 +296,7 @@ function DiligenceAssistant() {
             </span>
           </div>
 
-          <div className="flex flex-row items-center gap-4">
+          <div className="flex flex-row w-full items-center gap-4">
             <ConnectQuickbooks
               loading={loading}
               connected={connected}
