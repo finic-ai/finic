@@ -457,7 +457,7 @@ async def get_username(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/geberate-proof-of-cash")
+@app.post("/generate-proof-of-cash")
 async def generate_proof_of_cash(
     config: AppConfig = Depends(validate_token),
 ):
@@ -465,8 +465,10 @@ async def generate_proof_of_cash(
         # Send an alert to slack
 
         user = await db.get_user(config.user_id)
-        slack_message = f"Proof of cash requested: {user.first_name} {user.last_name} ({user.email})."
-        url = "https://hook.us1.make.com/u2j67wjp0oyasths8yp2rl9ak2cxwrz0"
+        slack_message = f"Proof of cash requested: {user.first_name} {user.last_name} ({user.email}).\n"
+        slack_message += f"User ID: {config.user_id}\n"
+        slack_message += f"Bank statements: https://supabase.com/dashboard/project/gbifoxptaqxnlrfucmfo/storage/buckets/diligence_docs \n"
+        url = "https://hook.us1.make.com/ckl2ii0tvjoa17yeiq1rgjbbjnqst9n4"
         data = {"message": slack_message}
 
         response = requests.post(url, json=data)
