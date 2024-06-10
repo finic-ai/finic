@@ -57,7 +57,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
               window.location.href = "/diligence";
             }}
           >
-            Diligence AI
+            Quality of Earnings
           </Sidebar.Item>
           {/* <Sidebar.Item icon="FeatherBarChart"
           onClick={() => {
