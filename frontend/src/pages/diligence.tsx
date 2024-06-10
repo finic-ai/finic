@@ -27,7 +27,12 @@ import {
   updateUserId,
 } from "@feathery/react";
 import { SubframeSides } from "@subframe/core/dist/cjs/assets/icons/final";
-import { getQuickbooksStatus, getDiligenceDocUploadStatus } from "../utils";
+import {
+  getQuickbooksStatus,
+  getDiligenceDocUploadStatus,
+  uploadDiligenceDocuments,
+  generateProofOfCash,
+} from "../utils";
 import { useUserStateContext } from "../context/UserStateContext";
 import { DefaultPageLayout } from "../subframe";
 import { Avatar } from "@/subframe/components/Avatar";
@@ -70,8 +75,8 @@ function ConnectQuickbooks({
             </span>
           </div>
           <span className="text-body font-body text-subtext-color">
-            Send this link to the seller so that they can log in and connect
-            their Quickbooks account.
+            Send this link to the seller so that they can connect their
+            Quickbooks account.
           </span>
         </div>
         <CopyToClipboardField
@@ -116,12 +121,15 @@ function ConnectQuickbooks({
 function UploadBankStatements({
   loading,
   uploaded,
+  onUpload,
 }: {
   loading: boolean;
   uploaded: boolean;
-  userId: string;
+  // async func to upload files that takes in a file and returns a promise
+  onUpload: (files: Array<File>, filenames: Array<string>) => Promise<void>;
 }) {
   const [showUpload, setShowUpload] = useState<boolean>(false);
+  const [uploading, setUploading] = useState<boolean>(false);
   return (
     <div className="flex flex-col w-[600px] items-start gap-6 rounded-md border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
       <div className="flex w-full flex-col items-start gap-2">
@@ -144,8 +152,9 @@ function UploadBankStatements({
           onClick={() => {
             setShowUpload(true);
           }}
+          loading={uploading}
           variant="neutral-secondary"
-          className="w-full"
+          className="w-full mt-3 mb-2"
         >
           Upload
         </Button>
@@ -187,26 +196,29 @@ function UploadBankStatements({
           }}
           onAction={async (context) => {
             if (
-              context.trigger.id !== "d354864c-e54d-4194-a39f-019019daed3a" ||
+              context.trigger.id !== "3df3cb30-63c2-433f-9d6f-75578a0bdd3e" ||
               (context as any).beforeClickActions
             ) {
               return;
             }
             console.log(context);
+            setUploading(true);
+            setShowUpload(false);
+
             const fields = context.fields;
             const fieldNames = [
-              "june-2023",
-              "july-2023",
-              "august-2023",
-              "september-2023",
-              "october-2023",
-              "november-2023",
-              "december-2023",
-              "january-2024",
-              "february-2024",
-              "march-2024",
-              "april-2024",
-              "may-2024",
+              "june_2023",
+              "july_2023",
+              "august_2023",
+              "september_2023",
+              "october_2023",
+              "november_2023",
+              "december_2023",
+              "january_2024",
+              "february_2024",
+              "march_2024",
+              "april_2024",
+              "may_2024",
             ];
             var files: File[] = [];
             for (const fieldName of fieldNames) {
@@ -217,14 +229,8 @@ function UploadBankStatements({
                 files.push(file);
               }
             }
-            // const response = await initializeBusiness(
-            //   bearer,
-            //   loanAmount,
-            //   phoneNumber,
-            //   companyName,
-            //   companyWebsite,
-            //   state
-            // );
+            await onUpload(files, fieldNames);
+            setUploading(false);
           }}
         />
       </div>
@@ -236,14 +242,27 @@ function DiligenceAssistant() {
   const [loading, setLoading] = useState<boolean>(true);
   const [connected, setConnected] = useState<boolean>(false);
 
-  const contextRef = useRef<FormContext>(null);
-  const navigate = useNavigate();
-
   const [uploaded, setUploaded] = useState<boolean>(false);
   // formCompletion is a state but of function type
-  const [formCompletion, setFormCompletion] = useState(() => () => {});
+  const [generating, setGenerating] = useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const { bearer, email, userId, firstName } = useUserStateContext();
+
+  async function onUpload(files: Array<File>, fileNames: Array<string>) {
+    console.log(files);
+    await uploadDiligenceDocuments(bearer, userId, files, fileNames);
+    await getDocumentUploadStatus();
+  }
+
+  async function getDocumentUploadStatus() {
+    const response = await getDiligenceDocUploadStatus(bearer);
+    console.log(response);
+    if (response.uploaded) {
+      setUploaded(true);
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
     async function getConnectionStatus() {
@@ -251,18 +270,16 @@ function DiligenceAssistant() {
       if (response.connected) {
         setConnected(true);
       }
+    }
+
+    async function updateState() {
+      await getConnectionStatus();
+      await getDocumentUploadStatus();
       setLoading(false);
     }
-    async function getDocumentUploadStatus() {
-      const response = await getDiligenceDocUploadStatus(bearer);
-      console.log(response);
-      if (response.uploaded) {
-        setUploaded(true);
-      }
-      setLoading(false);
-    }
-    getConnectionStatus();
-    getDocumentUploadStatus();
+
+    updateState();
+    if (userId) updateUserId(userId, true);
   }, []);
 
   return (
@@ -288,9 +305,57 @@ function DiligenceAssistant() {
             <UploadBankStatements
               loading={loading}
               uploaded={uploaded}
-              userId={userId}
+              onUpload={onUpload}
             />
           </div>
+          {/* Centered brand primary button Generate Proof of Cash */}
+          <Button
+            disabled={loading || !connected || !uploaded}
+            loading={generating}
+            onClick={async () => {
+              setGenerating(true);
+              await generateProofOfCash(bearer);
+              setGenerating(false);
+              setDialogOpen(true);
+            }}
+            variant="brand-primary"
+            className="w-full mt-3 mb-2"
+          >
+            Generate Proof of Cash
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog.Content className="h-auto w-auto flex-none">
+              <div className="flex max-w-[384px] flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
+                <div className="flex flex-col items-center gap-6">
+                  <div className="flex flex-col items-center gap-4">
+                    <IconWithBackground
+                      variant="success"
+                      size="large"
+                      icon="FeatherSend"
+                    />
+                    <span className="text-subheader font-subheader text-default-font">
+                      Request Submitted
+                    </span>
+                    <span className="text-body font-body text-default-font">
+                      {`Your request for a proof of cash statement is currently processing. When complete, you will receive a email at ${email} with the report.`}
+                    </span>
+                  </div>
+                  <div className="flex w-full items-center gap-2">
+                    <Button
+                      className="h-8 w-full grow shrink-0 basis-0"
+                      variant="brand-primary"
+                      size="medium"
+                      onClick={() => {
+                        setDialogOpen(false);
+                      }}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Dialog.Content>
+          </Dialog>
         </div>
       </div>
     </DefaultPageLayout>

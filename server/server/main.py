@@ -251,6 +251,7 @@ async def apply_for_loan(
     linkedin_url: str = Form(None),
     config: AppConfig = Depends(validate_token),
 ):
+    print("applying for loan")
     try:
         businesses = await db.get_businesses_for_user(config.user_id)
         business = businesses[0]
@@ -264,6 +265,7 @@ async def apply_for_loan(
                 user_id=config.user_id, business=business
             )
             if num_files == 0:
+                print("no files")
                 raise IncompleteOnboardingError()
             else:
                 # update business with linkedin_url and under_loi
@@ -367,7 +369,10 @@ async def get_diligence_doc_upload_status(
 
         storage_filepaths = await db.get_diligence_file_paths(user_id=config.user_id)
 
-        return {"uploaded": len(storage_filepaths) == 13}
+        print("storage_filepaths", storage_filepaths)
+        print("len(storage_filepaths)", len(storage_filepaths))
+
+        return {"uploaded": len(storage_filepaths) == 12}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -447,6 +452,26 @@ async def get_username(
     try:
         user = await db.get_user(request.id)
         return {"username": f"{user.first_name} {user.last_name}"}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/geberate-proof-of-cash")
+async def generate_proof_of_cash(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        # Send an alert to slack
+
+        user = await db.get_user(config.user_id)
+        slack_message = f"Proof of cash requested: {user.first_name} {user.last_name} ({user.email})."
+        url = "https://hook.us1.make.com/u2j67wjp0oyasths8yp2rl9ak2cxwrz0"
+        data = {"message": slack_message}
+
+        response = requests.post(url, json=data)
+
+        return {"success": True}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
