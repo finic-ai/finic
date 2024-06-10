@@ -13,7 +13,7 @@ type Inputs = {
   hasEscrow: string | undefined,
   earnoutDescription: string,
   escrowPercent: number,
-  closingDate: Date,
+  closingDate: Date | null,
 }
 
 interface LoiStepThreeProps {
