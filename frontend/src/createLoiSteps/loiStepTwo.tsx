@@ -19,6 +19,7 @@ type Inputs = {
   noteInterestRate: number,
   noteTerm: number,
   noteStandby: number,
+  notePaymentType: string,
   transactionType: string,
   equityRolloverPercent: number,
 }
@@ -60,7 +61,7 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
     if (loi == null) return;
     console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
-      if (['purchasePrice', 'notePercent', 'noteInterestRate', 'noteTerm', 'noteStandby', 'transactionType', 'equityRolloverPercent'].includes(key)) {
+      if (['purchasePrice', 'notePercent', 'noteInterestRate', 'noteTerm', 'noteStandby', 'notePaymentType', 'transactionType', 'equityRolloverPercent'].includes(key)) {
         setValue(key as keyof Inputs, value as string | number);
       }
       if (key == 'noteStandby' && value as number > 0) {
@@ -152,6 +153,33 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
             </TextField>
             {errors.noteTerm && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
+        </div>
+        <div className="flex flex-col items-start gap-1">
+        <Controller
+          control={control}
+          name="notePaymentType"
+          rules={{ required: false }}
+          render={({ field }) => (
+            <RadioGroup
+              label="How will the note be paid?"
+              helpText=""
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <div className="flex flex-col items-start gap-2">
+                <RadioGroup.Option
+                  label="Interest only for the term with a balloon payment at the end"
+                  value="interest_only"
+                />
+                <RadioGroup.Option
+                  label="Interest and principal payments amortized over the term"
+                  value="amortizing"
+                />
+              </div>
+            </RadioGroup>
+          )
+        }/>
+          {errors.notePaymentType && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>
         <div className="flex flex-col items-start gap-1">
           <label className="text-body-bold font-body-bold text-default-font" htmlFor="noteOnStandby">

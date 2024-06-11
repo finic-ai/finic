@@ -22,7 +22,7 @@ type Inputs = {
   terminationFeeType: string,
   terminationFeeAmount: number,
   governingLaw: string,
-  expirationDate: Date | null,
+  expirationDate: Date,
   status: string
 }
 
@@ -34,6 +34,7 @@ interface LoiStepFourProps {
 }
 
 function LoiStepFour({ setActiveStep, updateLoi, loi, setConfirmationModalOpen }: LoiStepFourProps) {
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const {
     register,
@@ -51,9 +52,11 @@ function LoiStepFour({ setActiveStep, updateLoi, loi, setConfirmationModalOpen }
     if (data.terminationFeeType == "none") {
       data.terminationFeeAmount = 0
     }
+    setIsLoading(true)
     const newLoi = await updateLoi(data)
     if ('id' in newLoi) {
       setConfirmationModalOpen(true)
+      setIsLoading(false)
     }
   }
 
@@ -61,10 +64,10 @@ function LoiStepFour({ setActiveStep, updateLoi, loi, setConfirmationModalOpen }
     if (loi == null) return;
     for (const [key, value] of Object.entries(loi)) {
       if (['terminationFeeType', 'terminationFeeAmount', 'governingLaw'].includes(key)) {
-        setValue(key as keyof Inputs, value);
+        setValue(key as keyof Inputs, value as string | number);
       }
       else if (['terminationFeeType', 'expirationDate'].includes(key)) {
-        setValue(key as keyof Inputs, value ? new Date(value) : null);
+        setValue(key as keyof Inputs, new Date(value as string));
       }
       else if (key == 'exclusivityDays') {
         setValue(key as keyof Inputs, value as number);
@@ -177,8 +180,8 @@ function LoiStepFour({ setActiveStep, updateLoi, loi, setConfirmationModalOpen }
           </div>
         </div>
         <div className="flex w-full items-center gap-2">
-          <Button size="medium" type="submit">Finish</Button>
-          <Button variant="neutral-tertiary" size="medium" onClick={() => setActiveStep(2)}>
+          <Button loading={isLoading} size="medium" type="submit">Finish</Button>
+          <Button disabled={isLoading} variant="neutral-tertiary" size="medium" onClick={() => setActiveStep(2)}>
             Back
           </Button>
         </div>

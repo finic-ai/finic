@@ -13,7 +13,7 @@ type Inputs = {
   hasEscrow: string | undefined,
   earnoutDescription: string,
   escrowPercent: number,
-  closingDate: Date | null,
+  closingDate: Date,
   escrowCap: number,
   escrowTippingBasket: number,
 }
@@ -60,10 +60,10 @@ function LoiStepThree({ setActiveStep, updateLoi, loi }: LoiStepThreeProps) {
     console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
       if (['earnoutDescription', 'escrowPercent', 'escrowCap', 'escrowTippingBasket'].includes(key)) {
-        setValue(key as keyof Inputs, value);
+        setValue(key as keyof Inputs, value as string | number);
       }
       else if (key == 'closingDate') {
-        setValue('closingDate', value ? new Date(value) : null);
+        setValue('closingDate', new Date(value as string));
       }
     }
     loi.earnoutDescription ? setValue('hasEarnout', 'yes') : setValue('hasEarnout', 'no');

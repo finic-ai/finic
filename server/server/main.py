@@ -23,6 +23,7 @@ from models.models import (
     VellumDocument,
     ProcessingState,
 )
+from lois import StanfordBasicLOI
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -36,6 +37,7 @@ from models.api import (
     GetLoiRequest,
     CreateBusinessRequest,
     CreateLoiRequest,
+    ComposeLoiRequest,
     GetUsernameRequest,
 )
 import uuid
@@ -410,8 +412,20 @@ async def upsert_loi(
             for attr, value in request_dict.items():
                 if value is not None:
                     setattr(loi, attr, value)
-
         await db.upsert_loi(loi)
+
+        if request.status == "completed":
+            try:
+                loi_dict = loi.dict()
+                loi = StanfordBasicLOI(**loi_dict)
+            except Exception as e:
+                raise HTTPException(status_code=422, detail="LOI fields missing or invalid")
+            try:
+                loi.construct_docx()
+                await db.upload_loi_files(loi)
+                loi.document = None
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=str("Something went wrong with construction the LOI document: " + e))
 
         return loi
     except Exception as e:
@@ -439,6 +453,21 @@ async def delete_lois(
         raise HTTPException(
             status_code=404, detail="No LOIs matching the provided IDs were found"
         )
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/compose-loi")
+async def compose_loi(
+    request: ComposeLoiRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        
+        loi.construct_docx()
+        download_url = await db.upload_loi_files(loi)
+
+        return download_url
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

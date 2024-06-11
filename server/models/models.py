@@ -93,6 +93,7 @@ class LOI(BaseModel):
     id: str
     created_by: str
     status: str
+    document: Optional[Any] = None
     business_name: Optional[str] = None
     buyer_name: Optional[str] = None
     legal_entity: Optional[str] = None
@@ -119,6 +120,7 @@ class LOI(BaseModel):
     equity_rollover_percent: Optional[float] = None
     escrow_cap: Optional[int] = None
     escrow_tipping_basket: Optional[int] = None
+    note_payment_type: Optional[str] = None
 
 class ProcessingState(str, Enum):
     not_started = "NOT_STARTED"

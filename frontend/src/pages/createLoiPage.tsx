@@ -24,10 +24,9 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
 interface ConfirmationModalProps {
   open: boolean;
   docxFilePath: string; 
-  pdfFilePath: string;
 }
 
-function ConfirmationModal({ open, docxFilePath, pdfFilePath }: ConfirmationModalProps) {
+function ConfirmationModal({ open, docxFilePath }: ConfirmationModalProps) {
   const navigate = useNavigate();
   return (
     <DialogLayout open={open} onOpenChange={() => {}}>
@@ -46,12 +45,6 @@ function ConfirmationModal({ open, docxFilePath, pdfFilePath }: ConfirmationModa
                 subtitle="Fully Editable"
                 icon="FeatherFileEdit"
                 onClick={() => window.open(docxFilePath, '_blank')}
-              />
-              <HomeCard
-                title="PDF"
-                subtitle="Ready for Signing"
-                icon="FeatherFileText"
-                onClick={() => window.open(pdfFilePath, '_blank')}
               />
             </div>
           </div>
@@ -78,8 +71,6 @@ function CreateLoiPage() {
   const [ activeStep, setActiveStep ] = useState(0);
   const [ loiData, setLoiData ] = useState<LOI | null>(null);
   const [ confirmationModalOpen, setConfirmationModalOpen ] = useState(false);
-  const [ docxFilePath, setDocxFilePath ] = useState<string | null>(null);
-  const [ pdfFilePath, setPdfFilePath ] = useState<string | null>(null);
 
   useEffect(() => {
     const loadLoiData = async () => {
@@ -102,7 +93,7 @@ function CreateLoiPage() {
   
   return (
     <DefaultPageLayout>
-      <ConfirmationModal open={docxFilePath !== null && pdfFilePath !== null} docxFilePath="https://www.google.com" pdfFilePath="https://www.google.com"/>
+      <ConfirmationModal open={confirmationModalOpen} docxFilePath={`https://api.godealwise.com/storage/v1/object/public/lois/${loiId}.docx`}/>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-8 bg-default-background pt-12 pb-12">
         <div className="flex w-full flex-col items-start gap-2">
           <Breadcrumbs>

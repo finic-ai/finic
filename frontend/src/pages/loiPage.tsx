@@ -49,7 +49,8 @@ export type LOI = {
   sellerName: string,
   equityRolloverPercent: number,
   escrowCap: number,
-  escrowTippingBasket: number
+  escrowTippingBasket: number,
+  notePaymentType: boolean
 }
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {

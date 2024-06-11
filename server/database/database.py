@@ -22,7 +22,7 @@ import pandas as pd
 import httpx
 import datetime
 from pypdf import PdfWriter, PdfReader
-import fitz
+import tempfile
 
 
 def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
@@ -393,6 +393,7 @@ class Database:
 
     async def upsert_loi(self, loi: LOI) -> Optional[LOI]:
         loi_dict = loi.dict()
+        loi_dict.pop('document', None)
         for key, value in loi_dict.items():
             if isinstance(value, datetime.date):
                 loi_dict[key] = value.isoformat()
@@ -439,3 +440,24 @@ class Database:
         if getattr(response, 'error', None) is not None:
             raise Exception(f"Failed to delete LOIs: {response.error.message}")
         return [LOI(**row) for row in response.data]
+
+    async def upload_loi_files(self, loi: LOI) -> Optional[List[LOI]]:
+        import pdb
+        with tempfile.NamedTemporaryFile(delete=True) as tmp_file:
+            loi.document.save(tmp_file.name)
+            
+            bucket_name = "lois"
+            file_name = f"{loi.id}.docx"
+            
+            # Upload the file
+            try:
+                response = self.supabase.storage.from_(bucket_name).upload(file_name, tmp_file.name)
+            except StorageException as e:
+                if "Duplicate" in str(e):
+                    self.supabase.storage.from_(bucket_name).remove(file_name)
+                    response = self.supabase.storage.from_(bucket_name).upload(file_name, tmp_file.name)
+        if response.status_code == 200:
+            return response.content
+        else:
+            raise Exception(f"Failed to upload LOI files")
+

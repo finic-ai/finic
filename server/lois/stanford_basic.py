@@ -2,37 +2,50 @@ import os
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any, Tuple
-from datetime import datetime
+import datetime
 from enum import Enum
 from docx import Document
 from docx.document import Document as DocxDocument
 from docx.shared import Inches
 from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER, WD_ALIGN_PARAGRAPH
 from models.models import LOI
-from lois.loi import LOIDocument
 import inflect
 import pdb
 
 inflect_engine = inflect.engine()
 
-class TestLOI(LOI):
-    business_entity_type: Optional[str] = None
-    business_address: Optional[str] = None
+
+class StanfordBasicLOI(LOI):
+    document: Optional[Any] = None
+    business_name: str
+    buyer_name: str
+    legal_entity: Optional[str] = None
+    business_revenue: float
+    business_ebitda: float
+    purchase_price: float
+    note_percent: float
+    note_interest_rate: float
+    note_term: int
+    note_standby: int
+    transaction_type: str
+    earnout_description: str
+    escrow_percent: float
+    escrow_cap: int
+    escrow_tipping_basket: int
+    closing_date: Optional[datetime.date] = None
+    exclusivity_days: int
+    termination_fee_type: str
+    termination_fee_amount: float
+    governing_law: str
+    expiration_date: Optional[datetime.date] = None
+    business_address: str
     business_state: Optional[str] = None
-    buyer_title: Optional[str] = None
-    seller_name: Optional[str] = None
-    equity_rollover_percent: Optional[float] = None
-    escrow_cap: Optional[int] = None
-    escrow_tipping_basket: Optional[int] = None
-    exclusivity_days: Optional[int] = None
-
-class StanfordBasicLOI(LOIDocument):
-
-    def __init__(self, loi: TestLOI):
-        self.loi = loi
+    business_entity_type: Optional[str] = None
+    seller_name: str
+    equity_rollover_percent: float
+    note_payment_type: str
 
     def construct_docx(self) -> None:
-        loi = self.loi
         self.document = Document()
 
         ### Disclaimer
@@ -48,43 +61,44 @@ class StanfordBasicLOI(LOIDocument):
         self.document.add_page_break()
         
         ### Preamble
-        self.document.add_paragraph(f"""{datetime.now().strftime("%B %d, %Y")}
-{loi.seller_name}
-{loi.business_address}
+        self.document.add_paragraph(f"""{datetime.datetime.now().strftime("%B %d, %Y")}
+{self.seller_name}
+{self.business_address}
 
 Re: Proposed Transaction
 
-Dear {loi.buyer_name}:
+Dear {self.buyer_name}:
 """)
-        p = self.document.add_paragraph(f"The following sets forth the terms and conditions upon which an acquisition company to be established by {loi.legal_entity if loi.legal_entity else loi.buyer_name} and its affiliates (”")
+        p = self.document.add_paragraph(f"The following sets forth the terms and conditions upon which an acquisition company to be established by {self.legal_entity if self.legal_entity else self.buyer_name} and its affiliates (”")
         p.add_run("Buyer").bold = True
         p.add_run("”) would acquire ")
-        if loi.transaction_type == "stock":
+        if self.transaction_type == "stock":
             p.add_run("all of the outstanding shares of")
         else:
             p.add_run("all or substantially all of the assets of").bold = True 
-        p.add_run(f"{loi.business_name}")
-        if loi.business_entity_type != "Other" and loi.business_state:
-            p.add_run(", a {loi.business_entity_type}")
+        p.add_run(f"{self.business_name}")
+        if self.business_entity_type and self.business_entity_type != "Other" and self.business_state:
+            p.add_run(f", a {self.business_entity_type}")
         p.add_run("(the “")
         p.add_run("Company").bold = True
         p.add_run("”). The acquisition of the Company and the related transactions are collectively referred to herein as the “")
         p.add_run("Transaction").bold = True
         p.add_run(".”")
+
         ### 1. Enterprise Valuation.
         p=self.document.add_paragraph(f"1.\t")
         p.paragraph_format.tab_stops.add_tab_stop(Inches(0.5), alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES)
         r = p.add_run(f"Enterprise Valuation.")
         r.bold = True
         r.underline = True
-        p.add_run(f"  Our proposal for the cash-free, debt-free enterprise valuation of the Company upon which the various aspects of the Transaction would be based is ${loi.purchase_price:,.0f} (the “")
+        p.add_run(f"  Our proposal for the cash-free, debt-free enterprise valuation of the Company upon which the various aspects of the Transaction would be based is ${self.purchase_price:,.0f} (the “")
         p.add_run("Company Enterprise Valuation").bold = True
-        p.add_run(f"”). We have assumed in establishing the Company Enterprise Valuation that the Company will have run-rate revenue of approximately ${loi.business_revenue:,.0f} and run-rate EBITDA of approximately ${loi.business_ebitda:,.0f}, and that Buyer will receive a full step up in the tax basis of the assets in connection with the consummation of the Transaction.")
+        p.add_run(f"”). We have assumed in establishing the Company Enterprise Valuation that the Company will have run-rate revenue of approximately ${self.business_revenue:,.0f} and run-rate EBITDA of approximately ${self.business_ebitda:,.0f}, and that Buyer will receive a full step up in the tax basis of the assets in connection with the consummation of the Transaction.")
 
         ### 2. Purchase Price; Adjustment to PUrchase Price.
-        note_amount = loi.purchase_price * loi.note_percent
-        equity_rollover_amount = loi.purchase_price * loi.equity_rollover_percent
-        closing_cash_amount = loi.purchase_price - note_amount - equity_rollover_amount
+        note_amount = self.purchase_price * self.note_percent
+        equity_rollover_amount = self.purchase_price * self.equity_rollover_percent
+        closing_cash_amount = self.purchase_price - note_amount - equity_rollover_amount
         next_num = "ii"
         p=self.document.add_paragraph(f"2.\t")
         p.paragraph_format.tab_stops.add_tab_stop(Inches(0.5), alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES)
@@ -99,18 +113,20 @@ Dear {loi.buyer_name}:
             p.add_run(f", ({next_num}) ${equity_rollover_amount:,.0f}, which will be subordinate to Buyer’s senior credit facility, be reinvested in Buyer on the same terms as capital contributed by Buyer’s other investors at the closing")
             next_num = "iii"
         
-        if loi.note_percent > 0:
-            p.add_run(f", ({next_num}) ${note_amount:,.0f}, which will bear interest at a rate of {loi.note_interest_rate * 100:.0f}% per year for {inflect_engine.number_to_words(loi.note_term)} ({int(loi.note_term)}) years")
-            if loi.bullet_payment_anniversary:
-                p.add_run(f" (interest will be payable quarterly in arrears) and be paid in a bullet payment on the {inflect_engine.ordinal(loi.note_term)} anniversary of the closing date")
-            elif loi.note_standby > 0:
-                p.add_run(f" and be repaid in equal monthly installments of principal and interest, following a {loi.note_standby}-year standby period where no payments of principal or interest are required")
-            else:
-                p.add_run(f" and be repaid in equal monthly installments of principal and interest commencing immediately after the closing date")
+        if self.note_percent > 0:
+            p.add_run(f", ({next_num}) ${note_amount:,.0f}, which will bear interest at a rate of {self.note_interest_rate * 100:.0f}% per year for {inflect_engine.number_to_words(self.note_term)} ({int(self.note_term)}) years")
+            if self.note_payment_type == "interest_only":
+                p.add_run(f" (interest will be payable quarterly in arrears) and be paid in a bullet payment on the {inflect_engine.ordinal(self.note_term)} anniversary of the closing date")
+            elif self.note_payment_type == "amortizing":
+                p.add_run(f" and be repaid in equal monthly installments of principal and interest")
+                if self.note_standby > 0:
+                    p.add_run(f" , following a {self.note_standby}-year standby period where no payments of principal or interest are required")
+                else:
+                    p.add_run(f" commencing immediately after the closing date")
             next_num = "iv"
         
-        if loi.earnout_description:
-            p.add_run(f", ({next_num}) an earnout payable in cash upon the achievement of certain performance milestones by the Company:  {loi.earnout_description}")
+        if self.earnout_description:
+            p.add_run(f", ({next_num}) an earnout payable in cash upon the achievement of certain performance milestones by the Company:  {self.earnout_description}")
 
         p.add_run(". Nothing in the Definitive Agreement will prohibit or limit Buyer’s ability to freely operate the business following the closing.")
 
@@ -125,9 +141,9 @@ Dear {loi.buyer_name}:
         p.add_run("Definitive Agreement").bold = True
         p.add_run("”) and related documentation. The Definitive Agreement will be mutually acceptable to the parties and include, among other things, customary representations and warranties relating to all aspects of the Company’s business (including without limitation assets, liabilities, contracts, operations,customers and suppliers, employees and compliance with laws), and indemnifications, escrows and covenants.")
         next_letter = "b"
-        if loi.escrow_percent > 0:
-            escrow_amount = loi.purchase_price * loi.escrow_percent
-            p = self.document.add_paragraph(f"\t{next_letter}.\tThe seller and the Company will indemnify Buyer after the closing for claims relating to (i) breaches of representations, warranties and covenants and (ii) liabilities relating to the Company. At the closing, the parties will deposit ${escrow_amount:,.0f} ({loi.escrow_percent * 100:.0f})% of the Purchase Price into an escrow account as a source of security for such indemnification obligations. The non- fundamental representations and warranties shall survive until the eighteen- (18-) month anniversary of the closing, at which time all funds remaining in such escrow account (other than those reserved for then- pending claims) will be released to the Seller. Indemnification claims resulting from breaches of non-fundamental representations and warranties will be subject to a ${loi.escrow_cap:,.0f} cap and a ${loi.escrow_tipping_basket:,.0f} tipping basket. The parties will also deposit an agreed upon amount of the Purchase Price into a working capital escrow account to secure a customary post-closing true-up mechanism.")
+        if self.escrow_percent > 0:
+            escrow_amount = self.purchase_price * self.escrow_percent
+            p = self.document.add_paragraph(f"\t{next_letter}.\tThe seller and the Company will indemnify Buyer after the closing for claims relating to (i) breaches of representations, warranties and covenants and (ii) liabilities relating to the Company. At the closing, the parties will deposit ${escrow_amount:,.0f} ({self.escrow_percent * 100:.0f})% of the Purchase Price into an escrow account as a source of security for such indemnification obligations. The non- fundamental representations and warranties shall survive until the eighteen- (18-) month anniversary of the closing, at which time all funds remaining in such escrow account (other than those reserved for then- pending claims) will be released to the Seller. Indemnification claims resulting from breaches of non-fundamental representations and warranties will be subject to a ${self.escrow_cap:,.0f} cap and a ${self.escrow_tipping_basket:,.0f} tipping basket. The parties will also deposit an agreed upon amount of the Purchase Price into a working capital escrow account to secure a customary post-closing true-up mechanism.")
             next_letter = "c"
         
         p = self.document.add_paragraph(f"\t{next_letter}.\tThe Definitive Agreement will also include closing conditions such as (i) satisfactory completion by Buyer of its due diligence investigation of the Company, (ii) a ")
@@ -168,7 +184,7 @@ Dear {loi.buyer_name}:
         r = p.add_run(f"Exclusivity.")
         r.bold = True
         r.underline = True
-        p.add_run(f"  The Company agrees, in consideration of the substantial expenditure of time, effort and expense to be undertaken by Buyer in the investigation, preparation of documents and other activities related to the transactions contemplated by this letter of intent, that during the period commencing with the date of this letter of intent and ending {inflect_engine.number_to_words(loi.exclusivity_days)} ({loi.exclusivity_days}) days thereafter (the “")
+        p.add_run(f"  The Company agrees, in consideration of the substantial expenditure of time, effort and expense to be undertaken by Buyer in the investigation, preparation of documents and other activities related to the transactions contemplated by this letter of intent, that during the period commencing with the date of this letter of intent and ending {inflect_engine.number_to_words(self.exclusivity_days)} ({self.exclusivity_days}) days thereafter (the “")
         p.add_run("Exclusivity Period").bold = True
         p.add_run("”), neither the Company nor any of its stockholders/members, officers, directors/managers, employees, agents or representatives, will: (a) solicit, initiate or encourage submission of proposals or offers, or accept any proposals or offers, or enter into negotiations or discussions with any other person or persons (including, without limitation, any financial or other advisors) with regard to the merger or combination with, or sale or any other form of disposition of, the assets or stock/membership interests or other security interests of the Company or any part thereof (“")
         p.add_run("Acquisition Proposals").bold = True
@@ -214,7 +230,15 @@ Dear {loi.buyer_name}:
         r = p.add_run(f"Governing Law.")
         r.bold = True
         r.underline = True
-        p.add_run(f"  The Binding Provisions will be governed by and construed under the laws of the State of {loi.governing_law} without regard to conflicts of laws principles.")
+        p.add_run(f"  The Binding Provisions will be governed by and construed under the laws of the State of {self.governing_law} without regard to conflicts of laws principles.")
+
+        ### 13. Expiration Date.
+        p=self.document.add_paragraph(f"13.\t")
+        p.paragraph_format.tab_stops.add_tab_stop(Inches(0.5), alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES)
+        r = p.add_run(f"Expiration Date.")
+        r.bold = True
+        r.underline = True
+        p.add_run(f"  The terms of this letter of intent shall remain valid and in effect until {self.expiration_date.strftime('%B %d, %Y')}, after which they shall automatically terminate and be of no further effect unless extended by mutual written agreement of the parties.")
 
         ### Signature
         p = self.document.add_paragraph("[")
@@ -226,12 +250,12 @@ Dear {loi.buyer_name}:
 
 Sincerely,
 """)
-        p.add_run(loi.legal_entity if loi.legal_entity else "").bold = True
+        p.add_run(self.legal_entity if self.legal_entity else "").bold = True
         p.add_run(f"""
 
 
 By: _______________________
-Name: {loi.buyer_name}
+Name: {self.buyer_name}
 Title: _______________________
 
 
@@ -239,14 +263,12 @@ Title: _______________________
 ACCEPTED AND AGREED:
 """)
 
-        p.add_run({loi.business_name}).bold = True
+        p.add_run({self.business_name}).bold = True
         p.add_run(f"""
 
 
 By: _______________________
-Name: {loi.seller_name}
+Name: {self.seller_name}
 Title: _______________________
 Date: _______________________
 """)
-    def save(self, path: str):
-        self.document.save(path)

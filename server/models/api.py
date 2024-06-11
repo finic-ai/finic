@@ -47,6 +47,10 @@ class CreateLoiRequest(BaseModel):
     equity_rollover_percent: Optional[float] = None
     escrow_cap: Optional[int] = None
     escrow_tipping_basket: Optional[int] = None
+    note_payment_type: Optional[str] = None
+
+class ComposeLoiRequest(BaseModel):
+    loi_id: str
 
 
 class CompleteOnboardingResponse(BaseModel):
