@@ -62,7 +62,7 @@ function ConnectQuickbooks({
   userId: string;
 }) {
   return (
-    <div className="flex flex-col w-[600px] items-start gap-6 rounded-md border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
+    <div className="flex flex-col w-1/2 h-60 items-start justify-between rounded-md border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
       <div className="flex w-full flex-col items-start gap-2">
         <div className="flex w-full flex-col items-start">
           <div className="flex items-center gap-2">
@@ -84,35 +84,35 @@ function ConnectQuickbooks({
           text={`https://app.godealwise.com/quickbooks?id=${userId}`}
         />
       </div>
-      <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-300" />
-      <div className="flex h-full w-full grow shrink-0 basis-0 items-center gap-2">
+      <div className="flex h-10 w-full flex-none flex-col items-start gap-2">
+        <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-300" />
         <div className="flex h-full w-full grow shrink-0 basis-0 items-start justify-between">
           <span className="text-body-bold font-body-bold text-default-font">
             Status:
           </span>
+          {!loading && connected && (
+            <div className="flex items-center gap-1">
+              <span className="text-body-bold font-body-bold text-brand-700">
+                Connected
+              </span>
+              <SubframeCore.Icon
+                className="text-body-bold font-body-bold text-brand-700"
+                name="FeatherCheck"
+              />
+            </div>
+          )}
+          {!loading && !connected && (
+            <div className="flex items-center gap-1">
+              <span className="text-body-bold font-body-bold text-neutral-500">
+                Not connected
+              </span>
+              <SubframeCore.Icon
+                className="text-body-bold font-body-bold text-neutral-500"
+                name="FeatherX"
+              />
+            </div>
+          )}
         </div>
-        {!loading && connected && (
-          <div className="flex items-center gap-1">
-            <span className="text-body-bold font-body-bold text-brand-700">
-              Connected
-            </span>
-            <SubframeCore.Icon
-              className="text-body-bold font-body-bold text-brand-700"
-              name="FeatherCheck"
-            />
-          </div>
-        )}
-        {!loading && !connected && (
-          <div className="flex items-center gap-1">
-            <span className="text-body-bold font-body-bold text-neutral-500">
-              Not connected
-            </span>
-            <SubframeCore.Icon
-              className="text-body-bold font-body-bold text-neutral-500"
-              name="FeatherX"
-            />
-          </div>
-        )}
       </div>
     </div>
   );
@@ -131,7 +131,7 @@ function UploadBankStatements({
   const [showUpload, setShowUpload] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
   return (
-    <div className="flex flex-col w-[600px] items-start gap-6 rounded-md border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
+    <div className="flex flex-col w-1/2 h-60 items-start justify-between rounded-md border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
       <div className="flex w-full flex-col items-start gap-2">
         <div className="flex w-full flex-col items-start">
           <div className="flex items-center gap-2">
@@ -159,80 +159,81 @@ function UploadBankStatements({
           Upload
         </Button>
       </div>
-      <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-300" />
-      <div className="flex h-full w-full grow shrink-0 basis-0 items-center gap-2">
+      <div className="flex h-10 w-full flex-none flex-col items-start gap-2">
+        <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-300" />
         <div className="flex h-full w-full grow shrink-0 basis-0 items-start justify-between">
           <span className="text-body-bold font-body-bold text-default-font">
             Status:
           </span>
-        </div>
-        {!loading && uploaded && (
-          <div className="flex items-center gap-1">
-            <span className="text-body-bold font-body-bold text-brand-700">
-              Uploaded
-            </span>
-            <SubframeCore.Icon
-              className="text-body-bold font-body-bold text-brand-700"
-              name="FeatherCheck"
-            />
-          </div>
-        )}
-        {!loading && !uploaded && (
-          <div className="flex items-center gap-1">
-            <span className="text-body-bold font-body-bold text-neutral-500">
-              Missing files
-            </span>
-            <SubframeCore.Icon
-              className="text-body-bold font-body-bold text-neutral-500"
-              name="FeatherX"
-            />
-          </div>
-        )}
-        <Form
-          formId="6dThW7"
-          popupOptions={{
-            show: showUpload,
-            onHide: () => setShowUpload(false),
-          }}
-          onAction={async (context) => {
-            if (
-              context.trigger.id !== "3df3cb30-63c2-433f-9d6f-75578a0bdd3e" ||
-              (context as any).beforeClickActions
-            ) {
-              return;
-            }
-            console.log(context);
-            setUploading(true);
-            setShowUpload(false);
 
-            const fields = context.fields;
-            const fieldNames = [
-              "june_2023",
-              "july_2023",
-              "august_2023",
-              "september_2023",
-              "october_2023",
-              "november_2023",
-              "december_2023",
-              "january_2024",
-              "february_2024",
-              "march_2024",
-              "april_2024",
-              "may_2024",
-            ];
-            var files: File[] = [];
-            for (const fieldName of fieldNames) {
-              const value = fields[fieldName].value as Promise<File>[];
-              if (value.length > 0) {
-                const file = await value[0];
-                console.log(file);
-                files.push(file);
+          {!loading && uploaded && (
+            <div className="flex items-center gap-1">
+              <span className="text-body-bold font-body-bold text-brand-700">
+                Uploaded
+              </span>
+              <SubframeCore.Icon
+                className="text-body-bold font-body-bold text-brand-700"
+                name="FeatherCheck"
+              />
+            </div>
+          )}
+          {!loading && !uploaded && (
+            <div className="flex items-center gap-1">
+              <span className="text-body-bold font-body-bold text-neutral-500">
+                Missing files
+              </span>
+              <SubframeCore.Icon
+                className="text-body-bold font-body-bold text-neutral-500"
+                name="FeatherX"
+              />
+            </div>
+          )}
+          <Form
+            formId="6dThW7"
+            popupOptions={{
+              show: showUpload,
+              onHide: () => setShowUpload(false),
+            }}
+            onAction={async (context) => {
+              if (
+                context.trigger.id !== "3df3cb30-63c2-433f-9d6f-75578a0bdd3e" ||
+                (context as any).beforeClickActions
+              ) {
+                return;
               }
-            }
-            await onUpload(files, fieldNames);
-            setUploading(false);
-          }}
-        />
+              console.log(context);
+              setUploading(true);
+              setShowUpload(false);
+
+              const fields = context.fields;
+              const fieldNames = [
+                "june_2023",
+                "july_2023",
+                "august_2023",
+                "september_2023",
+                "october_2023",
+                "november_2023",
+                "december_2023",
+                "january_2024",
+                "february_2024",
+                "march_2024",
+                "april_2024",
+                "may_2024",
+              ];
+              var files: File[] = [];
+              for (const fieldName of fieldNames) {
+                const value = fields[fieldName].value as Promise<File>[];
+                if (value.length > 0) {
+                  const file = await value[0];
+                  console.log(file);
+                  files.push(file);
+                }
+              }
+              await onUpload(files, fieldNames);
+              setUploading(false);
+            }}
+          />
+        </div>
       </div>
     </div>
   );
@@ -296,33 +297,35 @@ function DiligenceAssistant() {
             </span>
           </div>
 
-          <div className="flex flex-row w-full items-center gap-4">
-            <ConnectQuickbooks
-              loading={loading}
-              connected={connected}
-              userId={userId}
-            />
-            <UploadBankStatements
-              loading={loading}
-              uploaded={uploaded}
-              onUpload={onUpload}
-            />
+          <div className="flex flex-col w-full items-center gap-4">
+            <div className="flex flex-row w-full items-center gap-4">
+              <ConnectQuickbooks
+                loading={loading}
+                connected={connected}
+                userId={userId}
+              />
+              <UploadBankStatements
+                loading={loading}
+                uploaded={uploaded}
+                onUpload={onUpload}
+              />
+            </div>
+            {/* Centered brand primary button Generate Proof of Cash */}
+            <Button
+              disabled={loading || !connected || !uploaded}
+              loading={generating}
+              onClick={async () => {
+                setGenerating(true);
+                await generateProofOfCash(bearer);
+                setGenerating(false);
+                setDialogOpen(true);
+              }}
+              variant="brand-primary"
+              className="w-full mt-3 mb-2"
+            >
+              Generate Proof of Cash
+            </Button>
           </div>
-          {/* Centered brand primary button Generate Proof of Cash */}
-          <Button
-            disabled={loading || !connected || !uploaded}
-            loading={generating}
-            onClick={async () => {
-              setGenerating(true);
-              await generateProofOfCash(bearer);
-              setGenerating(false);
-              setDialogOpen(true);
-            }}
-            variant="brand-primary"
-            className="w-full mt-3 mb-2"
-          >
-            Generate Proof of Cash
-          </Button>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <Dialog.Content className="h-auto w-auto flex-none">
               <div className="flex max-w-[384px] flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
