@@ -413,7 +413,6 @@ async def upsert_loi(
                 if value is not None:
                     setattr(loi, attr, value)
         await db.upsert_loi(loi)
-
         if request.status == "completed":
             try:
                 loi_dict = loi.dict()
@@ -425,7 +424,7 @@ async def upsert_loi(
                 await db.upload_loi_files(loi)
                 loi.document = None
             except Exception as e:
-                raise HTTPException(status_code=500, detail=str("Something went wrong with construction the LOI document: " + e))
+                raise HTTPException(status_code=500, detail="Something went wrong with construction the LOI document: " + str(e))
 
         return loi
     except Exception as e:

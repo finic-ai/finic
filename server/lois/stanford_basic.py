@@ -67,7 +67,7 @@ class StanfordBasicLOI(LOI):
 
 Re: Proposed Transaction
 
-Dear {self.buyer_name}:
+Dear {self.seller_name}:
 """)
         p = self.document.add_paragraph(f"The following sets forth the terms and conditions upon which an acquisition company to be established by {self.legal_entity if self.legal_entity else self.buyer_name} and its affiliates (”")
         p.add_run("Buyer").bold = True
@@ -76,10 +76,10 @@ Dear {self.buyer_name}:
             p.add_run("all of the outstanding shares of")
         else:
             p.add_run("all or substantially all of the assets of").bold = True 
-        p.add_run(f"{self.business_name}")
+        p.add_run(f" {self.business_name}")
         if self.business_entity_type and self.business_entity_type != "Other" and self.business_state:
-            p.add_run(f", a {self.business_entity_type}")
-        p.add_run("(the “")
+            p.add_run(f", a {self.business_state} {self.business_entity_type}")
+        p.add_run(" (the “")
         p.add_run("Company").bold = True
         p.add_run("”). The acquisition of the Company and the related transactions are collectively referred to herein as the “")
         p.add_run("Transaction").bold = True
@@ -96,8 +96,8 @@ Dear {self.buyer_name}:
         p.add_run(f"”). We have assumed in establishing the Company Enterprise Valuation that the Company will have run-rate revenue of approximately ${self.business_revenue:,.0f} and run-rate EBITDA of approximately ${self.business_ebitda:,.0f}, and that Buyer will receive a full step up in the tax basis of the assets in connection with the consummation of the Transaction.")
 
         ### 2. Purchase Price; Adjustment to PUrchase Price.
-        note_amount = self.purchase_price * self.note_percent
-        equity_rollover_amount = self.purchase_price * self.equity_rollover_percent
+        note_amount = self.purchase_price * (self.note_percent/100)
+        equity_rollover_amount = self.purchase_price * (self.equity_rollover_percent/100)
         closing_cash_amount = self.purchase_price - note_amount - equity_rollover_amount
         next_num = "ii"
         p=self.document.add_paragraph(f"2.\t")
@@ -108,19 +108,20 @@ Dear {self.buyer_name}:
         p.add_run(f"  At closing, Buyer will acquire the Company for a total aggregate purchase price equal to (a) the Company Enterprise Valuation adjusted as described herein, minus (b) the amount of any net indebtedness of the Company at closing, including loans, capital leases, letters of credit, any payments arising out of the sale of the Company and any unpaid transaction fees (the “")
         p.add_run(f"Purchase Price").bold = True
         p.add_run(f"”). The Purchase Price will be adjusted up or down to the extent that the Company’s net working capital at closing is greater than or less than a normalized working capital target to be mutually agreed upon in the definitive agreements. The Purchase Price will be comprised of (i) a closing cash payment in the amount of ${closing_cash_amount:,.0f} (adjusted as described herein)")
+        self.document.add_page_break()
 
         if equity_rollover_amount > 0:
             p.add_run(f", ({next_num}) ${equity_rollover_amount:,.0f}, which will be subordinate to Buyer’s senior credit facility, be reinvested in Buyer on the same terms as capital contributed by Buyer’s other investors at the closing")
             next_num = "iii"
         
         if self.note_percent > 0:
-            p.add_run(f", ({next_num}) ${note_amount:,.0f}, which will bear interest at a rate of {self.note_interest_rate * 100:.0f}% per year for {inflect_engine.number_to_words(self.note_term)} ({int(self.note_term)}) years")
+            p.add_run(f", ({next_num}) ${note_amount:,.0f}, which will bear interest at a rate of {self.note_interest_rate:.0f}% per year for {inflect_engine.number_to_words(self.note_term)} ({int(self.note_term)}) years")
             if self.note_payment_type == "interest_only":
                 p.add_run(f" (interest will be payable quarterly in arrears) and be paid in a bullet payment on the {inflect_engine.ordinal(self.note_term)} anniversary of the closing date")
             elif self.note_payment_type == "amortizing":
                 p.add_run(f" and be repaid in equal monthly installments of principal and interest")
                 if self.note_standby > 0:
-                    p.add_run(f" , following a {self.note_standby}-year standby period where no payments of principal or interest are required")
+                    p.add_run(f", following a {self.note_standby}-year standby period where no payments of principal or interest are required")
                 else:
                     p.add_run(f" commencing immediately after the closing date")
             next_num = "iv"
@@ -190,13 +191,26 @@ Dear {self.buyer_name}:
         p.add_run("Acquisition Proposals").bold = True
         p.add_run("”), and that any such negotiations or discussions that may now be in process will be terminated; or (b) furnish to any other person any information with respect to, or otherwise cooperate in any way with or assist, facilitate or encourage, any Acquisition Proposal. The Company will promptly notify Buyer regarding any contact between the Company, its stockholders/equityholders or their respective representatives and any other person regarding any Acquisition Proposal. Unless either party provides the other written notice at least five (5) business days prior to the expiration of the Exclusivity Period, the Exclusivity Period shall automatically extend for successive thirty (30) day periods.")
 
-        ### 8. Expenses
+        ### 8. Expenses and Termination Fees
         p=self.document.add_paragraph(f"8.\t")
         p.paragraph_format.tab_stops.add_tab_stop(Inches(0.5), alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES)
-        r = p.add_run(f"Expenses.")
-        r.bold = True
-        r.underline = True
-        p.add_run(f"  Buyer and the Company will each bear their respective expenses in negotiating and executing this letter of intent and the Definitive Agreement and completing the transactions contemplated thereby, including conducting due diligence and obtaining financing.")
+        if self.termination_fee_type is "none":
+            r = p.add_run(f"Expenses.")
+            r.bold = True
+            r.underline = True
+            p.add_run(f"  Buyer and the Company will each bear their respective expenses in negotiating and executing this letter of intent and the Definitive Agreement and completing the transactions contemplated thereby, including conducting due diligence and obtaining financing.")
+        else:
+            r = p.add_run(f"Expenses and Termination Fee.")
+            r.bold = True
+            r.underline = True
+            p.add_run(f"  Buyer and the Company will each bear their respective expenses in negotiating and executing this letter of intent and the Definitive Agreement and completing the transactions contemplated thereby, including conducting due diligence and obtaining financing.")
+            if self.termination_fee_type == "buyside":
+                p.add_run(f" Notwithstanding the foregoing, in the event that the Buyer elects to terminate this letter of intent without proceeding to consummate the transaction, Buyer shall be obligated to pay to the Company a termination fee in the amount of {inflect_engine.number_to_words(int(self.termination_fee_amount))} dollars (${self.termination_fee_amount:,.0f}) as liquidated damages to cover administrative and other costs incurred by the Company in connection with the transaction.")
+            elif self.termination_fee_type == "sellside":
+                p.add_run(f" Notwithstanding the foregoing, in the event that the Seller elects to terminate this letter of intent without proceeding to consummate the transaction, Seller shall be obligated to pay to the Buyer a termination fee in the amount of {inflect_engine.number_to_words(int(self.termination_fee_amount))} dollars (${self.termination_fee_amount:,.0f}) as liquidated damages to cover administrative and other costs incurred by the Buyer in connection with the transaction.")
+            elif self.termination_fee_type == "mutual":
+                p.add_run(f" Notwithstanding the foregoing, in the event that either party elects to terminate this letter of intent without proceeding to consummate the transaction, the terminating party shall be obligated to pay to the other party a termination fee in the amount of {inflect_engine.number_to_words(int(self.termination_fee_amount))} dollars (${self.termination_fee_amount:,.0f}) as liquidated damages to cover administrative and other costs incurred in connection with the transaction.")
+            
 
         ### 9. Effect of Letter.
         p=self.document.add_paragraph(f"9.\t")
@@ -250,18 +264,28 @@ Dear {self.buyer_name}:
 
 Sincerely,
 """)
-        p.add_run(self.legal_entity if self.legal_entity else "").bold = True
-        p.add_run(f"""
+        if self.legal_entity:
+            p.add_run(self.legal_entity).bold = True
+            p.add_run(f"""
 
 
 By: _______________________
 Name: {self.buyer_name}
 Title: _______________________
+""")    
+        else:
+            p.add_run(self.buyer_name).bold = True
+            p.add_run(f"""
 
 
-
-ACCEPTED AND AGREED:
+_______________________
+Title: _______________________
 """)
+        p = self.document.add_paragraph("""
+
+
+
+ACCEPTED AND AGREED:""")
 
         p.add_run({self.business_name}).bold = True
         p.add_run(f"""

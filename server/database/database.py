@@ -23,6 +23,7 @@ import httpx
 import datetime
 from pypdf import PdfWriter, PdfReader
 import tempfile
+import pdb
 
 
 def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
@@ -442,7 +443,6 @@ class Database:
         return [LOI(**row) for row in response.data]
 
     async def upload_loi_files(self, loi: LOI) -> Optional[List[LOI]]:
-        import pdb
         with tempfile.NamedTemporaryFile(delete=True) as tmp_file:
             loi.document.save(tmp_file.name)
             
