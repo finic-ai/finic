@@ -24,9 +24,8 @@ class CreateLoiRequest(BaseModel):
     business_name: Optional[str] = None
     buyer_name: Optional[str] = None
     legal_entity: Optional[str] = None
-    biz_revenue: Optional[float] = None
-    biz_ebitda: Optional[float] = None
-    financials_period: Optional[str] = None
+    business_revenue: Optional[float] = None
+    business_ebitda: Optional[float] = None
     purchase_price: Optional[float] = None
     note_percent: Optional[float] = None
     note_interest_rate: Optional[float] = None
@@ -36,12 +35,22 @@ class CreateLoiRequest(BaseModel):
     earnout_description: Optional[str] = None
     escrow_percent: Optional[float] = None
     closing_date: Optional[datetime.date] = None
-    exclusivity_start_date: Optional[datetime.date] = None
-    exclusivity_end_date: Optional[datetime.date] = None
+    exclusivity_days: Optional[int] = None
     termination_fee_type: Optional[str] = None
     termination_fee_amount: Optional[float] = None
     governing_law: Optional[str] = None
     expiration_date: Optional[datetime.date] = None
+    business_address: Optional[str] = None
+    business_state: Optional[str] = None
+    business_entity_type: Optional[str] = None
+    seller_name: Optional[str] = None
+    equity_rollover_percent: Optional[float] = None
+    escrow_cap: Optional[int] = None
+    escrow_tipping_basket: Optional[int] = None
+    note_payment_type: Optional[str] = None
+
+class ComposeLoiRequest(BaseModel):
+    loi_id: str
 
 
 class CompleteOnboardingResponse(BaseModel):

@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import "../App.css";
+import states from 'states-us';
 import { Button } from "@/subframe/components/Button";
 import { TextField } from "@/subframe/components/TextField";
 import { Select } from "@/subframe/components/Select";
@@ -13,13 +14,17 @@ import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { LOI } from "../pages/loiPage.tsx"
 
+const businessEntityTypes = ["C Corporation", "S Corporation", "Limited Liability Company", "Sole Proprietorship", "Limited Liability Partnership", "Limited Partnership", "Other"]
+
 type Inputs = {
-  purchasePrice: number,
-  notePercent: number,
-  noteInterestRate: number,
-  noteTerm: number,
-  noteStandby: number,
-  transactionType: string,
+  businessName: string,
+  businessAddress: string,
+  businessState: string,
+  businessEntityType: string,
+  sellerName: string,
+  businessRevenue: number,
+  businessEbitda: number,
+  financialsPeriod: string,
 }
 
 interface LoiStepTwoProps {
@@ -28,15 +33,15 @@ interface LoiStepTwoProps {
   loi: LOI | null;
 }
 
-function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
-  const [ noteOnStandby, setNoteOnStandby ] = useState<string | null>('no');
+function LoiStepOne({ setActiveStep, updateLoi, loi}: LoiStepTwoProps) {
+  const [ hasLegalEntity, setHasLegalEntity ] = useState<string | null>('no');
 
   const {
     register,
     handleSubmit,
     watch,
     control,
-    unregister,
+    resetField,
     setValue,
     formState: { errors },
   } = useForm<Inputs>()
@@ -52,7 +57,7 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
     if (loi == null) return;
     console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
-      if (['purchasePrice', 'notePercent', 'noteInterestRate', 'noteTerm', 'noteStandby', 'transactionType'].includes(key)) {
+      if (['sellerName', 'businessName', 'businessAddress', 'businessState', 'businessEntityType', 'businessRevenue', 'businessEbitda', 'financialsPeriod'].includes(key)) {
         setValue(key as keyof Inputs, value as string | number);
       }
     }
@@ -65,103 +70,119 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
           <span className="w-full text-subheader font-subheader text-default-font" />
           <span className="w-full text-body font-body text-subtext-color" />
         </div>
-        <div className="flex flex-col items-start gap-1">
-          <label className="text-body-bold font-body-bold text-default-font" htmlFor="transactionType">
-            Will this be an asset or stock sale?
-          </label>
-          <Controller
-            control={control}
-            name="transactionType"
-            rules={{ required: true }}
-            render={({ field }) => (
-            <ToggleGroup value={field.value} onValueChange={field.onChange}>
-              <ToggleGroup.Item icon={null} value="asset">
-                Asset
-              </ToggleGroup.Item>
-              <ToggleGroup.Item icon={null} value="stock">
-                Stock
-              </ToggleGroup.Item>
-            </ToggleGroup>
-          )}
-          />
-          {errors.transactionType && <span className="text-body font-body text-error-700">This field is required</span>}
-        </div>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-          <TextField
-            className="h-auto w-full flex-none"
-            label="What is the purchase price?"
-            helpText=""
-            htmlFor="purchasePrice"
-          >
-            <TextField.Input {...register("purchasePrice", {required: true})}/>
-          </TextField>
-          {errors.purchasePrice && <span className="text-body font-body text-error-700">This field is required</span>}
-        </div>
-        <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-200" />
         <span className="text-subheader font-subheader text-default-font">
-          Sellers Note
+          Company Information
         </span>
         <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
           <TextField
             className="h-auto w-full flex-none"
-            label="What percent of the purchase price will be in the form of a seller note?"
+            label="Company's legal name"
             helpText=""
-            htmlFor="notePercent"
+            htmlFor="businessName"
           >
-            <TextField.Input {...register("notePercent", {required: true})}/>
+            <TextField.Input {...register("businessName", {required: true})}/>
           </TextField>
-          {errors.notePercent && <span className="text-body font-body text-error-700">This field is required</span>}
+          {errors.businessName && <span className="text-body font-body text-error-700">This field is required</span>}
+        </div>
+        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+          <TextField
+            className="h-auto w-full flex-none"
+            label="Seller's full name"
+            helpText=""
+            htmlFor="sellerName"
+          >
+            <TextField.Input {...register("sellerName", {required: true})}/>
+          </TextField>
+          {errors.sellerName && <span className="text-body font-body text-error-700">This field is required</span>}
+        </div>
+        <div className="flex w-full items-start gap-4">
+          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+            <label className="text-body-bold font-body-bold text-default-font" htmlFor="businessState">State of incorporation</label>
+            <Controller
+              control={control}
+              name="businessState"
+              rules={{ required: false }}
+              render={({ field }) => (
+                <Select
+                  className="h-auto w-full flex-none"
+                  placeholder="Select"
+                  helpText="Optional"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <div className="flex w-full flex-col items-start">
+                    {states.map((state) => (
+                      <Select.Item key={state.name} value={state.name}>
+                        {state.name}
+                      </Select.Item>
+                    ))}
+                  </div>
+                </Select>
+              )}
+            />
+          </div>
+          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+            <label className="text-body-bold font-body-bold text-default-font" htmlFor="businessEntityType">Entity type</label>
+            <Controller
+              control={control}
+              name="businessEntityType"
+              rules={{ required: false }}
+              render={({ field }) => (
+                <Select
+                  className="h-auto w-full flex-none"
+                  placeholder="Select"
+                  helpText="Optional"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <div className="flex w-full flex-col items-start">
+                    {businessEntityTypes.map((entityType) => (
+                      <Select.Item key={entityType} value={entityType}>
+                        {entityType}
+                      </Select.Item>
+                    ))}
+                  </div>
+                </Select>
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+          <TextArea
+            className="h-auto min-h-[96px] w-full flex-none"
+            label="Address"
+            helpText=""
+            htmlFor="businessAddress"
+          >
+            <TextArea.Input {...register("businessAddress", {required: false})} className="focus:ring-0"/>
+          </TextArea>
         </div>
         <div className="flex w-full items-start gap-4">
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
             <TextField
               className="h-auto w-full flex-none"
-              label="Interest rate on the note"
-              helpText=""
-              htmlFor="noteInterestRate"
-              iconRight="FeatherPercent"
+              label="Revenue"
+              helpText="The 12-month run rate revenue used as the basis for the valuation."
+              htmlFor="businessRevenue"
+              icon="FeatherDollarSign"
             >
-              <TextField.Input {...register("noteInterestRate", {required: true})}/>
+              <TextField.Input {...register("businessRevenue", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
             </TextField>
-            {errors.noteInterestRate && <span className="text-body font-body text-error-700">This field is required</span>}
+            {errors.businessRevenue && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
             <TextField
               className="h-auto w-full flex-none"
-              label="Term of the note"
-              helpText=""
-              htmlFor="noteTerm"
+              label="EBITDA"
+              helpText="The 12-month run rate EBIDTA used as the basis for the valuation."
+              htmlFor="businessEbitda"
+              icon="FeatherDollarSign"
             >
-              <TextField.Input {...register("noteTerm", {required: true})}/>
+              <TextField.Input {...register("businessEbitda", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
             </TextField>
-            {errors.noteTerm && <span className="text-body font-body text-error-700">This field is required</span>}
+            {errors.businessEbitda && <span className="text-body font-body text-error-700">This field is required</span>}
           </div>
         </div>
-        <div className="flex flex-col items-start gap-1">
-          <label className="text-body-bold font-body-bold text-default-font" htmlFor="Will the note be standby?">
-            Will the note be standby?
-          </label>
-          <ToggleGroup value={noteOnStandby || undefined}>
-            <ToggleGroup.Item icon={null} value="yes" onClick={() => setNoteOnStandby("yes")}>
-              Yes
-            </ToggleGroup.Item>
-            <ToggleGroup.Item icon={null} value="no" onClick={() => {setNoteOnStandby("no"); unregister('noteStandby')}}>
-              No
-            </ToggleGroup.Item>
-          </ToggleGroup>
-          {!noteOnStandby && <span className="text-body font-body text-error-700">This field is required</span>}
-        </div>
-        {noteOnStandby == 'yes' ? <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1 pl-4">
-          <TextField
-            className="h-auto w-full flex-none"
-            label="How many months will the note be on standby?"
-            helpText=""
-            htmlFor="noteStandby"
-          >
-            <TextField.Input {...register("noteStandby", {required: true})}/>
-          </TextField>
-          {errors.noteStandby && noteOnStandby && <span className="text-body font-body text-error-700">This field is required</span>}
-        </div>: null}
         <div className="flex w-full items-center gap-2">
           <Button size="medium" type="submit">Next</Button>
           <Button variant="neutral-tertiary" size="medium" onClick={() => setActiveStep(0)}>
@@ -173,4 +194,4 @@ function LoiStepTwo({ setActiveStep, updateLoi, loi }: LoiStepTwoProps) {
   );
 }
 
-export default LoiStepTwo;
+export default LoiStepOne;

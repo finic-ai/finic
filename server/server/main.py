@@ -23,6 +23,7 @@ from models.models import (
     VellumDocument,
     ProcessingState,
 )
+from lois import StanfordBasicLOI
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -36,6 +37,7 @@ from models.api import (
     GetLoiRequest,
     CreateBusinessRequest,
     CreateLoiRequest,
+    ComposeLoiRequest,
     GetUsernameRequest,
 )
 import uuid
@@ -380,12 +382,12 @@ async def get_diligence_doc_upload_status(
 
 @app.post("/get-lois")
 async def get_lois(
-    loi_id: str = Body(None),
+    request: GetLoiRequest = Body(None),
     config: AppConfig = Depends(validate_token),
 ):
     try:
         loi = await db.get_lois(
-            user_id=config.user_id, loi_id=loi_id if loi_id is not None else None
+            user_id=config.user_id, loi_id=request.loi_id if hasattr(request, 'loi_id') else None
         )
         return loi
     except Exception as e:
@@ -401,6 +403,10 @@ async def upsert_loi(
     try:
         request_dict = vars(request)
         if request.id is not None:
+            try:
+                uuid_obj = uuid.UUID(request.id, version=4)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid UUID format for request.id")
             loi = await db.get_lois(user_id=config.user_id, loi_id=request.id)
             loi = loi[0]
             for attr, value in request_dict.items():
@@ -411,8 +417,19 @@ async def upsert_loi(
             for attr, value in request_dict.items():
                 if value is not None:
                     setattr(loi, attr, value)
-
         await db.upsert_loi(loi)
+        if request.status == "completed":
+            try:
+                loi_dict = loi.dict()
+                loi = StanfordBasicLOI(**loi_dict)
+            except Exception as e:
+                raise HTTPException(status_code=422, detail="LOI fields missing or invalid")
+            try:
+                loi.construct_docx()
+                await db.upload_loi_files(loi)
+                loi.document = None
+            except Exception as e:
+                raise HTTPException(status_code=500, detail="Something went wrong with construction the LOI document: " + str(e))
 
         return loi
     except Exception as e:
@@ -440,6 +457,21 @@ async def delete_lois(
         raise HTTPException(
             status_code=404, detail="No LOIs matching the provided IDs were found"
         )
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/compose-loi")
+async def compose_loi(
+    request: ComposeLoiRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        
+        loi.construct_docx()
+        download_url = await db.upload_loi_files(loi)
+
+        return download_url
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
