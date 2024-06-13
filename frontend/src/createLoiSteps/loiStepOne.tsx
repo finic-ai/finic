@@ -17,16 +17,8 @@ import { LOI } from "../pages/loiPage.tsx"
 const businessEntityTypes = ["C Corporation", "S Corporation", "Limited Liability Company", "Sole Proprietorship", "Limited Liability Partnership", "Limited Partnership", "Other"]
 
 type Inputs = {
-  businessName: string,
-  businessAddress: string,
-  businessState: string,
-  businessEntityType: string,
-  sellerName: string,
   buyerName: string,
   legalEntity: string,
-  businessRevenue: number,
-  businessEbitda: number,
-  financialsPeriod: string,
 }
 
 interface LoiStepOneProps {
@@ -60,10 +52,9 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
 
   useEffect(() => {
     if (loi == null) return;
-    console.log(loi)
     for (const [key, value] of Object.entries(loi)) {
-      if (['buyerName', 'sellerName', 'businessName', 'businessAddress', 'businessState', 'businessEntityType', 'legalEntity', 'businessRevenue', 'businessEbitda', 'financialsPeriod'].includes(key)) {
-        setValue(key as keyof Inputs, value as string | number);
+      if (['buyerName', 'legalEntity'].includes(key)) {
+        setValue(key as keyof Inputs, value as string);
       }
       if (key == 'legalEntity' && value != '') {
         setHasLegalEntity('yes');
@@ -79,7 +70,7 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
           <span className="w-full text-body font-body text-subtext-color" />
         </div>
         <span className="text-subheader font-subheader text-default-font">
-          Acquiring Entity
+          Buyer Information
         </span>
         <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
           <TextField
@@ -117,120 +108,6 @@ function LoiStepOne({ setActiveStep, createLoi, loi}: LoiStepOneProps) {
           </TextField>
           {errors.legalEntity && hasLegalEntity && <span className="text-body font-body text-error-700">This field is required</span>}
         </div>: null}
-        <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-200" />
-        <span className="text-subheader font-subheader text-default-font">
-          Business Info
-        </span>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-          <TextField
-            className="h-auto w-full flex-none"
-            label="Business name"
-            helpText=""
-            htmlFor="businessName"
-          >
-            <TextField.Input {...register("businessName", {required: true})}/>
-          </TextField>
-          {errors.businessName && <span className="text-body font-body text-error-700">This field is required</span>}
-        </div>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-          <TextField
-            className="h-auto w-full flex-none"
-            label="Seller's full name"
-            helpText=""
-            htmlFor="sellerName"
-          >
-            <TextField.Input {...register("sellerName", {required: true})}/>
-          </TextField>
-          {errors.sellerName && <span className="text-body font-body text-error-700">This field is required</span>}
-        </div>
-        <div className="flex w-full items-start gap-4">
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-            <label className="text-body-bold font-body-bold text-default-font" htmlFor="businessState">State of incorporation</label>
-            <Controller
-              control={control}
-              name="businessState"
-              rules={{ required: false }}
-              render={({ field }) => (
-                <Select
-                  className="h-auto w-full flex-none"
-                  placeholder="Select"
-                  helpText="Optional"
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <div className="flex w-full flex-col items-start">
-                    {states.map((state) => (
-                      <Select.Item key={state.name} value={state.name}>
-                        {state.name}
-                      </Select.Item>
-                    ))}
-                  </div>
-                </Select>
-              )}
-            />
-          </div>
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-            <label className="text-body-bold font-body-bold text-default-font" htmlFor="businessEntityType">Entity type</label>
-            <Controller
-              control={control}
-              name="businessEntityType"
-              rules={{ required: false }}
-              render={({ field }) => (
-                <Select
-                  className="h-auto w-full flex-none"
-                  placeholder="Select"
-                  helpText="Optional"
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <div className="flex w-full flex-col items-start">
-                    {businessEntityTypes.map((entityType) => (
-                      <Select.Item key={entityType} value={entityType}>
-                        {entityType}
-                      </Select.Item>
-                    ))}
-                  </div>
-                </Select>
-              )}
-            />
-          </div>
-        </div>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-          <TextArea
-            className="h-auto min-h-[96px] w-full flex-none"
-            label="Address"
-            helpText=""
-            htmlFor="businessAddress"
-          >
-            <TextArea.Input {...register("businessAddress", {required: false})} className="focus:ring-0"/>
-          </TextArea>
-        </div>
-        <div className="flex w-full items-start gap-4">
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-            <TextField
-              className="h-auto w-full flex-none"
-              label="Revenue"
-              helpText="The 12-month run rate revenue used as the basis for the valuation."
-              htmlFor="businessRevenue"
-              icon="FeatherDollarSign"
-            >
-              <TextField.Input {...register("businessRevenue", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
-            </TextField>
-            {errors.businessRevenue && <span className="text-body font-body text-error-700">This field is required</span>}
-          </div>
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
-            <TextField
-              className="h-auto w-full flex-none"
-              label="EBITDA"
-              helpText="The 12-month run rate EBIDTA used as the basis for the valuation."
-              htmlFor="businessEbitda"
-              icon="FeatherDollarSign"
-            >
-              <TextField.Input {...register("businessEbitda", {required: true})} type="number" className="focus:ring-0 pl-0 pr-0"/>
-            </TextField>
-            {errors.businessEbitda && <span className="text-body font-body text-error-700">This field is required</span>}
-          </div>
-        </div>
         <Button size="medium" type="submit">Next</Button>
       </div>
     </form>

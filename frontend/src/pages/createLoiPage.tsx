@@ -10,9 +10,10 @@ import { Steps } from "@/subframe/components/Steps";
 import { DialogLayout } from "@/subframe/layouts/DialogLayout";
 import { HomeCard } from "@/subframe/components/HomeCard";
 import LoiStepOne from "../createLoiSteps/loiStepOne";
-import LoiStepTwo from "../createLoiSteps/loiStepTwo";
-import LoiStepThree from "../createLoiSteps/loiStepThree";
-import LoiStepFour from "../createLoiSteps/loiStepFour";
+import LoiStepTwo from "../createLoiSteps/loiStepTwo.tsx";
+import LoiStepThree from "../createLoiSteps/loiStepThree.tsx";
+import LoiStepFour from "../createLoiSteps/loiStepFour.tsx";
+import LoiStepFive from "../createLoiSteps/loiStepFive.tsx";
 import { LOI } from "../pages/loiPage.tsx"
 
 import { getLois, upsertLoi } from "../utils";
@@ -23,10 +24,11 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
 
 interface ConfirmationModalProps {
   open: boolean;
-  docxFilePath: string; 
+  docxFilePath: string;
+  filename: string;
 }
 
-function ConfirmationModal({ open, docxFilePath }: ConfirmationModalProps) {
+function ConfirmationModal({ open, docxFilePath, filename }: ConfirmationModalProps) {
   const navigate = useNavigate();
   return (
     <DialogLayout open={open} onOpenChange={() => {}}>
@@ -44,7 +46,15 @@ function ConfirmationModal({ open, docxFilePath }: ConfirmationModalProps) {
                 title="DOCX"
                 subtitle="Fully Editable"
                 icon="FeatherFileEdit"
-                onClick={() => window.open(docxFilePath, '_blank')}
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = docxFilePath;
+                  // Specify the filename you want to download as
+                  link.download = filename;
+                  document.body.appendChild(link); // Append to the document
+                  link.click(); // Programmatically click the link to trigger the download
+                  document.body.removeChild(link); // Clean up and remove the link
+                }}
               />
             </div>
           </div>
@@ -93,7 +103,7 @@ function CreateLoiPage() {
   
   return (
     <DefaultPageLayout>
-      <ConfirmationModal open={confirmationModalOpen} docxFilePath={`https://api.godealwise.com/storage/v1/object/public/lois/${loiId}.docx`}/>
+      {loiData !== null && <ConfirmationModal open={confirmationModalOpen} docxFilePath={`https://api.godealwise.com/storage/v1/object/public/lois/${loiId}.docx`} filename={`${loiData.businessName} - Letter of Intent.docx`}/>}
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-8 bg-default-background pt-12 pb-12">
         <div className="flex w-full flex-col items-start gap-2">
           <Breadcrumbs>
@@ -109,27 +119,32 @@ function CreateLoiPage() {
         </div>
         <Steps>
           <Steps.Step
-            name="Basic Information"
+            name="Buyer Info"
             firstStep={true}
             variant={activeStep > 0 ? "success": "active"}
             stepNumber="1"
             onClick={() => setActiveStep(0)}
           />
           <Steps.Step 
-            name="Deal Structure" 
+            name="Company Info" 
             variant={activeStep > 1 ? "success": (activeStep == 1 ? "active": "default")} 
             stepNumber="2" 
             onClick={() => activeStep > 1 && setActiveStep(1)}/>
           <Steps.Step 
-            name="Post Close" 
+            name="Deal Structure" 
             variant={activeStep > 2 ? "success": (activeStep == 2 ? "active": "default")} 
             stepNumber="3" 
             onClick={() => activeStep > 2 && setActiveStep(2)}/>
           <Steps.Step 
-            name="Misc" 
-            variant={activeStep == 3 ? "active": "default"} 
-            lastStep={true} 
+            name="Post Close" 
+            variant={activeStep > 3 ? "success": (activeStep == 3 ? "active": "default")} 
+            onClick={() => activeStep > 1 && setActiveStep(3)}
             stepNumber="4" />
+          <Steps.Step 
+            name="Legal" 
+            variant={activeStep == 4 ? "active": "default"} 
+            lastStep={true} 
+            stepNumber="5" />
         </Steps>
         <div className="flex w-full items-start gap-6">
           {(() => {
@@ -141,7 +156,9 @@ function CreateLoiPage() {
               case 2:
                 return <LoiStepThree setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
               case 3:
-                return <LoiStepFour setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData} setConfirmationModalOpen={setConfirmationModalOpen}/>;
+                return <LoiStepFour setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
+              case 4:
+                return <LoiStepFive setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData} setConfirmationModalOpen={setConfirmationModalOpen}/>;
             }
           })()}
           <div className="flex flex-col items-center justify-center gap-1">
