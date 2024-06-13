@@ -189,6 +189,7 @@ class Database:
 
     async def num_files_in_bucket(self, user_id: str, business: Business) -> int:
         try:
+            print(f"{user_id}/{business.id}")
             bucket = self.supabase.storage.from_("loan_docs").list(
                 f"{user_id}/{business.id}"
             )
@@ -307,12 +308,12 @@ class Database:
     async def get_diligence_file_paths(self, user_id: str) -> List[str]:
         try:
             bucket = self.supabase.storage.from_("diligence_docs").list(
-                user_id,
+                f"{user_id}/bank_statements"
             )
 
             filenames = [file["name"] for file in bucket]
 
-            return [f"{user_id}/{filename}" for filename in filenames]
+            return [f"{user_id}/bank_statements/{filename}" for filename in filenames]
         except StorageException as e:
             return []
 
@@ -372,7 +373,7 @@ class Database:
             loan_application.lender = lender
 
         return result
-    
+
     async def get_lois(self, user_id: str, loi_id: str = None) -> List[LOI]:
         if loi_id:
             response = (
@@ -383,7 +384,7 @@ class Database:
                 .execute()
             )
             return [LOI(**row) for row in response.data]
-        
+
         response = (
             self.supabase.table("letters_of_intent")
             .select("*")
@@ -409,7 +410,7 @@ class Database:
             row = response.data[0]
             return LOI(**row)
         return None
-    
+
     async def get_lois(self, user_id: str, loi_id: str = None) -> List[LOI]:
         if loi_id:
             response = (
@@ -421,7 +422,7 @@ class Database:
                 .execute()
             )
             return [LOI(**row) for row in response.data]
-        
+
         response = (
             self.supabase.table("letters_of_intent")
             .select("*")
@@ -438,7 +439,7 @@ class Database:
             .in_("id", loi_ids)
             .execute()
         )
-        if getattr(response, 'error', None) is not None:
+        if getattr(response, "error", None) is not None:
             raise Exception(f"Failed to delete LOIs: {response.error.message}")
         return [LOI(**row) for row in response.data]
 

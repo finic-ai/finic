@@ -184,6 +184,7 @@ function LoiStepThree({ setActiveStep, updateLoi, loi }: LoiStepThreeProps) {
           <label className="text-body-bold font-body-bold text-default-font" htmlFor="noteOnStandby">
             Will the note be standby?
           </label>
+          <p className="text-label pb-3">A 2 year standby is required by SBA 7(a) lenders for a sellers note to count towards minimum equity requirements.</p>
           <ToggleGroup value={noteOnStandby || undefined}>
             <ToggleGroup.Item icon={null} value="yes" onClick={() => setNoteOnStandby("yes")}>
               Yes

@@ -192,21 +192,32 @@ export async function downloadFile(url: string) {
   return fileUrl;
 }
 
-export async function uploadDiligenceDocument(
+export async function uploadDiligenceDocuments(
   apiKey: string,
   userId: string,
-  businessId: string,
-  file: File
+  files: Array<File>,
+  fileNames: Array<string>
 ) {
-  const { data, error } = await supabase.storage
-    .from("diligence_docs")
-    .upload(`${userId}/${businessId}/cim.pdf`, file);
+  // Upload files to supabase bucket using the file names provided
 
-  if (error) {
-    console.error(`Error uploading file: ${error.message}`);
-    return null;
-  }
-  return data;
+  await Promise.all(
+    files.map(async (file, index) => {
+      // get the file extension
+      const extension = file.name.split(".").pop();
+
+      const { data, error } = await supabase.storage
+        .from("diligence_docs")
+        .upload(
+          `${userId}/bank_statements/${fileNames[index]}.${extension}`,
+          file,
+          { upsert: true }
+        );
+
+      if (error) {
+        console.error(`Error uploading file: ${error.message}`);
+      }
+    })
+  );
 }
 
 export const chat = async (apiKey: string, messages: any): Promise<any> => {
@@ -416,6 +427,26 @@ export const getUsername = async (id: string): Promise<string> => {
     return data.username;
   } catch (error: any) {
     console.error(`Error getting username: ${error.message}`);
+    return error;
+  }
+};
+
+export const generateProofOfCash = async (apiKey: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/generate-proof-of-cash",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(`Error generating proof of cash: ${error.message}`);
     return error;
   }
 };

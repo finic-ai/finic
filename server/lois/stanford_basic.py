@@ -284,8 +284,8 @@ Title: _______________________
         p = self.document.add_paragraph("""
 
 
-
-ACCEPTED AND AGREED:""")
+ACCEPTED AND AGREED:
+""")
 
         p.add_run({self.business_name}).bold = True
         p.add_run(f"""

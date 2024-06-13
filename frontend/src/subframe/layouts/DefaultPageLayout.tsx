@@ -54,13 +54,18 @@ const DefaultPageLayoutRoot = React.forwardRef<
           <Sidebar.Item selected={location.pathname === "/diligence"} icon="FeatherSparkles"
             onClick={() => {
               window.location.href = "/diligence";
-            }}
-          >Diligence AI</Sidebar.Item>
-          <Sidebar.Item icon="FeatherFileSignature" selected={['/lois', '/create-loi'].some(path => location.pathname.includes(path))}
+            }}>
+            Financial Due Diligence
+          </Sidebar.Item>
+          <Sidebar.Item icon="FeatherFileSignature" 
+            selected={location.pathname === "/lois"}
             onClick={() => {
               window.location.href = "/lois";
-            }}>LOIs</Sidebar.Item>
-          <Sidebar.Item selected ={location.pathname === "/"} icon="FeatherLandmark" 
+            }}>LOIs
+          </Sidebar.Item>
+          <Sidebar.Item
+            selected={location.pathname === "/"}
+            icon="FeatherDollarSign"
             onClick={() => {
               window.location.href = "/";
             }}>Find a Lender</Sidebar.Item>
