@@ -108,7 +108,7 @@ function CreateLoiPage() {
         <div className="flex w-full flex-col items-start gap-2">
           <Breadcrumbs>
             <Breadcrumbs.Item onClick={() => {
-              window.location.href = "/lois";
+              navigate("/lois");
             }}>LOIs</Breadcrumbs.Item>
             <Breadcrumbs.Divider />
             <Breadcrumbs.Item active={true}>Create LOI</Breadcrumbs.Item>
@@ -162,19 +162,17 @@ function CreateLoiPage() {
             }
           })()}
           <div className="flex flex-col items-center justify-center gap-1">
-            <div className="flex w-80 flex-col items-center justify-center gap-2 rounded-md bg-neutral-50 pt-6 pr-6 pb-6 pl-6">
-              <span className="text-body font-body text-subtext-color">
-                LOI Preview
-              </span>
-            </div>
             <Button
               variant="brand-tertiary"
               size="medium"
               icon="FeatherEye"
               iconRight={null}
               loading={false}
+              onClick={() => {
+                window.open("https://api.godealwise.com/storage/v1/object/public/lois/Search_Fund_Starter_Kit_-_Letter_of_Intent.pdf", "_blank");
+              }}
             >
-              Preview Template
+              View Template
             </Button>
           </div>
         </div>

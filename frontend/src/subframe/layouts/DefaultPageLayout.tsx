@@ -47,7 +47,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
     >
       {isLoggedIn && (
         <Sidebar
-          className="h-full w-56 flex-none"
+          className="h-full w-57 flex-none"
           hideLogo={false}
           logoImage="https://res.cloudinary.com/subframe/image/upload/v1711487224/uploads/132/s1sz3csmgplv8dnu1js7.png"
         >
