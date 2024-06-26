@@ -10,6 +10,7 @@ import LoginPage from "./LoginPage";
 import QuickBooks from "./pages/quickbooks";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { Root } from "@subframe/core/dist/cjs/components/progress";
+import DisconnectQuickbooks from "./pages/disconnectQuickbooks";
 import TagManager from "react-gtm-module";
 
 function App() {

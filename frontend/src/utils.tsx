@@ -276,22 +276,42 @@ export const createBusiness = async (
   }
 };
 
-export const getQuickbooksStatus = async (apiKey: string): Promise<any> => {
+export const getQuickbooksStatus = async (userId: string): Promise<any> => {
   try {
     const response = await fetch(
       import.meta.env.VITE_APP_SERVER_URL + "/get-quickbooks-status",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ id: userId }),
       }
     );
     const data = await response.json();
     return data;
   } catch (error: any) {
     console.error(`Error getting Quickbooks status: ${error.message}`);
+    return error;
+  }
+};
+
+export const disconnectQuickbooks = async (userId: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      import.meta.env.VITE_APP_SERVER_URL + "/disconnect-quickbooks",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: userId }),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(`Error disconnecting Quickbooks: ${error.message}`);
     return error;
   }
 };

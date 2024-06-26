@@ -52,9 +52,9 @@ const DefaultPageLayoutRoot = React.forwardRef<
           logoImage="https://res.cloudinary.com/subframe/image/upload/v1711487224/uploads/132/s1sz3csmgplv8dnu1js7.png"
         >
           <Sidebar.Item
-            selected={location.pathname === "/diligence"}
+            selected={location.pathname === "/"}
             onClick={() => {
-              window.location.href = "/diligence";
+              window.location.href = "/";
             }}
           >
             Quality of Earnings
@@ -63,7 +63,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
           onClick={() => {
             window.location.href = "/lois";
           }}>LOIs</Sidebar.Item> */}
-          <Sidebar.Item
+          {/* <Sidebar.Item
             selected={location.pathname === "/"}
             icon="FeatherDollarSign"
             onClick={() => {
@@ -71,7 +71,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             }}
           >
             Find a Lender
-          </Sidebar.Item>
+          </Sidebar.Item> */}
           {/* logout button */}
           <Sidebar.Item
             icon="FeatherLogOut"

@@ -37,6 +37,7 @@ from models.api import (
     CreateBusinessRequest,
     CreateLoiRequest,
     GetUsernameRequest,
+    GetQuickbooksStatusRequest,
 )
 import uuid
 from models.models import AppConfig, Business, LOI
@@ -345,17 +346,30 @@ async def get_diligence_docs(
 
 @app.post("/get-quickbooks-status")
 async def get_quickbooks_status(
-    config: AppConfig = Depends(validate_token),
+    request: GetQuickbooksStatusRequest = Body(...),
 ):
     try:
         data_connector = DataConnector()
 
-        connection = data_connector.get_quickbooks_connection(config.user_id)
+        connection = data_connector.get_quickbooks_connection(request.id)
         status = False
         if "credentials" in connection:
             status = True
 
         return {"connected": status}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/disconnect-quickbooks")
+async def disconnect_quickbooks(
+    request: GetQuickbooksStatusRequest = Body(...),
+):
+    try:
+        data_connector = DataConnector()
+        data_connector.disconnect_quickbooks(request.id)
+        return {"success": True}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

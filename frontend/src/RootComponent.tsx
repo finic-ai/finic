@@ -13,6 +13,7 @@ import { init, Form } from "@feathery/react";
 import Onboarding from "./pages/onboarding";
 import Dashboard from "./pages/dashboard";
 import Quickbooks from "./pages/quickbooks";
+import DisconnectQuickbooks from "./pages/disconnectQuickbooks";
 import DiligenceAssistant from "./pages/diligence";
 import LoiPage from "./pages/loiPage";
 import CreateLoiPage from "./pages/createLoiPage";
@@ -51,8 +52,7 @@ function RootComponent() {
       ) : (
         <>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/diligence" element={<DiligenceAssistant />} />
+            <Route path="/" element={<DiligenceAssistant />} />
             <Route path="/quickbooks" element={<Quickbooks />} />
             <Route path="/lois" element={<LoiPage />} />
             <Route path="/create-loi/" element={<CreateLoiPage />} />

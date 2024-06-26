@@ -71,3 +71,7 @@ class ChatRequest(BaseModel):
 
 class GetUsernameRequest(BaseModel):
     id: str
+
+
+class GetQuickbooksStatusRequest(BaseModel):
+    id: str

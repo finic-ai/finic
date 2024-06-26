@@ -71,12 +71,12 @@ function ConnectQuickbooks({
               name="FeatherLink"
             />
             <span className="text-subheader font-subheader text-default-font">
-              Connect Quickbooks
+              Connect QuickBooks
             </span>
           </div>
           <span className="text-body font-body text-subtext-color">
             Send this link to the seller so that they can connect their
-            Quickbooks account.
+            QuickBooks account.
           </span>
         </div>
         <CopyToClipboardField
@@ -267,7 +267,7 @@ function DiligenceAssistant() {
 
   useEffect(() => {
     async function getConnectionStatus() {
-      const response = await getQuickbooksStatus(bearer);
+      const response = await getQuickbooksStatus(userId);
       if (response.connected) {
         setConnected(true);
       }
@@ -292,7 +292,7 @@ function DiligenceAssistant() {
               Proof of Cash
             </span>
             <span className="w-full text-body font-body text-subtext-color">
-              Connect the seller's Quickbooks and upload their bank statements
+              Connect the seller's QuickBooks and upload their bank statements
               to get a preliminary proof of cash.
             </span>
           </div>
