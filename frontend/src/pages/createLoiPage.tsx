@@ -7,19 +7,13 @@ import { DefaultPageLayout } from "../subframe";
 import { Button } from "@/subframe/components/Button";
 import { Breadcrumbs } from "@/subframe/components/Breadcrumbs";
 import { Steps } from "@/subframe/components/Steps";
-import { TextField } from "@/subframe/components/TextField";
-import { Select } from "@/subframe/components/Select";
-import { TextArea } from "@/subframe/components/TextArea";
-import { RadioGroup } from "@/subframe/components/RadioGroup";
-import { Checkbox } from "@/subframe/components/Checkbox";
-import { CheckboxGroup } from "@/subframe/components/CheckboxGroup";
-import { RadioCardGroup } from "@/subframe/components/RadioCardGroup";
-import { Accordion } from "@/subframe/components/Accordion";
-import { useForm, SubmitHandler } from "react-hook-form"
+import { DialogLayout } from "@/subframe/layouts/DialogLayout";
+import { HomeCard } from "@/subframe/components/HomeCard";
 import LoiStepOne from "../createLoiSteps/loiStepOne";
-import LoiStepTwo from "../createLoiSteps/loiStepTwo";
-import LoiStepThree from "../createLoiSteps/loiStepThree";
-import LoiStepFour from "../createLoiSteps/loiStepFour";
+import LoiStepTwo from "../createLoiSteps/loiStepTwo.tsx";
+import LoiStepThree from "../createLoiSteps/loiStepThree.tsx";
+import LoiStepFour from "../createLoiSteps/loiStepFour.tsx";
+import LoiStepFive from "../createLoiSteps/loiStepFive.tsx";
 import { LOI } from "../pages/loiPage.tsx"
 
 import { getLois, upsertLoi } from "../utils";
@@ -28,6 +22,57 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
   api_host: "https://app.posthog.com",
 });
 
+interface ConfirmationModalProps {
+  open: boolean;
+  docxFilePath: string;
+  filename: string;
+}
+
+function ConfirmationModal({ open, docxFilePath, filename }: ConfirmationModalProps) {
+  const navigate = useNavigate();
+  return (
+    <DialogLayout open={open} onOpenChange={() => {}}>
+      <div className="flex h-full w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
+        <span className="text-subheader font-subheader text-default-font">
+          🎉 Your LOI is ready
+        </span>
+        <div className="flex w-full flex-col items-start gap-6">
+          <div className="flex w-full flex-col items-start gap-2">
+            <span className="text-body-bold font-body-bold text-default-font">
+              Click to Download
+            </span>
+            <div className="flex h-full w-full grow shrink-0 basis-0 items-start gap-2">
+              <HomeCard
+                title="DOCX"
+                subtitle="Fully Editable"
+                icon="FeatherFileEdit"
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = docxFilePath;
+                  // Specify the filename you want to download as
+                  link.download = filename;
+                  document.body.appendChild(link); // Append to the document
+                  link.click(); // Programmatically click the link to trigger the download
+                  document.body.removeChild(link); // Clean up and remove the link
+                }}
+              />
+            </div>
+          </div>
+          <span className="text-label font-label text-subtext-color">
+            You can also access these files anytime from the LOI page.
+          </span>
+        </div>
+        <div className="flex w-full items-center justify-end gap-2">
+          <Button size="medium" icon={null} onClick={() => navigate('/lois')}>
+            Back to LOIs
+          </Button>
+        </div>
+      </div>
+    </DialogLayout>
+  );
+}
+
+
 function CreateLoiPage() {
   const navigate = useNavigate();
   const { loiId } = useParams<{ loiId: string }>();
@@ -35,6 +80,7 @@ function CreateLoiPage() {
   const { bearer, email, userId } = useUserStateContext();
   const [ activeStep, setActiveStep ] = useState(0);
   const [ loiData, setLoiData ] = useState<LOI | null>(null);
+  const [ confirmationModalOpen, setConfirmationModalOpen ] = useState(false);
 
   useEffect(() => {
     const loadLoiData = async () => {
@@ -57,11 +103,12 @@ function CreateLoiPage() {
   
   return (
     <DefaultPageLayout>
+      {loiData !== null && <ConfirmationModal open={confirmationModalOpen} docxFilePath={`https://api.godealwise.com/storage/v1/object/public/lois/${loiId}.docx`} filename={`${loiData.businessName} - Letter of Intent.docx`}/>}
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-8 bg-default-background pt-12 pb-12">
         <div className="flex w-full flex-col items-start gap-2">
           <Breadcrumbs>
             <Breadcrumbs.Item onClick={() => {
-              window.location.href = "/lois";
+              navigate("/lois");
             }}>LOIs</Breadcrumbs.Item>
             <Breadcrumbs.Divider />
             <Breadcrumbs.Item active={true}>Create LOI</Breadcrumbs.Item>
@@ -72,27 +119,32 @@ function CreateLoiPage() {
         </div>
         <Steps>
           <Steps.Step
-            name="Basic Information"
+            name="Buyer Info"
             firstStep={true}
             variant={activeStep > 0 ? "success": "active"}
             stepNumber="1"
             onClick={() => setActiveStep(0)}
           />
           <Steps.Step 
-            name="Deal Structure" 
+            name="Company Info" 
             variant={activeStep > 1 ? "success": (activeStep == 1 ? "active": "default")} 
             stepNumber="2" 
             onClick={() => activeStep > 1 && setActiveStep(1)}/>
           <Steps.Step 
-            name="Post Close" 
+            name="Deal Structure" 
             variant={activeStep > 2 ? "success": (activeStep == 2 ? "active": "default")} 
             stepNumber="3" 
             onClick={() => activeStep > 2 && setActiveStep(2)}/>
           <Steps.Step 
-            name="Misc" 
-            variant={activeStep == 3 ? "active": "default"} 
-            lastStep={true} 
+            name="Post Close" 
+            variant={activeStep > 3 ? "success": (activeStep == 3 ? "active": "default")} 
+            onClick={() => activeStep > 1 && setActiveStep(3)}
             stepNumber="4" />
+          <Steps.Step 
+            name="Legal" 
+            variant={activeStep == 4 ? "active": "default"} 
+            lastStep={true} 
+            stepNumber="5" />
         </Steps>
         <div className="flex w-full items-start gap-6">
           {(() => {
@@ -105,22 +157,22 @@ function CreateLoiPage() {
                 return <LoiStepThree setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
               case 3:
                 return <LoiStepFour setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData}/>;
+              case 4:
+                return <LoiStepFive setActiveStep={setActiveStep} updateLoi={handleUpsertLoi} loi={loiData} setConfirmationModalOpen={setConfirmationModalOpen}/>;
             }
           })()}
           <div className="flex flex-col items-center justify-center gap-1">
-            <div className="flex w-80 flex-col items-center justify-center gap-2 rounded-md bg-neutral-50 pt-6 pr-6 pb-6 pl-6">
-              <span className="text-body font-body text-subtext-color">
-                LOI Preview
-              </span>
-            </div>
             <Button
               variant="brand-tertiary"
               size="medium"
               icon="FeatherEye"
               iconRight={null}
               loading={false}
+              onClick={() => {
+                window.open("https://api.godealwise.com/storage/v1/object/public/lois/Search_Fund_Starter_Kit_-_Letter_of_Intent.pdf", "_blank");
+              }}
             >
-              Preview
+              View Template
             </Button>
           </div>
         </div>

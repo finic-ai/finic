@@ -31,7 +31,8 @@ babel = "^2.14.0"
 firecrawl-py = "^0.0.8"
 pypdf = "^4.2.0"
 poetry-dotenv-plugin = "^0.2.0"
-vellum-ai = "^0.6.1"
+python-docx = "^1.1.2"
+inflect = "^7.3.0"
 
 [tool.poetry.scripts]
 start = "server.main:start"

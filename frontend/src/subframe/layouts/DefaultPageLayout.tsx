@@ -47,31 +47,29 @@ const DefaultPageLayoutRoot = React.forwardRef<
     >
       {isLoggedIn && (
         <Sidebar
-          className="h-full w-56 flex-none"
+          className="h-full w-57 flex-none"
           hideLogo={false}
           logoImage="https://res.cloudinary.com/subframe/image/upload/v1711487224/uploads/132/s1sz3csmgplv8dnu1js7.png"
         >
           <Sidebar.Item
             selected={location.pathname === "/"}
+            icon="FeatherSparkles"
             onClick={() => {
               window.location.href = "/";
             }}
           >
             Quality of Earnings
           </Sidebar.Item>
-          {/* <Sidebar.Item icon="FeatherBarChart"
-          onClick={() => {
-            window.location.href = "/lois";
-          }}>LOIs</Sidebar.Item> */}
-          {/* <Sidebar.Item
-            selected={location.pathname === "/"}
-            icon="FeatherDollarSign"
+          <Sidebar.Item
+            icon="FeatherFileSignature"
+            selected={location.pathname === "/lois"}
             onClick={() => {
-              window.location.href = "/";
+              window.location.href = "/lois";
             }}
           >
-            Find a Lender
-          </Sidebar.Item> */}
+            LOIs
+          </Sidebar.Item>
+
           {/* logout button */}
           <Sidebar.Item
             icon="FeatherLogOut"

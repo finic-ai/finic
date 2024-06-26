@@ -23,9 +23,6 @@ import httpx
 import datetime
 from pypdf import PdfWriter, PdfReader
 import fitz
-import vellum
-from vellum.client import Vellum
-import vellum.types as types
 import requests
 from database import Database
 import base64

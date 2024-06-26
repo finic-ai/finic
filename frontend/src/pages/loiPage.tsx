@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import ReactDOM from "react-dom";
 import "../App.css";
 import posthog from "posthog-js";
@@ -25,9 +26,8 @@ export type LOI = {
   businessName: string,
   buyerName: string,
   legalEntity: string,
-  bizRevenue: number,
-  bizEbitda: number,
-  financialsPeriod: string,
+  businessRevenue: number,
+  businessEbitda: number,
   purchasePrice: number,
   notePercent: number,
   noteInterestRate: number,
@@ -39,12 +39,19 @@ export type LOI = {
   earnoutDescription: string,
   escrowPercent: number,
   closingDate: Date,
-  exclusivityStartDate: Date,
-  exclusivityEndDate: Date,
+  exclusivityDays: number,
   terminationFeeType: string,
   terminationFeeAmount: number,
   governingLaw: string,
   expirationDate: Date,
+  businessAddress: string,
+  businessState: string,
+  businessEntityType: string,
+  sellerName: string,
+  equityRolloverPercent: number,
+  escrowCap: number,
+  escrowTippingBasket: number,
+  notePaymentType: boolean
 }
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
@@ -53,16 +60,17 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
 init("8f535b4f-a447-4278-b242-bd77d408f7e2");
 
 function LoiPage() {
+  const navigate = useNavigate();
   const { bearer, email, userId } = useUserStateContext();
   const [ lois, setLois ] = useState<Array<LOI> | null>(null);
 
+  const loadLoiData = async () => {
+    const lois = await getLois(bearer, userId);
+    console.log(lois);
+    setLois(lois);
+  };
+
   useEffect(() => {
-    const loadLoiData = async () => {
-      const lois = await getLois(bearer, userId);
-      console.log(lois);
-      setLois(lois);
-    };
-  
     loadLoiData();
   }, []);
 
@@ -88,7 +96,7 @@ function LoiPage() {
             Get started
           </span>
           <span className="text-body font-body text-default-font">
-            It takes just 5 minutes to create an LOI on Dealwise.
+            It takes just 5 minutes to create an LOI on Dealwise. We use standard templates provided by Stanford GSB.
           </span>
         </div>
         <div className="flex w-full flex-col items-start gap-4">
@@ -97,7 +105,7 @@ function LoiPage() {
               {`${lois ? lois.length : 0} LOIs`}
             </span>
             <SubframeCore.DropdownMenu.Root>
-              <SubframeCore.DropdownMenu.Trigger asChild={true}>
+              {/* <SubframeCore.DropdownMenu.Trigger asChild={true}>
                 <Button
                   variant="neutral-secondary"
                   icon="FeatherArrowUpDown"
@@ -105,7 +113,7 @@ function LoiPage() {
                 >
                   Sort
                 </Button>
-              </SubframeCore.DropdownMenu.Trigger>
+              </SubframeCore.DropdownMenu.Trigger> */}
               <SubframeCore.DropdownMenu.Portal>
                 <SubframeCore.DropdownMenu.Content
                   side="bottom"
@@ -148,22 +156,10 @@ function LoiPage() {
           <div className="flex w-full flex-col items-start gap-2">
             {!lois || lois.length == 0 && <div className="flex w-full items-start gap-4">
               <HomeCard
-                title="Answer Questions"
-                subtitle=""
+                title="Get Started"
+                subtitle="Click here to create your first LOI"
                 icon="FeatherFormInput"
-                className="hover:bg-white cursor-default"
-              />
-              <HomeCard
-                title="Generate a LOI"
-                subtitle=""
-                icon="FeatherSparkles"
-                className="hover:bg-white cursor-default"
-              />
-              <HomeCard 
-                title="Download PDF" 
-                subtitle="" 
-                icon="FeatherFileDown" 
-                className="hover:bg-white cursor-default"
+                onClick={() => navigate("/create-loi")}
               />
             </div>}
             {lois && lois.map((loi) => (
@@ -186,10 +182,10 @@ function LoiPage() {
                       asChild={true}
                     >
                       <DropdownMenu>
-                        <DropdownMenu.DropdownItem icon="FeatherDownload">
+                        {/* <DropdownMenu.DropdownItem icon="FeatherDownload">
                           Download PDF
-                        </DropdownMenu.DropdownItem>
-                        <DropdownMenu.DropdownItem icon="FeatherFileDown">
+                        </DropdownMenu.DropdownItem> */}
+                        <DropdownMenu.DropdownItem icon="FeatherFileDown" onClick={() => window.open(`https://api.godealwise.com/storage/v1/object/public/lois/${loi.id}.docx`, '_blank')}>
                           Download DOCX
                         </DropdownMenu.DropdownItem>
                         <DropdownMenu.DropdownItem icon="FeatherEdit" onClick={() => {
@@ -197,8 +193,9 @@ function LoiPage() {
                         }}>
                           Edit
                         </DropdownMenu.DropdownItem>
-                        <DropdownMenu.DropdownItem icon="FeatherTrash" onClick={() => {
-                          deleteLoi(bearer, loi.id);
+                        <DropdownMenu.DropdownItem icon="FeatherTrash" onClick={async () =>{
+                          await deleteLoi(bearer, loi.id);
+                          loadLoiData();
                         }}>
                           Delete
                         </DropdownMenu.DropdownItem>

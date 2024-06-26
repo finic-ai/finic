@@ -1,1 +1,1 @@
-from .loi_generator import LOIGenerator
+from .stanford_basic import StanfordBasicLOI
