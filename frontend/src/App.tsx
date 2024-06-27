@@ -48,7 +48,6 @@ function App() {
           <RootComponent />
         ) : (
           <Routes>
-            <Route path="/quickbooks" element={<QuickBooks />} />
             <Route path="*" element={<LoginPage />} />
           </Routes>
         )}
