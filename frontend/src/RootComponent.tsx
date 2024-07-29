@@ -14,7 +14,7 @@ import Onboarding from "./pages/onboarding";
 import Dashboard from "./pages/dashboard";
 import Quickbooks from "./pages/quickbooks";
 import DisconnectQuickbooks from "./pages/disconnectQuickbooks";
-import DiligenceAssistant from "./pages/diligence";
+import Workflows from "./pages/workflows";
 import LoiPage from "./pages/loiPage";
 import CreateLoiPage from "./pages/createLoiPage";
 import posthog from "posthog-js";
@@ -52,11 +52,7 @@ function RootComponent() {
       ) : (
         <>
           <Routes>
-            <Route path="/" element={<DiligenceAssistant />} />
-            <Route path="/quickbooks" element={<Quickbooks />} />
-            <Route path="/lois" element={<LoiPage />} />
-            <Route path="/create-loi/" element={<CreateLoiPage />} />
-            <Route path="/create-loi/:loiId" element={<CreateLoiPage />} />
+            <Route path="/" element={<Workflows />} />
           </Routes>
         </>
       )}
