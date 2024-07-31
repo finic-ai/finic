@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Icon Button — https://app.subframe.com/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
+ * Icon Button — https://app.subframe.com/0bc1b5ae3457/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
  */
 
 import React from "react";
@@ -23,6 +23,7 @@ interface IconButtonRootProps
   size?: "large" | "medium" | "small";
   icon?: SubframeCore.IconName;
   loading?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 }
 
@@ -42,7 +43,7 @@ const IconButtonRoot = React.forwardRef<HTMLElement, IconButtonRootProps>(
     return (
       <button
         className={SubframeCore.twClassNames(
-          "group/af9405b1 flex h-8 w-8 cursor-pointer items-center justify-center gap-2 rounded-md border-none bg-transparent hover:bg-neutral-50 active:bg-neutral-100 disabled:cursor-default disabled:bg-neutral-200 hover:disabled:cursor-default hover:disabled:bg-neutral-200 active:disabled:cursor-default active:disabled:bg-neutral-200",
+          "group/af9405b1 flex h-8 w-8 cursor-pointer items-center justify-center gap-2 rounded border-none bg-transparent hover:bg-neutral-50 active:bg-neutral-100 disabled:cursor-default disabled:bg-neutral-200 hover:disabled:cursor-default hover:disabled:bg-neutral-200 active:disabled:cursor-default active:disabled:bg-neutral-200",
           {
             "h-6 w-6": size === "small",
             "h-10 w-10": size === "large",

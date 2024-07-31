@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Accordion — https://app.subframe.com/library?component=Accordion_d2e81e20-863a-4027-826a-991d8910efd9
+ * Accordion — https://app.subframe.com/0bc1b5ae3457/library?component=Accordion_d2e81e20-863a-4027-826a-991d8910efd9
  */
 
 import React from "react";
@@ -96,21 +96,21 @@ const AccordionRoot = React.forwardRef<HTMLElement, AccordionRootProps>(
       <SubframeCore.Collapsible.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "group/d2e81e20 flex w-full flex-col items-start rounded-md",
+            "group/d2e81e20 flex w-full flex-col items-start rounded",
             className
           )}
           ref={ref as any}
         >
           <Trigger>
             {trigger ? (
-              <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start group-data-[state=open]/d2e81e20:h-auto group-data-[state=open]/d2e81e20:w-full group-data-[state=open]/d2e81e20:flex-none">
+              <div className="flex w-full grow shrink-0 basis-0 flex-col items-start group-data-[state=open]/d2e81e20:h-auto group-data-[state=open]/d2e81e20:w-full group-data-[state=open]/d2e81e20:flex-none">
                 {trigger}
               </div>
             ) : null}
           </Trigger>
           <Content>
             {children ? (
-              <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start">
+              <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
                 {children}
               </div>
             ) : null}

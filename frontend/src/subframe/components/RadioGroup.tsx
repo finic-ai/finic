@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Radio Group — https://app.subframe.com/library?component=Radio+Group_c4b6300e-20b4-4f3e-8b9f-379a046674ca
+ * Radio Group — https://app.subframe.com/0bc1b5ae3457/library?component=Radio+Group_c4b6300e-20b4-4f3e-8b9f-379a046674ca
  */
 
 import React from "react";
@@ -21,7 +21,7 @@ const Option = React.forwardRef<HTMLElement, OptionProps>(function Option(
     <SubframeCore.RadioGroup.Item asChild={true} {...otherProps}>
       <button
         className={SubframeCore.twClassNames(
-          "group/0f804ad9 flex cursor-pointer items-center gap-2 border-none bg-transparent disabled:cursor-default",
+          "group/0f804ad9 flex cursor-pointer items-center gap-2 border-none bg-transparent text-left disabled:cursor-default",
           className
         )}
         ref={ref as any}
@@ -48,6 +48,8 @@ interface RadioGroupRootProps
   error?: boolean;
   horizontal?: boolean;
   children?: React.ReactNode;
+  value?: string;
+  onValueChange?: (value: string) => void;
   className?: string;
 }
 
@@ -91,7 +93,7 @@ const RadioGroupRoot = React.forwardRef<HTMLElement, RadioGroupRootProps>(
           {helpText ? (
             <span
               className={SubframeCore.twClassNames(
-                "text-label font-label text-subtext-color",
+                "text-caption font-caption text-subtext-color",
                 { "text-error-700": error }
               )}
             >

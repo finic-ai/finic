@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Text Field — https://app.subframe.com/library?component=Text+Field_be48ca43-f8e7-4c0e-8870-d219ea11abfe
+ * Text Field — https://app.subframe.com/0bc1b5ae3457/library?component=Text+Field_be48ca43-f8e7-4c0e-8870-d219ea11abfe
  */
 
 import React from "react";
@@ -9,6 +9,8 @@ import * as SubframeCore from "@subframe/core";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }
 
@@ -74,7 +76,7 @@ const TextFieldRoot = React.forwardRef<HTMLElement, TextFieldRootProps>(
         ) : null}
         <div
           className={SubframeCore.twClassNames(
-            "flex h-8 w-full flex-none items-center gap-1 rounded-md border border-solid border-neutral-border bg-default-background pr-2 pl-2 group-focus-within/be48ca43:border group-focus-within/be48ca43:border-solid group-focus-within/be48ca43:border-brand-primary",
+            "flex h-8 w-full flex-none items-center gap-1 rounded border border-solid border-neutral-border bg-default-background pr-2 pl-2 group-focus-within/be48ca43:border group-focus-within/be48ca43:border-solid group-focus-within/be48ca43:border-brand-primary",
             {
               "border border-solid border-neutral-100 bg-neutral-100 group-hover/be48ca43:border group-hover/be48ca43:border-solid group-hover/be48ca43:border-neutral-border group-focus-within/be48ca43:bg-default-background":
                 variant === "filled",
@@ -88,7 +90,7 @@ const TextFieldRoot = React.forwardRef<HTMLElement, TextFieldRootProps>(
             name={icon}
           />
           {children ? (
-            <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start pr-1 pl-1">
+            <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch pr-1 pl-1">
               {children}
             </div>
           ) : null}
@@ -103,7 +105,7 @@ const TextFieldRoot = React.forwardRef<HTMLElement, TextFieldRootProps>(
         {helpText ? (
           <span
             className={SubframeCore.twClassNames(
-              "text-label font-label text-subtext-color",
+              "text-caption font-caption text-subtext-color",
               { "text-error-700": error }
             )}
           >

@@ -5,16 +5,16 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          50: "rgb(240, 253, 250)",
-          100: "rgb(204, 251, 241)",
-          200: "rgb(153, 246, 228)",
-          300: "rgb(94, 234, 212)",
-          400: "rgb(45, 212, 191)",
-          500: "rgb(20, 184, 166)",
-          600: "rgb(13, 148, 136)",
-          700: "rgb(15, 118, 110)",
-          800: "rgb(17, 94, 89)",
-          900: "rgb(19, 78, 74)",
+          50: "rgb(255, 247, 237)",
+          100: "rgb(255, 237, 213)",
+          200: "rgb(254, 215, 170)",
+          300: "rgb(253, 186, 116)",
+          400: "rgb(251, 146, 60)",
+          500: "rgb(249, 115, 22)",
+          600: "rgb(234, 88, 12)",
+          700: "rgb(194, 65, 12)",
+          800: "rgb(154, 52, 18)",
+          900: "rgb(124, 45, 18)",
         },
         neutral: {
           0: "rgb(255, 255, 255)",
@@ -66,7 +66,7 @@ module.exports = {
           800: "rgb(22, 101, 52)",
           900: "rgb(20, 83, 45)",
         },
-        "brand-primary": "rgb(13, 148, 136)",
+        "brand-primary": "rgb(234, 88, 12)",
         "default-font": "rgb(23, 23, 23)",
         "subtext-color": "rgb(115, 115, 115)",
         "neutral-border": "rgb(229, 229, 229)",
@@ -74,18 +74,18 @@ module.exports = {
         "default-background": "rgb(255, 255, 255)",
       },
       fontSize: {
-        label: [
+        caption: [
           "12px",
           {
             lineHeight: "16px",
             fontWeight: "400",
           },
         ],
-        "label-bold": [
+        "caption-bold": [
           "12px",
           {
             lineHeight: "16px",
-            fontWeight: "600",
+            fontWeight: "500",
           },
         ],
         body: [
@@ -99,28 +99,28 @@ module.exports = {
           "14px",
           {
             lineHeight: "20px",
+            fontWeight: "500",
+          },
+        ],
+        "heading-3": [
+          "16px",
+          {
+            lineHeight: "20px",
             fontWeight: "600",
           },
         ],
-        subheader: [
-          "18px",
+        "heading-2": [
+          "20px",
           {
-            lineHeight: "28px",
-            fontWeight: "500",
+            lineHeight: "24px",
+            fontWeight: "600",
           },
         ],
-        "section-header": [
-          "24px",
+        "heading-1": [
+          "30px",
           {
-            lineHeight: "32px",
-            fontWeight: "500",
-          },
-        ],
-        header: [
-          "36px",
-          {
-            lineHeight: "40px",
-            fontWeight: "500",
+            lineHeight: "36px",
+            fontWeight: "600",
           },
         ],
         "monospace-body": [
@@ -132,19 +132,19 @@ module.exports = {
         ],
       },
       fontFamily: {
-        label: "Inter",
-        "label-bold": "Inter",
+        caption: "Inter",
+        "caption-bold": "Inter",
         body: "Inter",
         "body-bold": "Inter",
-        subheader: "Inter",
-        "section-header": "Inter",
-        header: "Inter",
+        "heading-3": "Inter",
+        "heading-2": "Inter",
+        "heading-1": "Inter",
         "monospace-body": "monospace",
       },
       boxShadow: {
         default: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",
         overlay:
-          "0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1)",
+          "0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)",
       },
       container: {
         padding: {

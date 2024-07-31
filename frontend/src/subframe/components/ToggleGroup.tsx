@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Toggle Group — https://app.subframe.com/library?component=Toggle+Group_2026f10a-e3cc-4c89-80da-a7259acae3b7
+ * Toggle Group — https://app.subframe.com/0bc1b5ae3457/library?component=Toggle+Group_2026f10a-e3cc-4c89-80da-a7259acae3b7
  */
 
 import React from "react";
@@ -60,6 +60,8 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
 interface ToggleGroupRootProps
   extends React.ComponentProps<typeof SubframeCore.ToggleGroup.Root> {
   children?: React.ReactNode;
+  value?: string;
+  onValueChange?: (value: string) => void;
   className?: string;
 }
 
@@ -72,7 +74,7 @@ const ToggleGroupRoot = React.forwardRef<HTMLElement, ToggleGroupRootProps>(
       <SubframeCore.ToggleGroup.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "flex items-start gap-px overflow-hidden rounded-md border border-solid border-neutral-border bg-neutral-border",
+            "flex items-start gap-px overflow-hidden rounded border border-solid border-neutral-border bg-neutral-border",
             className
           )}
           ref={ref as any}

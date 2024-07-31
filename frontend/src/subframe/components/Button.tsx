@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * Button — https://app.subframe.com/0bc1b5ae3457/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
  */
 
 import React from "react";
@@ -25,6 +25,7 @@ interface ButtonRootProps
   icon?: SubframeCore.IconName;
   iconRight?: SubframeCore.IconName;
   loading?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 }
 
@@ -46,7 +47,7 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
     return (
       <button
         className={SubframeCore.twClassNames(
-          "group/3b777358 flex h-8 cursor-pointer items-center justify-center gap-2 rounded-md border-none bg-brand-600 pr-3 pl-3 hover:bg-brand-500 active:bg-brand-600 disabled:cursor-default disabled:bg-neutral-200 hover:disabled:cursor-default hover:disabled:bg-neutral-200 active:disabled:cursor-default active:disabled:bg-neutral-200",
+          "group/3b777358 flex h-8 cursor-pointer items-center justify-center gap-2 rounded border-none bg-brand-600 pr-3 pl-3 hover:bg-brand-500 active:bg-brand-600 disabled:cursor-default disabled:bg-neutral-200 hover:disabled:cursor-default hover:disabled:bg-neutral-200 active:disabled:cursor-default active:disabled:bg-neutral-200",
           {
             "h-6 w-auto flex-row gap-1 pt-0 pr-2 pb-0 pl-2": size === "small",
             "h-10 w-auto pt-0 pr-4 pb-0 pl-4": size === "large",
@@ -106,7 +107,7 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
               "text-body font-body text-white group-disabled/3b777358:text-neutral-400",
               {
                 "inline-block text-[12px] font-[400] leading-[20px]": loading,
-                "text-label font-label": size === "small",
+                "text-caption font-caption": size === "small",
                 "text-error-800":
                   variant === "destructive-tertiary" ||
                   variant === "destructive-secondary",
@@ -124,7 +125,7 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
             className={SubframeCore.twClassNames(
               "whitespace-nowrap text-body-bold font-body-bold text-white group-disabled/3b777358:text-neutral-400",
               {
-                "text-label-bold font-label-bold": size === "small",
+                "text-caption-bold font-caption-bold": size === "small",
                 "text-white": variant === "inverse",
                 "text-error-700":
                   variant === "destructive-tertiary" ||

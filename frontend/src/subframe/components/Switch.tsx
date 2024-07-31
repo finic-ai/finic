@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Switch — https://app.subframe.com/library?component=Switch_7a464794-9ea9-4040-b1de-5bfb2ce599d9
+ * Switch — https://app.subframe.com/0bc1b5ae3457/library?component=Switch_7a464794-9ea9-4040-b1de-5bfb2ce599d9
  */
 
 import React from "react";
@@ -31,6 +31,8 @@ const Thumb = React.forwardRef<HTMLElement, ThumbProps>(function Thumb(
 
 interface SwitchRootProps
   extends React.ComponentProps<typeof SubframeCore.Switch.Root> {
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
   className?: string;
 }
 

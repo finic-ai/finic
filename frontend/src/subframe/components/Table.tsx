@@ -1,10 +1,10 @@
 "use client";
 /*
  * Documentation:
- * Table — https://app.subframe.com/library?component=Table_142dfde7-d0cc-48a1-a04c-a08ab2252633
- * Badge — https://app.subframe.com/library?component=Badge_97bdb082-1124-4dd7-a335-b14b822d0157
- * Dropdown Menu — https://app.subframe.com/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
- * Icon Button — https://app.subframe.com/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
+ * Table — https://app.subframe.com/0bc1b5ae3457/library?component=Table_142dfde7-d0cc-48a1-a04c-a08ab2252633
+ * Badge — https://app.subframe.com/0bc1b5ae3457/library?component=Badge_97bdb082-1124-4dd7-a335-b14b822d0157
+ * Dropdown Menu — https://app.subframe.com/0bc1b5ae3457/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
+ * Icon Button — https://app.subframe.com/0bc1b5ae3457/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
  */
 
 import React from "react";
@@ -100,12 +100,12 @@ const HeaderCell = React.forwardRef<HTMLElement, HeaderCellProps>(
           ref={ref as any}
         >
           {children ? (
-            <span className="whitespace-nowrap text-label-bold font-label-bold text-subtext-color">
+            <span className="whitespace-nowrap text-caption-bold font-caption-bold text-subtext-color">
               {children}
             </span>
           ) : null}
           <SubframeCore.Icon
-            className="text-label font-label text-subtext-color"
+            className="text-caption font-caption text-subtext-color"
             name={icon}
           />
         </div>

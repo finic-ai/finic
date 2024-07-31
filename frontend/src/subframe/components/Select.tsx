@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Select — https://app.subframe.com/library?component=Select_bb88f90b-8c43-4b73-9c2f-3558ce7838f3
+ * Select — https://app.subframe.com/0bc1b5ae3457/library?component=Select_bb88f90b-8c43-4b73-9c2f-3558ce7838f3
  */
 
 import React from "react";
@@ -19,10 +19,10 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
   ref
 ) {
   return (
-    <SubframeCore.Select.Item value={value} {...otherProps}>
+    <SubframeCore.Select.Item value={value} asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "group/969e345b flex h-8 w-full cursor-pointer items-center gap-1 rounded-md pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-brand-50",
+          "group/969e345b flex h-8 w-full cursor-pointer items-center gap-1 rounded pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-brand-50",
           className
         )}
         ref={ref as any}
@@ -78,7 +78,7 @@ const Content = React.forwardRef<HTMLElement, ContentProps>(function Content(
     <SubframeCore.Select.Content asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "flex w-full flex-col items-start overflow-hidden rounded-md border border-solid border-neutral-border bg-white pt-1 pr-1 pb-1 pl-1 shadow-overlay",
+          "flex w-full flex-col items-start overflow-hidden rounded border border-solid border-neutral-border bg-white pt-1 pr-1 pb-1 pl-1 shadow-overlay",
           className
         )}
         ref={ref as any}
@@ -150,6 +150,7 @@ const ItemText = React.forwardRef<HTMLElement, ItemTextProps>(function ItemText(
 
 interface SelectRootProps
   extends React.ComponentProps<typeof SubframeCore.Select.Root> {
+  disabled?: boolean;
   error?: boolean;
   variant?: "outline" | "filled";
   label?: string;
@@ -157,12 +158,15 @@ interface SelectRootProps
   helpText?: string;
   icon?: SubframeCore.IconName;
   children?: React.ReactNode;
+  value?: string;
+  onValueChange?: (value: string) => void;
   className?: string;
 }
 
 const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
   function SelectRoot(
     {
+      disabled = false,
       error = false,
       variant = "outline",
       label,
@@ -171,18 +175,41 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
       icon = null,
       children,
       className,
+      value,
+      defaultValue,
+      onValueChange,
+      open,
+      defaultOpen,
+      onOpenChange,
+      dir,
+      name,
+      autoComplete,
+      required,
       ...otherProps
     }: SelectRootProps,
     ref
   ) {
     return (
-      <SubframeCore.Select.Root {...otherProps}>
+      <SubframeCore.Select.Root
+        disabled={disabled}
+        value={value}
+        defaultValue={defaultValue}
+        onValueChange={onValueChange}
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={onOpenChange}
+        dir={dir}
+        name={name}
+        autoComplete={autoComplete}
+        required={required}
+      >
         <div
           className={SubframeCore.twClassNames(
             "group/bb88f90b flex cursor-pointer flex-col items-start gap-1",
             className
           )}
           ref={ref as any}
+          {...otherProps}
         >
           {label ? (
             <span className="text-body-bold font-body-bold text-default-font">
@@ -191,11 +218,12 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
           ) : null}
           <div
             className={SubframeCore.twClassNames(
-              "flex h-8 w-full flex-none flex-col items-start rounded-md border border-solid border-neutral-border bg-default-background group-focus-within/bb88f90b:border group-focus-within/bb88f90b:border-solid group-focus-within/bb88f90b:border-brand-primary group-disabled/bb88f90b:bg-neutral-100",
+              "flex h-8 w-full flex-none flex-col items-start rounded border border-solid border-neutral-border bg-default-background group-focus-within/bb88f90b:border group-focus-within/bb88f90b:border-solid group-focus-within/bb88f90b:border-brand-primary",
               {
                 "border border-solid border-neutral-100 bg-neutral-100 group-hover/bb88f90b:border group-hover/bb88f90b:border-solid group-hover/bb88f90b:border-neutral-border group-hover/bb88f90b:bg-neutral-100":
                   variant === "filled",
                 "border border-solid border-error-600": error,
+                "bg-neutral-100": disabled,
               }
             )}
           >
@@ -204,7 +232,7 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
           {helpText ? (
             <span
               className={SubframeCore.twClassNames(
-                "text-label font-label text-subtext-color",
+                "text-caption font-caption text-subtext-color",
                 { "text-error-700": error }
               )}
             >
@@ -213,7 +241,7 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
           ) : null}
           <Content>
             {children ? (
-              <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start">
+              <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
                 {children}
               </div>
             ) : null}
