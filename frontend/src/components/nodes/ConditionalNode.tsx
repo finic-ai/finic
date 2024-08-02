@@ -1,9 +1,14 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { Handle, Position } from '@xyflow/react';
+import { 
+  Handle, 
+  Position,
+  type Node,
+  type NodeProps,
+} from '@xyflow/react';
 import * as SubframeCore from "@subframe/core";
-import { DefaultPageLayout } from "@/subframe/layouts/DefaultPageLayout";
+import { WorkflowPageLayout } from "@/subframe/layouts/WorkflowPageLayout";
 import { IconWithBackground } from "@/subframe/components/IconWithBackground";
 import { RadioGroup } from "@/subframe/components/RadioGroup";
 import { Button } from "@/subframe/components/Button";
@@ -16,15 +21,14 @@ import { Alert } from "@/subframe/components/Alert";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { Switch } from "@/subframe/components/Switch";
 
-import { Node, NodeType } from "@/types";
+import { NodeLayout } from "@/components/nodes";
 
-export default function ConditionalNode() {
-  const onChange = useCallback((evt: any) => {
-    console.log(evt.target.value);
-  }, []);
+type ConditionalNode = Node<{ openDrawer: () => void }, 'conditional'>;
+
+export default function ConditionalNode({ data }: NodeProps<ConditionalNode>) {
  
   return (
-    <div className="flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6">
+    <NodeLayout openDrawer={data.openDrawer}>
       <Handle 
         type="target" 
         position={Position.Left} 
@@ -314,18 +318,6 @@ export default function ConditionalNode() {
           Add Branch
         </Button>
       </div>
-      <div className="flex w-full items-center justify-end gap-2 pt-2 pr-2 pb-2 pl-2">
-        <Button
-          variant="brand-secondary"
-          icon="FeatherArrowUpRight"
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-        >
-          Open
-        </Button>
-        <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}>
-          Run Node
-        </Button>
-      </div>
-    </div>
+    </NodeLayout>
   );
 }

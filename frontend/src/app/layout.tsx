@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import {ReactFlowProvider} from "@xyflow/react"
+import React from "react";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -23,7 +26,9 @@ export default function RootLayout({
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
         </head>
       </head>
-      <body className={inter.className}>{children}</body>
+      <ReactFlowProvider>
+        <body className={inter.className}>{children}</body>
+      </ReactFlowProvider>
     </html>
   );
 }

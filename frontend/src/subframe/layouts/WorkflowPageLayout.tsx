@@ -1,31 +1,35 @@
 "use client";
 
 import React from "react";
+import { 
+  ReactFlowProvider,
+  type NodeTypes
+} from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
 import { EditorTopBar } from "../components/EditorTopBar";
 import { SidebarTile } from "../components/SidebarTile";
 import { SidebarButton } from "../components/SidebarButton";
 
-import { NodeType } from "@/types";
+import { FinicNodeType } from "@/types";
 
-interface DefaultPageLayoutRootProps
+interface WorkflowPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
-  addNode: (nodeType: NodeType) => void;
+  addNode: (type: FinicNodeType) => void;
 }
 
-const DefaultPageLayoutRoot = React.forwardRef<
+const WorkflowPageLayoutRoot = React.forwardRef<
   HTMLElement,
-  DefaultPageLayoutRootProps
->(function DefaultPageLayoutRoot(
-  { children, className, addNode, ...otherProps }: DefaultPageLayoutRootProps,
+  WorkflowPageLayoutRootProps
+>(function WorkflowPageLayoutRoot(
+  { children, className, addNode, ...otherProps }: WorkflowPageLayoutRootProps,
   ref
 ) {
   return (
     <div className="flex flex-col h-screen bg-default-background">
       <EditorTopBar className="flex-none"/>
-      <div className="flex flex-1 bg-default-background w-full items-start overflow-hidden">
+      <div className="flex flex-1 bg-default-background w-full items-start overflow-auto">
         <div className="flex w-32 flex-col items-start justify-between border-r border-solid border-neutral-border h-full">
           <div className="flex flex-1 w-full overflow-auto flex-col items-start gap-px border-b border-solid border-neutral-border bg-neutral-border">
             <div className="flex w-full flex-col items-center gap-px bg-default-background pt-2 pr-2 pb-2 pl-2">
@@ -35,7 +39,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </div>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherFileInput" text="Source" onClick={() => addNode('source')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherFileInput" text="Source" onClick={() => addNode(FinicNodeType.SOURCE)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -55,7 +59,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherFileOutput" text="Destination" onClick={() => addNode('destination')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherFileOutput" text="Destination" onClick={() => addNode(FinicNodeType.DESTINATION)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -75,7 +79,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherFileJson" text="Mapping" onClick={() => addNode('mapping')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherFileJson" text="Mapping" onClick={() => addNode(FinicNodeType.MAPPING)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -94,7 +98,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherMerge" text="Join" onClick={() => addNode('join')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherMerge" text="Join" onClick={() => addNode(FinicNodeType.JOIN)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -114,7 +118,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherSplit" text="Split" onClick={() => addNode('split')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherSplit" text="Split" onClick={() => addNode(FinicNodeType.SPLIT)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -134,7 +138,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherFilter" text="Filter" onClick={() => addNode('filter')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherFilter" text="Filter" onClick={() => addNode(FinicNodeType.FILTER)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -154,7 +158,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherHelpCircle" text="Conditional" onClick={() => addNode('conditional')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherHelpCircle" text="Conditional" onClick={() => addNode(FinicNodeType.CONDITIONAL)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -174,7 +178,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherSparkles" text="Generative AI" onClick={() => addNode('generative_ai')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherSparkles" text="Generative AI" onClick={() => addNode(FinicNodeType.GENERATIVE_AI)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -193,7 +197,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherCode2" text="Python" onClick={() => addNode('python')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherCode2" text="Python" onClick={() => addNode(FinicNodeType.PYTHON)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -213,7 +217,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             </SubframeCore.HoverCard.Root>
             <SubframeCore.HoverCard.Root>
               <SubframeCore.HoverCard.Trigger asChild={true}>
-                <SidebarTile className="flex-grow min-h-16" icon="FeatherDatabaseZap" text="SQL" onClick={() => addNode('sql')}/>
+                <SidebarTile className="flex-grow min-h-16" icon="FeatherDatabaseZap" text="SQL" onClick={() => addNode(FinicNodeType.SQL)}/>
               </SubframeCore.HoverCard.Trigger>
               <SubframeCore.HoverCard.Portal>
                 <SubframeCore.HoverCard.Content
@@ -246,4 +250,4 @@ const DefaultPageLayoutRoot = React.forwardRef<
   );
 });
 
-export const DefaultPageLayout = DefaultPageLayoutRoot;
+export const WorkflowPageLayout = WorkflowPageLayoutRoot;

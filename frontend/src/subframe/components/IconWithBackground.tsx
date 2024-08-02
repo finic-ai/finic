@@ -7,6 +7,8 @@
 import React from "react";
 import * as SubframeCore from "@subframe/core";
 
+export type IconName = SubframeCore.IconName;
+
 interface IconWithBackgroundRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "brand" | "neutral" | "error" | "success" | "warning";
