@@ -141,3 +141,5 @@ dmypy.json
 .DS_Store
 
 app_config.py
+
+local_dir
