@@ -10,13 +10,7 @@ import { useUserStateContext } from "./context/UserStateContext";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 
 import { init, Form } from "@feathery/react";
-import Onboarding from "./pages/onboarding";
-import Dashboard from "./pages/dashboard";
-import Quickbooks from "./pages/quickbooks";
-import DisconnectQuickbooks from "./pages/disconnectQuickbooks";
 import Workflows from "./pages/workflows";
-import LoiPage from "./pages/loiPage";
-import CreateLoiPage from "./pages/createLoiPage";
 import posthog from "posthog-js";
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
@@ -26,8 +20,7 @@ posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
 function RootComponent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { bearer, completedOnboarding, authStateLoading, email, userId } =
-    useUserStateContext();
+  const { bearer, authStateLoading, email, userId } = useUserStateContext();
 
   const [leads, setLeads] = useState<any[]>([]);
 
@@ -39,23 +32,9 @@ function RootComponent() {
 
   return (
     <>
-      {!completedOnboarding ? (
-        <>
-          {!authStateLoading ? (
-            <Routes>
-              <Route path="/" element={<Onboarding />} />
-            </Routes>
-          ) : (
-            <></>
-          )}
-        </>
-      ) : (
-        <>
-          <Routes>
-            <Route path="/" element={<Workflows />} />
-          </Routes>
-        </>
-      )}
+      <Routes>
+        <Route path="/" element={<Workflows />} />
+      </Routes>
     </>
   );
 }

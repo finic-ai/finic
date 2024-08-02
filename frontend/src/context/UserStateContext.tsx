@@ -10,11 +10,8 @@ interface UserStateContextProps {
   bearer: any;
   email: any;
   avatarUrl: any;
-  firstName: any;
-  lastName: any;
+  appId: any;
   userId: any;
-  completedOnboarding: any;
-  setCompletedOnboarding: any;
   authStateLoading: boolean;
   authState: any;
 }
@@ -33,15 +30,10 @@ export function UserStateProvider({
   const [bearer, setBearer] = useState(null);
   const [email, setEmail] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
+  const [appId, setAppId] = useState(null);
   const [userId, setUserId] = useState("");
-  const [completedOnboarding, setCompletedOnboarding] = useState(false);
   const loggedIn = session !== null;
   const [authStateLoading, setAuthStateLoading] = useState(true);
-
-  let query = new URLSearchParams(useLocation().search);
-  let referralId = query.get("referral_id");
 
   const fetchData = async () => {
     // TODO #1: Replace with your JWT template name
@@ -55,45 +47,37 @@ export function UserStateProvider({
       const email = user!.email || metadata.email;
       const id = user!.id;
       // Select the row corresponding to this userId
-      const { data } = await supabase
-        .from("lending_users")
-        .select()
-        .eq("id", id);
+      const { data } = await supabase.from("user").select().eq("id", id);
       console.log(data);
 
       if (data && data[0]) {
-        setBearer(data[0]["secret_key"]);
-        setCompletedOnboarding(data[0]["completed_onboarding"]);
+        setBearer(data[0].secret_key);
         setEmail(email);
         setAvatarUrl(data[0].avatar_url);
-        setFirstName(data[0].first_name);
-        setLastName(data[0].last_name);
+        setAppId(data[0].app_id);
         setUserId(id);
         setAuthStateLoading(false);
       } else {
         // Create the user row if it doesn't exist
 
         const response = await supabase
-          .from("lending_users")
+          .from("user")
           .insert({
             id: id,
             secret_key: uuidv4(),
-            completed_onboarding: false,
+            app_id: uuidv4(),
             email: email,
             avatar_url: metadata.avatar_url,
-            referral_id: referralId,
           })
           .select();
         console.log(response);
 
         if (response.data && response.data[0]) {
           const data = response.data[0];
-          setBearer(data["secret_key"]);
-          setCompletedOnboarding(data["completed_onboarding"]);
+          setBearer(data.secret_key);
           setEmail(email);
           setAvatarUrl(metadata.avatar_url);
-          setFirstName(metadata.first_name);
-          setLastName(metadata.last_name);
+          setAppId(data.app_id);
           setUserId(id);
           setAuthStateLoading(false);
         }
@@ -118,11 +102,8 @@ export function UserStateProvider({
         bearer: bearer,
         email: email,
         avatarUrl: avatarUrl,
-        firstName: firstName,
-        lastName: lastName,
         userId: userId,
-        completedOnboarding: completedOnboarding,
-        setCompletedOnboarding,
+        appId: appId,
         authState: authStateLoading
           ? "loading"
           : loggedIn
