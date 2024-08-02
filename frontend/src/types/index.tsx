@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   type NodeTypes
 } from '@xyflow/react';
@@ -12,6 +13,16 @@ import {
   GenerativeAINode,
   PythonNode,
   SQLNode,
+  SourceNodeConfigurationDrawer,
+  DestinationNodeConfigurationDrawer,
+  MappingNodeConfigurationDrawer,
+  JoinNodeConfigurationDrawer,
+  SplitNodeConfigurationDrawer,
+  FilterNodeConfigurationDrawer,
+  ConditionalNodeConfigurationDrawer,
+  GenerativeAINodeConfigurationDrawer,
+  PythonNodeConfigurationDrawer,
+  SQLNodeConfigurationDrawer,
 } from '../components/nodes';
 
 export enum FinicNodeType {
@@ -25,6 +36,32 @@ export enum FinicNodeType {
   GENERATIVE_AI = 'generative_ai',
   PYTHON = 'python',
   SQL = 'sql',
+};
+
+export const nodeTypes: NodeTypes = {
+  source: SourceNode,
+  destination: DestinationNode,
+  mapping: MappingNode,
+  join: JoinNode,
+  split: SplitNode,
+  filter: FilterNode,
+  conditional: ConditionalNode,
+  generative_ai: GenerativeAINode,
+  python: PythonNode,
+  sql: SQLNode,
+};
+
+export const configurationDrawerTypes: Record<string, React.ComponentType> = {
+  source: SourceNodeConfigurationDrawer,
+  destination: DestinationNodeConfigurationDrawer,
+  mapping: MappingNodeConfigurationDrawer,
+  join: JoinNodeConfigurationDrawer,
+  split: SplitNodeConfigurationDrawer,
+  filter: FilterNodeConfigurationDrawer,
+  conditional: ConditionalNodeConfigurationDrawer,
+  generative_ai: GenerativeAINodeConfigurationDrawer,
+  python: PythonNodeConfigurationDrawer,
+  sql: SQLNodeConfigurationDrawer,
 };
 
 export const NodeTypeNames = {

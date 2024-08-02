@@ -26,44 +26,41 @@ import { TextArea } from "@/subframe/components/TextArea";
 import { Alert } from "@/subframe/components/Alert";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { Switch } from "@/subframe/components/Switch";
-
-import '@xyflow/react/dist/style.css';
-import { FinicNodeType, NodeIcons } from "@/types";
-import { SourceNode, DestinationNode, MappingNode, JoinNode, SplitNode, FilterNode, ConditionalNode, GenerativeAINode, PythonNode, SQLNode } from "@/components/nodes";
+import { nodeTypes, FinicNodeType, configurationDrawerTypes, NodeIcons } from "@/types";
+import { 
+  SourceNode, 
+  DestinationNode, 
+  MappingNode, 
+  JoinNode, 
+  SplitNode, 
+  FilterNode, 
+  ConditionalNode, 
+  GenerativeAINode, 
+  PythonNode, 
+  SQLNode,
+} from "@/components/nodes";
 import { ConfigurationDrawer } from "@/components/ConfigurationDrawer";
+import '@xyflow/react/dist/style.css';
 
 const initialNodes = [
   { id: '1', position: { x: 0, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' } , type: 'source' },
-  { id: '2', position: { x: 500, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'destination' },
-  { id: '3', position: { x: 1000, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'mapping' },
-  { id: '4', position: { x: 1500, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'join' },
-  { id: '5', position: { x: 2000, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'split' },
-  { id: '6', position: { x: 2500, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'filter' },
-  { id: '7', position: { x: 3000, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'conditional' },
-  { id: '8', position: { x: 3500, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'generative_ai' },
-  { id: '9', position: { x: 4000, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'python' },
-  { id: '10', position: { x: 4500, y: 0 }, data: { title: 'Example Source Node', description: 'Test Description' }, type:'sql' },
+  { id: '2', position: { x: 500, y: 0 }, data: { title: 'Example Destination Node', description: 'Test Description' }, type:'destination' },
+  { id: '3', position: { x: 1000, y: 0 }, data: { title: 'Example Mapping Node', description: 'Test Description' }, type:'mapping' },
+  { id: '4', position: { x: 1500, y: 0 }, data: { title: 'Example Join Node', description: 'Test Description' }, type:'join' },
+  { id: '5', position: { x: 2000, y: 0 }, data: { title: 'Example Split Node', description: 'Test Description' }, type:'split' },
+  { id: '6', position: { x: 2500, y: 0 }, data: { title: 'Example Filter Node', description: 'Test Description' }, type:'filter' },
+  { id: '7', position: { x: 3000, y: 0 }, data: { title: 'Example Conditional Node', description: 'Test Description' }, type:'conditional' },
+  { id: '8', position: { x: 3500, y: 0 }, data: { title: 'Example Generative AI Node', description: 'Test Description' }, type:'generative_ai' },
+  { id: '9', position: { x: 4000, y: 0 }, data: { title: 'Example Python Node', description: 'Test Description' }, type:'python' },
+  { id: '10', position: { x: 4500, y: 0 }, data: { title: 'Example SQL Node', description: 'Test Description' }, type:'sql' },
 ];
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
-const nodeTypes: NodeTypes = {
-  source: SourceNode,
-  destination: DestinationNode,
-  mapping: MappingNode,
-  join: JoinNode,
-  split: SplitNode,
-  filter: FilterNode,
-  conditional: ConditionalNode,
-  generative_ai: GenerativeAINode,
-  python: PythonNode,
-  sql: SQLNode,
-};
-
 export default function WorkflowPage() {
   // const [nodes] = useState<Node[]>([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const nodesWithData = initialNodes.map((node) => {return {...node, data: {...node.data, openDrawer: () => setIsDrawerOpen(true)}}});
+  const nodesWithData = initialNodes.map((node) => {return {...node, data: {...node.data, onNodeOpen: onNodeOpen}}});
 
   const [nodes, setNodes, onNodesChange] = useNodesState(nodesWithData);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -74,6 +71,14 @@ export default function WorkflowPage() {
     (params: any) => setEdges((edges) => addEdge(params, edges)),
     [setEdges],
   )
+
+  function onNodeOpen(nodeId: string) {
+    const node = nodes.find((node) => node.id === nodeId);
+    if (node) {
+      setSelectedNode(node);
+      setIsDrawerOpen(true);
+    }
+  }
 
   const onNodeClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
@@ -148,6 +153,7 @@ export default function WorkflowPage() {
             nodeType={selectedNode.type as string}
             iconName={NodeIcons[selectedNode.type as keyof IconName]}
           >
+            {React.createElement(configurationDrawerTypes[selectedNode.type as keyof typeof configurationDrawerTypes])}
           </ConfigurationDrawer>}
         </div>
       </div>

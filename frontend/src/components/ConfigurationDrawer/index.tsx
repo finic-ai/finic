@@ -7,11 +7,10 @@ import { Alert } from "@/subframe/components/Alert";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { TextField } from "@/subframe/components/TextField";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
-
-import { PythonNodeConfigurationDrawer } from "../nodes/PythonNode";
 import { NodeTypeNames } from "@/types";
 
 interface ConfigurationDrawerProps {
+  children?: React.ReactNode;
   className?: string;
   title: string;
   description?: string;
@@ -20,7 +19,7 @@ interface ConfigurationDrawerProps {
   closeDrawer: () => void;
 }
 
-export function ConfigurationDrawer({ className, title, description, nodeType, iconName, closeDrawer }: ConfigurationDrawerProps) {
+export function ConfigurationDrawer({ children, className, title, description, nodeType, iconName, closeDrawer }: ConfigurationDrawerProps) {
   return (
     <div className={"flex w-80 h-full flex-none flex-col items-start border-l border-solid border-neutral-border " + (className ? className : '')}>
       <div className="flex flex-grow w-full overflow-auto flex-col items-start">
@@ -55,7 +54,7 @@ export function ConfigurationDrawer({ className, title, description, nodeType, i
             />
           </TextArea>
         </PropertiesAccordion>
-        <PythonNodeConfigurationDrawer />
+        {children}
       </div>
       <div className="flex w-full items-center justify-end gap-2 pt-4 pr-2 pb-2 pl-2">
         <Button

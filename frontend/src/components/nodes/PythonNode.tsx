@@ -4,6 +4,7 @@ import React, { useState, useCallback } from "react";
 import { 
   Handle,
   Position,
+  useNodeId,
   type Node,
   type NodeProps
 } from '@xyflow/react';
@@ -24,15 +25,17 @@ import { Switch } from "@/subframe/components/Switch";
 import { NodeLayout } from "@/components/nodes";
 import { ConfigurationDrawer } from "../ConfigurationDrawer";
 
-type PythonNode = Node<{ openDrawer: () => void }, 'python'>;
+type PythonNode = Node<{ title: string, nodeType: string, onNodeOpen: (node_id: string) => void }, 'python'>;
 
-export default function PythonNode({ data }: NodeProps<PythonNode>) {
-  const onChange = useCallback((evt: any) => {
-    console.log(evt.target.value);
-  }, []);
+export default function PythonNode(props: NodeProps<PythonNode>) {
+  const nodeId = useNodeId();
+
+  function onNodeOpen () {
+    props.data.onNodeOpen(nodeId as string);
+  }
  
   return (
-    <NodeLayout openDrawer={data.openDrawer}>
+    <NodeLayout openNode={onNodeOpen} title={props.data.title} nodeType={props.type}>
       <Handle 
         type="target" 
         position={Position.Left} 
@@ -44,32 +47,14 @@ export default function PythonNode({ data }: NodeProps<PythonNode>) {
         id="a"
         className="!w-4 !h-4 !bg-brand-600"
       />
-      <div className="flex w-full items-center justify-center gap-6">
-        <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
-          Run regression
+      <div className="flex flex-col w-full select-text gap-4">
+        <span className="text-heading-3 font-heading-3 text-default-font">
+          Code
         </span>
-        <div className="flex items-center justify-end gap-2">
-          <span className="text-body-bold font-body-bold text-default-font">
-            Python
+        <div className="flex w-full flex-col items-start gap-4 rounded bg-neutral-50 pt-2 pr-2 pb-2 pl-2">
+          <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font">
+            {"// Add a bit of code here\n\n// And some more if needed..."}
           </span>
-          <IconWithBackground
-            variant="brand"
-            size="medium"
-            icon="FeatherCode2"
-            square={false}
-          />
-        </div>
-      </div>
-      <div className="nodrag cursor-default select-text flex w-full grow shrink-0 basis-0 flex-col items-center gap-4 rounded border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
-        <div className="flex w-full flex-col items-start gap-6">
-          <span className="text-heading-3 font-heading-3 text-default-font">
-            Code
-          </span>
-          <div className="flex w-full flex-col items-start gap-4 rounded bg-neutral-50 pt-2 pr-2 pb-2 pl-2">
-            <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font">
-              {"// Add a bit of code here\n\n// And some more if needed..."}
-            </span>
-          </div>
         </div>
       </div>
     </NodeLayout>
@@ -178,4 +163,4 @@ export function PythonNodeConfigurationDrawer() {
       </PropertiesRow>
     </div>
   )
-}
+};
