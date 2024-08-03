@@ -58,6 +58,10 @@ export default function DestinationNode(props: NodeProps<DestinationNode>) {
   );
 };
 
+interface DestinationNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function DestinationNodeConfigurationDrawer() {
   return (
     <div>

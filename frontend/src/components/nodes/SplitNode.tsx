@@ -214,6 +214,10 @@ export default function SplitNode(props: NodeProps<SplitNode>) {
   );
 };
 
+interface SplitNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function SplitNodeConfigurationDrawer() {
   return (
     <div>

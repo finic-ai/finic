@@ -168,6 +168,10 @@ export default function FilterNode(props: NodeProps<FilterNode>) {
   );
 };
 
+interface FilterNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function FilterNodeConfigurationDrawer() {
   return (
     <div>

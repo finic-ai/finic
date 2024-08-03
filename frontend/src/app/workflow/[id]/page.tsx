@@ -9,6 +9,8 @@ import {
   Background,
   useNodesState,
   useEdgesState,
+  useStore,
+  useStoreApi,
   addEdge,
   type Node,
   type Edge,
@@ -58,7 +60,14 @@ const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
 export default function WorkflowPage() {
   // const [nodes] = useState<Node[]>([]);
+  const store = useStoreApi();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Need to get the React Flow state in order to mark a node as selected when clicking the "Open" button
+  const onNodeOpen = useCallback((nodeId: string) => {
+    const { addSelectedNodes } = store.getState();
+    addSelectedNodes([nodeId]);
+  }, [store])
 
   const nodesWithData = initialNodes.map((node) => {return {...node, data: {...node.data, onNodeOpen: onNodeOpen}}});
 
@@ -67,27 +76,25 @@ export default function WorkflowPage() {
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
 
+  useOnSelectionChange({
+    onChange: useCallback(({ nodes, edges }) => {
+      console.log(nodes)
+      if (nodes.length === 0) {
+        setSelectedNode(null);
+        setSelectedEdge(null);
+        setIsDrawerOpen(false);
+      } else {
+        setSelectedNode(nodes[0]);
+        setSelectedEdge(null);
+        setIsDrawerOpen(true);
+      }
+    }, [selectedNode]),
+  });
+
   const onConnect = useCallback(
     (params: any) => setEdges((edges) => addEdge(params, edges)),
     [setEdges],
   )
-
-  function onNodeOpen(nodeId: string) {
-    const node = nodes.find((node) => node.id === nodeId);
-    if (node) {
-      setSelectedNode(node);
-      setIsDrawerOpen(true);
-    }
-  }
-
-  const onNodeClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
-      setSelectedNode(node);
-      setSelectedEdge(null);
-      setIsDrawerOpen(true);
-    },
-    [setSelectedNode, setSelectedEdge, setIsDrawerOpen],
-  );
 
   function RenderWorkflow() {
     return (
@@ -98,7 +105,6 @@ export default function WorkflowPage() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onNodeClick={onNodeClick}
       >
         <Controls />
         <MiniMap />
@@ -112,7 +118,11 @@ export default function WorkflowPage() {
     const newNode = {
       id: (nodes.length + 1).toString(),
       position: { x: 0, y: 500 },
-      data: { label: (nodes.length + 1).toString() },
+      data: { 
+        title: 'New Node',
+        description: 'New Node Description',
+        onNodeOpen: onNodeOpen,
+      },
       type: nodeType,
     };
     setNodes([...nodes, newNode]);

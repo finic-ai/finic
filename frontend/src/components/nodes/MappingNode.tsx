@@ -203,6 +203,10 @@ export default function MappingNode(props: NodeProps<MappingNode>) {
   );
 };
 
+interface MappingNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function MappingNodeConfigurationDrawer() {
   return (
     <div>

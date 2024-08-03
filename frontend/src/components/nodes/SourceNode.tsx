@@ -61,6 +61,10 @@ export default function SourceNode(props: NodeProps<SourceNode>) {
   );
 };
 
+interface SourceNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function SourceNodeConfigurationDrawer() {
   return (
     <div>

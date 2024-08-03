@@ -144,6 +144,10 @@ export default function JoinNode(props: NodeProps<JoinNode>) {
   );
 };
 
+interface JoinNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function JoinNodeConfigurationDrawer() {
   return (
     <div>

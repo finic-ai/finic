@@ -60,6 +60,10 @@ export default function SQLNode(props: NodeProps<SQLNode>) {
   );
 };
 
+interface SQLNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function SQLNodeConfigurationDrawer() {
   return (
     <div>

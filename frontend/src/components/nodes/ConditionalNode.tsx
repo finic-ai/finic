@@ -306,6 +306,10 @@ export default function ConditionalNode(props: NodeProps<ConditionalNode>) {
   );
 }
 
+interface ConditionalNodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function ConditionalNodeConfigurationDrawer() {
   return (
     <div>
@@ -404,4 +408,4 @@ export function ConditionalNodeConfigurationDrawer() {
       </PropertiesRow>
     </div>
   )
-}
+};

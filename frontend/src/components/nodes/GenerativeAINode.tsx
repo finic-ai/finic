@@ -115,6 +115,10 @@ export default function GenerativeAINode(props: NodeProps<GenerativeAINOde>) {
   );
 };
 
+interface GenerativeAINodeConfigurationDrawerProps {
+  closeDrawer: () => void;
+}
+
 export function GenerativeAINodeConfigurationDrawer() {
   return (
     <div>
