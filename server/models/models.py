@@ -93,7 +93,7 @@ class PythonNode(TransformNode):
 
 
 class JoinNode(TransformNode):
-    pass
+    join_column: str
 
 
 class Workflow(BaseModel):
