@@ -1,6 +1,6 @@
 import * as SubframeCore from "@subframe/core";
 import { Button } from "@/subframe/components/Button";
-import { IconWithBackground, IconName } from "@/subframe/components/IconWithBackground";
+import { IconWithBackground} from "@/subframe/components/IconWithBackground";
 import { DropdownMenu } from "@/subframe/components/DropdownMenu";
 import { nodeTypes, NodeTypeNames, NodeIcons } from "@/types";
 
@@ -22,15 +22,15 @@ export function NodeLayout({ children, title, nodeType, openNode }: NodeLayoutPr
       <div className="flex w-full flex-col gap-4">
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center justify-center gap-2">
-            <span className="text-body-bold font-body-bold text-default-font">
-              {NodeTypeNames[nodeType as keyof typeof NodeTypeNames]}
-            </span>
             <IconWithBackground
               variant="brand"
               size="medium"
-              icon={NodeIcons[nodeType as keyof IconName]}
+              icon={NodeIcons[nodeType as keyof SubframeCore.IconName]}
               square={false}
             />
+            <span className="text-body-bold font-body-bold text-default-font">
+              {NodeTypeNames[nodeType as keyof typeof NodeTypeNames]}
+            </span>
             </div>
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
