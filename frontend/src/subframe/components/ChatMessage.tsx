@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * Chat Message — https://app.subframe.com/library?component=Chat+Message_e0b80449-ff31-4847-8bd3-ea071e67c7d5
- * Avatar — https://app.subframe.com/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Chat Message — https://app.subframe.com/cb0b7d209a24/library?component=Chat+Message_e0b80449-ff31-4847-8bd3-ea071e67c7d5
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
  */
 
 import React from "react";

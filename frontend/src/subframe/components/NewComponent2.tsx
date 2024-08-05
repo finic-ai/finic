@@ -1,9 +1,9 @@
 "use client";
 /*
  * Documentation:
- * New Component2 — https://app.subframe.com/library?component=New+Component2_b286f60c-a632-4e8c-9687-d2b3bd0a4b5a
- * Icon Button — https://app.subframe.com/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
- * Avatar — https://app.subframe.com/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * New Component2 — https://app.subframe.com/cb0b7d209a24/library?component=New+Component2_b286f60c-a632-4e8c-9687-d2b3bd0a4b5a
+ * Icon Button — https://app.subframe.com/cb0b7d209a24/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
  */
 
 import React from "react";
@@ -35,7 +35,7 @@ const NewComponent2Root = React.forwardRef<HTMLElement, NewComponent2RootProps>(
           icon="FeatherSearch"
           loading={false}
         />
-        <Avatar>AB</Avatar>
+        <Avatar>A</Avatar>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Text Field — https://app.subframe.com/library?component=Text+Field_be48ca43-f8e7-4c0e-8870-d219ea11abfe
+ * Text Field — https://app.subframe.com/cb0b7d209a24/library?component=Text+Field_be48ca43-f8e7-4c0e-8870-d219ea11abfe
  */
 
 import React from "react";
@@ -9,6 +9,8 @@ import * as SubframeCore from "@subframe/core";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }
 
@@ -68,7 +70,7 @@ const TextFieldRoot = React.forwardRef<HTMLElement, TextFieldRootProps>(
         {...otherProps}
       >
         {label ? (
-          <span className="text-body-bold font-body-bold text-default-font">
+          <span className="text-label-bold font-label-bold text-default-font">
             {label}
           </span>
         ) : null}
@@ -79,22 +81,22 @@ const TextFieldRoot = React.forwardRef<HTMLElement, TextFieldRootProps>(
               "border border-solid border-neutral-100 bg-neutral-100 group-hover/be48ca43:border group-hover/be48ca43:border-solid group-hover/be48ca43:border-neutral-border group-focus-within/be48ca43:bg-default-background":
                 variant === "filled",
               "border border-solid border-error-600": error,
-              "border border-solid border-neutral-100 bg-neutral-100": disabled,
+              "border border-solid border-neutral-200 bg-neutral-200": disabled,
             }
           )}
         >
           <SubframeCore.Icon
-            className="text-body font-body text-neutral-400"
+            className="text-body font-body text-subtext-color"
             name={icon}
           />
           {children ? (
-            <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start pr-1 pl-1">
+            <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch pr-1 pl-1">
               {children}
             </div>
           ) : null}
           <SubframeCore.Icon
             className={SubframeCore.twClassNames(
-              "text-body font-body text-neutral-400",
+              "text-body font-body text-subtext-color",
               { "text-error-500": error }
             )}
             name={iconRight}

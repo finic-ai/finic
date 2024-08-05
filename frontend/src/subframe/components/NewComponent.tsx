@@ -1,10 +1,10 @@
 "use client";
 /*
  * Documentation:
- * New Component — https://app.subframe.com/library?component=New+Component_c5157938-0546-4473-bc66-64920f95bdfd
- * Chat Sent — https://app.subframe.com/library?component=Chat+Sent_8206bfc1-a590-434f-9706-c81a8bc60827
- * Avatar — https://app.subframe.com/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
- * Chat Bubble Them — https://app.subframe.com/library?component=Chat+Bubble+Them_5fa1557c-fe15-4f3e-85e7-470457d52473
+ * New Component — https://app.subframe.com/cb0b7d209a24/library?component=New+Component_c5157938-0546-4473-bc66-64920f95bdfd
+ * Chat Sent — https://app.subframe.com/cb0b7d209a24/library?component=Chat+Sent_8206bfc1-a590-434f-9706-c81a8bc60827
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Chat Bubble Them — https://app.subframe.com/cb0b7d209a24/library?component=Chat+Bubble+Them_5fa1557c-fe15-4f3e-85e7-470457d52473
  */
 
 import React from "react";
@@ -31,7 +31,7 @@ const NewComponentRoot = React.forwardRef<HTMLElement, NewComponentRootProps>(
         ref={ref as any}
         {...otherProps}
       >
-        <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start gap-4">
+        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-4">
           <ChatSent
             name="You"
             message="Summarize this client's health history"
@@ -41,7 +41,7 @@ const NewComponentRoot = React.forwardRef<HTMLElement, NewComponentRootProps>(
             time=""
             avatar={
               <Avatar image="https://res.cloudinary.com/subframe/image/upload/v1711487219/uploads/132/tflbg5xz6alwt0gc69ss.png">
-                AB
+                A
               </Avatar>
             }
             name="Bot"
@@ -51,7 +51,7 @@ const NewComponentRoot = React.forwardRef<HTMLElement, NewComponentRootProps>(
             time=""
             avatar={
               <Avatar image="https://res.cloudinary.com/subframe/image/upload/v1711487219/uploads/132/tflbg5xz6alwt0gc69ss.png">
-                AB
+                A
               </Avatar>
             }
             name="Bot"
@@ -61,7 +61,7 @@ const NewComponentRoot = React.forwardRef<HTMLElement, NewComponentRootProps>(
             time=""
             avatar={
               <Avatar image="https://res.cloudinary.com/subframe/image/upload/v1711487219/uploads/132/tflbg5xz6alwt0gc69ss.png">
-                AB
+                A
               </Avatar>
             }
             name="Bot"

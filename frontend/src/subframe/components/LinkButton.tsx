@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Link Button — https://app.subframe.com/library?component=Link+Button_a4ee726a-774c-4091-8c49-55b659356024
+ * Link Button — https://app.subframe.com/cb0b7d209a24/library?component=Link+Button_a4ee726a-774c-4091-8c49-55b659356024
  */
 
 import React from "react";
@@ -14,6 +14,7 @@ interface LinkButtonRootProps
   icon?: SubframeCore.IconName;
   children?: string;
   iconRight?: SubframeCore.IconName;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 }
 
@@ -44,7 +45,7 @@ const LinkButtonRoot = React.forwardRef<HTMLElement, LinkButtonRootProps>(
       >
         <SubframeCore.Icon
           className={SubframeCore.twClassNames(
-            "text-body font-body text-subtext-color group-hover/a4ee726a:text-subtext-color group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400",
+            "text-body font-body text-neutral-700 group-hover/a4ee726a:text-brand-700 group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400",
             {
               "text-label font-label": size === "small",
               "text-subheader font-subheader": size === "large",
@@ -59,7 +60,7 @@ const LinkButtonRoot = React.forwardRef<HTMLElement, LinkButtonRootProps>(
         {children ? (
           <span
             className={SubframeCore.twClassNames(
-              "text-body font-body text-subtext-color group-hover/a4ee726a:text-subtext-color group-hover/a4ee726a:underline group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:no-underline",
+              "text-body font-body text-neutral-700 group-hover/a4ee726a:text-brand-700 group-hover/a4ee726a:underline group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:no-underline",
               {
                 "text-label font-label": size === "small",
                 "text-subheader font-subheader": size === "large",
@@ -75,7 +76,7 @@ const LinkButtonRoot = React.forwardRef<HTMLElement, LinkButtonRootProps>(
         ) : null}
         <SubframeCore.Icon
           className={SubframeCore.twClassNames(
-            "text-body font-body text-subtext-color group-hover/a4ee726a:text-subtext-color group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400",
+            "text-body font-body text-neutral-700 group-hover/a4ee726a:text-brand-700 group-disabled/a4ee726a:text-neutral-400 group-hover/a4ee726a:group-disabled/a4ee726a:text-neutral-400",
             {
               "text-label font-label": size === "small",
               "text-subheader font-subheader": size === "large",

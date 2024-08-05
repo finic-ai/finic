@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * NotificationCard — https://app.subframe.com/library?component=NotificationCard_111b2a02-05f4-409e-9687-998a4b3814db
+ * NotificationCard — https://app.subframe.com/cb0b7d209a24/library?component=NotificationCard_111b2a02-05f4-409e-9687-998a4b3814db
  */
 
 import React from "react";
@@ -43,14 +43,14 @@ const NotificationCardRoot = React.forwardRef<
           name={icon}
         />
       </div>
-      <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+      <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
         {text ? (
           <span className="w-full text-body-bold font-body-bold text-default-font">
             {text}
           </span>
         ) : null}
         {text2 ? (
-          <span className="h-full grow shrink-0 basis-0 text-label font-label text-subtext-color">
+          <span className="grow shrink-0 basis-0 text-label font-label text-subtext-color">
             {text2}
           </span>
         ) : null}

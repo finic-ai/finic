@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * Toast — https://app.subframe.com/library?component=Toast_2c7966c2-a95d-468a-83fe-bf196b95be7a
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * Toast — https://app.subframe.com/cb0b7d209a24/library?component=Toast_2c7966c2-a95d-468a-83fe-bf196b95be7a
+ * Button — https://app.subframe.com/cb0b7d209a24/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
  */
 
 import React from "react";
@@ -50,7 +50,7 @@ const ToastRoot = React.forwardRef<HTMLElement, ToastRootProps>(
           )}
           name={icon}
         />
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start">
           {title ? (
             <span
               className={SubframeCore.twClassNames(
@@ -58,6 +58,7 @@ const ToastRoot = React.forwardRef<HTMLElement, ToastRootProps>(
                 {
                   "text-success-700": variant === "success",
                   "text-error-700": variant === "error",
+                  "text-brand-800": variant === "brand",
                 }
               )}
             >

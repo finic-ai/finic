@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Switch — https://app.subframe.com/library?component=Switch_7a464794-9ea9-4040-b1de-5bfb2ce599d9
+ * Switch — https://app.subframe.com/cb0b7d209a24/library?component=Switch_7a464794-9ea9-4040-b1de-5bfb2ce599d9
  */
 
 import React from "react";
@@ -20,7 +20,7 @@ const Thumb = React.forwardRef<HTMLElement, ThumbProps>(function Thumb(
     <SubframeCore.Switch.Thumb asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "flex h-3.5 w-3.5 flex-col items-start gap-2 rounded-full bg-white shadow-[0px_1px_2px_0px_#0000001a]",
+          "flex h-3.5 w-3.5 flex-col items-start gap-2 rounded-full bg-white shadow-default",
           className
         )}
         ref={ref as any}
@@ -31,6 +31,8 @@ const Thumb = React.forwardRef<HTMLElement, ThumbProps>(function Thumb(
 
 interface SwitchRootProps
   extends React.ComponentProps<typeof SubframeCore.Switch.Root> {
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
   className?: string;
 }
 
@@ -40,7 +42,7 @@ const SwitchRoot = React.forwardRef<HTMLElement, SwitchRootProps>(
       <SubframeCore.Switch.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "group/7a464794 flex h-5 w-8 cursor-pointer flex-col items-start justify-center gap-2 rounded-full border border-solid border-neutral-300 bg-neutral-300 pt-0.5 pr-0.5 pb-0.5 pl-0.5 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-600 aria-[checked=true]:bg-brand-600",
+            "group/7a464794 flex h-5 w-8 cursor-pointer flex-col items-start justify-center gap-2 rounded-full border border-solid border-neutral-200 bg-neutral-200 pt-0.5 pr-0.5 pb-0.5 pl-0.5 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-600 aria-[checked=true]:bg-brand-600",
             className
           )}
           ref={ref as any}

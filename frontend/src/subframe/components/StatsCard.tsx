@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Stats Card — https://app.subframe.com/library?component=Stats+Card_ce8a575f-7dd0-409b-8e4d-98c260a65cb1
+ * Stats Card — https://app.subframe.com/cb0b7d209a24/library?component=Stats+Card_ce8a575f-7dd0-409b-8e4d-98c260a65cb1
  */
 
 import React from "react";
@@ -34,10 +34,10 @@ const StatsCardRoot = React.forwardRef<HTMLElement, StatsCardRootProps>(
         ref={ref as any}
         {...otherProps}
       >
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
           <div className="flex w-full items-center gap-1">
             {label ? (
-              <span className="line-clamp-1 w-full grow shrink-0 basis-0 text-body font-body text-subtext-color">
+              <span className="line-clamp-1 grow shrink-0 basis-0 text-body font-body text-subtext-color">
                 {label}
               </span>
             ) : null}

@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Accordion — https://app.subframe.com/library?component=Accordion_d2e81e20-863a-4027-826a-991d8910efd9
+ * Accordion — https://app.subframe.com/cb0b7d209a24/library?component=Accordion_d2e81e20-863a-4027-826a-991d8910efd9
  */
 
 import React from "react";
@@ -103,14 +103,14 @@ const AccordionRoot = React.forwardRef<HTMLElement, AccordionRootProps>(
         >
           <Trigger>
             {trigger ? (
-              <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start group-data-[state=open]/d2e81e20:h-auto group-data-[state=open]/d2e81e20:w-full group-data-[state=open]/d2e81e20:flex-none">
+              <div className="flex w-full grow shrink-0 basis-0 flex-col items-start group-data-[state=open]/d2e81e20:h-auto group-data-[state=open]/d2e81e20:w-full group-data-[state=open]/d2e81e20:flex-none">
                 {trigger}
               </div>
             ) : null}
           </Trigger>
           <Content>
             {children ? (
-              <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start">
+              <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
                 {children}
               </div>
             ) : null}

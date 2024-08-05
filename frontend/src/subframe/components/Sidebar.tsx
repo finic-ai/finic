@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Sidebar — https://app.subframe.com/library?component=Sidebar_1651a160-3525-494a-b02c-03db4e8516b1
+ * Sidebar — https://app.subframe.com/cb0b7d209a24/library?component=Sidebar_1651a160-3525-494a-b02c-03db4e8516b1
  */
 
 import React from "react";
@@ -90,10 +90,12 @@ const SidebarRoot = React.forwardRef<HTMLElement, SidebarRootProps>(
             { hidden: hideLogo }
           )}
         >
-          {logoImage ? <img className="h-9 flex-none" src={logoImage} /> : null}
+          {logoImage ? (
+            <img className="h-9 flex-none object-cover" src={logoImage} />
+          ) : null}
         </div>
         {children ? (
-          <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start gap-1 pr-3 pl-3">
+          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1 pr-3 pl-3">
             {children}
           </div>
         ) : null}

@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * Copy to clipboard button — https://app.subframe.com/library?component=Copy+to+clipboard+button_e8c76626-6462-4f2f-b595-38d530d427e8
- * Tooltip — https://app.subframe.com/library?component=Tooltip_ccebd1e9-f6ac-4737-8376-0dfacd90c9f3
+ * Copy to clipboard button — https://app.subframe.com/cb0b7d209a24/library?component=Copy+to+clipboard+button_e8c76626-6462-4f2f-b595-38d530d427e8
+ * Tooltip — https://app.subframe.com/cb0b7d209a24/library?component=Tooltip_ccebd1e9-f6ac-4737-8376-0dfacd90c9f3
  */
 
 import React from "react";
@@ -14,6 +14,7 @@ interface CopyToClipboardButtonRootProps
   clipboardText?: string;
   tooltipText?: string;
   icon?: SubframeCore.IconName;
+  onCopy?: () => void;
   className?: string;
 }
 

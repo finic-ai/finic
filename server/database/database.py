@@ -62,14 +62,12 @@ class Database:
             return Workflow(**row)
         return None
 
-    async def get_workflow(
-        self, config: AppConfig, workflow_id: str
-    ) -> Optional[Workflow]:
+    async def get_workflow(self, workflow_id: str, app_id: str) -> Optional[Workflow]:
         response = (
             self.supabase.table("workflow")
             .select("*")
             .filter("id", "eq", workflow_id)
-            .filter("app_id", "eq", config.app_id)
+            .filter("app_id", "eq", app_id)
             .execute()
         )
         if len(response.data) > 0:

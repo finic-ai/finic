@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Chat Sent — https://app.subframe.com/library?component=Chat+Sent_8206bfc1-a590-434f-9706-c81a8bc60827
+ * Chat Sent — https://app.subframe.com/cb0b7d209a24/library?component=Chat+Sent_8206bfc1-a590-434f-9706-c81a8bc60827
  */
 
 import React from "react";

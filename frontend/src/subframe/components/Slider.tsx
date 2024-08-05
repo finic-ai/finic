@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Slider — https://app.subframe.com/library?component=Slider_f4092874-0320-449e-a0c5-b435987c4cfb
+ * Slider — https://app.subframe.com/cb0b7d209a24/library?component=Slider_f4092874-0320-449e-a0c5-b435987c4cfb
  */
 
 import React from "react";
@@ -64,7 +64,7 @@ const Track = React.forwardRef<HTMLElement, TrackProps>(function Track(
     <SubframeCore.Slider.Track asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "flex h-1.5 w-full flex-col items-start gap-2 rounded-full bg-neutral-200",
+          "flex h-1.5 w-full flex-col items-start gap-2 rounded-full bg-neutral-100",
           className
         )}
         ref={ref as any}
@@ -77,6 +77,9 @@ const Track = React.forwardRef<HTMLElement, TrackProps>(function Track(
 
 interface SliderRootProps
   extends React.ComponentProps<typeof SubframeCore.Slider.Root> {
+  value?: number[];
+  onValueChange?: (value: number[]) => void;
+  onValueCommit?: (value: number[]) => void;
   className?: string;
 }
 

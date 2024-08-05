@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Vertical Stepper — https://app.subframe.com/library?component=Vertical+Stepper_bdc0291d-b5be-40c5-ae2f-527a868488b2
+ * Vertical Stepper — https://app.subframe.com/cb0b7d209a24/library?component=Vertical+Stepper_bdc0291d-b5be-40c5-ae2f-527a868488b2
  */
 
 import React from "react";
@@ -41,32 +41,28 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
     >
       <div
         className={SubframeCore.twClassNames(
-          "flex h-full flex-col items-center",
+          "flex flex-col items-center gap-1 self-stretch",
           { "h-auto w-auto flex-none": lastStep }
         )}
       >
         <div
           className={SubframeCore.twClassNames(
-            "flex h-3 w-0.5 flex-none flex-col items-center gap-2 bg-neutral-border",
-            { "h-3 w-0.5 flex-none": lastStep, hidden: firstStep }
+            "flex h-2 w-0.5 flex-none flex-col items-center gap-2 bg-neutral-border",
+            { "h-2 w-0.5 flex-none": lastStep, hidden: firstStep }
           )}
         />
         <div
           className={SubframeCore.twClassNames(
             "flex h-7 w-7 flex-none items-center justify-center overflow-hidden rounded-full bg-neutral-100",
-            {
-              "border-2 border-solid border-brand-600 bg-brand-600":
-                variant === "active",
-              "bg-brand-100": variant === "completed",
-            }
+            { "bg-brand-100": variant === "active" || variant === "completed" }
           )}
         >
           {stepNumber ? (
             <span
               className={SubframeCore.twClassNames(
-                "text-body-bold font-body-bold text-subtext-color",
+                "text-body-bold font-body-bold text-subtext-color text-center",
                 {
-                  "text-body-bold font-body-bold text-white":
+                  "text-body-bold font-body-bold text-brand-700":
                     variant === "active",
                   hidden: variant === "completed",
                 }
@@ -85,14 +81,14 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
         </div>
         <div
           className={SubframeCore.twClassNames(
-            "flex h-full min-h-[12px] w-0.5 grow shrink-0 basis-0 flex-col items-center gap-2 bg-neutral-border",
+            "flex min-h-[8px] w-0.5 grow shrink-0 basis-0 flex-col items-center gap-2 bg-neutral-border",
             { hidden: lastStep }
           )}
         />
       </div>
       <div
         className={SubframeCore.twClassNames(
-          "flex w-full grow shrink-0 basis-0 flex-col items-center gap-1 pt-4 pb-4",
+          "flex grow shrink-0 basis-0 flex-col items-center gap-1 pt-4 pb-4",
           { "pt-4 pr-0 pb-1 pl-0": lastStep, "pt-1 pr-0 pb-4 pl-0": firstStep }
         )}
       >

@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Logo Icon — https://app.subframe.com/library?component=Logo+Icon_13f819c9-cdb5-4fb6-8634-13fd88ba5319
+ * Logo Icon — https://app.subframe.com/cb0b7d209a24/library?component=Logo+Icon_13f819c9-cdb5-4fb6-8634-13fd88ba5319
  */
 
 import React from "react";
@@ -30,10 +30,13 @@ const LogoIconRoot = React.forwardRef<HTMLElement, LogoIconRootProps>(
       >
         {image ? (
           <img
-            className={SubframeCore.twClassNames("h-3 w-3 flex-none", {
-              "h-5 w-5 flex-none": size === "x-large",
-              "h-3.5 w-3.5 flex-none": size === "large",
-            })}
+            className={SubframeCore.twClassNames(
+              "h-3 w-3 flex-none object-cover",
+              {
+                "h-5 w-5 flex-none": size === "x-large",
+                "h-3.5 w-3.5 flex-none": size === "large",
+              }
+            )}
             src={image}
           />
         ) : null}

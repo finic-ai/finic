@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Detail Card — https://app.subframe.com/library?component=Detail+Card_7b4c33d9-098f-461c-a804-7905f589dc59
+ * Detail Card — https://app.subframe.com/cb0b7d209a24/library?component=Detail+Card_7b4c33d9-098f-461c-a804-7905f589dc59
  */
 
 import React from "react";
@@ -34,7 +34,7 @@ const DetailCardRoot = React.forwardRef<HTMLElement, DetailCardRootProps>(
         ref={ref as any}
         {...otherProps}
       >
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
           {label ? (
             <span
               className={SubframeCore.twClassNames(

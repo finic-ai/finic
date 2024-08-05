@@ -1,9 +1,9 @@
 "use client";
 /*
  * Documentation:
- * Chat Header — https://app.subframe.com/library?component=Chat+Header_d433f068-1938-4805-865a-295917565aeb
- * Avatar — https://app.subframe.com/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
- * Icon Button — https://app.subframe.com/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
+ * Chat Header — https://app.subframe.com/cb0b7d209a24/library?component=Chat+Header_d433f068-1938-4805-865a-295917565aeb
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Icon Button — https://app.subframe.com/cb0b7d209a24/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
  */
 
 import React from "react";
@@ -35,9 +35,9 @@ const ChatHeaderRoot = React.forwardRef<HTMLElement, ChatHeaderRootProps>(
           size="large"
           image="https://res.cloudinary.com/subframe/image/upload/v1711417512/shared/btvntvzhdbhpulae3kzk.jpg"
         >
-          AB
+          A
         </Avatar>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start">
           {name ? (
             <span className="w-full text-subheader font-subheader text-default-font">
               {name}

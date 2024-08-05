@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * OAuth Social Button — https://app.subframe.com/library?component=OAuth+Social+Button_f1948f75-65f9-4f21-b3e4-a49511440c26
+ * OAuth Social Button — https://app.subframe.com/cb0b7d209a24/library?component=OAuth+Social+Button_f1948f75-65f9-4f21-b3e4-a49511440c26
  */
 
 import React from "react";
@@ -11,6 +11,7 @@ interface OAuthSocialButtonRootProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: string;
   logo?: string;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 }
 
@@ -37,7 +38,9 @@ const OAuthSocialButtonRoot = React.forwardRef<
       type={type}
       {...otherProps}
     >
-      {logo ? <img className="h-5 w-5 flex-none" src={logo} /> : null}
+      {logo ? (
+        <img className="h-5 w-5 flex-none object-cover" src={logo} />
+      ) : null}
       {children ? (
         <span className="text-body-bold font-body-bold text-neutral-700 group-disabled/f1948f75:text-neutral-400">
           {children}

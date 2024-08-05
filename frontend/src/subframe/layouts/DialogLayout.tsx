@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * Dialog Layout — https://app.subframe.com/library?component=Dialog+Layout_ff4920a8-df26-4012-934d-0a9edbf5e373
- * Dialog — https://app.subframe.com/library?component=Dialog_ca59db17-43fb-4247-8094-3c55162e902d
+ * Dialog Layout — https://app.subframe.com/cb0b7d209a24/library?component=Dialog+Layout_ff4920a8-df26-4012-934d-0a9edbf5e373
+ * Dialog — https://app.subframe.com/cb0b7d209a24/library?component=Dialog_ca59db17-43fb-4247-8094-3c55162e902d
  */
 
 import React from "react";
@@ -23,7 +23,7 @@ const DialogLayoutRoot = React.forwardRef<HTMLElement, DialogLayoutRootProps>(
       <Dialog className={className} ref={ref as any} {...otherProps}>
         <Dialog.Content>
           {children ? (
-            <div className="flex h-full w-full grow shrink-0 basis-0 items-start gap-6">
+            <div className="flex w-full grow shrink-0 basis-0 items-start gap-6">
               {children}
             </div>
           ) : null}

@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Dropdown Menu — https://app.subframe.com/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
+ * Dropdown Menu — https://app.subframe.com/cb0b7d209a24/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
  */
 
 import React from "react";
@@ -34,11 +34,11 @@ const DropdownItem = React.forwardRef<HTMLElement, DropdownItemProps>(
           ref={ref as any}
         >
           <SubframeCore.Icon
-            className="text-body font-body text-subtext-color"
+            className="text-body font-body text-default-font"
             name={icon}
           />
           {children ? (
-            <span className="line-clamp-1 w-full grow shrink-0 basis-0 text-body font-body text-default-font group-hover/adcae8d6:text-default-font">
+            <span className="line-clamp-1 grow shrink-0 basis-0 text-body font-body text-default-font group-hover/adcae8d6:text-default-font">
               {children}
             </span>
           ) : null}

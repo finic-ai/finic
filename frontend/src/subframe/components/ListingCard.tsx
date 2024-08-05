@@ -1,10 +1,10 @@
 "use client";
 /*
  * Documentation:
- * Listing Card — https://app.subframe.com/library?component=Listing+Card_cc674cf2-7111-4f75-8744-3ec3ddd3f437
- * Tooltip — https://app.subframe.com/library?component=Tooltip_ccebd1e9-f6ac-4737-8376-0dfacd90c9f3
- * Badge — https://app.subframe.com/library?component=Badge_97bdb082-1124-4dd7-a335-b14b822d0157
- * Detail Card — https://app.subframe.com/library?component=Detail+Card_7b4c33d9-098f-461c-a804-7905f589dc59
+ * Listing Card — https://app.subframe.com/cb0b7d209a24/library?component=Listing+Card_cc674cf2-7111-4f75-8744-3ec3ddd3f437
+ * Tooltip — https://app.subframe.com/cb0b7d209a24/library?component=Tooltip_ccebd1e9-f6ac-4737-8376-0dfacd90c9f3
+ * Badge — https://app.subframe.com/cb0b7d209a24/library?component=Badge_97bdb082-1124-4dd7-a335-b14b822d0157
+ * Detail Card — https://app.subframe.com/cb0b7d209a24/library?component=Detail+Card_7b4c33d9-098f-461c-a804-7905f589dc59
  */
 
 import React from "react";
@@ -42,20 +42,20 @@ const ListingCardRoot = React.forwardRef<HTMLElement, ListingCardRootProps>(
         ref={ref as any}
         {...otherProps}
       >
-        <div className="flex h-full items-start gap-4 pt-1">
+        <div className="flex items-start gap-4 self-stretch pt-1">
           <SubframeCore.Icon
             className="text-[18px] font-[500] leading-[24px] text-neutral-400 group-hover/cc674cf2:text-brand-600"
             name="FeatherBuilding"
           />
         </div>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-4">
-          <div className="flex h-full w-full grow shrink-0 basis-0 items-center gap-2">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start gap-4">
+          <div className="flex w-full grow shrink-0 basis-0 items-center gap-2">
             {title ? (
-              <span className="w-full grow shrink-0 basis-0 text-subheader font-subheader text-default-font">
+              <span className="grow shrink-0 basis-0 text-subheader font-subheader text-default-font">
                 {title}
               </span>
             ) : null}
-            <div className="flex h-full flex-col items-center gap-2 pt-1">
+            <div className="flex flex-col items-center gap-2 self-stretch pt-1">
               <SubframeCore.Tooltip.Provider>
                 <SubframeCore.Tooltip.Root>
                   <SubframeCore.Tooltip.Trigger asChild={true}>
@@ -83,7 +83,7 @@ const ListingCardRoot = React.forwardRef<HTMLElement, ListingCardRootProps>(
             <DetailCard label="Price" value={price} small={true} />
           </div>
         </div>
-        <div className="flex h-full items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4 self-stretch">
           <SubframeCore.Icon
             className="text-section-header font-section-header text-neutral-300 group-hover/cc674cf2:text-brand-600"
             name="FeatherChevronRight"

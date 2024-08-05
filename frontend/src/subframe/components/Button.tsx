@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * Button — https://app.subframe.com/cb0b7d209a24/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
  */
 
 import React from "react";
@@ -25,6 +25,7 @@ interface ButtonRootProps
   icon?: SubframeCore.IconName;
   iconRight?: SubframeCore.IconName;
   loading?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 }
 
@@ -58,11 +59,11 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
               variant === "destructive-secondary",
             "bg-error-600 hover:bg-error-500 active:bg-error-600":
               variant === "destructive-primary",
-            "bg-transparent hover:bg-neutral-50 active:bg-neutral-100":
+            "bg-transparent hover:bg-neutral-100 active:bg-neutral-200":
               variant === "neutral-tertiary",
             "border border-solid border-neutral-border bg-default-background hover:bg-neutral-50 active:bg-default-background":
               variant === "neutral-secondary",
-            "bg-neutral-600 hover:bg-neutral-500 active:bg-neutral-600":
+            "bg-neutral-100 hover:bg-neutral-200 active:bg-neutral-100":
               variant === "neutral-primary",
             "bg-transparent hover:bg-brand-50 active:bg-brand-100":
               variant === "brand-tertiary",
@@ -77,18 +78,19 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
       >
         <SubframeCore.Icon
           className={SubframeCore.twClassNames(
-            "text-[16px] font-[400] leading-[16px] text-white group-disabled/3b777358:text-neutral-400 group-hover/3b777358:group-disabled/3b777358:text-neutral-400 group-active/3b777358:group-disabled/3b777358:text-neutral-400",
+            "text-body font-body text-white group-disabled/3b777358:text-neutral-400",
             {
               hidden: loading,
-              "text-[12px] font-[400] leading-[12px]": size === "small",
-              "text-[18px] font-[400] leading-[18px]": size === "large",
+              "text-body font-body": size === "small",
+              "text-subheader font-subheader": size === "large",
               "text-white": variant === "inverse",
               "text-error-700":
                 variant === "destructive-tertiary" ||
                 variant === "destructive-secondary",
-              "text-neutral-600":
+              "text-neutral-700":
                 variant === "neutral-tertiary" ||
-                variant === "neutral-secondary",
+                variant === "neutral-secondary" ||
+                variant === "neutral-primary",
               "text-brand-700":
                 variant === "brand-tertiary" || variant === "brand-secondary",
             }
@@ -103,16 +105,17 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
         >
           <SubframeCore.Loader
             className={SubframeCore.twClassNames(
-              "text-body font-body text-white group-disabled/3b777358:text-neutral-400",
+              "text-label font-label text-white group-disabled/3b777358:text-neutral-400",
               {
                 "inline-block text-[12px] font-[400] leading-[20px]": loading,
                 "text-label font-label": size === "small",
-                "text-error-800":
+                "text-error-700":
                   variant === "destructive-tertiary" ||
                   variant === "destructive-secondary",
                 "text-neutral-700":
                   variant === "neutral-tertiary" ||
-                  variant === "neutral-secondary",
+                  variant === "neutral-secondary" ||
+                  variant === "neutral-primary",
                 "text-brand-700":
                   variant === "brand-tertiary" || variant === "brand-secondary",
               }
@@ -124,14 +127,17 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
             className={SubframeCore.twClassNames(
               "whitespace-nowrap text-body-bold font-body-bold text-white group-disabled/3b777358:text-neutral-400",
               {
+                hidden: loading,
                 "text-label-bold font-label-bold": size === "small",
+                "text-body-bold font-body-bold": size === "large",
                 "text-white": variant === "inverse",
                 "text-error-700":
                   variant === "destructive-tertiary" ||
                   variant === "destructive-secondary",
-                "text-neutral-600":
+                "text-neutral-700":
                   variant === "neutral-tertiary" ||
-                  variant === "neutral-secondary",
+                  variant === "neutral-secondary" ||
+                  variant === "neutral-primary",
                 "text-brand-700":
                   variant === "brand-tertiary" || variant === "brand-secondary",
               }
@@ -142,17 +148,18 @@ const ButtonRoot = React.forwardRef<HTMLElement, ButtonRootProps>(
         ) : null}
         <SubframeCore.Icon
           className={SubframeCore.twClassNames(
-            "text-[16px] font-[400] leading-[16px] text-white group-disabled/3b777358:text-neutral-400",
+            "text-body font-body text-white group-disabled/3b777358:text-neutral-400",
             {
-              "text-[12px] font-[600] leading-[12px]": size === "small",
-              "text-[18px] font-[400] leading-[18px]": size === "large",
+              "text-body font-body": size === "small",
+              "text-subheader font-subheader": size === "large",
               "text-white": variant === "inverse",
               "text-error-700":
                 variant === "destructive-tertiary" ||
                 variant === "destructive-secondary",
-              "text-neutral-600":
+              "text-neutral-700":
                 variant === "neutral-tertiary" ||
-                variant === "neutral-secondary",
+                variant === "neutral-secondary" ||
+                variant === "neutral-primary",
               "text-brand-700":
                 variant === "brand-tertiary" || variant === "brand-secondary",
             }

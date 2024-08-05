@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * Copy to clipboard field — https://app.subframe.com/library?component=Copy+to+clipboard+field_1e2e1a38-8b4a-41bd-b224-b893c92a0495
- * Copy to clipboard button — https://app.subframe.com/library?component=Copy+to+clipboard+button_e8c76626-6462-4f2f-b595-38d530d427e8
+ * Copy to clipboard field — https://app.subframe.com/cb0b7d209a24/library?component=Copy+to+clipboard+field_1e2e1a38-8b4a-41bd-b224-b893c92a0495
+ * Copy to clipboard button — https://app.subframe.com/cb0b7d209a24/library?component=Copy+to+clipboard+button_e8c76626-6462-4f2f-b595-38d530d427e8
  */
 
 import React from "react";
@@ -31,9 +31,9 @@ const CopyToClipboardFieldRoot = React.forwardRef<
       ref={ref as any}
       {...otherProps}
     >
-      <div className="flex w-full grow shrink-0 basis-0 items-start gap-1 pt-0.5 pb-0.5">
+      <div className="flex grow shrink-0 basis-0 items-start gap-1 pt-0.5 pb-0.5">
         {text ? (
-          <span className="w-full grow shrink-0 basis-0 whitespace-pre-wrap text-monospace-body font-monospace-body text-subtext-color">
+          <span className="grow shrink-0 basis-0 whitespace-pre-wrap text-monospace-body font-monospace-body text-subtext-color">
             {text}
           </span>
         ) : null}

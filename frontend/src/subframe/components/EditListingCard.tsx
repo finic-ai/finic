@@ -1,9 +1,9 @@
 "use client";
 /*
  * Documentation:
- * Edit Listing Card — https://app.subframe.com/library?component=Edit+Listing+Card_0a2f8f32-a8e8-4928-9a21-177d2b96c53e
- * Icon with background — https://app.subframe.com/library?component=Icon+with+background_c5d68c0e-4c0c-4cff-8d8c-6ff334859b3a
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * Edit Listing Card — https://app.subframe.com/cb0b7d209a24/library?component=Edit+Listing+Card_0a2f8f32-a8e8-4928-9a21-177d2b96c53e
+ * Icon with background — https://app.subframe.com/cb0b7d209a24/library?component=Icon+with+background_c5d68c0e-4c0c-4cff-8d8c-6ff334859b3a
+ * Button — https://app.subframe.com/cb0b7d209a24/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
  */
 
 import React from "react";
@@ -47,13 +47,13 @@ const EditListingCardRoot = React.forwardRef<
       ref={ref as any}
       {...otherProps}
     >
-      <div className="flex h-full w-24 flex-none items-center justify-center gap-2 bg-brand-50 pt-4 pr-4 pb-4 pl-4">
+      <div className="flex w-24 flex-none items-center justify-center gap-2 self-stretch bg-brand-50 pt-4 pr-4 pb-4 pl-4">
         <SubframeCore.Icon
           className="text-[32px] font-[400] leading-[32px] text-brand-700"
           name={icon}
         />
       </div>
-      <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-4 pt-5 pr-4 pb-5 pl-4">
+      <div className="flex grow shrink-0 basis-0 flex-col items-start gap-4 pt-5 pr-4 pb-5 pl-4">
         <div className="flex w-full flex-col items-start gap-1">
           {text ? (
             <span className="line-clamp-1 w-full text-subheader font-subheader text-default-font">

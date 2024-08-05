@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Navbar — https://app.subframe.com/library?component=Navbar_6ca1b963-718d-4d67-aada-b3a747fd3661
+ * Navbar — https://app.subframe.com/cb0b7d209a24/library?component=Navbar_6ca1b963-718d-4d67-aada-b3a747fd3661
  */
 
 import React from "react";
@@ -57,9 +57,11 @@ const NavbarRoot = React.forwardRef<HTMLElement, NavbarRootProps>(
         {...otherProps}
       >
         <div className="flex items-center gap-4">
-          {logo ? <img className="h-7 flex-none" src={logo} /> : null}
+          {logo ? (
+            <img className="h-7 flex-none object-cover" src={logo} />
+          ) : null}
           {children ? (
-            <div className="flex h-full w-full grow shrink-0 basis-0 items-start gap-1">
+            <div className="flex grow shrink-0 basis-0 items-start gap-1 self-stretch">
               {children}
             </div>
           ) : null}

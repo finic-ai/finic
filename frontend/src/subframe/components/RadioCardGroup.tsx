@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Radio Card Group — https://app.subframe.com/library?component=Radio+Card+Group_6d5193b8-6043-4dc1-aad5-7f902ef872df
+ * Radio Card Group — https://app.subframe.com/cb0b7d209a24/library?component=Radio+Card+Group_6d5193b8-6043-4dc1-aad5-7f902ef872df
  */
 
 import React from "react";
@@ -23,7 +23,7 @@ const RadioCard = React.forwardRef<HTMLElement, RadioCardProps>(
       <SubframeCore.RadioGroup.Item asChild={true} {...otherProps}>
         <button
           className={SubframeCore.twClassNames(
-            "group/502d4919 flex w-full cursor-pointer items-center gap-4 rounded-md border border-solid border-neutral-200 bg-default-background pt-3 pr-4 pb-3 pl-4 hover:bg-neutral-50 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-200 aria-[checked=true]:bg-brand-50 hover:aria-[checked=true]:bg-brand-50 disabled:cursor-default disabled:border disabled:border-solid disabled:border-neutral-100 disabled:bg-neutral-50 hover:disabled:cursor-default hover:disabled:bg-neutral-50",
+            "group/502d4919 flex w-full cursor-pointer items-center gap-4 rounded-md border border-solid border-neutral-200 bg-default-background pt-3 pr-4 pb-3 pl-4 text-left hover:bg-neutral-50 aria-[checked=true]:border aria-[checked=true]:border-solid aria-[checked=true]:border-brand-200 aria-[checked=true]:bg-brand-50 hover:aria-[checked=true]:bg-brand-50 disabled:cursor-default disabled:border disabled:border-solid disabled:border-neutral-100 disabled:bg-neutral-50 hover:disabled:cursor-default hover:disabled:bg-neutral-50",
             className
           )}
           ref={ref as any}
@@ -39,7 +39,7 @@ const RadioCard = React.forwardRef<HTMLElement, RadioCardProps>(
             </div>
           </div>
           {children ? (
-            <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-2">
+            <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2">
               {children}
             </div>
           ) : null}
@@ -52,6 +52,8 @@ const RadioCard = React.forwardRef<HTMLElement, RadioCardProps>(
 interface RadioCardGroupRootProps
   extends React.ComponentProps<typeof SubframeCore.RadioGroup.Root> {
   children?: React.ReactNode;
+  value?: string;
+  onValueChange?: (value: string) => void;
   className?: string;
 }
 

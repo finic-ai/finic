@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * NotificationsTile — https://app.subframe.com/library?component=NotificationsTile_a3bafc67-14c4-49d2-8212-9b7666d36dc3
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * NotificationsTile — https://app.subframe.com/cb0b7d209a24/library?component=NotificationsTile_a3bafc67-14c4-49d2-8212-9b7666d36dc3
+ * Button — https://app.subframe.com/cb0b7d209a24/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
  */
 
 import React from "react";
@@ -38,7 +38,7 @@ const NotificationsTileRoot = React.forwardRef<
       {...otherProps}
     >
       <div className="flex w-full items-start gap-2 pt-4 pr-3 pb-4 pl-6">
-        <span className="line-clamp-1 w-full grow shrink-0 basis-0 text-subheader font-subheader text-default-font">
+        <span className="line-clamp-1 grow shrink-0 basis-0 text-subheader font-subheader text-default-font">
           Notifications
         </span>
         <Button

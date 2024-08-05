@@ -99,5 +99,5 @@ class JoinNode(TransformNode):
 class Workflow(BaseModel):
     id: str
     app_id: str
-    nodes: List[Node]
-    edges: List[Edge]
+    nodes: List[Dict[str, Any]]
+    edges: List[Dict[str, Any]]

@@ -2,3 +2,6 @@
 /debug
 .vscode
 .env
+
+# subframe
+.subframe/access-token

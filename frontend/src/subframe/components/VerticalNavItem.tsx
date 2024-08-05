@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Vertical Nav Item — https://app.subframe.com/library?component=Vertical+Nav+Item_6588120a-d20f-4c9b-9777-5bd7f42447b2
+ * Vertical Nav Item — https://app.subframe.com/cb0b7d209a24/library?component=Vertical+Nav+Item_6588120a-d20f-4c9b-9777-5bd7f42447b2
  */
 
 import React from "react";

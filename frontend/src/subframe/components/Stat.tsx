@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Stat — https://app.subframe.com/library?component=Stat_87f41252-6499-4a06-b300-478b0eb95ef4
+ * Stat — https://app.subframe.com/cb0b7d209a24/library?component=Stat_87f41252-6499-4a06-b300-478b0eb95ef4
  */
 
 import React from "react";
@@ -26,7 +26,7 @@ const StatRoot = React.forwardRef<HTMLElement, StatRootProps>(function StatRoot(
       ref={ref as any}
       {...otherProps}
     >
-      <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-1">
+      <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
         {label ? (
           <span className="line-clamp-1 w-full text-body font-body text-neutral-600">
             {label}

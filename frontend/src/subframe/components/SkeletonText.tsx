@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Skeleton Text — https://app.subframe.com/library?component=Skeleton+Text_a9aae3f0-955e-4607-a272-374f1dc18f4b
+ * Skeleton Text — https://app.subframe.com/cb0b7d209a24/library?component=Skeleton+Text_a9aae3f0-955e-4607-a272-374f1dc18f4b
  */
 
 import React from "react";

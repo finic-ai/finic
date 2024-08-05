@@ -1,9 +1,9 @@
 "use client";
 /*
  * Documentation:
- * Feed — https://app.subframe.com/library?component=Feed_7d554e3e-c194-4acf-8d18-5fba3a57892f
- * Icon with background — https://app.subframe.com/library?component=Icon+with+background_c5d68c0e-4c0c-4cff-8d8c-6ff334859b3a
- * Avatar — https://app.subframe.com/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Feed — https://app.subframe.com/cb0b7d209a24/library?component=Feed_7d554e3e-c194-4acf-8d18-5fba3a57892f
+ * Icon with background — https://app.subframe.com/cb0b7d209a24/library?component=Icon+with+background_c5d68c0e-4c0c-4cff-8d8c-6ff334859b3a
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
  */
 
 import React from "react";
@@ -39,26 +39,26 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
       ref={ref as any}
       {...otherProps}
     >
-      <div className="flex h-full flex-col items-center">
+      <div className="flex flex-col items-center self-stretch">
         {leftSlot ? (
           <div className="flex flex-col items-start gap-1">{leftSlot}</div>
         ) : null}
         <div
           className={SubframeCore.twClassNames(
-            "flex h-full w-0.5 grow shrink-0 basis-0 flex-col items-start gap-2 bg-neutral-border",
+            "flex w-0.5 grow shrink-0 basis-0 flex-col items-start gap-2 bg-neutral-border",
             { hidden: isLast }
           )}
         />
       </div>
       <div
         className={SubframeCore.twClassNames(
-          "flex w-full grow shrink-0 basis-0 flex-col items-end gap-2 pt-1.5 pb-6",
+          "flex grow shrink-0 basis-0 flex-col items-end gap-2 pt-1.5 pb-6",
           { "pt-1 pr-0 pb-1 pl-0": isLast }
         )}
       >
         <div className="flex w-full flex-wrap items-center gap-2">
           {children ? (
-            <div className="flex w-full grow shrink-0 basis-0 flex-wrap items-start gap-1">
+            <div className="flex grow shrink-0 basis-0 flex-wrap items-start gap-1">
               {children}
             </div>
           ) : null}
@@ -69,7 +69,7 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
           ) : null}
         </div>
         {comment ? (
-          <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start gap-2">
+          <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-2">
             {comment}
           </div>
         ) : null}

@@ -1,9 +1,9 @@
 "use client";
 /*
  * Documentation:
- * Home List Item — https://app.subframe.com/library?component=Home+List+Item_ebb36ea3-fbec-433a-9b2b-1ba94ab49667
- * Dropdown Menu — https://app.subframe.com/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
- * Icon Button — https://app.subframe.com/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
+ * Home List Item — https://app.subframe.com/cb0b7d209a24/library?component=Home+List+Item_ebb36ea3-fbec-433a-9b2b-1ba94ab49667
+ * Dropdown Menu — https://app.subframe.com/cb0b7d209a24/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
+ * Icon Button — https://app.subframe.com/cb0b7d209a24/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
  */
 
 import React from "react";
@@ -47,7 +47,7 @@ const HomeListItemRoot = React.forwardRef<HTMLElement, HomeListItemRootProps>(
             name={icon}
           />
         </div>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start">
           {title ? (
             <span className="line-clamp-1 w-full text-body font-body text-default-font">
               {title}
@@ -60,7 +60,7 @@ const HomeListItemRoot = React.forwardRef<HTMLElement, HomeListItemRootProps>(
           ) : null}
         </div>
         {metadata ? (
-          <span className="w-full grow shrink-0 basis-0 text-body font-body text-subtext-color">
+          <span className="grow shrink-0 basis-0 text-body font-body text-subtext-color">
             {metadata}
           </span>
         ) : null}

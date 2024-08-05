@@ -1,9 +1,9 @@
 "use client";
 /*
  * Documentation:
- * Todo Tile — https://app.subframe.com/library?component=Todo+Tile_847ae027-2167-4922-bc01-9e7057de362a
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
- * Todo Card — https://app.subframe.com/library?component=Todo+Card_5a526da3-4a65-42ce-99bf-72b716eced31
+ * Todo Tile — https://app.subframe.com/cb0b7d209a24/library?component=Todo+Tile_847ae027-2167-4922-bc01-9e7057de362a
+ * Button — https://app.subframe.com/cb0b7d209a24/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * Todo Card — https://app.subframe.com/cb0b7d209a24/library?component=Todo+Card_5a526da3-4a65-42ce-99bf-72b716eced31
  */
 
 import React from "react";
@@ -37,7 +37,7 @@ const TodoTileRoot = React.forwardRef<HTMLElement, TodoTileRootProps>(
       >
         <div className="hidden w-full flex-col items-start gap-2 pt-4 pr-6 pb-4 pl-6">
           <div className="flex w-full items-center gap-2">
-            <span className="w-full grow shrink-0 basis-0 text-subheader font-subheader text-default-font">
+            <span className="grow shrink-0 basis-0 text-subheader font-subheader text-default-font">
               To-do
             </span>
             <Button

@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Steps — https://app.subframe.com/library?component=Steps_1d5e50a5-9857-430e-8cb6-67a6720881f3
+ * Steps — https://app.subframe.com/cb0b7d209a24/library?component=Steps_1d5e50a5-9857-430e-8cb6-67a6720881f3
  */
 
 import React from "react";
@@ -42,7 +42,7 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
       <div className="flex w-full items-center justify-center gap-2">
         <div
           className={SubframeCore.twClassNames(
-            "flex h-px w-full grow shrink-0 basis-0 flex-col items-center gap-2 bg-neutral-300",
+            "flex h-px grow shrink-0 basis-0 flex-col items-center gap-2 bg-neutral-300",
             { "bg-transparent": firstStep }
           )}
         />
@@ -86,7 +86,7 @@ const Step = React.forwardRef<HTMLElement, StepProps>(function Step(
         </div>
         <div
           className={SubframeCore.twClassNames(
-            "flex h-px w-full grow shrink-0 basis-0 flex-col items-center gap-2 bg-neutral-300",
+            "flex h-px grow shrink-0 basis-0 flex-col items-center gap-2 bg-neutral-300",
             { "bg-transparent": lastStep }
           )}
         />

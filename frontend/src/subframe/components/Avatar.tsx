@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Avatar — https://app.subframe.com/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
  */
 
 import React from "react";
@@ -52,7 +52,7 @@ const AvatarRoot = React.forwardRef<HTMLElement, AvatarRootProps>(
         {children ? (
           <span
             className={SubframeCore.twClassNames(
-              "text-[14px] font-[500] leading-[14px] text-brand-800 absolute",
+              "line-clamp-1 w-full text-[14px] font-[500] leading-[14px] text-brand-800 text-center absolute",
               {
                 "text-[10px] font-[500] leading-[10px]":
                   size === "x-small" || size === "small",
@@ -70,7 +70,7 @@ const AvatarRoot = React.forwardRef<HTMLElement, AvatarRootProps>(
         ) : null}
         {image ? (
           <img
-            className="h-full w-full grow shrink-0 basis-0 absolute"
+            className="w-full grow shrink-0 basis-0 object-cover absolute"
             src={image}
           />
         ) : null}

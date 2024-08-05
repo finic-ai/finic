@@ -12,6 +12,8 @@ from models.models import (
     DestinationNode,
     TransformNode,
     TransformationType,
+    SourceType,
+    DestinationType,
 )
 from supabase import create_client, Client
 import os
@@ -25,6 +27,9 @@ import datetime
 import tempfile
 import pdb
 from collections import deque
+from .transformations import run_mapping_node, run_python_node, run_join_node
+from .sources import run_gcs_source
+from .destinations import run_snowflake_destination
 
 
 class NodeRunner:
@@ -35,7 +40,7 @@ class NodeRunner:
         self, node: Node, inputs: List[str], interim_results: Dict
     ) -> bool:
         if node.type == NodeType.source:
-            output = await self.run_source_node(node)
+            output = await self.run_source_node(node, interim_results)
         elif node.type == NodeType.destination:
             output = await self.run_destination_node(node, inputs, interim_results)
         elif node.type == NodeType.transform:
@@ -46,9 +51,9 @@ class NodeRunner:
         interim_results[node.id] = output
         return True
 
-    async def run_source_node(self, node: SourceNode) -> bool:
-        if node.source == "google_cloud_storage":
-            return await self.run_gcs_source(node)
+    async def run_source_node(self, node: SourceNode, interim_results: Dict) -> bool:
+        if node.source == SourceType.google_cloud_storage:
+            return await run_gcs_source(node, interim_results)
         else:
             raise ValueError(f"Invalid source type: {node.source}")
 
@@ -56,7 +61,7 @@ class NodeRunner:
         self, node: DestinationNode, inputs: List[str], interim_results: Dict
     ) -> bool:
         if node.destination == "snowflake":
-            return await self.run_snowflake_destination(node, inputs)
+            return await run_snowflake_destination(node, inputs, interim_results)
         else:
             raise ValueError(f"Invalid destination type: {node.destination}")
 
@@ -64,13 +69,13 @@ class NodeRunner:
         self, node: TransformNode, inputs: List[str], interim_results: Dict
     ) -> bool:
         if node.transformation == TransformationType.python:
-            pass
+            run_mapping_node(node, inputs, interim_results)
         elif node.transformation == TransformationType.sql:
             pass
         elif node.transformation == TransformationType.join:
-            pass
+            run_mapping_node(node, inputs, interim_results)
         elif node.transformation == TransformationType.mapping:
-            pass
+            run_mapping_node(node, inputs, interim_results)
         elif node.transformation == TransformationType.split:
             pass
         elif node.transformation == TransformationType.filter:

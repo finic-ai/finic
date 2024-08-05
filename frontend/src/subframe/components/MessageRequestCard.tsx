@@ -1,10 +1,10 @@
 "use client";
 /*
  * Documentation:
- * Message Request Card — https://app.subframe.com/library?component=Message+Request+Card_4501145a-a5e7-473b-947a-c6997cd277a6
- * Link Button — https://app.subframe.com/library?component=Link+Button_a4ee726a-774c-4091-8c49-55b659356024
- * Icon Button — https://app.subframe.com/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * Message Request Card — https://app.subframe.com/cb0b7d209a24/library?component=Message+Request+Card_4501145a-a5e7-473b-947a-c6997cd277a6
+ * Link Button — https://app.subframe.com/cb0b7d209a24/library?component=Link+Button_a4ee726a-774c-4091-8c49-55b659356024
+ * Icon Button — https://app.subframe.com/cb0b7d209a24/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
+ * Button — https://app.subframe.com/cb0b7d209a24/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
  */
 
 import React from "react";
@@ -49,7 +49,7 @@ const MessageRequestCardRoot = React.forwardRef<
       {...otherProps}
     >
       <div className="flex w-full items-center gap-2">
-        <div className="flex w-full grow shrink-0 basis-0 items-start">
+        <div className="flex grow shrink-0 basis-0 items-start">
           <div
             className={SubframeCore.twClassNames("flex items-center gap-2", {
               "flex-row gap-2": showCompany,
@@ -89,9 +89,9 @@ const MessageRequestCardRoot = React.forwardRef<
           Accept
         </Button>
       </div>
-      <div className="flex h-full w-full grow shrink-0 basis-0 flex-col items-start gap-2 rounded-md border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
+      <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-2 rounded-md border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default">
         {message ? (
-          <span className="h-full w-full grow shrink-0 basis-0 whitespace-pre-wrap text-body font-body text-default-font">
+          <span className="w-full grow shrink-0 basis-0 whitespace-pre-wrap text-body font-body text-default-font">
             {message}
           </span>
         ) : null}

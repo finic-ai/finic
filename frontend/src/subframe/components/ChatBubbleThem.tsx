@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * Chat Bubble Them — https://app.subframe.com/library?component=Chat+Bubble+Them_5fa1557c-fe15-4f3e-85e7-470457d52473
- * Avatar — https://app.subframe.com/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Chat Bubble Them — https://app.subframe.com/cb0b7d209a24/library?component=Chat+Bubble+Them_5fa1557c-fe15-4f3e-85e7-470457d52473
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
  */
 
 import React from "react";

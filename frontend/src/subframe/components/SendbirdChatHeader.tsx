@@ -1,10 +1,10 @@
 "use client";
 /*
  * Documentation:
- * Sendbird Chat Header — https://app.subframe.com/library?component=Sendbird+Chat+Header_e029df5a-e971-45de-bc11-a8d0e29ddb10
- * Icon Button — https://app.subframe.com/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
- * Link Button — https://app.subframe.com/library?component=Link+Button_a4ee726a-774c-4091-8c49-55b659356024
- * Button — https://app.subframe.com/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
+ * Sendbird Chat Header — https://app.subframe.com/cb0b7d209a24/library?component=Sendbird+Chat+Header_e029df5a-e971-45de-bc11-a8d0e29ddb10
+ * Icon Button — https://app.subframe.com/cb0b7d209a24/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
+ * Link Button — https://app.subframe.com/cb0b7d209a24/library?component=Link+Button_a4ee726a-774c-4091-8c49-55b659356024
+ * Button — https://app.subframe.com/cb0b7d209a24/library?component=Button_3b777358-b86b-40af-9327-891efc6826fe
  */
 
 import React from "react";
@@ -43,8 +43,8 @@ const SendbirdChatHeaderRoot = React.forwardRef<
       ref={ref as any}
       {...otherProps}
     >
-      <div className="flex w-full grow shrink-0 basis-0 items-start gap-2">
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
+      <div className="flex grow shrink-0 basis-0 items-start gap-2">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start">
           <div className="flex items-center gap-2">
             {fullName ? (
               <span className="text-body-bold font-body-bold text-default-font">

@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Progress — https://app.subframe.com/library?component=Progress_60964db0-a1bf-428b-b9d5-f34cdf58ea77
+ * Progress — https://app.subframe.com/cb0b7d209a24/library?component=Progress_60964db0-a1bf-428b-b9d5-f34cdf58ea77
  */
 
 import React from "react";
@@ -43,7 +43,7 @@ const ProgressRoot = React.forwardRef<HTMLElement, ProgressRootProps>(
       <SubframeCore.Progress.Root asChild={true} value={value} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "flex w-full flex-col items-start gap-2 overflow-hidden rounded-full bg-neutral-200",
+            "flex w-full flex-col items-start gap-2 overflow-hidden rounded-full bg-neutral-100",
             className
           )}
           ref={ref as any}

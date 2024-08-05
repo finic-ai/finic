@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * List — https://app.subframe.com/library?component=List_414641ff-6f21-4e4e-81b4-170160998f40
+ * List — https://app.subframe.com/cb0b7d209a24/library?component=List_414641ff-6f21-4e4e-81b4-170160998f40
  */
 
 import React from "react";
@@ -31,7 +31,7 @@ const ListItem = React.forwardRef<HTMLElement, ListItemProps>(function ListItem(
         <div className="flex items-start gap-2">{leftSlot}</div>
       ) : null}
       {children ? (
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start">
           {children}
         </div>
       ) : null}

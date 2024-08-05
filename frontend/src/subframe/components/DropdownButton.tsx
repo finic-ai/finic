@@ -1,8 +1,8 @@
 "use client";
 /*
  * Documentation:
- * Dropdown Button — https://app.subframe.com/library?component=Dropdown+Button_0d533080-af9c-4d40-85cc-332490a1a191
- * Dropdown Menu — https://app.subframe.com/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
+ * Dropdown Button — https://app.subframe.com/cb0b7d209a24/library?component=Dropdown+Button_0d533080-af9c-4d40-85cc-332490a1a191
+ * Dropdown Menu — https://app.subframe.com/cb0b7d209a24/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
  */
 
 import React from "react";
@@ -14,6 +14,7 @@ interface DropdownButtonRootProps
   icon?: SubframeCore.IconName;
   children?: string;
   dropdownMenu?: React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 }
 
