@@ -25,12 +25,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
-from models.api import (
-    RunWorkflowRequest,
-    GetAvailableDestinationTablesRequest,
-    GetAvailableSourceDatasetsRequest,
-    UpsertWorkflowRequest,
-)
+from models.api import CompleteOnboardingRequest, UpsertWorkflowRequest
 import uuid
 from models.models import AppConfig
 from database import Database
@@ -113,45 +108,6 @@ async def create_business(
         )
         await db.upsert_workflow(workflow=workflow)
         return workflow
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/run-workflow")
-async def run_workflow(
-    request: RunWorkflowRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflow = await db.get_workflow(config=config, workflow_id=request.workflow_id)
-        if workflow is None:
-            raise HTTPException(status_code=404, detail="Workflow not found")
-
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/get-available-source-datasets")
-async def get_available_datasets_from_source(
-    request: GetAvailableSourceDatasetsRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        return {}
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/get-available-destination-tables")
-async def get_available_tables_from_destination(
-    request: GetAvailableDestinationTablesRequest = Form(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        return {}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
