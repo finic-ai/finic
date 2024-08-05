@@ -9,8 +9,6 @@ import {
   type NodeProps
 } from '@xyflow/react';
 import * as SubframeCore from "@subframe/core";
-import { WorkflowPageLayout } from "@/subframe/layouts/WorkflowPageLayout";
-import { IconWithBackground } from "@/subframe/components/IconWithBackground";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { Button } from "@/subframe/components/Button";
 import { Table } from "@/subframe/components/Table";
@@ -21,7 +19,7 @@ import { Alert } from "@/subframe/components/Alert";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { Switch } from "@/subframe/components/Switch";
 
-import { NodeLayout } from "@/components/nodes";
+import { NodeLayout } from "@/components/Nodes";
 
 type SourceNode = Node<{ title: string, nodeType: string, onNodeOpen: (node_id: string) => void }, 'source'>;
 

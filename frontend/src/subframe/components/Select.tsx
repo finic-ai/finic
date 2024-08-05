@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Select — https://app.subframe.com/0bc1b5ae3457/library?component=Select_bb88f90b-8c43-4b73-9c2f-3558ce7838f3
+ * Select — https://app.subframe.com/cb0b7d209a24/library?component=Select_bb88f90b-8c43-4b73-9c2f-3558ce7838f3
  */
 
 import React from "react";
@@ -22,12 +22,14 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
     <SubframeCore.Select.Item value={value} asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "group/969e345b flex h-8 w-full cursor-pointer items-center gap-1 rounded pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-brand-50",
+          "group/969e345b flex h-8 w-full cursor-pointer items-center gap-1 rounded-md pr-3 pl-3 hover:bg-neutral-100 active:bg-neutral-50 data-[highlighted]:bg-brand-50",
           className
         )}
         ref={ref as any}
       >
-        <Select.ItemText>{children || value}</Select.ItemText>
+        <Select.ItemText className="h-auto grow shrink-0 basis-0">
+          {children || value}
+        </Select.ItemText>
         <SubframeCore.Icon
           className="hidden text-body font-body text-default-font group-hover/969e345b:hidden group-data-[state=checked]/969e345b:inline-flex group-data-[state=checked]/969e345b:text-brand-600"
           name="FeatherCheck"
@@ -78,7 +80,7 @@ const Content = React.forwardRef<HTMLElement, ContentProps>(function Content(
     <SubframeCore.Select.Content asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "flex w-full flex-col items-start overflow-hidden rounded border border-solid border-neutral-border bg-white pt-1 pr-1 pb-1 pl-1 shadow-overlay",
+          "flex w-full flex-col items-start overflow-hidden rounded-md border border-solid border-neutral-border bg-white pt-1 pr-1 pb-1 pl-1 shadow-overlay",
           className
         )}
         ref={ref as any}
@@ -212,18 +214,18 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
           {...otherProps}
         >
           {label ? (
-            <span className="text-body-bold font-body-bold text-default-font">
+            <span className="text-label-bold font-label-bold text-default-font">
               {label}
             </span>
           ) : null}
           <div
             className={SubframeCore.twClassNames(
-              "flex h-8 w-full flex-none flex-col items-start rounded border border-solid border-neutral-border bg-default-background group-focus-within/bb88f90b:border group-focus-within/bb88f90b:border-solid group-focus-within/bb88f90b:border-brand-primary",
+              "flex h-8 w-full flex-none flex-col items-start rounded-md border border-solid border-neutral-border bg-default-background group-focus-within/bb88f90b:border group-focus-within/bb88f90b:border-solid group-focus-within/bb88f90b:border-brand-primary",
               {
                 "border border-solid border-neutral-100 bg-neutral-100 group-hover/bb88f90b:border group-hover/bb88f90b:border-solid group-hover/bb88f90b:border-neutral-border group-hover/bb88f90b:bg-neutral-100":
                   variant === "filled",
                 "border border-solid border-error-600": error,
-                "bg-neutral-100": disabled,
+                "bg-neutral-200": disabled,
               }
             )}
           >
@@ -232,7 +234,7 @@ const SelectRoot = React.forwardRef<HTMLElement, SelectRootProps>(
           {helpText ? (
             <span
               className={SubframeCore.twClassNames(
-                "text-caption font-caption text-subtext-color",
+                "text-label font-label text-subtext-color",
                 { "text-error-700": error }
               )}
             >

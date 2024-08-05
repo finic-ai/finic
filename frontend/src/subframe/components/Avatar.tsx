@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Avatar — https://app.subframe.com/0bc1b5ae3457/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Avatar — https://app.subframe.com/cb0b7d209a24/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
  */
 
 import React from "react";
@@ -34,7 +34,7 @@ const AvatarRoot = React.forwardRef<HTMLElement, AvatarRootProps>(
         className={SubframeCore.twClassNames(
           "group/bec25ae6 flex h-8 w-8 flex-col items-center justify-center gap-2 overflow-hidden rounded-full bg-brand-100 relative",
           {
-            rounded: square,
+            "rounded-md": square,
             "h-5 w-5": size === "x-small",
             "h-6 w-6": size === "small",
             "h-12 w-12": size === "large",
@@ -52,7 +52,7 @@ const AvatarRoot = React.forwardRef<HTMLElement, AvatarRootProps>(
         {children ? (
           <span
             className={SubframeCore.twClassNames(
-              "text-[14px] font-[500] leading-[14px] text-brand-800 absolute",
+              "line-clamp-1 w-full text-[14px] font-[500] leading-[14px] text-brand-800 text-center absolute",
               {
                 "text-[10px] font-[500] leading-[10px]":
                   size === "x-small" || size === "small",
@@ -69,7 +69,10 @@ const AvatarRoot = React.forwardRef<HTMLElement, AvatarRootProps>(
           </span>
         ) : null}
         {image ? (
-          <img className="w-full grow shrink-0 basis-0 absolute" src={image} />
+          <img
+            className="w-full grow shrink-0 basis-0 object-cover absolute"
+            src={image}
+          />
         ) : null}
       </div>
     );

@@ -1,5 +1,7 @@
+import * as SubframeCore from "@subframe/core";
 import { Button } from "@/subframe/components/Button";
 import { IconWithBackground, IconName } from "@/subframe/components/IconWithBackground";
+import { DropdownMenu } from "@/subframe/components/DropdownMenu";
 import { nodeTypes, NodeTypeNames, NodeIcons } from "@/types";
 
 interface NodeLayoutProps {
@@ -17,21 +19,53 @@ export function NodeLayout({ children, title, nodeType, openNode }: NodeLayoutPr
  
   return (
     <div className="flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6">
-      <div className="flex w-full items-center justify-center gap-6">
+      <div className="flex w-full flex-col gap-4">
+        <div className="flex w-full items-center justify-between">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-body-bold font-body-bold text-default-font">
+              {NodeTypeNames[nodeType as keyof typeof NodeTypeNames]}
+            </span>
+            <IconWithBackground
+              variant="brand"
+              size="medium"
+              icon={NodeIcons[nodeType as keyof IconName]}
+              square={false}
+            />
+            </div>
+            <SubframeCore.DropdownMenu.Root>
+              <SubframeCore.DropdownMenu.Trigger asChild={true}>
+                <Button
+                  disabled={false}
+                  variant="neutral-secondary"
+                  size="medium"
+                  icon="FeatherMoreVertical"
+                  iconRight={null}
+                  loading={false}
+                  onClick={stopPropagation}
+                />
+              </SubframeCore.DropdownMenu.Trigger>
+              <SubframeCore.DropdownMenu.Portal>
+                <SubframeCore.DropdownMenu.Content
+                  side="bottom"
+                  align="start"
+                  sideOffset={4}
+                  asChild={true}
+                >
+                  <DropdownMenu>
+                    <DropdownMenu.DropdownItem icon="FeatherCopy" onClick={stopPropagation}>
+                      Duplicate
+                    </DropdownMenu.DropdownItem>
+                    <DropdownMenu.DropdownItem icon="FeatherTrash" onClick={stopPropagation}>
+                      Delete
+                    </DropdownMenu.DropdownItem>
+                  </DropdownMenu>
+                </SubframeCore.DropdownMenu.Content>
+              </SubframeCore.DropdownMenu.Portal>
+            </SubframeCore.DropdownMenu.Root>
+        </div>
         <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
           {title}
         </span>
-        <div className="flex items-center justify-end gap-2">
-          <span className="text-body-bold font-body-bold text-default-font">
-            {NodeTypeNames[nodeType as keyof typeof NodeTypeNames]}
-          </span>
-          <IconWithBackground
-            variant="brand"
-            size="medium"
-            icon={NodeIcons[nodeType as keyof IconName]}
-            square={false}
-          />
-        </div>
       </div>
       <div 
         className="nodrag cursor-default flex w-full grow shrink-0 basis-0 flex-col items-start gap-2 rounded border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default"

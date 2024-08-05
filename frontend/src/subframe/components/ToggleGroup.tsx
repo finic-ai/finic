@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Toggle Group — https://app.subframe.com/0bc1b5ae3457/library?component=Toggle+Group_2026f10a-e3cc-4c89-80da-a7259acae3b7
+ * Toggle Group — https://app.subframe.com/cb0b7d209a24/library?component=Toggle+Group_2026f10a-e3cc-4c89-80da-a7259acae3b7
  */
 
 import React from "react";
@@ -29,24 +29,30 @@ const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(
     <SubframeCore.ToggleGroup.Item asChild={true} {...otherProps}>
       <div
         className={SubframeCore.twClassNames(
-          "group/56dea6ed flex h-8 w-full cursor-pointer items-center justify-center gap-2 bg-white pr-3 pl-3 hover:bg-neutral-50 active:bg-neutral-100 aria-[checked=true]:bg-brand-50 hover:aria-[checked=true]:bg-brand-50 active:aria-[checked=true]:bg-brand-100",
-          { "hover:bg-white active:bg-white": disabled },
+          "group/56dea6ed flex h-7 w-full cursor-pointer items-center justify-center gap-2 rounded-md pt-1 pr-2 pb-1 pl-2 active:bg-neutral-100 aria-[checked=true]:bg-default-background aria-[checked=true]:shadow-default hover:aria-[checked=true]:bg-default-background active:aria-[checked=true]:bg-default-background",
+          { "hover:bg-transparent active:bg-transparent": disabled },
           className
         )}
         ref={ref as any}
       >
         <SubframeCore.Icon
           className={SubframeCore.twClassNames(
-            "text-[16px] font-[400] leading-[16px] text-subtext-color group-aria-[checked=true]/56dea6ed:text-brand-700",
-            { "text-neutral-400": disabled }
+            "text-body font-body text-subtext-color group-hover/56dea6ed:text-default-font group-active/56dea6ed:text-default-font group-aria-[checked=true]/56dea6ed:text-default-font",
+            {
+              "text-neutral-400 group-hover/56dea6ed:text-neutral-400 group-active/56dea6ed:text-neutral-400":
+                disabled,
+            }
           )}
           name={icon}
         />
         {children ? (
           <span
             className={SubframeCore.twClassNames(
-              "whitespace-nowrap text-body-bold font-body-bold text-subtext-color group-aria-[checked=true]/56dea6ed:text-brand-700",
-              { "text-neutral-400": disabled }
+              "whitespace-nowrap text-label-bold font-label-bold text-subtext-color group-hover/56dea6ed:text-default-font group-active/56dea6ed:text-default-font group-aria-[checked=true]/56dea6ed:text-default-font",
+              {
+                "text-neutral-400 group-hover/56dea6ed:text-neutral-400 group-active/56dea6ed:text-neutral-400":
+                  disabled,
+              }
             )}
           >
             {children}
@@ -74,7 +80,7 @@ const ToggleGroupRoot = React.forwardRef<HTMLElement, ToggleGroupRootProps>(
       <SubframeCore.ToggleGroup.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "flex items-start gap-px overflow-hidden rounded border border-solid border-neutral-border bg-neutral-border",
+            "flex items-center gap-0.5 overflow-hidden rounded-md bg-neutral-100 pt-0.5 pr-0.5 pb-0.5 pl-0.5",
             className
           )}
           ref={ref as any}

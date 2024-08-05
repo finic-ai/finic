@@ -6,9 +6,9 @@ import {
   type NodeTypes
 } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { EditorTopBar } from "../components/EditorTopBar";
-import { SidebarTile } from "../components/SidebarTile";
-import { SidebarButton } from "../components/SidebarButton";
+import { EditorTopBar } from "@/subframe/components/EditorTopBar";
+import { SidebarTile } from "@/subframe/components/SidebarTile";
+import { SidebarButton } from "@/subframe/components/SidebarButton";
 
 import { FinicNodeType } from "@/types";
 

@@ -27,7 +27,9 @@ export default function RootLayout({
         </head>
       </head>
       <ReactFlowProvider>
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          {children}
+        </body>
       </ReactFlowProvider>
     </html>
   );

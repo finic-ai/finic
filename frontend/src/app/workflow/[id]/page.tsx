@@ -17,8 +17,8 @@ import {
   type NodeTypes,
 } from '@xyflow/react';
 import * as SubframeCore from "@subframe/core";
-import { WorkflowPageLayout } from "@/subframe/layouts/WorkflowPageLayout";
-import { IconWithBackground, IconName } from "@/subframe/components/IconWithBackground";
+import { WorkflowPageLayout } from "..";
+import { IconWithBackground } from "@/subframe/components/IconWithBackground";
 import { RadioGroup } from "@/subframe/components/RadioGroup";
 import { Button } from "@/subframe/components/Button";
 import { Table } from "@/subframe/components/Table";
@@ -40,7 +40,7 @@ import {
   GenerativeAINode, 
   PythonNode, 
   SQLNode,
-} from "@/components/nodes";
+} from "@/components/Nodes";
 import { ConfigurationDrawer } from "@/components/ConfigurationDrawer";
 import '@xyflow/react/dist/style.css';
 
@@ -65,6 +65,7 @@ export default function WorkflowPage() {
 
   // Need to get the React Flow state in order to mark a node as selected when clicking the "Open" button
   const onNodeOpen = useCallback((nodeId: string) => {
+    console.log(store.getState());
     const { addSelectedNodes } = store.getState();
     addSelectedNodes([nodeId]);
   }, [store])
@@ -105,6 +106,7 @@ export default function WorkflowPage() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        selectNodesOnDrag={false}
       >
         <Controls />
         <MiniMap />
@@ -161,7 +163,7 @@ export default function WorkflowPage() {
             title={selectedNode.data.title as string}
             description={selectedNode.data.description as string}
             nodeType={selectedNode.type as string}
-            iconName={NodeIcons[selectedNode.type as keyof IconName]}
+            iconName={NodeIcons[selectedNode.type as keyof SubframeCore.IconName]}
           >
             {React.createElement(configurationDrawerTypes[selectedNode.type as keyof typeof configurationDrawerTypes])}
           </ConfigurationDrawer>}

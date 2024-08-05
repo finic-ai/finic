@@ -1,13 +1,11 @@
 "use client";
 /*
  * Documentation:
- * Icon with background — https://app.subframe.com/0bc1b5ae3457/library?component=Icon+with+background_c5d68c0e-4c0c-4cff-8d8c-6ff334859b3a
+ * Icon with background — https://app.subframe.com/cb0b7d209a24/library?component=Icon+with+background_c5d68c0e-4c0c-4cff-8d8c-6ff334859b3a
  */
 
 import React from "react";
 import * as SubframeCore from "@subframe/core";
-
-export type IconName = SubframeCore.IconName;
 
 interface IconWithBackgroundRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -37,7 +35,7 @@ const IconWithBackgroundRoot = React.forwardRef<
       className={SubframeCore.twClassNames(
         "group/c5d68c0e flex h-5 w-5 items-center justify-center gap-2 rounded-full bg-brand-100",
         {
-          rounded: square,
+          "rounded-md": square,
           "h-6 w-6": size === "small",
           "h-8 w-8": size === "medium",
           "h-12 w-12": size === "large",
@@ -54,16 +52,16 @@ const IconWithBackgroundRoot = React.forwardRef<
     >
       <SubframeCore.Icon
         className={SubframeCore.twClassNames(
-          "text-[10px] font-[400] leading-[10px] text-brand-800",
+          "text-[10px] font-[400] leading-[12px] text-brand-800",
           {
-            "text-[12px] font-[400] leading-[12px]": size === "small",
-            "text-[16px] font-[400] leading-[16px]": size === "medium",
-            "text-[24px] font-[400] leading-[24px]": size === "large",
-            "text-[32px] font-[400] leading-[32px]": size === "x-large",
+            "text-label font-label": size === "small",
+            "text-body font-body": size === "medium",
+            "text-section-header font-section-header": size === "large",
+            "text-header font-header": size === "x-large",
             "text-warning-800": variant === "warning",
             "text-success-800": variant === "success",
             "text-error-800": variant === "error",
-            "text-neutral-800": variant === "neutral",
+            "text-neutral-700": variant === "neutral",
           }
         )}
         name={icon}

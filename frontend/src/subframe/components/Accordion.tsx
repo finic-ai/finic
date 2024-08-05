@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Accordion — https://app.subframe.com/0bc1b5ae3457/library?component=Accordion_d2e81e20-863a-4027-826a-991d8910efd9
+ * Accordion — https://app.subframe.com/cb0b7d209a24/library?component=Accordion_d2e81e20-863a-4027-826a-991d8910efd9
  */
 
 import React from "react";
@@ -96,7 +96,7 @@ const AccordionRoot = React.forwardRef<HTMLElement, AccordionRootProps>(
       <SubframeCore.Collapsible.Root asChild={true} {...otherProps}>
         <div
           className={SubframeCore.twClassNames(
-            "group/d2e81e20 flex w-full flex-col items-start rounded",
+            "group/d2e81e20 flex w-full flex-col items-start rounded-md",
             className
           )}
           ref={ref as any}
