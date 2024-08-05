@@ -21,8 +21,83 @@ class User(BaseModel):
     completed_onboarding: Optional[bool] = None
 
 
+class Edge(BaseModel):
+    id: str
+    source: str
+    target: str
+
+
+class NodePosition(BaseModel):
+    x: int
+    y: int
+
+
+class NodeType(Enum):
+    source = "source"
+    destination = "destination"
+    transform = "transform"
+
+
+class SourceType(Enum):
+    google_cloud_storage = "google_cloud_storage"
+
+
+class DestinationType(Enum):
+    snowflake = "snowflake"
+
+
+class TransformationType(Enum):
+    python = "python"
+    sql = "sql"
+    mapping = "mapping"
+    join = "join"
+    split = "split"
+    filter = "filter"
+    conditional = "conditional"
+
+
+class Node(BaseModel):
+    id: str
+    position: NodePosition
+    type: NodeType
+
+
+class SourceNode(Node):
+    source: SourceType
+    credentials: Dict[str, Any]
+    configuration: Dict[str, Any]
+
+
+class DestinationNode(Node):
+    destination: DestinationType
+    credentials: Dict[str, Any]
+    configuration: Dict[str, Any]
+
+
+class TransformNode(Node):
+    transformation: TransformationType
+    configuration: Optional[Dict[str, Any]] = None
+
+
+class ColumnMapping(BaseModel):
+    old_name: str
+    new_name: str
+
+
+class MappingNode(TransformNode):
+    mappings: List[ColumnMapping]
+
+
+class PythonNode(TransformNode):
+    pass
+
+
+class JoinNode(TransformNode):
+    pass
+
+
 class Workflow(BaseModel):
     id: str
     app_id: str
-    nodes: List[Dict[str, Any]]
-    edges: List[Dict[str, Any]]
+    nodes: List[Node]
+    edges: List[Edge]

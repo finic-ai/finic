@@ -1,4 +1,4 @@
-# Finic
+# dealwise-marketplace
 
 server
 ```

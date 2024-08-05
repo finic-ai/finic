@@ -1,3 +1,7 @@
 
 # subframe
 .subframe/access-token
+.vercel
+/debug
+.vscode
+.env
