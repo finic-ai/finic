@@ -1,5 +1,0 @@
-
-```
-yarn install
-yarn dev
-```
