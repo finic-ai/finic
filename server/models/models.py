@@ -76,8 +76,24 @@ class DestinationNode(Node):
 
 class TransformNode(Node):
     transformation: TransformationType
-    code: Optional[str] = None
     configuration: Optional[Dict[str, Any]] = None
+
+
+class ColumnMapping(BaseModel):
+    old_name: str
+    new_name: str
+
+
+class MappingNode(TransformNode):
+    mappings: List[ColumnMapping]
+
+
+class PythonNode(TransformNode):
+    pass
+
+
+class JoinNode(TransformNode):
+    pass
 
 
 class Workflow(BaseModel):
