@@ -61,3 +61,16 @@ class Database:
             row = response.data[0]
             return Workflow(**row)
         return None
+
+    async def get_workflow(self, workflow_id: str, app_id: str) -> Optional[Workflow]:
+        response = (
+            self.supabase.table("workflow")
+            .select("*")
+            .filter("id", "eq", workflow_id)
+            .filter("app_id", "eq", app_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Workflow(**row)
+        return None

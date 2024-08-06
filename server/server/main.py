@@ -25,7 +25,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
-from models.api import CompleteOnboardingRequest, UpsertWorkflowRequest
+from models.api import GetWorkflowRequest, UpsertWorkflowRequest
 import uuid
 from models.models import AppConfig
 from database import Database
@@ -107,6 +107,19 @@ async def create_business(
             edges=request.edges,
         )
         await db.upsert_workflow(workflow=workflow)
+        return workflow
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/get-workflow")
+async def create_business(
+    request: GetWorkflowRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        workflow = await db.get_workflow(request.id, config.app_id)
         return workflow
     except Exception as e:
         print(e)
