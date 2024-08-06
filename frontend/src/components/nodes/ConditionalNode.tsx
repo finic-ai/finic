@@ -38,7 +38,7 @@ export default function ConditionalNode(props: NodeProps<ConditionalNode>) {
   }
  
   return (
-    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} nodeType={props.type}>
+    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} isSelected ={props.selected || false} nodeType={props.type}>
       <Handle 
         type="target" 
         position={Position.Left} 

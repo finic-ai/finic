@@ -12,11 +12,12 @@ interface NodeLayoutProps {
   children?: React.ReactNode;
   title: string;
   nodeType: string;
+  isSelected: boolean;
   results?: NodeResults;
   openNode: () => void;
 }
 
-export function NodeLayout({ children, title, nodeType, results, openNode }: NodeLayoutProps) {
+export function NodeLayout({ children, title, nodeType, isSelected, results, openNode }: NodeLayoutProps) {
   const resultTableRef = useRef<HTMLTableElement>(null);
 
   const stopPropagation = (event: React.MouseEvent) => {
@@ -40,7 +41,7 @@ export function NodeLayout({ children, title, nodeType, results, openNode }: Nod
  
   return (
     <div className="flex flex-col items-center justify-center gap-2">
-      <div className="flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6">
+      <div className={`flex w-112 flex-col items-start gap-6 rounded bg-default-background pt-6 pr-6 pb-6 pl-6 border border-solid border-neutral-border shadow-overlay ${isSelected && "shadow-selected-glow"}`}>
         <div className="flex w-full flex-col gap-4">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center justify-center gap-2">
@@ -90,7 +91,7 @@ export function NodeLayout({ children, title, nodeType, results, openNode }: Nod
           </span>
         </div>
         <div 
-          className="nodrag cursor-default flex w-full grow shrink-0 basis-0 flex-col items-start gap-2 rounded border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6 shadow-default"
+          className="nodrag cursor-default flex w-full flex-col items-start gap-2 rounded border border-solid border-neutral-border bg-default-background pt-6 pr-6 pb-6 pl-6"
           onClick={stopPropagation}
         >
           {children ? children : null}
@@ -112,7 +113,7 @@ export function NodeLayout({ children, title, nodeType, results, openNode }: Nod
           </div>
         </div>
       </div>
-      {results && <div className="flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-neutral-100 pt-6 pr-6 pb-6 pl-6">
+      {results && <div className="flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-neutral-100 pt-6 pr-6 pb-6 pl-6 shadow-overlay">
         <div className="flex w-full items-center justify-center gap-6">
           <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
             Results

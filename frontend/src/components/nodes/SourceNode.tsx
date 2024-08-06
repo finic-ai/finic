@@ -39,7 +39,7 @@ export default function SourceNode(props: NodeProps<SourceNode>) {
   }
  
   return (
-    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} nodeType={props.type}>
+    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} isSelected ={props.selected || false} nodeType={props.type}>
       <Handle 
         type="source" 
         position={Position.Right} 

@@ -3,7 +3,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import {ReactFlowProvider} from "@xyflow/react"
-import { ThemeProvider } from "@material-tailwind/react";
 import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
