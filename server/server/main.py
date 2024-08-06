@@ -34,6 +34,7 @@ import datetime
 import pdb
 import logging
 import sentry_sdk
+from workflow_runner import WorkflowRunner
 
 sentry_sdk.init(
     dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
@@ -95,7 +96,7 @@ async def validate_optional_token(
 
 
 @app.post("/upsert-workflow")
-async def create_business(
+async def upsert_workflow(
     request: UpsertWorkflowRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
@@ -114,12 +115,27 @@ async def create_business(
 
 
 @app.post("/get-workflow")
-async def create_business(
+async def get_workflow(
     request: GetWorkflowRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
         workflow = await db.get_workflow(request.id, config.app_id)
+        return workflow
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/run-workflow")
+async def run_workflow(
+    request: GetWorkflowRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        workflow = await db.get_workflow(request.id, config.app_id)
+        runner = WorkflowRunner()
+        runner.run_workflow(workflow)
         return workflow
     except Exception as e:
         print(e)
