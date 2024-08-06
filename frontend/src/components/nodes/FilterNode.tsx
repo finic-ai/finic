@@ -19,10 +19,15 @@ import { TextArea } from "@/subframe/components/TextArea";
 import { Alert } from "@/subframe/components/Alert";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { Switch } from "@/subframe/components/Switch";
-
+import { type NodeResults } from "@/types";
 import { NodeLayout } from "@/components/Nodes";
 
-type FilterNode = Node<{ title: string, nodeType: string, onNodeOpen: (node_id: string) => void }, 'filter'>;
+type FilterNode = Node<{ 
+  title: string, 
+  nodeType: string,
+  results: NodeResults,
+  onNodeOpen: (node_id: string) => void 
+}, 'filter'>;
 
 export default function FilterNode(props: NodeProps<FilterNode>) {
   const nodeId = useNodeId();
@@ -32,7 +37,7 @@ export default function FilterNode(props: NodeProps<FilterNode>) {
   }
  
   return (
-    <NodeLayout openNode={onNodeOpen} title={props.data.title} nodeType={props.type}>
+    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} nodeType={props.type}>
       <Handle 
         type="target" 
         position={Position.Left} 

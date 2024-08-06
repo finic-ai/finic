@@ -89,3 +89,8 @@ export const NodeIcons = {
   python: 'FeatherCode2',
   sql: 'FeatherDatabaseZap',
 };
+
+export type NodeResults = {
+  columns: string[];
+  data: Array<Array<string | number | boolean>>;
+};
