@@ -58,6 +58,33 @@ const initialNodes = [
 ];
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
+const testResults = {
+  columns: ["opportunity_id", "amount", "close_date", "is_closed", "is_won"],
+  data: [
+    [1, 1000, "2021-09-01", true, false],
+    [2, 2000, "2021-09-02", false, true],
+    [3, 3000, "2021-09-03", true, false],
+    [4, 4000, "2021-09-04", false, true],
+    [5, 5000, "2021-09-05", true, false],
+    [6, 6000, "2021-09-06", false, true],
+    [7, 7000, "2021-09-07", true, false],
+    [8, 8000, "2021-09-08", false, true],
+    [9, 9000, "2021-09-09", true, false],
+    [10, 10000, "2021-09-10", false, true],
+    [1, 1000, "2021-09-01", true, false],
+    [2, 2000, "2021-09-02", false, true],
+    [3, 3000, "2021-09-03", true, false],
+    [4, 4000, "2021-09-04", false, true],
+    [5, 5000, "2021-09-05", true, false],
+    [6, 6000, "2021-09-06", false, true],
+    [7, 7000, "2021-09-07", true, false],
+    [8, 8000, "2021-09-08", false, true],
+    [9, 9000, "2021-09-09", true, false],
+    [10, 10000, "2021-09-10", false, true]
+  ]
+};
+
+
 export default function WorkflowPage() {
   // const [nodes] = useState<Node[]>([]);
   const store = useStoreApi();
@@ -70,7 +97,7 @@ export default function WorkflowPage() {
     addSelectedNodes([nodeId]);
   }, [store])
 
-  const nodesWithData = initialNodes.map((node) => {return {...node, data: {...node.data, onNodeOpen: onNodeOpen}}});
+  const nodesWithData = initialNodes.map((node) => {return {...node, data: {...node.data, results: testResults, onNodeOpen: onNodeOpen}}});
 
   const [nodes, setNodes, onNodesChange] = useNodesState(nodesWithData);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);

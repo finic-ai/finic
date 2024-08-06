@@ -19,12 +19,17 @@ import { TextArea } from "@/subframe/components/TextArea";
 import { Alert } from "@/subframe/components/Alert";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { Switch } from "@/subframe/components/Switch";
-
+import { type NodeResults } from "@/types";
 import { NodeLayout } from "@/components/Nodes";
 
-type GenerativeAINOde = Node<{ title: string, nodeType: string, onNodeOpen: (node_id: string) => void }, 'generative_ai'>;
+type GenerativeAINode = Node<{ 
+  title: string, 
+  nodeType: string,
+  results: NodeResults,
+  onNodeOpen: (node_id: string) => void 
+}, 'generative_ai'>;
 
-export default function GenerativeAINode(props: NodeProps<GenerativeAINOde>) {
+export default function GenerativeAINode(props: NodeProps<GenerativeAINode>) {
   const nodeId = useNodeId();
 
   function onNodeOpen () {
@@ -32,7 +37,7 @@ export default function GenerativeAINode(props: NodeProps<GenerativeAINOde>) {
   }
  
   return (
-    <NodeLayout openNode={onNodeOpen} title={props.data.title} nodeType={props.type}>
+    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} nodeType={props.type}>
     <Handle 
       type="target" 
       position={Position.Left} 
