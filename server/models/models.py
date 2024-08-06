@@ -96,8 +96,22 @@ class JoinNode(TransformNode):
     join_column: str
 
 
+class GCSNode(SourceNode):
+    bucket: str
+    filename: str
+    project_id: str
+
+
+class SnowflakeNode(DestinationNode):
+    account: str
+    warehouse: str
+    database: str
+    schema: str
+    table: str
+
+
 class Workflow(BaseModel):
     id: str
     app_id: str
-    nodes: List[Dict[str, Any]]
-    edges: List[Dict[str, Any]]
+    nodes: List[Node]
+    edges: List[Edge]

@@ -33,6 +33,8 @@ pypdf = "^4.2.0"
 poetry-dotenv-plugin = "^0.2.0"
 python-docx = "^1.1.2"
 inflect = "^7.3.0"
+google-auth = "^2.32.0"
+snowflake-connector-python = "^3.12.0"
 
 [tool.poetry.scripts]
 start = "server.main:start"

@@ -60,7 +60,7 @@ class NodeRunner:
     async def run_destination_node(
         self, node: DestinationNode, inputs: List[str], interim_results: Dict
     ) -> bool:
-        if node.destination == "snowflake":
+        if node.destination == DestinationType.snowflake:
             return await run_snowflake_destination(node, inputs, interim_results)
         else:
             raise ValueError(f"Invalid destination type: {node.destination}")

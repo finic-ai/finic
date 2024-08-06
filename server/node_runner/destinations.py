@@ -10,17 +10,49 @@ from models.models import (
     NodeType,
     SourceNode,
     DestinationNode,
-    TransformNode,
-    TransformationType,
-    MappingNode,
-    PythonNode,
-    JoinNode,
+    SnowflakeNode,
 )
 import copy
 import numpy as np
+import snowflake.connector
+import pandas as pd
 
 
 def run_snowflake_destination(
-    node: MappingNode, inputs: List[str], interim_results: Dict[str, List[List[Any]]]
+    node: SnowflakeNode, inputs: List[str], interim_results: Dict[str, List[List[Any]]]
 ):
-    pass
+    connection_params = {
+        "user": node.credentials["user"],
+        "password": node.credentials["password"],
+        "account": node.account,
+        "warehouse": node.warehouse,
+        "database": node.database,
+        "schema": node.schema,
+    }
+    conn = snowflake.connector.connect(**connection_params)
+    input_table = interim_results[inputs[0]]
+
+    try:
+        # Create a cursor object
+        cursor = conn.cursor()
+
+        # Convert DataFrame to a list of tuples (Snowflake doesn't support pandas DataFrames directly)
+        columns = input_table[0]
+        # Define the table name
+        table_name = node.table
+
+        # Create a SQL statement for inserting data
+        insert_sql = f"""
+        INSERT INTO {table_name} ({', '.join(columns)})
+        VALUES ({', '.join(['%s' for _ in columns])})
+        """
+
+        # Execute the SQL statement with the data
+        cursor.executemany(insert_sql, input_table[1:])
+        conn.commit()
+    finally:
+        # Close the connection
+        cursor.close()
+        conn.close()
+
+    return True
