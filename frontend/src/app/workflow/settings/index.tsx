@@ -6,7 +6,7 @@ import {
   type NodeTypes
 } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { EditorTopBar } from "@/subframe/components/EditorTopBar";
+import { EditorTopBar } from "@/components/TopBar";
 import { SidebarTile } from "@/subframe/components/SidebarTile";
 import { SidebarButton } from "@/subframe/components/SidebarButton";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
