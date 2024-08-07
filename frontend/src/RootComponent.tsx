@@ -13,6 +13,7 @@ import { init, Form } from "@feathery/react";
 import WorkflowList from "./pages/home";
 import Workflow from "./pages/workflow";
 import posthog from "posthog-js";
+import { ReactFlowProvider } from "@xyflow/react";
 
 posthog.init("phc_GklsIGZF6U38LCVs4D5oybUhjbmFAIxI4gNxVye1dJ4", {
   api_host: "https://app.posthog.com",
@@ -35,7 +36,14 @@ function RootComponent() {
     <>
       <Routes>
         <Route path="/" element={<WorkflowList />} />
-        <Route path="/workflow/:id" element={<Workflow />} />
+        <Route
+          path="/workflow/:id"
+          element={
+            <ReactFlowProvider>
+              <Workflow />
+            </ReactFlowProvider>
+          }
+        />
       </Routes>
     </>
   );
