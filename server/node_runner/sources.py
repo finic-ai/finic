@@ -15,7 +15,7 @@ from models.models import (
     MappingNode,
     PythonNode,
     JoinNode,
-    GCSNode,
+    GCSConfiguration,
 )
 import copy
 import numpy as np
@@ -26,11 +26,15 @@ import requests
 import pandas as pd
 
 
-def run_gcs_source(node: GCSNode, interim_results: Dict[str, List[List[Any]]]):
+def run_gcs_source(
+    node: SourceNode,
+    node_config: GCSConfiguration,
+    interim_results: Dict[str, List[List[Any]]],
+):
     service_account_info = node.credentials
-    bucket = node.bucket
+    bucket = node_config.bucket
     # url encode the filename
-    filename = quote(node.filename, safe="")
+    filename = quote(node_config.filename, safe="")
 
     # make sure the file is a csv or excel file
     if (

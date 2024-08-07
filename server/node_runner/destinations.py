@@ -10,7 +10,7 @@ from models.models import (
     NodeType,
     SourceNode,
     DestinationNode,
-    SnowflakeNode,
+    SnowflakeConfiguration,
 )
 import copy
 import numpy as np
@@ -19,15 +19,18 @@ import pandas as pd
 
 
 def run_snowflake_destination(
-    node: SnowflakeNode, inputs: List[str], interim_results: Dict[str, List[List[Any]]]
+    node: DestinationNode,
+    node_config: SnowflakeConfiguration,
+    inputs: List[str],
+    interim_results: Dict[str, List[List[Any]]],
 ):
     connection_params = {
         "user": node.credentials["user"],
         "password": node.credentials["password"],
-        "account": node.account,
-        "warehouse": node.warehouse,
-        "database": node.database,
-        "schema": node.schema,
+        "account": node_config.account,
+        "warehouse": node_config.warehouse,
+        "database": node_config.database,
+        "schema": node_config.schema,
     }
     conn = snowflake.connector.connect(**connection_params)
     input_table = interim_results[inputs[0]]
