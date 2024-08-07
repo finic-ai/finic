@@ -6,7 +6,12 @@ import { Button } from "../../../../frontend/src/subframe/components/Button";
 import { IconWithBackground } from "../../../../frontend/src/subframe/components/IconWithBackground";
 import { DropdownMenu } from "../../../../frontend/src/subframe/components/DropdownMenu";
 import { Table } from "../../../../frontend/src/subframe/components/Table";
-import { nodeTypes, NodeTypeNames, NodeIcons, type NodeResults } from "@/types";
+import {
+  nodeTypes,
+  NodeTypeNames,
+  NodeIcons,
+  type NodeResults,
+} from "@/types/index";
 
 interface NodeLayoutProps {
   children?: React.ReactNode;

@@ -21,7 +21,28 @@ export default defineConfig({
       {
         find: '@/subframe',
         replacement: '/src/subframe'
-      }
+      },
+      {
+        find: '@/hooks',
+        replacement: '/src/hooks'
+      },
+      {
+        find: '@/context',
+        replacement: '/src/context'
+      },
+      {
+        find: '@/components',
+        replacement: '/src/components'
+      },
+      {
+        find: '@/types',
+        replacement: '/src/types'
+      },
+      {
+        find: '@/layouts',
+        replacement: '/src/layouts'
+      },
+
     ]
   }
 })
