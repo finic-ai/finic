@@ -12,20 +12,14 @@ import { SidebarButton } from "@/subframe/components/SidebarButton";
 
 import { FinicNodeType } from "@/types";
 
-interface WorkflowPageLayoutRootProps
+interface WorkflowPageLayoutProps
   extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
   addNode: (type: FinicNodeType) => void;
 }
 
-const WorkflowPageLayoutRoot = React.forwardRef<
-  HTMLElement,
-  WorkflowPageLayoutRootProps
->(function WorkflowPageLayoutRoot(
-  { children, className, addNode, ...otherProps }: WorkflowPageLayoutRootProps,
-  ref
-) {
+export function WorkflowPageLayout({ children, className, addNode, ...otherProps }: WorkflowPageLayoutProps) {
   return (
     <div className="flex flex-col h-screen bg-default-background">
       <EditorTopBar className="flex-none"/>
@@ -248,6 +242,4 @@ const WorkflowPageLayoutRoot = React.forwardRef<
       </div>
     </div>
   );
-});
-
-export const WorkflowPageLayout = WorkflowPageLayoutRoot;
+};

@@ -17,6 +17,14 @@ interface WorkflowOptions {
   id: string;
 }
 
+export async function useAvailableWorkflows() {
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const response = await fetch('/get-workflows');
+  const data = await response.json();
+  setWorkflows(data);
+  return [workflows, setWorkflows]
+}
+
 export default function useWorkflow() {
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
 
