@@ -19,8 +19,8 @@ import { TextArea } from "../../../../frontend/src/subframe/components/TextArea"
 import { Alert } from "../../../../frontend/src/subframe/components/Alert";
 import { PropertiesRow } from "../../../../frontend/src/subframe/components/PropertiesRow";
 import { Switch } from "../../../../frontend/src/subframe/components/Switch";
-import { type NodeResults } from "@/types";
-import { NodeLayout } from "@/components/Nodes";
+import { type NodeResults } from "@/types/index";
+import { NodeLayout } from "@/components/nodes/index";
 
 type JoinNode = Node<
   {

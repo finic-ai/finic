@@ -9,7 +9,7 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { ToggleGroup } from "../../../../frontend/src/subframe/components/ToggleGroup";
+import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { RadioGroup } from "../../../../frontend/src/subframe/components/RadioGroup";
 import { Button } from "../../../../frontend/src/subframe/components/Button";
 import { Table } from "../../../../frontend/src/subframe/components/Table";
@@ -19,9 +19,9 @@ import { PropertiesAccordion } from "../../../../frontend/src/subframe/component
 import { TextArea } from "../../../../frontend/src/subframe/components/TextArea";
 import { Alert } from "../../../../frontend/src/subframe/components/Alert";
 import { PropertiesRow } from "../../../../frontend/src/subframe/components/PropertiesRow";
-import { Switch } from "../../../../frontend/src/subframe/components/Switch";
-import { type NodeResults } from "@/types";
-import { NodeLayout } from "@/components/Nodes";
+import { Switch } from "@/subframe/components/Switch";
+import { type NodeResults } from "../../types";
+import { NodeLayout } from "../../components/nodes";
 
 type ConditionalNode = Node<
   {

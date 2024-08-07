@@ -35,7 +35,7 @@ function RootComponent() {
     <>
       <Routes>
         <Route path="/" element={<WorkflowList />} />
-        {/* <Route path="/workflow/:id" element={<Workflow />} /> */}
+        <Route path="/workflow/:id" element={<Workflow />} />
       </Routes>
     </>
   );
