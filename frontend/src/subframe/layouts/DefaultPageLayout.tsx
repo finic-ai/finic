@@ -14,6 +14,7 @@ import { Button } from "../components/Button";
 import { IconButton } from "../components/IconButton";
 import { DropdownMenu } from "../components/DropdownMenu";
 import { Avatar } from "../components/Avatar";
+import { EditorTopBar } from "../../layouts/TopBar";
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -38,45 +39,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
       {...otherProps}
     >
       <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch">
-        <div className="flex w-full items-center justify-between border-l-0 border-solid border-neutral-border pt-2 pr-4 pb-2 pl-4">
-          <div className="flex grow shrink-0 basis-0 items-center gap-4">
-            <div className="flex grow shrink-0 basis-0 items-start justify-center gap-2">
-              <Button variant="neutral-tertiary">Workflows</Button>
-            </div>
-            <IconButton
-              disabled={false}
-              variant="neutral-tertiary"
-              size="large"
-              icon="FeatherHelpCircle"
-              loading={false}
-            />
-            <SubframeCore.DropdownMenu.Root>
-              <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                <Avatar
-                  className="cursor-pointer"
-                  image="https://res.cloudinary.com/subframe/image/upload/v1715365107/uploads/132/axxegsbktgi1g9ud3683.png"
-                />
-              </SubframeCore.DropdownMenu.Trigger>
-              <SubframeCore.DropdownMenu.Portal>
-                <SubframeCore.DropdownMenu.Content
-                  side="bottom"
-                  align="end"
-                  sideOffset={8}
-                  asChild={true}
-                >
-                  <DropdownMenu>
-                    <DropdownMenu.DropdownItem icon="FeatherMailPlus">
-                      Refer a company
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon="FeatherLogOut">
-                      Log out
-                    </DropdownMenu.DropdownItem>
-                  </DropdownMenu>
-                </SubframeCore.DropdownMenu.Content>
-              </SubframeCore.DropdownMenu.Portal>
-            </SubframeCore.DropdownMenu.Root>
-          </div>
-        </div>
+        <EditorTopBar className="flex-none" />
         {children ? (
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-4 overflow-y-auto">
             {children}

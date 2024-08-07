@@ -1,7 +1,5 @@
-import React from 'react';
-import {
-  type NodeTypes
-} from '@xyflow/react';
+import React from "react";
+import { type NodeTypes } from "@xyflow/react";
 import {
   SourceNode,
   DestinationNode,
@@ -23,20 +21,20 @@ import {
   GenerativeAINodeConfigurationDrawer,
   PythonNodeConfigurationDrawer,
   SQLNodeConfigurationDrawer,
-} from '../components/Nodes';
+} from "../components/nodes";
 
 export enum FinicNodeType {
-  SOURCE = 'source',
-  DESTINATION = 'destination',
-  MAPPING = 'mapping',
-  JOIN = 'join',
-  SPLIT = 'split',
-  FILTER = 'filter',
-  CONDITIONAL = 'conditional',
-  GENERATIVE_AI = 'generative_ai',
-  PYTHON = 'python',
-  SQL = 'sql',
-};
+  SOURCE = "source",
+  DESTINATION = "destination",
+  MAPPING = "mapping",
+  JOIN = "join",
+  SPLIT = "split",
+  FILTER = "filter",
+  CONDITIONAL = "conditional",
+  GENERATIVE_AI = "generative_ai",
+  PYTHON = "python",
+  SQL = "sql",
+}
 
 export const nodeTypes: NodeTypes = {
   source: SourceNode,
@@ -65,29 +63,29 @@ export const configurationDrawerTypes: Record<string, React.ComponentType> = {
 };
 
 export const NodeTypeNames = {
-  source: 'Source',
-  destination: 'Destination',
-  mapping: 'Mapping',
-  join: 'Join',
-  split: 'Split',
-  filter: 'Filter',
-  conditional: 'Conditional',
-  generative_ai: 'Generative AI',
-  python: 'Python',
-  sql: 'SQL',
+  source: "Source",
+  destination: "Destination",
+  mapping: "Mapping",
+  join: "Join",
+  split: "Split",
+  filter: "Filter",
+  conditional: "Conditional",
+  generative_ai: "Generative AI",
+  python: "Python",
+  sql: "SQL",
 };
 
 export const NodeIcons = {
-  source: 'FeatherFileInput',
-  destination: 'FeatherFileOutput',
-  mapping: 'FeatherFileJson',
-  join: 'FeatherMerge',
-  split: 'FeatherSplit',
-  filter: 'FeatherFilter',
-  conditional: 'FeatherHelpCircle',
-  generative_ai: 'FeatherSparkles',
-  python: 'FeatherCode2',
-  sql: 'FeatherDatabaseZap',
+  source: "FeatherFileInput",
+  destination: "FeatherFileOutput",
+  mapping: "FeatherFileJson",
+  join: "FeatherMerge",
+  split: "FeatherSplit",
+  filter: "FeatherFilter",
+  conditional: "FeatherHelpCircle",
+  generative_ai: "FeatherSparkles",
+  python: "FeatherCode2",
+  sql: "FeatherDatabaseZap",
 };
 
 export type NodeResults = {

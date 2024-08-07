@@ -1,9 +1,5 @@
-import { useState, useEffect } from 'react';
-import {
-  type Node,
-  type Edge,
-  type NodeTypes,
-} from '@xyflow/react';
+import { useState, useEffect } from "react";
+import { type Node, type Edge, type NodeTypes } from "@xyflow/react";
 
 interface Workflow {
   id: string;
@@ -21,38 +17,38 @@ export default function useWorkflow() {
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
 
   useEffect(() => {
-    fetch('/get-workflow')
+    fetch("/get-workflow")
       .then((res) => res.json())
       .then((data) => setWorkflow(data));
   }, []);
 
   const getNodes = () => {
     return workflow?.nodes;
-  }
-  
+  };
+
   const getEdges = () => {
     return workflow?.edges;
-  }
+  };
 
   const runWorkflow = async () => {
-    const response = await fetch('/run-workflow', {
-      method: 'POST',
+    const response = await fetch("/run-workflow", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: workflow?.id
+        id: workflow?.id,
       }),
     });
     const data = await response.json();
     console.log(data);
-  }
+  };
 
   const runNode = async (nodeId: string) => {
-    const response = await fetch('/api/run', {
-      method: 'POST',
+    const response = await fetch("/api/run", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         node_id: nodeId,
@@ -61,11 +57,25 @@ export default function useWorkflow() {
     });
     const data = await response.json();
     console.log(data);
-  }
+  };
 
   return {
     getNodes,
     getEdges,
-    runWorkflow
+    runWorkflow,
   };
+}
+
+export async function useAvailableWorkflows() {
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+
+  useEffect(() => {
+    const fetchWorkflows = async () => {
+      const response = await fetch("/get-workflows");
+      const data = await response.json();
+      setWorkflows(data);
+    };
+    fetchWorkflows();
+  }, []);
+  return [workflows, setWorkflows];
 }
