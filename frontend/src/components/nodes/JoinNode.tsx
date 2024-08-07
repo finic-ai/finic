@@ -1,151 +1,160 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { 
+import {
   Handle,
   Position,
   useNodeId,
   type Node,
-  type NodeProps
-} from '@xyflow/react';
+  type NodeProps,
+} from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { ToggleGroup } from "@/subframe/components/ToggleGroup";
-import { Button } from "@/subframe/components/Button";
-import { Table } from "@/subframe/components/Table";
-import { Select } from "@/subframe/components/Select";
-import { TextField } from "@/subframe/components/TextField";
-import { PropertiesAccordion } from "@/subframe/components/PropertiesAccordion";
-import { TextArea } from "@/subframe/components/TextArea";
-import { Alert } from "@/subframe/components/Alert";
-import { PropertiesRow } from "@/subframe/components/PropertiesRow";
-import { Switch } from "@/subframe/components/Switch";
+import { ToggleGroup } from "../../../../frontend/src/subframe/components/ToggleGroup";
+import { Button } from "../../../../frontend/src/subframe/components/Button";
+import { Table } from "../../../../frontend/src/subframe/components/Table";
+import { Select } from "../../../../frontend/src/subframe/components/Select";
+import { TextField } from "../../../../frontend/src/subframe/components/TextField";
+import { PropertiesAccordion } from "../../../../frontend/src/subframe/components/PropertiesAccordion";
+import { TextArea } from "../../../../frontend/src/subframe/components/TextArea";
+import { Alert } from "../../../../frontend/src/subframe/components/Alert";
+import { PropertiesRow } from "../../../../frontend/src/subframe/components/PropertiesRow";
+import { Switch } from "../../../../frontend/src/subframe/components/Switch";
 import { type NodeResults } from "@/types";
 import { NodeLayout } from "@/components/Nodes";
 
-type JoinNode = Node<{ 
-  title: string, 
-  nodeType: string,
-  results: NodeResults,
-  onNodeOpen: (node_id: string) => void 
-}, 'join'>;
+type JoinNode = Node<
+  {
+    title: string;
+    nodeType: string;
+    results: NodeResults;
+    onNodeOpen: (node_id: string) => void;
+  },
+  "join"
+>;
 
 export default function JoinNode(props: NodeProps<JoinNode>) {
   const nodeId = useNodeId();
 
-  function onNodeOpen () {
+  function onNodeOpen() {
     props.data.onNodeOpen(nodeId as string);
   }
- 
+
   return (
-    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} isSelected ={props.selected || false} nodeType={props.type}>
-      <Handle 
-        type="target" 
-        position={Position.Left} 
+    <NodeLayout
+      openNode={onNodeOpen}
+      title={props.data.title}
+      results={props.data.results}
+      isSelected={props.selected || false}
+      nodeType={props.type}
+    >
+      <Handle
+        type="target"
+        position={Position.Left}
         id="a"
         className="!w-4 !h-4 !bg-brand-600 !top-1/3"
       />
-      <Handle 
-        type="target" 
+      <Handle
+        type="target"
         position={Position.Left}
         id="b"
         className="!w-4 !h-4 !bg-brand-600 !top-2/3"
       />
-      <Handle 
-        type="source" 
+      <Handle
+        type="source"
         position={Position.Right}
         className="!w-4 !h-4 !bg-brand-600"
       />
       <div className="flex flex-col w-full select-text gap-4">
-          <span className="text-heading-3 font-heading-3 text-default-font">
-            Columns to Join On
-          </span>
-          <div className="flex w-full items-start gap-6">
-            <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2">
-              <Select
-                className="h-auto w-full flex-none"
-                disabled={false}
-                error={false}
-                variant="outline"
-                label=""
-                placeholder="Select"
-                helpText=""
-                icon={null}
-                value=""
-                onValueChange={(value: string) => {}}
-              >
-                <Select.Item value="Item 1">Item 1</Select.Item>
-                <Select.Item value="Item 2">Item 2</Select.Item>
-                <Select.Item value="Item 3">Item 3</Select.Item>
-              </Select>
-              <Select
-                className="h-auto w-full flex-none"
-                disabled={false}
-                error={false}
-                variant="outline"
-                label=""
-                placeholder="Select"
-                helpText=""
-                icon={null}
-                value=""
-                onValueChange={(value: string) => {}}
-              >
-                <Select.Item value="Item 1">Item 1</Select.Item>
-                <Select.Item value="Item 2">Item 2</Select.Item>
-                <Select.Item value="Item 3">Item 3</Select.Item>
-              </Select>
-            </div>
-            <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2">
-              <Select
-                className="h-auto w-full flex-none"
-                disabled={false}
-                error={false}
-                variant="outline"
-                label=""
-                placeholder="Select"
-                helpText=""
-                icon={null}
-                value=""
-                onValueChange={(value: string) => {}}
-              >
-                <Select.Item value="Item 1">Item 1</Select.Item>
-                <Select.Item value="Item 2">Item 2</Select.Item>
-                <Select.Item value="Item 3">Item 3</Select.Item>
-              </Select>
-              <Select
-                className="h-auto w-full flex-none"
-                disabled={false}
-                error={false}
-                variant="outline"
-                label=""
-                placeholder="Select"
-                helpText=""
-                icon={null}
-                value=""
-                onValueChange={(value: string) => {}}
-              >
-                <Select.Item value="Item 1">Item 1</Select.Item>
-                <Select.Item value="Item 2">Item 2</Select.Item>
-                <Select.Item value="Item 3">Item 3</Select.Item>
-              </Select>
-            </div>
-          </div>
-          <div className="flex w-full items-center justify-between">
-            <Button
+        <span className="text-heading-3 font-heading-3 text-default-font">
+          Columns to Join On
+        </span>
+        <div className="flex w-full items-start gap-6">
+          <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2">
+            <Select
+              className="h-auto w-full flex-none"
               disabled={false}
-              variant="brand-tertiary"
-              size="medium"
-              icon="FeatherPlus"
-              iconRight={null}
-              loading={false}
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+              error={false}
+              variant="outline"
+              label=""
+              placeholder="Select"
+              helpText=""
+              icon={null}
+              value=""
+              onValueChange={(value: string) => {}}
             >
-              Add Column
-            </Button>
+              <Select.Item value="Item 1">Item 1</Select.Item>
+              <Select.Item value="Item 2">Item 2</Select.Item>
+              <Select.Item value="Item 3">Item 3</Select.Item>
+            </Select>
+            <Select
+              className="h-auto w-full flex-none"
+              disabled={false}
+              error={false}
+              variant="outline"
+              label=""
+              placeholder="Select"
+              helpText=""
+              icon={null}
+              value=""
+              onValueChange={(value: string) => {}}
+            >
+              <Select.Item value="Item 1">Item 1</Select.Item>
+              <Select.Item value="Item 2">Item 2</Select.Item>
+              <Select.Item value="Item 3">Item 3</Select.Item>
+            </Select>
           </div>
+          <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2">
+            <Select
+              className="h-auto w-full flex-none"
+              disabled={false}
+              error={false}
+              variant="outline"
+              label=""
+              placeholder="Select"
+              helpText=""
+              icon={null}
+              value=""
+              onValueChange={(value: string) => {}}
+            >
+              <Select.Item value="Item 1">Item 1</Select.Item>
+              <Select.Item value="Item 2">Item 2</Select.Item>
+              <Select.Item value="Item 3">Item 3</Select.Item>
+            </Select>
+            <Select
+              className="h-auto w-full flex-none"
+              disabled={false}
+              error={false}
+              variant="outline"
+              label=""
+              placeholder="Select"
+              helpText=""
+              icon={null}
+              value=""
+              onValueChange={(value: string) => {}}
+            >
+              <Select.Item value="Item 1">Item 1</Select.Item>
+              <Select.Item value="Item 2">Item 2</Select.Item>
+              <Select.Item value="Item 3">Item 3</Select.Item>
+            </Select>
+          </div>
+        </div>
+        <div className="flex w-full items-center justify-between">
+          <Button
+            disabled={false}
+            variant="brand-tertiary"
+            size="medium"
+            icon="FeatherPlus"
+            iconRight={null}
+            loading={false}
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+          >
+            Add Column
+          </Button>
+        </div>
       </div>
     </NodeLayout>
   );
-};
+}
 
 interface JoinNodeConfigurationDrawerProps {
   closeDrawer: () => void;
@@ -171,9 +180,9 @@ export function JoinNodeConfigurationDrawer() {
       <PropertiesAccordion title="Dependencies">
         <div className="flex flex-col items-start gap-4">
           <span className="text-caption font-caption text-default-font">
-            You can specify python packages to import during the execution of this
-            workflow. Imported packages will be available across all nodes in this
-            workflow.
+            You can specify python packages to import during the execution of
+            this workflow. Imported packages will be available across all nodes
+            in this workflow.
           </span>
           <div className="flex items-center gap-4">
             <span className="text-caption font-caption text-default-font">
@@ -215,7 +224,7 @@ export function JoinNodeConfigurationDrawer() {
             Upload
           </Button>
           <span className="text-caption font-caption text-subtext-color">
-            Upload a CSV file to test this node with sample  input data.
+            Upload a CSV file to test this node with sample input data.
           </span>
         </div>
       </PropertiesAccordion>
@@ -248,5 +257,5 @@ export function JoinNodeConfigurationDrawer() {
         </Select>
       </PropertiesRow>
     </div>
-  )
-};
+  );
+}

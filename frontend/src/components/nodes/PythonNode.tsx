@@ -1,51 +1,60 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { 
+import {
   Handle,
   Position,
   useNodeId,
   type Node,
-  type NodeProps
-} from '@xyflow/react';
+  type NodeProps,
+} from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { ToggleGroup } from "@/subframe/components/ToggleGroup";
-import { Button } from "@/subframe/components/Button";
-import { Table } from "@/subframe/components/Table";
-import { Select } from "@/subframe/components/Select";
-import { TextField } from "@/subframe/components/TextField";
-import { PropertiesAccordion } from "@/subframe/components/PropertiesAccordion";
-import { TextArea } from "@/subframe/components/TextArea";
-import { Alert } from "@/subframe/components/Alert";
-import { PropertiesRow } from "@/subframe/components/PropertiesRow";
-import { Switch } from "@/subframe/components/Switch";
+import { ToggleGroup } from "../../../../frontend/src/subframe/components/ToggleGroup";
+import { Button } from "../../../../frontend/src/subframe/components/Button";
+import { Table } from "../../../../frontend/src/subframe/components/Table";
+import { Select } from "../../../../frontend/src/subframe/components/Select";
+import { TextField } from "../../../../frontend/src/subframe/components/TextField";
+import { PropertiesAccordion } from "../../../../frontend/src/subframe/components/PropertiesAccordion";
+import { TextArea } from "../../../../frontend/src/subframe/components/TextArea";
+import { Alert } from "../../../../frontend/src/subframe/components/Alert";
+import { PropertiesRow } from "../../../../frontend/src/subframe/components/PropertiesRow";
+import { Switch } from "../../../../frontend/src/subframe/components/Switch";
 import { type NodeResults } from "@/types";
 import { NodeLayout } from "@/components/Nodes";
 import { ConfigurationDrawer } from "../ConfigurationDrawer";
 
-type PythonNode = Node<{ 
-  title: string, 
-  nodeType: string,
-  results: NodeResults,
-  onNodeOpen: (node_id: string) => void 
-}, 'python'>;
+type PythonNode = Node<
+  {
+    title: string;
+    nodeType: string;
+    results: NodeResults;
+    onNodeOpen: (node_id: string) => void;
+  },
+  "python"
+>;
 
 export default function PythonNode(props: NodeProps<PythonNode>) {
   const nodeId = useNodeId();
 
-  function onNodeOpen () {
+  function onNodeOpen() {
     props.data.onNodeOpen(nodeId as string);
   }
- 
+
   return (
-    <NodeLayout openNode={onNodeOpen} title={props.data.title} results={props.data.results} isSelected ={props.selected || false} nodeType={props.type}>
-      <Handle 
-        type="target" 
-        position={Position.Left} 
+    <NodeLayout
+      openNode={onNodeOpen}
+      title={props.data.title}
+      results={props.data.results}
+      isSelected={props.selected || false}
+      nodeType={props.type}
+    >
+      <Handle
+        type="target"
+        position={Position.Left}
         className="!w-4 !h-4 !bg-brand-600"
       />
-      <Handle 
-        type="source" 
+      <Handle
+        type="source"
         position={Position.Right}
         id="a"
         className="!w-4 !h-4 !bg-brand-600"
@@ -88,9 +97,9 @@ export function PythonNodeConfigurationDrawer() {
       <PropertiesAccordion title="Dependencies">
         <div className="flex flex-col items-start gap-4">
           <span className="text-caption font-caption text-default-font">
-            You can specify python packages to import during the execution of this
-            workflow. Imported packages will be available across all nodes in this
-            workflow.
+            You can specify python packages to import during the execution of
+            this workflow. Imported packages will be available across all nodes
+            in this workflow.
           </span>
           <div className="flex items-center gap-4">
             <span className="text-caption font-caption text-default-font">
@@ -132,7 +141,7 @@ export function PythonNodeConfigurationDrawer() {
             Upload
           </Button>
           <span className="text-caption font-caption text-subtext-color">
-            Upload a CSV file to test this node with sample  input data.
+            Upload a CSV file to test this node with sample input data.
           </span>
         </div>
       </PropertiesAccordion>
@@ -165,5 +174,5 @@ export function PythonNodeConfigurationDrawer() {
         </Select>
       </PropertiesRow>
     </div>
-  )
-};
+  );
+}
