@@ -17,35 +17,13 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { WorkflowPageLayout } from "../../layouts/workflowPageLayout";
-import { IconWithBackground } from "../../subframe/components/IconWithBackground";
-import { RadioGroup } from "../../subframe/components/RadioGroup";
-import { Button } from "../../subframe/components/Button";
-import { Table } from "../../subframe/components/Table";
-import { Select } from "../../subframe/components/Select";
-import { PropertiesAccordion } from "../../subframe/components/PropertiesAccordion";
-import { TextArea } from "../../subframe/components/TextArea";
-import { Alert } from "../../subframe/components/Alert";
-import { PropertiesRow } from "../../subframe/components/PropertiesRow";
-import { Switch } from "../../subframe/components/Switch";
+import { WorkflowPageLayout } from "@/layouts/WorkflowPageLayout";
 import {
   nodeTypes,
   FinicNodeType,
   configurationDrawerTypes,
   NodeIcons,
 } from "../../types";
-import {
-  SourceNode,
-  DestinationNode,
-  MappingNode,
-  JoinNode,
-  SplitNode,
-  FilterNode,
-  ConditionalNode,
-  GenerativeAINode,
-  PythonNode,
-  SQLNode,
-} from "../../components/nodes";
 import { ConfigurationDrawer } from "../../components/ConfigurationDrawer";
 import "@xyflow/react/dist/style.css";
 import { useParams } from "react-router-dom";

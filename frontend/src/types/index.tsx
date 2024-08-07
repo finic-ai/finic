@@ -21,7 +21,7 @@ import {
   GenerativeAINodeConfigurationDrawer,
   PythonNodeConfigurationDrawer,
   SQLNodeConfigurationDrawer,
-} from "../components/nodes";
+} from "@/components/Nodes";
 
 export enum FinicNodeType {
   SOURCE = "source",

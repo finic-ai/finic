@@ -3,21 +3,19 @@
 import React from "react";
 import { ReactFlowProvider, type NodeTypes } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { EditorTopBar } from "./TopBar";
+import { EditorTopBar } from "@/components/TopBar";
 import { SidebarTile } from "@/subframe/components/SidebarTile";
 import { SidebarButton } from "@/subframe/components/SidebarButton";
 
 import { FinicNodeType } from "@/types/index";
 
-interface WorkflowPageLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
+interface WorkflowPageLayoutProps {
   children?: React.ReactNode;
-  className?: string;
   addNode: (type: FinicNodeType) => void;
 }
 
 export function WorkflowPageLayout({
   children,
-  className,
   addNode,
   ...otherProps
 }: WorkflowPageLayoutProps) {

@@ -10,36 +10,21 @@
 
 import React from "react";
 import * as SubframeCore from "@subframe/core";
-import { Button } from "../components/Button";
-import { IconButton } from "../components/IconButton";
-import { DropdownMenu } from "../components/DropdownMenu";
-import { Avatar } from "../components/Avatar";
-import { EditorTopBar } from "../../layouts/TopBar";
+import { Button } from "../subframe/components/Button";
+import { IconButton } from "../subframe/components/IconButton";
+import { DropdownMenu } from "../subframe/components/DropdownMenu";
+import { Avatar } from "../subframe/components/Avatar";
+import { AppTopBar } from "@/components/TopBar";
 
-interface DefaultPageLayoutRootProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DefaultPageLayoutRootProps {
   children?: React.ReactNode;
-  className?: string;
 }
 
-const DefaultPageLayoutRoot = React.forwardRef<
-  HTMLElement,
-  DefaultPageLayoutRootProps
->(function DefaultPageLayoutRoot(
-  { children, className, ...otherProps }: DefaultPageLayoutRootProps,
-  ref
-) {
+export function DefaultPageLayout({ children }: DefaultPageLayoutRootProps) {
   return (
-    <div
-      className={SubframeCore.twClassNames(
-        "flex h-screen w-full items-center bg-default-background",
-        className
-      )}
-      ref={ref as any}
-      {...otherProps}
-    >
+    <div className="flex h-screen w-full items-center bg-default-background">
       <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch">
-        <EditorTopBar className="flex-none" />
+        <AppTopBar className="flex-none" />
         {children ? (
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-4 overflow-y-auto">
             {children}
@@ -48,6 +33,4 @@ const DefaultPageLayoutRoot = React.forwardRef<
       </div>
     </div>
   );
-});
-
-export const DefaultPageLayout = DefaultPageLayoutRoot;
+};

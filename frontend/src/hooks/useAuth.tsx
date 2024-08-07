@@ -1,9 +1,21 @@
-import type { PropsWithChildren, ReactNode } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import supabase from "../lib/supabaseClient";
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { v4 as uuidv4 } from "uuid";
-import { authState } from "@feathery/react/dist/auth/LoginForm";
+import { createClient } from "@supabase/supabase-js";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
+
+console.log("supabaseUrl", supabaseUrl);
+console.log("supabaseKey", supabaseKey);
+
+if (!supabaseUrl) {
+  throw new Error("Missing env.SUPABASE_URL");
+} else if (!supabaseKey) {
+  throw new Error("Missing env.SUPABASE_KEY");
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface UserStateContextProps {
   isLoggedIn: boolean;
@@ -16,11 +28,47 @@ interface UserStateContextProps {
   authState: any;
 }
 
-const UserStateContext = createContext<UserStateContextProps>(undefined!);
-
 interface UserStateProviderProps {
   children: ReactNode | undefined;
   session: any; // Use a more specific type if you know the structure of your session object
+}
+
+const UserStateContext = createContext<UserStateContextProps>(undefined!);
+
+export function useAuth() {
+  const [session, setSession] = useLocalStorage("session", null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      setSession(session);
+    });
+    
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  function logOut() {
+    console.log("logging out");
+    supabase.auth.signOut();
+  }
+
+  function getUserStateContext() {
+    const context = useContext(UserStateContext);
+
+    return context;
+  }
+
+  return {
+    logOut,
+    getUserStateContext,
+    session,
+    setSession,
+  };
 }
 
 export function UserStateProvider({
@@ -43,7 +91,6 @@ export function UserStateProvider({
         data: { user },
       } = await supabase.auth.getUser();
       let metadata = user!.user_metadata;
-      console.log(metadata);
       const email = user!.email || metadata.email;
       const id = user!.id;
       // Select the row corresponding to this userId
@@ -114,10 +161,4 @@ export function UserStateProvider({
       {children}
     </UserStateContext.Provider>
   );
-}
-
-export function useUserStateContext(): UserStateContextProps {
-  const context = useContext(UserStateContext);
-
-  return context;
 }

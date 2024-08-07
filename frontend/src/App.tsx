@@ -1,55 +1,43 @@
-import React, { useState, useEffect } from "react";
 import "./App.css";
-import useLocalStorage from "./useLocalStorage";
-import supabase from "./lib/supabaseClient";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { UserStateProvider } from "./context/UserStateContext";
-import RootComponent from "./RootComponent";
-import LoginPage from "./LoginPage";
+import {ReactFlowProvider} from "@xyflow/react"
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { Root } from "@subframe/core/dist/cjs/components/progress";
-import TagManager from "react-gtm-module";
+import React, { useEffect, useState } from "react";
+import { useAuth, UserStateProvider, supabase } from "@/hooks/useAuth";
+import WorkflowList from "@/pages/home";
+import WorkflowPage from "@/pages/workflow";
+import LoginPage from "@/pages/auth/LoginPage";
 
 function App() {
-  const [session, setSession] = useLocalStorage("session", null);
-  console.log(session);
+  const { session, setSession } = useAuth();
 
-  const tagManagerArgs = {
-    gtmId: "GTM-P8J3LCM2",
+  const renderLoginRoutes = () => {
+    return (
+      <Routes>
+        <Route path="*" element={<LoginPage />} />
+      </Routes>
+    );
   };
 
-  TagManager.initialize(tagManagerArgs);
-
-  (window as any).dataLayer.push({
-    event: "buyer_signup",
-  });
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("session", session);
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const renderAppRoutes = () => {
+    return (
+      <Routes>
+        <Route path="/" element={<WorkflowList />} />
+        <Route
+          path="/workflow/:id"
+          element={
+            <ReactFlowProvider>
+              <WorkflowPage />
+            </ReactFlowProvider>
+          }
+        />
+        </Routes>
+    );
+  }
 
   return (
     <Router>
       <UserStateProvider session={session}>
-        {session ? (
-          <RootComponent />
-        ) : (
-          <Routes>
-            <Route path="*" element={<LoginPage />} />
-          </Routes>
-        )}
+        {session ? renderAppRoutes() : renderLoginRoutes()}
       </UserStateProvider>
     </Router>
   );

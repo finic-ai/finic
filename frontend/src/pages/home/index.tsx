@@ -13,53 +13,15 @@ import { Checkbox } from "@/subframe/components/Checkbox";
 import { Tooltip } from "@/subframe/components/Tooltip";
 import { Badge } from "@/subframe/components/Badge";
 import { Switch } from "@/subframe/components/Switch";
+import { DefaultPageLayout } from "@/subframe";
 
-import { useAvailableWorkflows } from "@/hooks/useWorkflow";
+import { useAvailableWorkflows } from "../../hooks/useWorkflow";
 
 export function WorkflowList() {
   // const [workflows, setWorkflows] = useAvailableWorkflows();
 
   return (
-    <div className="flex h-screen w-full flex-col items-start bg-default-background">
-      <div className="flex w-full items-center gap-2 border-b border-solid border-neutral-border pt-3 pr-4 pb-3 pl-4">
-        <div className="flex grow shrink-0 basis-0 items-center gap-4">
-          <img
-            className="h-6 flex-none object-cover"
-            src="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/y2rsnhq3mex4auk54aye.png"
-          />
-        </div>
-        <div className="flex grow shrink-0 basis-0 flex-col items-center justify-center gap-2 self-stretch">
-          <Breadcrumbs>
-            <Breadcrumbs.Item active={true}>Workflows</Breadcrumbs.Item>
-          </Breadcrumbs>
-        </div>
-        <div className="flex grow shrink-0 basis-0 items-center justify-end gap-2 self-stretch">
-          <SubframeCore.DropdownMenu.Root>
-            <SubframeCore.DropdownMenu.Trigger asChild={true}>
-              <Avatar
-                size="small"
-                image="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif"
-              >
-                A
-              </Avatar>
-            </SubframeCore.DropdownMenu.Trigger>
-            <SubframeCore.DropdownMenu.Portal>
-              <SubframeCore.DropdownMenu.Content
-                side="bottom"
-                align="end"
-                sideOffset={4}
-                asChild={true}
-              >
-                <DropdownMenu>
-                  <DropdownMenu.DropdownItem icon="FeatherLogOut">
-                    Sign Out
-                  </DropdownMenu.DropdownItem>
-                </DropdownMenu>
-              </SubframeCore.DropdownMenu.Content>
-            </SubframeCore.DropdownMenu.Portal>
-          </SubframeCore.DropdownMenu.Root>
-        </div>
-      </div>
+    <DefaultPageLayout>
       <div className="flex w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
         <div className="flex w-full flex-wrap items-center gap-4">
           <div className="flex grow shrink-0 basis-0 items-center gap-1">
@@ -352,7 +314,7 @@ export function WorkflowList() {
         </div>
       </div>
       <div className="flex w-full flex-col items-start gap-6 overflow-hidden overflow-auto mobile:overflow-auto mobile:max-w-full" />
-    </div>
+    </DefaultPageLayout>
   );
 }
 

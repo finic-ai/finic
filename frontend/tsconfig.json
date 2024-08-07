@@ -22,24 +22,9 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/subframe/*": [
-        "./src/subframe/*"
+      "@/*": [
+        "./src/*"
       ],
-      "@/components/*": [
-        "./src/components/*"
-      ],
-      "@/hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@/utils/*": [
-        "./src/utils/*"
-      ],
-      "@/types/*": [
-        "./src/types/*"
-      ],
-      "@/constants/*": [
-        "./src/constants/*"
-      ]
     }
   },
   "include": [
