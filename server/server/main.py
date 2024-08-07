@@ -25,7 +25,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
-from models.api import GetWorkflowRequest, UpsertWorkflowRequest
+from models.api import GetWorkflowRequest, UpsertWorkflowRequest, ListWorkflowsRequest
 import uuid
 from models.models import AppConfig
 from database import Database
@@ -122,6 +122,18 @@ async def get_workflow(
     try:
         workflow = await db.get_workflow(request.id, config.app_id)
         return workflow
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/list-workflows")
+async def list_workflows(
+    request: ListWorkflowsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        workflows = await db.list_workflows(config.app_id)
+        return workflows
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

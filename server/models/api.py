@@ -32,3 +32,6 @@ class UpsertWorkflowRequest(BaseModel):
 
 class GetWorkflowRequest(BaseModel):
     id: str
+
+class ListWorkflowsRequest(BaseModel):
+    pass
