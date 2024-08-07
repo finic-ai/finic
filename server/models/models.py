@@ -62,21 +62,34 @@ class Node(BaseModel):
     type: NodeType
 
 
+class GCSConfiguration(BaseModel):
+    bucket: str
+    filename: str
+    project_id: str
+
+
 class SourceNode(Node):
     source: SourceType
     credentials: Dict[str, Any]
-    configuration: Dict[str, Any]
+    configuration: GCSConfiguration
+
+
+class SnowflakeConfiguration(BaseModel):
+    account: str
+    warehouse: str
+    database: str
+    table_schema: str
+    table: str
 
 
 class DestinationNode(Node):
     destination: DestinationType
     credentials: Dict[str, Any]
-    configuration: Dict[str, Any]
+    configuration: SnowflakeConfiguration
 
 
 class TransformNode(Node):
     transformation: TransformationType
-    configuration: Optional[Dict[str, Any]] = None
 
 
 class ColumnMapping(BaseModel):
@@ -94,20 +107,6 @@ class PythonNode(TransformNode):
 
 class JoinNode(TransformNode):
     join_column: str
-
-
-class GCSNode(SourceNode):
-    bucket: str
-    filename: str
-    project_id: str
-
-
-class SnowflakeNode(DestinationNode):
-    account: str
-    warehouse: str
-    database: str
-    schema: str
-    table: str
 
 
 class Workflow(BaseModel):
