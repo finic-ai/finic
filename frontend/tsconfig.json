@@ -38,5 +38,8 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "types": [
+    "@types/uuid"
+  ],
 }

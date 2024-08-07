@@ -18,6 +18,7 @@ import { Avatar } from "./Avatar";
 import { IconButton } from "./IconButton";
 import { DropdownMenu } from "./DropdownMenu";
 import { Button } from "./Button";
+import { useAuth } from "@/hooks/useAuth";
 
 interface EditorTopBarRootProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -28,6 +29,7 @@ const EditorTopBarRoot = React.forwardRef<HTMLElement, EditorTopBarRootProps>(
     { className, ...otherProps }: EditorTopBarRootProps,
     ref
   ) {
+    const { logOut } = useAuth();
     return (
       <div
         className={SubframeCore.twClassNames(
@@ -91,7 +93,7 @@ const EditorTopBarRoot = React.forwardRef<HTMLElement, EditorTopBarRootProps>(
               </SubframeCore.DropdownMenu.Content>
             </SubframeCore.DropdownMenu.Portal>
           </SubframeCore.DropdownMenu.Root>
-          <Button>Publish</Button>
+          <Button onClick={(e) => logOut()}>Publish</Button>
         </div>
       </div>
     );

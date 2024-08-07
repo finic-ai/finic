@@ -21,7 +21,7 @@ export default function useWorkflow() {
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
 
   useEffect(() => {
-    fetch('/api/workflow')
+    fetch('/get-workflow')
       .then((res) => res.json())
       .then((data) => setWorkflow(data));
   }, []);
@@ -35,14 +35,13 @@ export default function useWorkflow() {
   }
 
   const runWorkflow = async () => {
-    const response = await fetch('/api/workflow', {
+    const response = await fetch('/run-workflow', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        workflow_id: workflow?.id,
-        options: {},
+        id: workflow?.id
       }),
     });
     const data = await response.json();
