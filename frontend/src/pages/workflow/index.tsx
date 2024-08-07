@@ -17,7 +17,7 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { WorkflowPageLayout } from "./workflowPageLayout";
+import { WorkflowPageLayout } from "../../layouts/workflowPageLayout";
 import { IconWithBackground } from "../../subframe/components/IconWithBackground";
 import { RadioGroup } from "../../subframe/components/RadioGroup";
 import { Button } from "../../subframe/components/Button";
@@ -48,6 +48,7 @@ import {
 } from "../../components/nodes";
 import { ConfigurationDrawer } from "../../components/ConfigurationDrawer";
 import "@xyflow/react/dist/style.css";
+import { useParams } from "react-router-dom";
 
 const initialNodes = [
   {
@@ -150,6 +151,7 @@ const testResults = {
 
 export default function WorkflowPage() {
   // const [nodes] = useState<Node[]>([]);
+  const { id } = useParams();
   const store = useStoreApi();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
