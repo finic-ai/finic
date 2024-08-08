@@ -17,6 +17,7 @@ from .models import (
     SnowflakeConfiguration,
     GCSConfiguration,
     ColumnMapping,
+    WorkflowStatus,
 )
 from .api import (
     CompleteOnboardingRequest,

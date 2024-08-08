@@ -106,6 +106,8 @@ async def upsert_workflow(
             app_id=config.app_id,
             nodes=request.nodes,
             edges=request.edges,
+            name=request.name,
+            status=request.status,
         )
         await db.upsert_workflow(workflow=workflow)
         return workflow

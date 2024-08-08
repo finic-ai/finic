@@ -20,6 +20,7 @@ from models import (
     GCSConfiguration,
     MappingNode,
     ColumnMapping,
+    WorkflowStatus,
 )
 import requests
 import os
@@ -72,6 +73,8 @@ def run_workflow(id: str):
 
 
 workflow = Workflow(
+    name="Test Workflow",
+    status=WorkflowStatus.draft,
     id=WORKFLOW_ID,
     app_id=APP_ID,
     nodes=[

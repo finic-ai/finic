@@ -15,7 +15,7 @@ from models.models import (
     TransformationType,
     MappingNode,
     PythonNode,
-    JoinNode,
+    WorkflowStatus,
 )
 
 
@@ -28,10 +28,13 @@ class UpsertWorkflowRequest(BaseModel):
     id: str
     nodes: List[Node]
     edges: List[Edge]
+    name: str
+    status: WorkflowStatus
 
 
 class GetWorkflowRequest(BaseModel):
     id: str
+
 
 class ListWorkflowsRequest(BaseModel):
     pass
