@@ -17,8 +17,7 @@ import useWorkflow from "@/hooks/useWorkflow";
 import { Workflow } from "@/types";
 
 export function WorkflowList() {
-  const { listWorkflows } = useWorkflow();
-  const isLoading = true
+  const { listWorkflows, isLoading } = useWorkflow();
   const { session } = useAuth();
   const [workflows, setWorkflows] = useState<Array<Workflow>>([]);
   const { bearer, appId } = useUserStateContext();
@@ -28,6 +27,7 @@ export function WorkflowList() {
       listWorkflows(bearer, appId).then((data) => {
         console.log(data)
         setWorkflows(data);
+        console.log(isLoading)
       });
     }
   }, [bearer, appId]);

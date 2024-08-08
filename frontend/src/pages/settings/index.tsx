@@ -4,14 +4,14 @@ import React from "react";
 import { ReactFlowProvider, type NodeTypes } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
 import { EditorTopBar } from "@/components/TopBar";
-import { SidebarTile } from "../../../../../frontend/src/subframe/components/SidebarTile";
-import { SidebarButton } from "../../../../../frontend/src/subframe/components/SidebarButton";
-import { ToggleGroup } from "../../../../../frontend/src/subframe/components/ToggleGroup";
-import { Breadcrumbs } from "../../../../../frontend/src/subframe/components/Breadcrumbs";
-import { Avatar } from "../../../../../frontend/src/subframe/components/Avatar";
-import { IconButton } from "../../../../../frontend/src/subframe/components/IconButton";
-import { DropdownMenu } from "../../../../../frontend/src/subframe/components/DropdownMenu";
-import { Button } from "../../../../../frontend/src/subframe/components/Button";
+import { SidebarTile } from "@/subframe/components/SidebarTile";
+import { SidebarButton } from "@/subframe/components/SidebarButton";
+import { ToggleGroup } from "@/subframe/components/ToggleGroup";
+import { Breadcrumbs } from "@/subframe/components/Breadcrumbs";
+import { Avatar } from "@/subframe/components/Avatar";
+import { IconButton } from "@/subframe/components/IconButton";
+import { DropdownMenu } from "@/subframe/components/DropdownMenu";
+import { Button } from "@/subframe/components/Button";
 
 import { FinicNodeType } from "@/types";
 

@@ -22,6 +22,7 @@ import {
   PythonNodeConfigurationDrawer,
   SQLNodeConfigurationDrawer,
 } from "@/components/Nodes";
+import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/SourceNode/GCSConfigurationDrawer.tsx";
 
 export enum FinicNodeType {
   SOURCE = "source",
@@ -100,4 +101,16 @@ export type Workflow = {
   last_run: Date;
   nodes: Array<Node>;
   edges: Array<Edge>;
+};
+
+export enum SourceNodeType {
+  GCS = "gcs",
+}
+
+export enum DestinationNodeType {
+  SNOWFLAKE = "snowflake",
+}
+
+export const SourceConfigurationDrawerType: Record<string, React.ComponentType> = {
+  gcs: GCSConfigurationDrawer,
 };

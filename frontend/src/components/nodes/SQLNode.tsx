@@ -9,16 +9,16 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
-import { ToggleGroup } from "../../../../frontend/src/subframe/components/ToggleGroup";
-import { Button } from "../../../../frontend/src/subframe/components/Button";
-import { Table } from "../../../../frontend/src/subframe/components/Table";
-import { Select } from "../../../../frontend/src/subframe/components/Select";
-import { TextField } from "../../../../frontend/src/subframe/components/TextField";
-import { PropertiesAccordion } from "../../../../frontend/src/subframe/components/PropertiesAccordion";
-import { TextArea } from "../../../../frontend/src/subframe/components/TextArea";
-import { Alert } from "../../../../frontend/src/subframe/components/Alert";
-import { PropertiesRow } from "../../../../frontend/src/subframe/components/PropertiesRow";
-import { Switch } from "../../../../frontend/src/subframe/components/Switch";
+import { ToggleGroup } from "@/subframe/components/ToggleGroup";
+import { Button } from "@/subframe/components/Button";
+import { Table } from "@/subframe/components/Table";
+import { Select } from "@/subframe/components/Select";
+import { TextField } from "@/subframe/components/TextField";
+import { PropertiesAccordion } from "@/subframe/components/PropertiesAccordion";
+import { TextArea } from "@/subframe/components/TextArea";
+import { Alert } from "@/subframe/components/Alert";
+import { PropertiesRow } from "@/subframe/components/PropertiesRow";
+import { Switch } from "@/subframe/components/Switch";
 import { type NodeResults } from "@/types/index";
 import { NodeLayout } from "@/components/nodes/index";
 
