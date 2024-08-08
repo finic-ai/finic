@@ -16,6 +16,7 @@ from .models import (
     SourceType,
     SnowflakeConfiguration,
     GCSConfiguration,
+    ColumnMapping,
 )
 from .api import (
     CompleteOnboardingRequest,

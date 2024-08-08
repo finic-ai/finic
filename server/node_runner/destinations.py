@@ -30,7 +30,7 @@ def run_snowflake_destination(
         "account": node_config.account,
         "warehouse": node_config.warehouse,
         "database": node_config.database,
-        "schema": node_config.schema,
+        "schema": node_config.table_schema,
     }
     conn = snowflake.connector.connect(**connection_params)
     input_table = interim_results[inputs[0]]
@@ -42,7 +42,7 @@ def run_snowflake_destination(
         # Convert DataFrame to a list of tuples (Snowflake doesn't support pandas DataFrames directly)
         columns = input_table[0]
         # Define the table name
-        table_name = node.table
+        table_name = node_config.table
 
         # Create a SQL statement for inserting data
         insert_sql = f"""

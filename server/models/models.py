@@ -1,8 +1,9 @@
 import os
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any, Tuple
 from enum import Enum
+from strenum import StrEnum
 import datetime
 import io
 
@@ -65,7 +66,6 @@ class Node(BaseModel):
 class GCSConfiguration(BaseModel):
     bucket: str
     filename: str
-    project_id: str
 
 
 class SourceNode(Node):

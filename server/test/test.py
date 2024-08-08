@@ -18,6 +18,8 @@ from models import (
     DestinationType,
     SnowflakeConfiguration,
     GCSConfiguration,
+    MappingNode,
+    ColumnMapping,
 )
 import requests
 import os
@@ -31,13 +33,22 @@ WORKFLOW_ID = "123"
 APP_ID = os.getenv("APP_ID")
 SECRET_KEY = os.getenv("SECRET_KEY")
 GCS_CREDENTIALS = json.loads(os.getenv("GCS_CREDENTIALS"))
-SNOWFLAKE_CREDENTIALS = os.getenv("SNOWFLAKE_CREDENTIALS")
+GCS_BUCKET = os.getenv("GCS_BUCKET")
+GCS_FILENAME = os.getenv("GCS_FILENAME")
+SNOWFLAKE_CREDENTIALS = json.loads(os.getenv("SNOWFLAKE_CREDENTIALS"))
+SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
+SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
+SNOWFLAKE_DATABASE = os.getenv("SNOWFLAKE_DATABASE")
+SNOWFLAKE_SCHEMA = os.getenv("SNOWFLAKE_SCHEMA")
+SNOWFLAKE_TABLE = os.getenv("SNOWFLAKE_TABLE")
 
 
 def upsert_workflow(workflow: Workflow):
+    workflow_json = workflow.json()
+    print("workflow_json", workflow_json)
     response = requests.post(
-        "http://localhost:8000/upsert_workflow",
-        json=workflow.dict(),
+        "http://localhost:8080/upsert_workflow",
+        json=workflow_json,
         headers={"Authorization ": f"Bearer {SECRET_KEY}"},
     )
     return response
@@ -45,7 +56,7 @@ def upsert_workflow(workflow: Workflow):
 
 def get_workflow() -> Workflow:
     response = requests.post(
-        "http://localhost:8000/get_workflow",
+        "http://localhost:8080/get_workflow",
         json={"id": "123"},
         headers={"Authorization ": f"Bearer {SECRET_KEY}"},
     )
@@ -54,7 +65,7 @@ def get_workflow() -> Workflow:
 
 def run_workflow(id: str):
     response = requests.post(
-        "http://localhost:8000/run_workflow",
+        "http://localhost:8080/run_workflow",
         json={"id": id},
         headers={"Authorization ": f"Bearer {SECRET_KEY}"},
     )
@@ -70,42 +81,51 @@ workflow = Workflow(
             position={"x": 0, "y": 0},
             type=NodeType.source,
             source=SourceType.google_cloud_storage,
-            credentials={"token": "123"},
+            credentials=GCS_CREDENTIALS,
             configuration=GCSConfiguration(
-                bucket="bucket",
-                filename="filename",
-                project_id="project_id",
+                bucket=GCS_BUCKET,
+                filename=GCS_FILENAME,
             ),
         ),
-        TransformNode(
+        MappingNode(
             id="2",
             position={"x": 0, "y": 0},
             type=NodeType.transform,
             transformation=TransformationType.mapping,
+            mappings=[
+                ColumnMapping(old_name="Index", new_name="ID"),
+                ColumnMapping(old_name="Name", new_name="NAME"),
+                ColumnMapping(old_name="Linkedin Url", new_name="LINKEDIN_URL"),
+                ColumnMapping(
+                    old_name="Est. Revenue (USD)",
+                    new_name="ACCOUNT_SIZE",
+                ),
+            ],
         ),
         DestinationNode(
             id="3",
             position={"x": 0, "y": 0},
             type=NodeType.destination,
             destination=DestinationType.snowflake,
-            credentials={"token": "123"},
+            credentials=SNOWFLAKE_CREDENTIALS,
             configuration=SnowflakeConfiguration(
-                account="account",
-                warehouse="warehouse",
-                database="database",
-                table_schema="schema",
-                table="table",
+                account=SNOWFLAKE_ACCOUNT,
+                warehouse=SNOWFLAKE_WAREHOUSE,
+                database=SNOWFLAKE_DATABASE,
+                table_schema=SNOWFLAKE_SCHEMA,
+                table=SNOWFLAKE_TABLE,
             ),
         ),
     ],
     edges=[
-        Edge(id="1", source="1", destination="2"),
-        Edge(id="2", source="2", destination="3"),
+        Edge(id="1", source="1", target="2"),
+        Edge(id="2", source="2", target="3"),
     ],
 )
 
 upsert_workflow(workflow=workflow)
 response = get_workflow(workflow.id)
-assert response == workflow.dict()
+print("response", response)
+assert response == workflow.dict(use_enum_values=True)
 
 run_workflow(workflow.id)
