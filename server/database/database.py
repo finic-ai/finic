@@ -39,14 +39,16 @@ class Database:
 
     async def get_config(self, bearer_token: str) -> Optional[AppConfig]:
         response = (
-            self.supabase.table("lending_users")
+            self.supabase.table("user")
             .select("*")
             .filter("secret_key", "eq", bearer_token)
             .execute()
         )
+        print("response", response)
+        print("response.data", response.data)
         if len(response.data) > 0:
             row = response.data[0]
-            return AppConfig(user_id=row["id"])
+            return AppConfig(user_id=row["id"], app_id=row["app_id"])
         return None
 
     async def upsert_workflow(self, workflow: Workflow) -> Optional[Workflow]:
@@ -74,7 +76,7 @@ class Database:
             row = response.data[0]
             return Workflow(**row)
         return None
-    
+
     async def list_workflows(self, app_id: str) -> Optional[List[Workflow]]:
         response = (
             self.supabase.table("workflow")
@@ -82,7 +84,7 @@ class Database:
             .filter("app_id", "eq", app_id)
             .execute()
         )
-        
+
         if len(response.data) > 0:
             return [Workflow(**row) for row in response.data]
         return None

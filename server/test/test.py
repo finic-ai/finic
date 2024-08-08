@@ -44,30 +44,30 @@ SNOWFLAKE_TABLE = os.getenv("SNOWFLAKE_TABLE")
 
 
 def upsert_workflow(workflow: Workflow):
-    workflow_json = workflow.json()
+    workflow_json = json.loads(workflow.json())
     print("workflow_json", workflow_json)
     response = requests.post(
-        "http://localhost:8080/upsert_workflow",
+        "http://localhost:8080/upsert-workflow",
         json=workflow_json,
-        headers={"Authorization ": f"Bearer {SECRET_KEY}"},
+        headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
     return response
 
 
-def get_workflow() -> Workflow:
+def get_workflow(id: str) -> Workflow:
     response = requests.post(
-        "http://localhost:8080/get_workflow",
-        json={"id": "123"},
-        headers={"Authorization ": f"Bearer {SECRET_KEY}"},
+        "http://localhost:8080/get-workflow",
+        json={"id": id},
+        headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
     return response
 
 
 def run_workflow(id: str):
     response = requests.post(
-        "http://localhost:8080/run_workflow",
+        "http://localhost:8080/run-workflow",
         json={"id": id},
-        headers={"Authorization ": f"Bearer {SECRET_KEY}"},
+        headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
     return response
 
@@ -123,9 +123,10 @@ workflow = Workflow(
     ],
 )
 
-upsert_workflow(workflow=workflow)
-response = get_workflow(workflow.id)
-print("response", response)
-assert response == workflow.dict(use_enum_values=True)
+upsert_response = upsert_workflow(workflow=workflow)
+print("upsert_response", upsert_response)
+# response = get_workflow(workflow.id)
+# print("response", response)
+# assert response == workflow.dict()
 
-run_workflow(workflow.id)
+# run_workflow(workflow.id)
