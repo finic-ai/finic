@@ -20,7 +20,7 @@ export default function useWorkflow() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const createWorkflow = useCallback(async () => {
+  const createWorkflow = useCallback(async (bearer: string, appId: string) => {
     setIsLoading(true);
     setError(null);
     
@@ -42,7 +42,7 @@ export default function useWorkflow() {
     }
   }, []);
 
-  const getWorkflow = useCallback(async () => {
+  const getWorkflow = useCallback(async (bearer: string, appId: string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -81,30 +81,9 @@ export default function useWorkflow() {
     }
   }, []);
 
-  const runWorkflow = async () => {
+  const runWorkflow = async (bearer: string, appId: string) => {
     const response = await fetch("/run-workflow", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: workflow?.id,
-      }),
-    });
-    const data = await response.json();
-    console.log(data);
-  };
-
-  const runNode = async (nodeId: string) => {
-    const response = await fetch("/api/run", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        node_id: nodeId,
-        options: {},
-      }),
+      //
     });
     const data = await response.json();
     console.log(data);
