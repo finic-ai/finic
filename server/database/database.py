@@ -81,7 +81,7 @@ class Database:
         pdb.set_trace()
         response = (
             self.supabase.table("workflow")
-            .select("id, name, created_at, status, last_run")
+            .select("id, app_id, name, created_at, status, last_run, nodes, edges")
             .filter("app_id", "eq", app_id)
             .execute()
         )

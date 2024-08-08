@@ -117,5 +117,7 @@ class WorkflowStatus(Enum):
 class Workflow(BaseModel):
     id: str
     app_id: str
-    nodes: List[Node]
-    edges: List[Edge]
+    status: WorkflowStatus
+    last_run: Optional[datetime.datetime] = None
+    nodes: List[Node] = []
+    edges: List[Edge] = []
