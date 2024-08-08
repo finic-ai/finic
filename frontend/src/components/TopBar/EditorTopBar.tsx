@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import * as SubframeCore from "@subframe/core";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
 import { Breadcrumbs } from "@/subframe/components/Breadcrumbs";
@@ -10,9 +11,12 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface EditorTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
+  workflowName?: string;
 }
-export default function EditorTopBar({ className, ...otherProps }: EditorTopBarProps) {
+export default function EditorTopBar({ className, workflowName }: EditorTopBarProps) {
   const { logOut } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <div className={`flex w-full items-center gap-2 border-b border-solid border-neutral-border bg-default-background pt-3 pr-4 pb-3 pl-4 ${className}`}>
       <div className="flex grow shrink-0 basis-0 items-center gap-4">
@@ -31,9 +35,9 @@ export default function EditorTopBar({ className, ...otherProps }: EditorTopBarP
       </div>
       <div className="flex grow shrink-0 basis-0 flex-col items-center justify-center gap-2 self-stretch">
         <Breadcrumbs>
-          <Breadcrumbs.Item>Your drafts</Breadcrumbs.Item>
+          <Breadcrumbs.Item onClick={() => navigate("/")}>Workflows</Breadcrumbs.Item>
           <Breadcrumbs.Divider />
-          <Breadcrumbs.Item active={true}>New Project</Breadcrumbs.Item>
+          <Breadcrumbs.Item active={true}>{workflowName ? workflowName : "New Workflow"}</Breadcrumbs.Item>
         </Breadcrumbs>
       </div>
       <div className="flex grow shrink-0 basis-0 items-center justify-end gap-2 self-stretch">

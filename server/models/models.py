@@ -108,18 +108,14 @@ class PythonNode(TransformNode):
 class JoinNode(TransformNode):
     join_column: str
 
-
-class WorkflowStatus(str, Enum):
-    draft = "draft"
-    successful = "successful"
-    failed = "failed"
-    deployed = "deployed"
-
+class WorkflowStatus(Enum):
+    DRAFT = "draft"
+    DEPLOYED = "deployed"
+    SUCCESSFUL = "successful"
+    FAILED = "failed"
 
 class Workflow(BaseModel):
     id: str
     app_id: str
-    name: str
-    status: WorkflowStatus
     nodes: List[Node]
     edges: List[Edge]

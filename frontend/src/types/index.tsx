@@ -1,5 +1,5 @@
 import React from "react";
-import { type NodeTypes } from "@xyflow/react";
+import { type NodeTypes, type Node, type Edge } from "@xyflow/react";
 import {
   SourceNode,
   DestinationNode,
@@ -91,4 +91,13 @@ export const NodeIcons = {
 export type NodeResults = {
   columns: string[];
   data: Array<Array<string | number | boolean>>;
+};
+
+export type Workflow = {
+  id: string;
+  name: string;
+  status: string;
+  last_run: Date;
+  nodes: Array<Node>;
+  edges: Array<Edge>;
 };

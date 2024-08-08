@@ -1,10 +1,8 @@
 "use client";
 
-import React from "react";
-import { Breadcrumbs } from "@/subframe/components/Breadcrumbs";
-import { DropdownMenu } from "@/subframe/components/DropdownMenu";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as SubframeCore from "@subframe/core";
-import { Avatar } from "@/subframe/components/Avatar";
 import { TextField } from "@/subframe/components/TextField";
 import { Button } from "@/subframe/components/Button";
 import { IconButton } from "@/subframe/components/IconButton";
@@ -14,11 +12,31 @@ import { Tooltip } from "@/subframe/components/Tooltip";
 import { Badge } from "@/subframe/components/Badge";
 import { Switch } from "@/subframe/components/Switch";
 import { DefaultPageLayout } from "@/subframe";
-
-import { useAvailableWorkflows } from "../../hooks/useWorkflow";
+import { useAuth, useUserStateContext } from "@/hooks/useAuth";
+import useWorkflow from "@/hooks/useWorkflow";
+import { Workflow } from "@/types";
 
 export function WorkflowList() {
-  // const [workflows, setWorkflows] = useAvailableWorkflows();
+  const { listWorkflows } = useWorkflow();
+  const isLoading = true
+  const { session } = useAuth();
+  const [workflows, setWorkflows] = useState<Array<Workflow>>([]);
+  const { bearer, appId } = useUserStateContext();
+  
+  useEffect(() => {
+    if (bearer && appId) {
+      listWorkflows(bearer, appId).then((data) => {
+        console.log(data)
+        setWorkflows(data);
+      });
+    }
+  }, [bearer, appId]);
+  // const workflows = [
+  //   { id: "123", name: "Workflow 1", status: "draft", active: true },
+  //   { id: "456", name: "Workflow 2", status: "success", active: false },
+  //   { id: "789", name: "Workflow 3", status: "failed", active: true },
+  // ]
+  const navigate = useNavigate();
 
   return (
     <DefaultPageLayout>
@@ -103,213 +121,97 @@ export function WorkflowList() {
               </Table.HeaderRow>
             }
           >
-            <Table.Row clickable={true}>
-              <Table.Cell>
-                <Checkbox
-                  label=""
-                  checked={false}
-                  onCheckedChange={(checked: boolean) => {}}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <div className="flex items-center gap-2">
+            {!isLoading && workflows.map((workflow) => (
+              <Table.Row
+                key={workflow.id}
+              >
+                <Table.Cell>
+                  <Button
+                    disabled={false}
+                    variant="brand-primary"
+                    size="medium"
+                    icon={null}
+                    iconRight="FeatherArrowUpRight"
+                    loading={false}
+                    onClick={() => navigate(`/workflow/${workflow.id}`)}
+                  >
+                    Open
+                  </Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <div className="flex items-center gap-2">
+                    <SubframeCore.Icon
+                      className="text-heading-3 font-heading-3 text-default-font"
+                      name="FeatherTerminalSquare"
+                    />
+                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+                      {workflow.name}
+                    </span>
+                  </div>
+                </Table.Cell>
+                <Table.Cell>
+                  <SubframeCore.Tooltip.Provider>
+                    <SubframeCore.Tooltip.Root>
+                      <SubframeCore.Tooltip.Trigger asChild={true}>
+                        <SubframeCore.Icon
+                          className="text-heading-3 font-heading-3 text-success-600"
+                          name="FeatherCheckCheck"
+                        />
+                      </SubframeCore.Tooltip.Trigger>
+                      <SubframeCore.Tooltip.Portal>
+                        <SubframeCore.Tooltip.Content
+                          side="bottom"
+                          align="center"
+                          sideOffset={4}
+                          asChild={true}
+                        >
+                          <Tooltip>
+                            {workflow.status === "success"
+                              ? "Last Run Successful"
+                              : workflow.status === "failed"
+                              ? "Last Run Failed"
+                              : "Draft"}
+                          </Tooltip>
+                        </SubframeCore.Tooltip.Content>
+                      </SubframeCore.Tooltip.Portal>
+                    </SubframeCore.Tooltip.Root>
+                  </SubframeCore.Tooltip.Provider>
+                </Table.Cell>
+                <Table.Cell>
                   <SubframeCore.Icon
-                    className="text-heading-3 font-heading-3 text-default-font"
-                    name="FeatherTerminalSquare"
+                    className="text-body font-body text-subtext-color"
+                    name="FeatherClock"
                   />
-                  <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                    GCS to Snowflake
+                  <span className="whitespace-nowrap text-body font-body text-neutral-500">
+                    1.8s
                   </span>
-                </div>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Tooltip.Provider>
-                  <SubframeCore.Tooltip.Root>
-                    <SubframeCore.Tooltip.Trigger asChild={true}>
-                      <SubframeCore.Icon
-                        className="text-heading-3 font-heading-3 text-success-600"
-                        name="FeatherCheckCheck"
-                      />
-                    </SubframeCore.Tooltip.Trigger>
-                    <SubframeCore.Tooltip.Portal>
-                      <SubframeCore.Tooltip.Content
-                        side="bottom"
-                        align="center"
-                        sideOffset={4}
-                        asChild={true}
-                      >
-                        <Tooltip>Last Run Successful</Tooltip>
-                      </SubframeCore.Tooltip.Content>
-                    </SubframeCore.Tooltip.Portal>
-                  </SubframeCore.Tooltip.Root>
-                </SubframeCore.Tooltip.Provider>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherClock"
-                />
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  1.8s
-                </span>
-              </Table.Cell>
-              <Table.Cell>
-                <Badge>Input</Badge>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherUser"
-                />
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  WF-47301-38581
-                </span>
-              </Table.Cell>
-              <Table.Cell>
-                <Switch
-                  checked={false}
-                  onCheckedChange={(checked: boolean) => {}}
-                />
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row clickable={true}>
-              <Table.Cell>
-                <Checkbox
-                  label=""
-                  checked={false}
-                  onCheckedChange={(checked: boolean) => {}}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <div className="flex items-center gap-2">
+                </Table.Cell>
+                <Table.Cell>
+                  <Badge>
+                    {workflow.status === "success"
+                      ? "Output"
+                      : workflow.status === "failed"
+                      ? "Error"
+                      : "Input"}
+                  </Badge>
+                </Table.Cell>
+                <Table.Cell>
                   <SubframeCore.Icon
-                    className="text-heading-3 font-heading-3 text-default-font"
-                    name="FeatherTerminalSquare"
+                    className="text-body font-body text-subtext-color"
+                    name="FeatherUser"
                   />
-                  <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                    GCS to Snowflake
+                  <span className="whitespace-nowrap text-body font-body text-neutral-500">
+                    {workflow.id}
                   </span>
-                </div>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Tooltip.Provider>
-                  <SubframeCore.Tooltip.Root>
-                    <SubframeCore.Tooltip.Trigger asChild={true}>
-                      <SubframeCore.Icon
-                        className="text-heading-3 font-heading-3 text-neutral-600"
-                        name="FeatherDraftingCompass"
-                      />
-                    </SubframeCore.Tooltip.Trigger>
-                    <SubframeCore.Tooltip.Portal>
-                      <SubframeCore.Tooltip.Content
-                        side="bottom"
-                        align="center"
-                        sideOffset={4}
-                        asChild={true}
-                      >
-                        <Tooltip>Draft</Tooltip>
-                      </SubframeCore.Tooltip.Content>
-                    </SubframeCore.Tooltip.Portal>
-                  </SubframeCore.Tooltip.Root>
-                </SubframeCore.Tooltip.Provider>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherClock"
-                />
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  1.8s
-                </span>
-              </Table.Cell>
-              <Table.Cell>
-                <Badge>Input</Badge>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherUser"
-                />
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  WF-47301-38581
-                </span>
-              </Table.Cell>
-              <Table.Cell>
-                <Switch
-                  checked={false}
-                  onCheckedChange={(checked: boolean) => {}}
-                />
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row clickable={true}>
-              <Table.Cell>
-                <Checkbox
-                  label=""
-                  checked={false}
-                  onCheckedChange={(checked: boolean) => {}}
-                />
-              </Table.Cell>
-              <Table.Cell>
-                <div className="flex items-center gap-2">
-                  <SubframeCore.Icon
-                    className="text-heading-3 font-heading-3 text-default-font"
-                    name="FeatherTerminalSquare"
+                </Table.Cell>
+                <Table.Cell>
+                  <Switch
+                    checked={workflow.active}
+                    onCheckedChange={(checked: boolean) => {}}
                   />
-                  <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                    Salesforce + Marketo -&gt; Snowflake
-                  </span>
-                </div>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Tooltip.Provider>
-                  <SubframeCore.Tooltip.Root>
-                    <SubframeCore.Tooltip.Trigger asChild={true}>
-                      <SubframeCore.Icon
-                        className="text-heading-3 font-heading-3 text-brand-600"
-                        name="FeatherAlertOctagon"
-                      />
-                    </SubframeCore.Tooltip.Trigger>
-                    <SubframeCore.Tooltip.Portal>
-                      <SubframeCore.Tooltip.Content
-                        side="bottom"
-                        align="center"
-                        sideOffset={4}
-                        asChild={true}
-                      >
-                        <Tooltip>Last Run Failed</Tooltip>
-                      </SubframeCore.Tooltip.Content>
-                    </SubframeCore.Tooltip.Portal>
-                  </SubframeCore.Tooltip.Root>
-                </SubframeCore.Tooltip.Provider>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherClock"
-                />
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  2.3s
-                </span>
-              </Table.Cell>
-              <Table.Cell>
-                <Badge variant="neutral">Output</Badge>
-              </Table.Cell>
-              <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherUser"
-                />
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  WF-47301-38581
-                </span>
-              </Table.Cell>
-              <Table.Cell>
-                <Switch
-                  checked={false}
-                  onCheckedChange={(checked: boolean) => {}}
-                />
-              </Table.Cell>
-            </Table.Row>
+                </Table.Cell>
+              </Table.Row>
+            ))}
           </Table>
         </div>
       </div>

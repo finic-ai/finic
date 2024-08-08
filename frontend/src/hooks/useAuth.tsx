@@ -85,7 +85,6 @@ export function UserStateProvider({
 
   const fetchData = async () => {
     // TODO #1: Replace with your JWT template name
-    console.log("fetching data");
     try {
       const {
         data: { user },
@@ -161,4 +160,10 @@ export function UserStateProvider({
       {children}
     </UserStateContext.Provider>
   );
+}
+
+export function useUserStateContext(): UserStateContextProps {
+  const context = useContext(UserStateContext);
+
+  return context;
 }

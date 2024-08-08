@@ -78,9 +78,10 @@ class Database:
         return None
 
     async def list_workflows(self, app_id: str) -> Optional[List[Workflow]]:
+        pdb.set_trace()
         response = (
             self.supabase.table("workflow")
-            .select("id, name, created_at")
+            .select("id, name, created_at, status, last_run")
             .filter("app_id", "eq", app_id)
             .execute()
         )

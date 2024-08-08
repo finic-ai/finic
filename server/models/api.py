@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 from enum import Enum
 import datetime
+import uuid
 from typing import List, Optional, Dict, Any
 from models.models import (
     AppConfig,
     User,
     Workflow,
+    WorkflowStatus,
     Edge,
     Node,
     NodeType,
@@ -25,9 +27,10 @@ class CompleteOnboardingRequest(BaseModel):
 
 
 class UpsertWorkflowRequest(BaseModel):
-    id: str
-    nodes: List[Node]
-    edges: List[Edge]
+    id: Optional[str] = uuid.uuid4()
+    status: Optional[WorkflowStatus] = "draft"
+    nodes: Optional[List[Node]] = []
+    edges: Optional[List[Edge]] = []
 
 
 class GetWorkflowRequest(BaseModel):

@@ -101,12 +101,9 @@ async def upsert_workflow(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        workflow = Workflow(
-            id=request.id,
-            app_id=config.app_id,
-            nodes=request.nodes,
-            edges=request.edges,
-        )
+        import pdb
+        pdb.set_trace()
+        workflow = Workflow(**request.dict(), app_id=config.app_id)
         await db.upsert_workflow(workflow=workflow)
         return workflow
     except Exception as e:
