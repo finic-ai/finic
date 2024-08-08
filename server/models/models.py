@@ -33,21 +33,21 @@ class NodePosition(BaseModel):
     y: int
 
 
-class NodeType(Enum):
+class NodeType(str, Enum):
     source = "source"
     destination = "destination"
     transform = "transform"
 
 
-class SourceType(Enum):
+class SourceType(str, Enum):
     google_cloud_storage = "google_cloud_storage"
 
 
-class DestinationType(Enum):
+class DestinationType(str, Enum):
     snowflake = "snowflake"
 
 
-class TransformationType(Enum):
+class TransformationType(str, Enum):
     python = "python"
     sql = "sql"
     mapping = "mapping"
@@ -109,8 +109,17 @@ class JoinNode(TransformNode):
     join_column: str
 
 
+class WorkflowStatus(str, Enum):
+    draft = "draft"
+    successful = "successful"
+    failed = "failed"
+    deployed = "deployed"
+
+
 class Workflow(BaseModel):
     id: str
     app_id: str
+    name: str
+    status: WorkflowStatus
     nodes: List[Node]
     edges: List[Edge]

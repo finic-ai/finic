@@ -25,11 +25,12 @@ import requests
 import os
 from dotenv import load_dotenv
 import json
+import uuid
 
 load_dotenv()
 
 
-WORKFLOW_ID = "123"
+WORKFLOW_ID = os.getenv("WORKFLOW_ID")
 APP_ID = os.getenv("APP_ID")
 SECRET_KEY = os.getenv("SECRET_KEY")
 GCS_CREDENTIALS = json.loads(os.getenv("GCS_CREDENTIALS"))
@@ -44,11 +45,9 @@ SNOWFLAKE_TABLE = os.getenv("SNOWFLAKE_TABLE")
 
 
 def upsert_workflow(workflow: Workflow):
-    workflow_json = json.loads(workflow.json())
-    print("workflow_json", workflow_json)
     response = requests.post(
         "http://localhost:8080/upsert-workflow",
-        json=workflow_json,
+        json=workflow.dict(),
         headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
     return response
