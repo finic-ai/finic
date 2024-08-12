@@ -5,6 +5,7 @@ from models.models import (
     AppConfig,
     User,
     Workflow,
+    WorkflowRun,
 )
 from supabase import create_client, Client
 import os
@@ -88,4 +89,19 @@ class Database:
 
         if len(response.data) > 0:
             return [Workflow(**row) for row in response.data]
+        return None
+
+    async def save_workflow_run(
+        self, workflow_run: WorkflowRun
+    ) -> Optional[WorkflowRun]:
+        response = (
+            self.supabase.table("workflow_run")
+            .upsert(
+                workflow_run.dict(),
+            )
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return WorkflowRun(**row)
         return None
