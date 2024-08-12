@@ -143,7 +143,7 @@ async def run_workflow(
 ):
     try:
         workflow = await db.get_workflow(request.id, config.app_id)
-        runner = WorkflowRunner()
+        runner = WorkflowRunner(db=db)
         await runner.run_workflow(workflow)
         return workflow
     except Exception as e:
