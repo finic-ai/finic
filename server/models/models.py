@@ -1,11 +1,20 @@
 import os
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Any, Tuple
+from typing import List, Optional, Dict, Any, Tuple, Type, Union
 from enum import Enum
 from strenum import StrEnum
 import datetime
 import io
+import uuid
+from models.node_configurations import (
+    GCSSourceConfig,
+    SnowflakeDestinationConfig,
+    MappingTransformConfig,
+    PythonTransformConfig,
+    JoinTransformConfig,
+)
+from typing_extensions import Literal
 
 
 class AppConfig(BaseModel):
@@ -39,87 +48,43 @@ class NodeType(str, Enum):
     transform = "transform"
 
 
-class SourceType(str, Enum):
-    google_cloud_storage = "google_cloud_storage"
+class SourceNodeData(BaseModel):
+    node_type: Literal[NodeType.source] = NodeType.source
+    configuration: GCSSourceConfig
 
 
-class DestinationType(str, Enum):
-    snowflake = "snowflake"
+class DestinationNodeData(BaseModel):
+    node_type: Literal[NodeType.destination] = NodeType.destination
+    configuration: SnowflakeDestinationConfig
 
 
-class TransformationType(str, Enum):
-    python = "python"
-    sql = "sql"
-    mapping = "mapping"
-    join = "join"
-    split = "split"
-    filter = "filter"
-    conditional = "conditional"
+class TransformNodeData(BaseModel):
+    node_type: Literal[NodeType.transform] = NodeType.transform
+    configuration: Union[
+        MappingTransformConfig, PythonTransformConfig, JoinTransformConfig
+    ] = Field(..., discriminator="transform_type")
+
+
+class WorkflowStatus(str, Enum):
+    draft = "draft"
+    deployed = "deployed"
+    successful = "successful"
+    failed = "failed"
 
 
 class Node(BaseModel):
     id: str
     position: NodePosition
-    type: NodeType
-
-
-class GCSConfiguration(BaseModel):
-    bucket: str
-    filename: str
-
-
-class SourceNode(Node):
-    source: SourceType
-    credentials: Dict[str, Any]
-    configuration: GCSConfiguration
-
-
-class SnowflakeConfiguration(BaseModel):
-    account: str
-    warehouse: str
-    database: str
-    table_schema: str
-    table: str
-
-
-class DestinationNode(Node):
-    destination: DestinationType
-    credentials: Dict[str, Any]
-    configuration: SnowflakeConfiguration
-
-
-class TransformNode(Node):
-    transformation: TransformationType
-
-
-class ColumnMapping(BaseModel):
-    old_name: str
-    new_name: str
-
-
-class MappingNode(TransformNode):
-    mappings: List[ColumnMapping]
-
-
-class PythonNode(TransformNode):
-    pass
-
-
-class JoinNode(TransformNode):
-    join_column: str
-
-
-class WorkflowStatus(str, Enum):
-    draft = "draft"
-    successful = "successful"
-    failed = "failed"
-    deployed = "deployed"
+    node_data: Union[SourceNodeData, DestinationNodeData, TransformNodeData] = Field(
+        ..., discriminator="node_type"
+    )
 
 
 class Workflow(BaseModel):
-    id: str
-    app_id: str
+    id: Optional[str] = uuid.uuid4()
+    app_id: Optional[str] = None
     name: str
-    status: WorkflowStatus
-    nodes: List[Node]
-    edges: List[Edge]
+    status: Optional[WorkflowStatus] = WorkflowStatus.draft
+    last_run: Optional[datetime.datetime] = None
+    nodes: List[Node] = []
+    edges: List[Edge] = []

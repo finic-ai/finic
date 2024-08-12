@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { type Node, type Edge, type NodeTypes } from "@xyflow/react";
+import { useAuth } from "@/hooks/useAuth";
+
+const server_url = import.meta.env.VITE_APP_SERVER_URL;
 
 interface Workflow {
   id: string;
@@ -13,30 +16,70 @@ interface WorkflowOptions {
   id: string;
 }
 
-export async function useAvailableWorkflows() {
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
-  const response = await fetch('/get-workflows');
-  const data = await response.json();
-  setWorkflows(data);
-  return [workflows, setWorkflows]
-}
-
 export default function useWorkflow() {
-  const [workflow, setWorkflow] = useState<Workflow | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    fetch("/get-workflow")
-      .then((res) => res.json())
-      .then((data) => setWorkflow(data));
+  const createWorkflow = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch("/upsert-workflow", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer}`,
+        },
+        body: JSON.stringify({}),
+      });
+      const data = await response.json();
+      return data;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const getNodes = () => {
-    return workflow?.nodes;
-  };
+  const getWorkflow = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      //
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  const getEdges = () => {
-    return workflow?.edges;
-  };
+  const listWorkflows = useCallback(async (bearer: string, appId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log(bearer, appId)
+      const payload = {
+        app_id: appId,
+      }
+      const response = await fetch(`${server_url}/list-workflows`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer}`,
+        },
+        body: JSON.stringify(payload)
+      });
+      console.log(response)
+      const data = await response.json();
+      return data;
+    } catch (err: any) {
+      console.log(err)
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const runWorkflow = async () => {
     const response = await fetch("/run-workflow", {
@@ -68,22 +111,10 @@ export default function useWorkflow() {
   };
 
   return {
-    getNodes,
-    getEdges,
+    isLoading,
+    createWorkflow,
+    getWorkflow,
+    listWorkflows,
     runWorkflow,
   };
-}
-
-export async function useAvailableWorkflows() {
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
-
-  useEffect(() => {
-    const fetchWorkflows = async () => {
-      const response = await fetch("/get-workflows");
-      const data = await response.json();
-      setWorkflows(data);
-    };
-    fetchWorkflows();
-  }, []);
-  return [workflows, setWorkflows];
 }

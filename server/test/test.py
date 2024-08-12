@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-sys.path.append("../models")
+sys.path.append("../")
 
 from models import (
     AppConfig,
@@ -10,17 +10,16 @@ from models import (
     Edge,
     Node,
     NodeType,
-    SourceNode,
-    DestinationNode,
-    TransformNode,
-    TransformationType,
-    SourceType,
-    DestinationType,
-    SnowflakeConfiguration,
-    GCSConfiguration,
-    MappingNode,
+    SourceNodeData,
+    GCSSourceConfig,
     ColumnMapping,
     WorkflowStatus,
+    IntegrationType,
+    TransformNodeData,
+    TransformType,
+    DestinationNodeData,
+    MappingTransformConfig,
+    SnowflakeDestinationConfig,
 )
 import requests
 import os
@@ -48,7 +47,7 @@ SNOWFLAKE_TABLE = os.getenv("SNOWFLAKE_TABLE")
 def upsert_workflow(workflow: Workflow):
     response = requests.post(
         "http://localhost:8080/upsert-workflow",
-        json=workflow.dict(),
+        json={"workflow": workflow.dict()},
         headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
     return response
@@ -60,7 +59,9 @@ def get_workflow(id: str) -> Workflow:
         json={"id": id},
         headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
-    return response
+    if response.status_code == 200:
+        return Workflow(**response.json())
+    return None
 
 
 def run_workflow(id: str):
@@ -78,44 +79,46 @@ workflow = Workflow(
     id=WORKFLOW_ID,
     app_id=APP_ID,
     nodes=[
-        SourceNode(
+        Node(
             id="1",
             position={"x": 0, "y": 0},
-            type=NodeType.source,
-            source=SourceType.google_cloud_storage,
-            credentials=GCS_CREDENTIALS,
-            configuration=GCSConfiguration(
-                bucket=GCS_BUCKET,
-                filename=GCS_FILENAME,
+            node_data=SourceNodeData(
+                configuration=GCSSourceConfig(
+                    credentials=GCS_CREDENTIALS,
+                    bucket=GCS_BUCKET,
+                    filename=GCS_FILENAME,
+                ),
             ),
         ),
-        MappingNode(
+        Node(
             id="2",
             position={"x": 0, "y": 0},
-            type=NodeType.transform,
-            transformation=TransformationType.mapping,
-            mappings=[
-                ColumnMapping(old_name="Index", new_name="ID"),
-                ColumnMapping(old_name="Name", new_name="NAME"),
-                ColumnMapping(old_name="Linkedin Url", new_name="LINKEDIN_URL"),
-                ColumnMapping(
-                    old_name="Est. Revenue (USD)",
-                    new_name="ACCOUNT_SIZE",
+            node_data=TransformNodeData(
+                configuration=MappingTransformConfig(
+                    mappings=[
+                        ColumnMapping(old_name="Index", new_name="ID"),
+                        ColumnMapping(old_name="Name", new_name="NAME"),
+                        ColumnMapping(old_name="Linkedin Url", new_name="LINKEDIN_URL"),
+                        ColumnMapping(
+                            old_name="Est. Revenue (USD)",
+                            new_name="ACCOUNT_SIZE",
+                        ),
+                    ],
                 ),
-            ],
+            ),
         ),
-        DestinationNode(
+        Node(
             id="3",
             position={"x": 0, "y": 0},
-            type=NodeType.destination,
-            destination=DestinationType.snowflake,
-            credentials=SNOWFLAKE_CREDENTIALS,
-            configuration=SnowflakeConfiguration(
-                account=SNOWFLAKE_ACCOUNT,
-                warehouse=SNOWFLAKE_WAREHOUSE,
-                database=SNOWFLAKE_DATABASE,
-                table_schema=SNOWFLAKE_SCHEMA,
-                table=SNOWFLAKE_TABLE,
+            node_data=DestinationNodeData(
+                configuration=SnowflakeDestinationConfig(
+                    credentials=SNOWFLAKE_CREDENTIALS,
+                    account=SNOWFLAKE_ACCOUNT,
+                    warehouse=SNOWFLAKE_WAREHOUSE,
+                    database=SNOWFLAKE_DATABASE,
+                    table_schema=SNOWFLAKE_SCHEMA,
+                    table=SNOWFLAKE_TABLE,
+                ),
             ),
         ),
     ],
@@ -127,8 +130,6 @@ workflow = Workflow(
 
 upsert_response = upsert_workflow(workflow=workflow)
 print("upsert_response", upsert_response)
-# response = get_workflow(workflow.id)
-# print("response", response)
-# assert response == workflow.dict()
-
-# run_workflow(workflow.id)
+response_workflow = get_workflow(workflow.id)
+assert response_workflow.dict() == workflow.dict()
+run_workflow(workflow.id)

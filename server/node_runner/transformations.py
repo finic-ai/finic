@@ -8,20 +8,19 @@ from models.models import (
     Edge,
     Node,
     NodeType,
-    SourceNode,
-    DestinationNode,
-    TransformNode,
-    TransformationType,
-    MappingNode,
-    PythonNode,
-    JoinNode,
+    MappingTransformConfig,
+    PythonTransformConfig,
+    JoinTransformConfig,
 )
 import copy
 import numpy as np
+import pandas as pd
 
 
 def run_mapping_node(
-    node: MappingNode, inputs: List[str], interim_results: Dict[str, List[List[Any]]]
+    node_config: MappingTransformConfig,
+    inputs: List[str],
+    interim_results: Dict[str, List[List[Any]]],
 ):
     # Run the mapping transformation
 
@@ -29,37 +28,39 @@ def run_mapping_node(
         return
     elif len(inputs) > 1:
         raise ValueError("Mapping node can only have one input")
-    input = interim_results[inputs[0]]
-    input_table = interim_results[input]
+    input_table = interim_results[inputs[0]]
 
     # get the mapping
-    mappings = node.mappings
+    mappings = node_config.mappings
     # apply the mapping
-    output_table = copy.deepcopy(input_table)
-    # rename the columns
-    # the first row is the column names
-    column_names = output_table[0]
+    output_table = pd.DataFrame(input_table[1:], columns=input_table[0])
+    # rename the columns according to the mapping and drop the columns that are not in the mapping
+    output_table = output_table.rename(
+        columns={mapping.old_name: mapping.new_name for mapping in mappings}
+    )
+    output_table = output_table[[mapping.new_name for mapping in mappings]]
 
-    for mapping in mappings:
-        old_name = mapping.old_name
-        new_name = mapping.new_name
-        if old_name in column_names:
-            index = column_names.index(old_name)
-            column_names[index] = new_name
-
-    interim_results[node.id] = output_table
+    return [output_table.columns.tolist()] + output_table.values.tolist()
 
 
-def run_python_node(node: PythonNode, inputs: List[str], interim_results: Dict):
+def run_python_node(
+    node_config: PythonTransformConfig,
+    inputs: List[str],
+    interim_results: Dict,
+):
     # Run the python transformation
     pass
 
 
-def run_join_node(node: JoinNode, inputs: List[str], interim_results: Dict):
+def run_join_node(
+    node_config: JoinTransformConfig,
+    inputs: List[str],
+    interim_results: Dict,
+):
     # Run the join transformation
 
     input_tables = [interim_results[input] for input in inputs]
-    join_column = node.join_column
+    join_column = node_config.join_column
     # make sure each input table has the join column
     for input_table in input_tables:
         if join_column not in input_table[0]:
@@ -88,4 +89,4 @@ def run_join_node(node: JoinNode, inputs: List[str], interim_results: Dict):
         result = new_result
         columns_data[0] = np.array([row[join_column] for row in result])
 
-    interim_results[node.id] = result
+    return result

@@ -101,14 +101,8 @@ async def upsert_workflow(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        workflow = Workflow(
-            id=request.id,
-            app_id=config.app_id,
-            nodes=request.nodes,
-            edges=request.edges,
-            name=request.name,
-            status=request.status,
-        )
+        workflow = request.workflow
+        workflow.app_id = config.app_id
         await db.upsert_workflow(workflow=workflow)
         return workflow
     except Exception as e:
@@ -150,7 +144,7 @@ async def run_workflow(
     try:
         workflow = await db.get_workflow(request.id, config.app_id)
         runner = WorkflowRunner()
-        runner.run_workflow(workflow)
+        await runner.run_workflow(workflow)
         return workflow
     except Exception as e:
         print(e)
