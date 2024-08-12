@@ -2,10 +2,10 @@
 
 import { useRef, useEffect } from "react";
 import * as SubframeCore from "@subframe/core";
-import { Button } from "../../../../frontend/src/subframe/components/Button";
-import { IconWithBackground } from "../../../../frontend/src/subframe/components/IconWithBackground";
-import { DropdownMenu } from "../../../../frontend/src/subframe/components/DropdownMenu";
-import { Table } from "../../../../frontend/src/subframe/components/Table";
+import { Button } from "@/subframe/components/Button";
+import { IconWithBackground } from "@/subframe/components/IconWithBackground";
+import { DropdownMenu } from "@/subframe/components/DropdownMenu";
+import { Table } from "@/subframe/components/Table";
 import {
   nodeTypes,
   NodeTypeNames,

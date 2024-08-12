@@ -1,10 +1,10 @@
 import * as SubframeCore from "@subframe/core";
-import { ToggleGroup } from "../../../../../../frontend/src/subframe/components/ToggleGroup";
-import { Breadcrumbs } from "../../../../../../frontend/src/subframe/components/Breadcrumbs";
-import { Avatar } from "../../../../../../frontend/src/subframe/components/Avatar";
-import { IconButton } from "../../../../../../frontend/src/subframe/components/IconButton";
-import { DropdownMenu } from "../../../../../../frontend/src/subframe/components/DropdownMenu";
-import { Button } from "../../../../../../frontend/src/subframe/components/Button";
+import { ToggleGroup } from "@/subframe/components/ToggleGroup";
+import { Breadcrumbs } from "@/subframe/components/Breadcrumbs";
+import { Avatar } from "@/subframe/components/Avatar";
+import { IconButton } from "@/subframe/components/IconButton";
+import { DropdownMenu } from "@/subframe/components/DropdownMenu";
+import { Button } from "@/subframe/components/Button";
 import { SettingsPageLayout } from "..";
 
 interface AccountSettingsPageProps {

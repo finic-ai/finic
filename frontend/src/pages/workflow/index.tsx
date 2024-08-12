@@ -32,7 +32,7 @@ const initialNodes = [
   {
     id: "1",
     position: { x: 0, y: 0 },
-    data: { title: "Example Source Node", description: "Test Description" },
+    data: { title: "Example Source Node", description: "Test Description", sourceType: "gcs" },
     type: "source",
   },
   {
@@ -41,6 +41,7 @@ const initialNodes = [
     data: {
       title: "Example Destination Node",
       description: "Test Description",
+      destinationType: "snowflake",
     },
     type: "destination",
   },
@@ -248,16 +249,11 @@ export default function WorkflowPage() {
               title={selectedNode.data.title as string}
               description={selectedNode.data.description as string}
               nodeType={selectedNode.type as string}
+              nodeData={selectedNode.data}
               iconName={
                 NodeIcons[selectedNode.type as keyof SubframeCore.IconName]
               }
-            >
-              {React.createElement(
-                configurationDrawerTypes[
-                  selectedNode.type as keyof typeof configurationDrawerTypes
-                ]
-              )}
-            </ConfigurationDrawer>
+            />
           )}
         </div>
       </div>

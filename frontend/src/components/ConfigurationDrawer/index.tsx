@@ -1,33 +1,34 @@
-import { Button } from "../../../../frontend/src/subframe/components/Button";
+import React from "react";
+import { Button } from "@/subframe/components/Button";
 import {
   IconWithBackground,
   type IconName,
-} from "../../../../frontend/src/subframe/components/IconWithBackground";
-import { Select } from "../../../../frontend/src/subframe/components/Select";
-import { PropertiesAccordion } from "../../../../frontend/src/subframe/components/PropertiesAccordion";
-import { TextArea } from "../../../../frontend/src/subframe/components/TextArea";
-import { Alert } from "../../../../frontend/src/subframe/components/Alert";
-import { PropertiesRow } from "../../../../frontend/src/subframe/components/PropertiesRow";
-import { TextField } from "../../../../frontend/src/subframe/components/TextField";
-import { ToggleGroup } from "../../../../frontend/src/subframe/components/ToggleGroup";
-import { NodeTypeNames } from "@/types";
+} from "@/subframe/components/IconWithBackground";
+import { Select } from "@/subframe/components/Select";
+import { PropertiesAccordion } from "@/subframe/components/PropertiesAccordion";
+import { TextArea } from "@/subframe/components/TextArea";
+import { Alert } from "@/subframe/components/Alert";
+import { PropertiesRow } from "@/subframe/components/PropertiesRow";
+import { TextField } from "@/subframe/components/TextField";
+import { ToggleGroup } from "@/subframe/components/ToggleGroup";
+import { NodeTypeNames, configurationDrawerTypes } from "@/types";
 
 interface ConfigurationDrawerProps {
-  children?: React.ReactNode;
   className?: string;
   title: string;
   description?: string;
   nodeType: string;
+  nodeData?: any;
   iconName: IconName;
   closeDrawer: () => void;
 }
 
 export function ConfigurationDrawer({
-  children,
   className,
   title,
   description,
   nodeType,
+  nodeData,
   iconName,
   closeDrawer,
 }: ConfigurationDrawerProps) {
@@ -70,7 +71,10 @@ export function ConfigurationDrawer({
             />
           </TextArea>
         </PropertiesAccordion>
-        {children}
+        {React.createElement(
+          configurationDrawerTypes[nodeType as keyof typeof configurationDrawerTypes],
+          { nodeData }
+        )}
       </div>
       <div className="flex w-full items-center justify-end gap-2 pt-4 pr-2 pb-2 pl-2">
         <Button
