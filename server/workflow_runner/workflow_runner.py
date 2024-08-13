@@ -6,8 +6,8 @@ from models.models import (
     User,
     Workflow,
     Edge,
-    Node,
-    NodeType,
+    WorkflowRunStatus,
+    WorkflowRun,
 )
 from supabase import create_client, Client
 import os
@@ -22,11 +22,36 @@ import tempfile
 import pdb
 from collections import deque
 from node_runner import NodeRunner
+from database import Database
+import json
 
 
 class WorkflowRunner:
-    def __init__(self):
-        pass
+    def __init__(self, db: Database):
+        self.db = db
+
+    async def save_workflow_run(
+        self, workflow_id: str, status: WorkflowRunStatus, results: Dict
+    ):
+        # Save the first 100 rows of each result table
+        validated_results = {}
+        for node_id, result in results.items():
+            if result is not None:
+                new_result = result[:100]
+                # remove all NaN values and replace them with None
+                new_result = [
+                    [None if pd.isna(value) else value for value in row]
+                    for row in new_result
+                ]
+                validated_results[node_id] = new_result
+
+        workflow_run = WorkflowRun(
+            workflow_id=workflow_id,
+            results=validated_results,
+            status=status,
+        )
+
+        await self.db.save_workflow_run(workflow_run)
 
     async def run_workflow(self, workflow: Workflow) -> Dict:
         nodes = workflow.nodes
@@ -71,7 +96,11 @@ class WorkflowRunner:
 
         if len(topological_order) == len(nodes):
             # All nodes executed successfully in topological order.
+            await self.save_workflow_run(
+                workflow.id, WorkflowRunStatus.successful, results
+            )
             return results
         else:
             # There exists a cycle in the graph.
+            await self.save_workflow_run(workflow.id, WorkflowRunStatus.failed, results)
             raise ValueError("Workflow contains a cycle")

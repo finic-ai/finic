@@ -214,7 +214,7 @@ export function WorkflowList() {
               </Table.HeaderRow>
             }
           >
-            {!isLoading && workflows.map((workflow, index) => (
+            {!isLoading && workflows.sort((a, b) => a.name.localeCompare(b.name)).map((workflow, index) => (
               <WorkflowRow bearer={bearer} initial_data={workflow}/>
             ))}
           </Table>

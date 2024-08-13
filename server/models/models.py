@@ -72,6 +72,12 @@ class WorkflowStatus(str, Enum):
     failed = "failed"
 
 
+class WorkflowRunStatus(str, Enum):
+    running = "running"
+    successful = "successful"
+    failed = "failed"
+
+
 class Node(BaseModel):
     id: str
     position: NodePosition
@@ -85,5 +91,13 @@ class Workflow(BaseModel):
     app_id: str
     name: str
     status: WorkflowStatus
-    nodes: List[Node]
-    edges: List[Edge]
+    nodes: List[Node] = []
+    edges: List[Edge] = []
+
+
+class WorkflowRun(BaseModel):
+    workflow_id: str
+    status: WorkflowRunStatus
+    start_time: Optional[datetime.datetime] = None
+    end_time: Optional[datetime.datetime] = None
+    results: Dict[str, Any] = {}
