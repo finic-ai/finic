@@ -81,10 +81,9 @@ class Node(BaseModel):
 
 
 class Workflow(BaseModel):
-    id: Optional[str] = uuid.uuid4()
-    app_id: Optional[str] = None
+    id: str
+    app_id: str
     name: str
-    status: Optional[WorkflowStatus] = WorkflowStatus.draft
-    last_run: Optional[datetime.datetime] = None
-    nodes: List[Node] = []
-    edges: List[Edge] = []
+    status: WorkflowStatus
+    nodes: List[Node]
+    edges: List[Edge]

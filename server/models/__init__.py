@@ -21,7 +21,6 @@ from .node_configurations import (
     ColumnMapping,
 )
 from .api import (
-    CompleteOnboardingRequest,
     UpsertWorkflowRequest,
     GetWorkflowRequest,
 )

@@ -25,7 +25,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
-from models.api import GetWorkflowRequest, UpsertWorkflowRequest, ListWorkflowsRequest
+from models.api import GetWorkflowRequest, UpsertWorkflowRequest, ListWorkflowsRequest, SetWorkflowStatusRequest
 import uuid
 from models.models import AppConfig
 from database import Database
@@ -101,8 +101,25 @@ async def upsert_workflow(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        workflow = request.workflow
-        workflow.app_id = config.app_id
+        if request.id:
+            workflow = await db.get_workflow(request.id, config.app_id)
+            if not workflow:
+                raise HTTPException(
+                    status_code=404, detail="Workflow not found with the given ID"
+                )
+            for key, value in request.dict().items():
+                if value:
+                    setattr(workflow, key, value)
+        else:
+            new_id = str(uuid.uuid4())
+            workflow = Workflow(
+                id=new_id,
+                app_id=config.app_id,
+                name=request.name if request.name else "New Workflow",
+                status=request.status if request.status else "draft",
+                nodes=request.nodes if request.nodes else [],
+                edges=request.edges if request.edges else [],
+            )
         await db.upsert_workflow(workflow=workflow)
         return workflow
     except Exception as e:
