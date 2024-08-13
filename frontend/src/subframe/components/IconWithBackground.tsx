@@ -16,6 +16,8 @@ interface IconWithBackgroundRootProps
   className?: string;
 }
 
+export type IconName = SubframeCore.IconName
+
 const IconWithBackgroundRoot = React.forwardRef<
   HTMLElement,
   IconWithBackgroundRootProps

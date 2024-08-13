@@ -20,28 +20,22 @@ import { Alert } from "@/subframe/components/Alert";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { Switch } from "@/subframe/components/Switch";
 import { type NodeResults } from "@/types/index";
-import { NodeLayout } from "@/components/nodes/index";
+import { NodeLayout } from "@/components/Nodes/index";
+import { ConfigurationDrawer } from "../ConfigurationDrawer";
 
-type SQLNode = Node<
+type TransformationNode = Node<
   {
     title: string;
     nodeType: string;
     results: NodeResults;
-    onNodeOpen: (node_id: string) => void;
   },
-  "sql"
+  "transformation"
 >;
 
-export default function SQLNode(props: NodeProps<SQLNode>) {
-  const nodeId = useNodeId();
-
-  function onNodeOpen() {
-    props.data.onNodeOpen(nodeId as string);
-  }
-
+export default function TransformationNode(props: NodeProps<TransformationNode>) {
   return (
     <NodeLayout
-      openNode={onNodeOpen}
+      nodeId={props.id}
       title={props.data.title}
       results={props.data.results}
       isSelected={props.selected || false}
@@ -60,7 +54,7 @@ export default function SQLNode(props: NodeProps<SQLNode>) {
       />
       <div className="flex flex-col w-full select-text gap-4">
         <span className="text-heading-3 font-heading-3 text-default-font">
-          SQL Query
+          Code
         </span>
         <div className="flex w-full flex-col items-start gap-4 rounded bg-neutral-50 pt-2 pr-2 pb-2 pl-2">
           <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font">
@@ -72,13 +66,28 @@ export default function SQLNode(props: NodeProps<SQLNode>) {
   );
 }
 
-interface SQLNodeConfigurationDrawerProps {
-  closeDrawer: () => void;
+interface TransformationNodeConfigurationDrawerProps {
+  nodeData?: any;
 }
 
-export function SQLNodeConfigurationDrawer() {
+export function TransformationNodeConfigurationDrawer({ }: TransformationNodeConfigurationDrawerProps) {
   return (
     <div>
+      <PropertiesAccordion title="Description">
+        <TextArea
+          className="h-auto w-full flex-none"
+          variant="filled"
+          label=""
+          helpText=""
+        >
+          <TextArea.Input
+            className="h-auto min-h-[96px] w-full flex-none"
+            placeholder="Receive data from FiveTran's Salesforce connector"
+            value=""
+            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {}}
+          />
+        </TextArea>
+      </PropertiesAccordion>
       <PropertiesAccordion title="Python Version">
         <Select
           className="h-auto w-full flex-none"
@@ -96,9 +105,9 @@ export function SQLNodeConfigurationDrawer() {
       <PropertiesAccordion title="Dependencies">
         <div className="flex flex-col items-start gap-4">
           <span className="text-caption font-caption text-default-font">
-            You can specify python packages to import during the execution of
-            this workflow. Imported packages will be available across all nodes
-            in this workflow.
+            You can specify python packages to import during the execution of this
+            workflow. Imported packages will be available across all nodes in this
+            workflow.
           </span>
           <div className="flex items-center gap-4">
             <span className="text-caption font-caption text-default-font">
@@ -140,24 +149,92 @@ export function SQLNodeConfigurationDrawer() {
             Upload
           </Button>
           <span className="text-caption font-caption text-subtext-color">
-            Upload a CSV file to test this node with sample input data.
+            Upload a CSV file to test this node with sample  input data.
           </span>
         </div>
       </PropertiesAccordion>
-      <PropertiesRow text="Run Schedule">
-        <Select
-          variant="filled"
-          label=""
-          placeholder="24 hours"
-          helpText=""
-          value=""
-          onValueChange={(value: string) => {}}
-        >
-          <Select.Item value="5 mins">5 mins</Select.Item>
-          <Select.Item value="30 mins">30 mins</Select.Item>
-          <Select.Item value="1 hour">1 hour</Select.Item>
-        </Select>
-      </PropertiesRow>
+      <PropertiesAccordion title="Run Schedule">
+        <div className="flex flex-col items-start gap-4">
+          <span className="text-caption font-caption text-default-font">
+            By default, a node will immediately run after all its input nodes have
+            completed running. Setting a schedule delays running until the specified
+            time.
+          </span>
+          <div className="flex w-full items-center gap-2">
+            <span className="grow shrink-0 basis-0 text-caption-bold font-caption-bold text-default-font">
+              Enable Schedule
+            </span>
+            <Switch checked={false} onCheckedChange={(checked: boolean) => {}} />
+          </div>
+          <div className="flex w-full items-center justify-end gap-2">
+            <Button
+              className="h-8 grow shrink-0 basis-0"
+              variant="neutral-secondary"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+            >
+              Crontab
+            </Button>
+            <Button
+              className="h-8 grow shrink-0 basis-0"
+              icon="FeatherCheck"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+            >
+              Basic
+            </Button>
+          </div>
+          <div className="flex w-full items-center gap-2">
+            <span className="grow shrink-0 basis-0 text-caption-bold font-caption-bold text-default-font">
+              Run Frequency
+            </span>
+            <Select
+              variant="filled"
+              label=""
+              placeholder="Weekly"
+              helpText=""
+              value=""
+              onValueChange={(value: string) => {}}
+            >
+              <Select.Item value="5 mins">5 mins</Select.Item>
+              <Select.Item value="30 mins">30 mins</Select.Item>
+              <Select.Item value="1 hour">1 hour</Select.Item>
+            </Select>
+          </div>
+          <div className="flex w-full items-center gap-2">
+            <span className="grow shrink-0 basis-0 text-caption-bold font-caption-bold text-default-font">
+              Day of Week
+            </span>
+            <Select
+              variant="filled"
+              label=""
+              placeholder="Thursday"
+              helpText=""
+              value=""
+              onValueChange={(value: string) => {}}
+            >
+              <Select.Item value="5 mins">5 mins</Select.Item>
+              <Select.Item value="30 mins">30 mins</Select.Item>
+              <Select.Item value="1 hour">1 hour</Select.Item>
+            </Select>
+          </div>
+          <div className="flex w-full items-center gap-2">
+            <span className="grow shrink-0 basis-0 text-caption-bold font-caption-bold text-default-font">
+              Hour of Day
+            </span>
+            <Select
+              variant="filled"
+              label=""
+              placeholder="12:00:00 UTC"
+              helpText=""
+              value=""
+              onValueChange={(value: string) => {}}
+            >
+              <Select.Item value="5 mins">5 mins</Select.Item>
+              <Select.Item value="30 mins">30 mins</Select.Item>
+              <Select.Item value="1 hour">1 hour</Select.Item>
+            </Select>
+          </div>
+        </div>
+      </PropertiesAccordion>
       <PropertiesRow text="On Failure">
         <Select
           variant="filled"

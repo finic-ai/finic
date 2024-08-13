@@ -5,6 +5,7 @@ import {
   Handle,
   Position,
   useNodeId,
+  useStoreApi,
   type Node,
   type NodeProps,
 } from "@xyflow/react";
@@ -35,15 +36,10 @@ export default function SourceNode(props: NodeProps<SourceNode>) {
   const stopPropagation = (event: React.MouseEvent) => {
     event.stopPropagation();
   };
-  const nodeId = useNodeId();
-
-  function onNodeOpen() {
-    props.data.onNodeOpen(nodeId as string);
-  }
 
   return (
     <NodeLayout
-      openNode={onNodeOpen}
+      nodeId={props.id}
       title={props.data.title}
       results={props.data.results}
       isSelected={props.selected || false}

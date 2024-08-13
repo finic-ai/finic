@@ -26,21 +26,14 @@ type DestinationNode = Node<
     title: string;
     nodeType: string;
     results: NodeResults;
-    onNodeOpen: (node_id: string) => void;
   },
   "destination"
 >;
 
 export default function DestinationNode(props: NodeProps<DestinationNode>) {
-  const nodeId = useNodeId();
-
-  function onNodeOpen() {
-    props.data.onNodeOpen(nodeId as string);
-  }
-
   return (
     <NodeLayout
-      openNode={onNodeOpen}
+      nodeId={props.id}
       title={props.data.title}
       results={props.data.results}
       isSelected={props.selected || false}
@@ -72,7 +65,7 @@ interface DestinationNodeConfigurationDrawerProps {
   nodeData?: any;
 }
 
-export function DestinationNodeConfigurationDrawer({}: DestinationNodeConfigurationDrawerProps) {
+export function DestinationNodeConfigurationDrawer({ }: DestinationNodeConfigurationDrawerProps) {
   return (
     <div>
       <PropertiesAccordion title="Python Version">

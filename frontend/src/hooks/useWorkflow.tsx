@@ -44,11 +44,22 @@ export default function useWorkflow() {
     }
   }, []);
 
-  const getWorkflow = useCallback(async (bearer: string, appId: string) => {
+  const getWorkflow = useCallback(async (bearer: string, workflowId: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      //
+      const response = await fetch(`${server_url}/get-workflow`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer}`,
+        },
+        body: JSON.stringify({
+          id: workflowId
+        })
+      });
+      const data = await response.json();
+      return data;
     } catch (err: any) {
       setError(err);
     } finally {

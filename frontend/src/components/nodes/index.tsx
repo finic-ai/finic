@@ -1,6 +1,5 @@
-"use client";
-
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
+import { useStoreApi } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
 import { Button } from "@/subframe/components/Button";
 import { IconWithBackground } from "@/subframe/components/IconWithBackground";
@@ -14,33 +13,22 @@ import {
 } from "@/types/index";
 
 interface NodeLayoutProps {
+  nodeId: string;
   children?: React.ReactNode;
   title: string;
   nodeType: string;
   isSelected: boolean;
   results?: NodeResults;
-  openNode: () => void;
 }
 
-export function NodeLayout({
-  children,
-  title,
-  nodeType,
-  isSelected,
-  results,
-  openNode,
-}: NodeLayoutProps) {
+export function NodeLayout({ nodeId, children, title, nodeType, isSelected, results }: NodeLayoutProps) {
   const resultTableRef = useRef<HTMLTableElement>(null);
+  const store = useStoreApi();
 
   const stopPropagation = (event: React.MouseEvent) => {
     event.stopPropagation();
   };
-
-  const preventZoomOnScroll = (event: React.WheelEvent) => {
-    console.log("test");
-    event.stopPropagation();
-  };
-
+  
   useEffect(() => {
     const resultTable = resultTableRef.current;
     if (!resultTable) {
@@ -50,6 +38,14 @@ export function NodeLayout({
       event.stopPropagation();
     });
   });
+
+  const onOpenButtonClick = useCallback(() => {
+      const { addSelectedNodes } = store.getState();
+      addSelectedNodes([nodeId]);
+      console.log(store.getState());
+    },
+    [store]
+  );
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -127,7 +123,7 @@ export function NodeLayout({
               variant="brand-secondary"
               icon="FeatherArrowUpRight"
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                openNode();
+                onOpenButtonClick();
               }}
             >
               Open
@@ -198,36 +194,14 @@ export function NodeLayout({
 }
 
 export {
-  default as GenerativeAINode,
-  GenerativeAINodeConfigurationDrawer,
-} from "./GenerativeAINode";
-export { default as JoinNode, JoinNodeConfigurationDrawer } from "./JoinNode";
-export {
-  default as MappingNode,
-  MappingNodeConfigurationDrawer,
-} from "./MappingNode";
-export {
-  default as PythonNode,
-  PythonNodeConfigurationDrawer,
-} from "./PythonNode";
-export {
-  default as ConditionalNode,
-  ConditionalNodeConfigurationDrawer,
-} from "./ConditionalNode";
-export {
-  default as FilterNode,
-  FilterNodeConfigurationDrawer,
-} from "./FilterNode";
+  default as TransformationNode,
+  TransformationNodeConfigurationDrawer,
+} from "@/components/Nodes/TransformationNode";
 export {
   default as SourceNode,
   SourceNodeConfigurationDrawer,
-} from "./SourceNode";
+} from "@/components/Nodes/SourceNode";
 export {
   default as DestinationNode,
   DestinationNodeConfigurationDrawer,
-} from "./DestinationNode";
-export {
-  default as SplitNode,
-  SplitNodeConfigurationDrawer,
-} from "./SplitNode";
-export { default as SQLNode, SQLNodeConfigurationDrawer } from "./SQLNode";
+} from "@/components/Nodes/DestinationNode";

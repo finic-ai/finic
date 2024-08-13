@@ -23,15 +23,7 @@ interface ConfigurationDrawerProps {
   closeDrawer: () => void;
 }
 
-export function ConfigurationDrawer({
-  className,
-  title,
-  description,
-  nodeType,
-  nodeData,
-  iconName,
-  closeDrawer,
-}: ConfigurationDrawerProps) {
+export function ConfigurationDrawer({ className, title, description, nodeType, nodeData, iconName, closeDrawer }: ConfigurationDrawerProps) {
   return (
     <div
       className={
@@ -72,7 +64,7 @@ export function ConfigurationDrawer({
           </TextArea>
         </PropertiesAccordion>
         {React.createElement(
-          configurationDrawerTypes[nodeType as keyof typeof configurationDrawerTypes],
+          configurationDrawerTypes[nodeType as keyof typeof configurationDrawerTypes] as React.ElementType<{ nodeData: any }>,
           { nodeData }
         )}
       </div>
