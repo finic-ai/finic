@@ -25,7 +25,12 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
-from models.api import GetWorkflowRequest, UpsertWorkflowRequest, ListWorkflowsRequest, SetWorkflowStatusRequest
+from models.api import (
+    GetWorkflowRequest,
+    UpsertWorkflowRequest,
+    ListWorkflowsRequest,
+    SetWorkflowStatusRequest,
+)
 import uuid
 from models.models import AppConfig
 from database import Database
@@ -163,6 +168,21 @@ async def run_workflow(
         workflow_id = request.id
         runner = WorkflowJobRunner(db=db, config=config)
         run = await runner.start_job(workflow_id)
+        return run
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/get-workflow-run")
+async def get_workflow_run(
+    request: GetWorkflowRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        workflow_id = request.id
+        runner = WorkflowJobRunner(db=db, config=config)
+        run = await runner.get_run_status(workflow_id)
         return run
     except Exception as e:
         print(e)
