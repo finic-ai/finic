@@ -32,8 +32,8 @@ from .destinations import run_snowflake_destination
 
 
 class NodeRunner:
-    def __init__(self):
-        pass
+    def __init__(self, app_id: str):
+        self.app_id = app_id
 
     async def run_node(
         self, node: Node, inputs: List[str], interim_results: Dict
@@ -94,6 +94,7 @@ class NodeRunner:
         if node_config.transform_type == TransformType.python:
             return run_python_node(
                 node_config=node_config,
+                app_id=self.app_id,
                 inputs=inputs,
                 interim_results=interim_results,
             )

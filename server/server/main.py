@@ -35,6 +35,7 @@ import pdb
 import logging
 import sentry_sdk
 from workflow_runner import WorkflowRunner
+from workflow_job_runner import WorkflowJobRunner
 
 sentry_sdk.init(
     dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
@@ -142,10 +143,10 @@ async def run_workflow(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        workflow = await db.get_workflow(request.id, config.app_id)
-        runner = WorkflowRunner(db=db)
-        await runner.run_workflow(workflow)
-        return workflow
+        workflow_id = request.id
+        runner = WorkflowJobRunner(db=db, config=config)
+        run = await runner.start_job(workflow_id)
+        return run
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -157,4 +158,10 @@ async def trigger_error():
 
 
 def start():
-    uvicorn.run("server.main:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run(
+        "server.main:app",
+        host="0.0.0.0",
+        port=8080,
+        reload=True,
+        reload_excludes="subprocess_env/**",
+    )

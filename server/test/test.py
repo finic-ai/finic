@@ -20,6 +20,7 @@ from models import (
     DestinationNodeData,
     MappingTransformConfig,
     SnowflakeDestinationConfig,
+    PythonTransformConfig,
 )
 import requests
 import os
@@ -73,6 +74,29 @@ def run_workflow(id: str):
     return response
 
 
+code = """
+import pandas as pd
+from typing import List, Optional, Dict, Any, Tuple, Type, Union
+import json
+
+print('Pandas version:', pd.__version__)
+# Key: node name, Value: output data from that node
+# Transform the data and output as a 2d table. The first row should be the column names.
+inputs = {
+    "2": [
+        ["Index", "Name", "Linkedin Url", "Est. Revenue (USD)"],
+        [1, "John Doe", "linkedin.com/johndoe", 100000],
+        [2, "Jane Doe", "linkedin.com/janedoe", 200000],
+    ]
+}
+def finic_handler(inputs: Dict[str, List[List[Any]]]) -> List[List[Any]]:
+    input_table = inputs["2"]
+    return input_table
+
+print(json.dumps(finic_handler(inputs)))
+"""
+
+
 workflow = Workflow(
     name="Test Workflow",
     status=WorkflowStatus.draft,
@@ -110,6 +134,16 @@ workflow = Workflow(
         Node(
             id="3",
             position={"x": 0, "y": 0},
+            node_data=TransformNodeData(
+                configuration=PythonTransformConfig(
+                    code=code,
+                    dependencies=["pandas==2.2.1"],
+                ),
+            ),
+        ),
+        Node(
+            id="4",
+            position={"x": 0, "y": 0},
             node_data=DestinationNodeData(
                 configuration=SnowflakeDestinationConfig(
                     credentials=SNOWFLAKE_CREDENTIALS,
@@ -125,6 +159,7 @@ workflow = Workflow(
     edges=[
         Edge(id="1", source="1", target="2"),
         Edge(id="2", source="2", target="3"),
+        Edge(id="3", source="3", target="4"),
     ],
 )
 

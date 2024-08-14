@@ -15,6 +15,9 @@ from models.models import (
 import copy
 import numpy as np
 import pandas as pd
+import subprocess
+import venv
+import os
 
 
 def run_mapping_node(
@@ -45,11 +48,42 @@ def run_mapping_node(
 
 def run_python_node(
     node_config: PythonTransformConfig,
+    app_id: str,
     inputs: List[str],
     interim_results: Dict,
 ):
+    assert len(inputs) >= 1
     # Run the python transformation
-    pass
+
+    print("Running python node")
+
+    # Step 1: Create a new virtual environment
+    env_name = f"subprocess_env/{app_id}"
+    venv_dir = os.path.join(os.getcwd(), env_name)
+
+    venv.create(venv_dir, with_pip=True)
+
+    libraries = node_config.dependencies
+
+    # Step 2: Install pandas in the new virtual environment
+    subprocess.check_call([os.path.join(venv_dir, "bin", "pip"), "install"] + libraries)
+
+    python_path = os.path.join(venv_dir, "bin", "python")
+
+    result = subprocess.run(
+        [python_path, "-c", node_config.code],
+        input=str(interim_results[inputs[0]]),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        env={**os.environ, "PYTHONPATH": venv_dir},
+    )
+
+    print("result", result.stdout)
+    print("error", result.stderr)
+    print(result)
+
+    return interim_results[inputs[0]]
 
 
 def run_join_node(
@@ -61,32 +95,10 @@ def run_join_node(
 
     input_tables = [interim_results[input] for input in inputs]
     join_column = node_config.join_column
-    # make sure each input table has the join column
-    for input_table in input_tables:
-        if join_column not in input_table[0]:
-            raise ValueError(f"Join column {join_column} not found in input table")
 
-    # Extract the column data from each table
-    columns_data = [
-        np.array([row[join_column] for row in table]) for table in input_tables
-    ]
+    # Join the tables with pandas
+    output_table = input_tables[0]
+    for table in input_tables[1:]:
+        output_table = pd.merge(output_table, table, on=join_column)
 
-    # Start with the first table's data
-    result = input_tables[0]
-    for i in range(1, len(input_tables)):
-        # Find the indices in both tables where the join column matches
-        left_indices = np.where(np.isin(columns_data[0], columns_data[i]))[0]
-        right_indices = np.where(np.isin(columns_data[i], columns_data[0]))[0]
-
-        # Create the joined rows
-        new_result = []
-        for left_index, right_index in zip(left_indices, right_indices):
-            # Merge the rows by combining their dictionaries
-            new_row = {**result[left_index], **input_tables[i][right_index]}
-            new_result.append(new_row)
-
-        # Update the result and columns_data
-        result = new_result
-        columns_data[0] = np.array([row[join_column] for row in result])
-
-    return result
+    return [output_table.columns.tolist()] + output_table.values.tolist()

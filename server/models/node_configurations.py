@@ -62,6 +62,7 @@ class MappingTransformConfig(BaseModel):
 class PythonTransformConfig(BaseModel):
     transform_type: Literal[TransformType.python] = TransformType.python
     code: str
+    dependencies: List[str] = []
 
 
 class JoinTransformConfig(BaseModel):

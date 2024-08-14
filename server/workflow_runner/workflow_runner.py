@@ -27,8 +27,9 @@ import json
 
 
 class WorkflowRunner:
-    def __init__(self, db: Database):
+    def __init__(self, db: Database, config: AppConfig):
         self.db = db
+        self.config = config
 
     async def save_workflow_run(
         self, workflow_id: str, status: WorkflowRunStatus, results: Dict
@@ -72,7 +73,7 @@ class WorkflowRunner:
         queue = deque([node_id for node_id in in_degree if in_degree[node_id] == 0])
         topological_order = []
 
-        node_runner = NodeRunner()
+        node_runner = NodeRunner(app_id=self.config.app_id)
 
         while queue:
             current_node = queue.popleft()
