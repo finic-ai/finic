@@ -17,10 +17,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from typing import List, Optional
-from models.models import (
-    AppConfig,
-    Workflow,
-)
+from models.models import AppConfig, Workflow, WorkflowRunStatus
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -167,6 +164,9 @@ async def run_workflow(
     try:
         workflow_id = request.id
         runner = WorkflowJobRunner(db=db, config=config)
+        latest_run = await runner.get_run_status(workflow_id)
+        if latest_run and latest_run.status == WorkflowRunStatus.running:
+            raise HTTPException(status_code=400, detail="Workflow is already running")
         run = await runner.start_job(workflow_id)
         return run
     except Exception as e:
