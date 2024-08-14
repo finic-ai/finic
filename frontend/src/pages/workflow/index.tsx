@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ReactFlow,
   useOnSelectionChange,
@@ -27,6 +27,8 @@ import {
 import { ConfigurationDrawer } from "../../components/ConfigurationDrawer";
 import "@xyflow/react/dist/style.css";
 import { useParams } from "react-router-dom";
+import useWorkflow from "@/hooks/useWorkflow";
+import { useUserStateContext } from "@/hooks/useAuth";
 
 const initialNodes = [
   {
@@ -46,58 +48,10 @@ const initialNodes = [
     type: "destination",
   },
   {
-    id: "3",
-    position: { x: 1000, y: 0 },
-    data: { title: "Example Mapping Node", description: "Test Description" },
-    type: "mapping",
-  },
-  {
-    id: "4",
-    position: { x: 1500, y: 0 },
-    data: { title: "Example Join Node", description: "Test Description" },
-    type: "join",
-  },
-  {
-    id: "5",
-    position: { x: 2000, y: 0 },
-    data: { title: "Example Split Node", description: "Test Description" },
-    type: "split",
-  },
-  {
-    id: "6",
-    position: { x: 2500, y: 0 },
-    data: { title: "Example Filter Node", description: "Test Description" },
-    type: "filter",
-  },
-  {
-    id: "7",
-    position: { x: 3000, y: 0 },
-    data: {
-      title: "Example Conditional Node",
-      description: "Test Description",
-    },
-    type: "conditional",
-  },
-  {
-    id: "8",
-    position: { x: 3500, y: 0 },
-    data: {
-      title: "Example Generative AI Node",
-      description: "Test Description",
-    },
-    type: "generative_ai",
-  },
-  {
     id: "9",
     position: { x: 4000, y: 0 },
-    data: { title: "Example Python Node", description: "Test Description" },
-    type: "python",
-  },
-  {
-    id: "10",
-    position: { x: 4500, y: 0 },
-    data: { title: "Example SQL Node", description: "Test Description" },
-    type: "sql",
+    data: { title: "Example Transformation Node", description: "Test Description" },
+    type: "transformation",
   },
 ];
 const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
@@ -129,29 +83,14 @@ const testResults = {
 };
 
 export default function WorkflowPage() {
-  // const [nodes] = useState<Node[]>([]);
-  const { id } = useParams();
+  const { id: workflowId } = useParams();
   const store = useStoreApi();
+  const { unselectNodesAndEdges } = store.getState();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { getWorkflow } = useWorkflow();
+  const { bearer } = useUserStateContext();
 
-  // Need to get the React Flow state in order to mark a node as selected when clicking the "Open" button
-  const onNodeOpen = useCallback(
-    (nodeId: string) => {
-      console.log(store.getState());
-      const { addSelectedNodes } = store.getState();
-      addSelectedNodes([nodeId]);
-    },
-    [store]
-  );
-
-  const nodesWithData = initialNodes.map((node) => {
-    return {
-      ...node,
-      data: { ...node.data, results: testResults, onNodeOpen: onNodeOpen },
-    };
-  });
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(nodesWithData);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
@@ -205,7 +144,8 @@ export default function WorkflowPage() {
       data: {
         title: "New Node",
         description: "New Node Description",
-        onNodeOpen: onNodeOpen,
+        sourceType: nodeType == FinicNodeType.SOURCE ? "gcs" : undefined,
+        destinationType: nodeType == FinicNodeType.DESTINATION ? undefined : undefined,
       },
       type: nodeType,
     };
@@ -213,9 +153,7 @@ export default function WorkflowPage() {
   }
 
   function closeDrawer() {
-    setSelectedEdge(null);
-    setSelectedNode(null);
-    setIsDrawerOpen(false);
+    unselectNodesAndEdges({nodes: [selectedNode!]})
   }
 
   return (
@@ -245,7 +183,7 @@ export default function WorkflowPage() {
           {selectedNode && (
             <ConfigurationDrawer
               className={isDrawerOpen ? undefined : "hidden"}
-              closeDrawer={closeDrawer}
+              closeDrawer={() => closeDrawer()}
               title={selectedNode.data.title as string}
               description={selectedNode.data.description as string}
               nodeType={selectedNode.type as string}

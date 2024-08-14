@@ -12,31 +12,124 @@ import { Tooltip } from "@/subframe/components/Tooltip";
 import { Badge } from "@/subframe/components/Badge";
 import { Switch } from "@/subframe/components/Switch";
 import { DefaultPageLayout } from "@/subframe";
-import { useAuth, useUserStateContext } from "@/hooks/useAuth";
+import { useUserStateContext } from "@/hooks/useAuth";
 import useWorkflow from "@/hooks/useWorkflow";
 import { Workflow } from "@/types";
 
+function WorkflowRow({ bearer, initial_data }: { bearer: string, initial_data: Workflow }) {
+  const [workflow, setWorkflow] = useState<Workflow>(initial_data);
+  const { setWorkflowStatus } = useWorkflow();
+  const navigate = useNavigate();
+  
+  function toggleStatus(workflowId: string, status: string) {
+    setWorkflowStatus(bearer, workflowId, status).then((data) => {
+      data.last_run = new Date();
+      setWorkflow(data);
+    });
+  }
+
+  return (
+    <Table.Row
+      key={workflow.id}
+    >
+      <Table.Cell>
+        <Button
+          disabled={false}
+          variant="brand-primary"
+          size="medium"
+          icon={null}
+          iconRight="FeatherArrowUpRight"
+          loading={false}
+          onClick={() => navigate(`/workflow/${workflow.id}`)}
+        >
+          Open
+        </Button>
+      </Table.Cell>
+      <Table.Cell>
+        <div className="flex items-center gap-2">
+          <SubframeCore.Icon
+            className="text-heading-3 font-heading-3 text-default-font"
+            name="FeatherTerminalSquare"
+          />
+          <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+            {workflow.name}
+          </span>
+        </div>
+      </Table.Cell>
+      <Table.Cell>
+        <SubframeCore.Tooltip.Provider>
+          <SubframeCore.Tooltip.Root>
+            <SubframeCore.Tooltip.Trigger asChild={true}>
+              <SubframeCore.Icon
+                className="text-heading-3 font-heading-3 text-success-600"
+                name="FeatherCheckCheck"
+              />
+            </SubframeCore.Tooltip.Trigger>
+            <SubframeCore.Tooltip.Portal>
+              <SubframeCore.Tooltip.Content
+                side="bottom"
+                align="center"
+                sideOffset={4}
+                asChild={true}
+              >
+                <Tooltip>
+                  {workflow.status === "success"
+                    ? "Last Run Successful"
+                    : workflow.status === "failed"
+                    ? "Last Run Failed"
+                    : "Draft"}
+                </Tooltip>
+              </SubframeCore.Tooltip.Content>
+            </SubframeCore.Tooltip.Portal>
+          </SubframeCore.Tooltip.Root>
+        </SubframeCore.Tooltip.Provider>
+      </Table.Cell>
+      <Table.Cell>
+        <SubframeCore.Icon
+          className="text-body font-body text-subtext-color"
+          name="FeatherClock"
+        />
+        <span className="whitespace-nowrap text-body font-body text-neutral-500">
+          1.8s
+        </span>
+      </Table.Cell>
+      {/* <Table.Cell>
+        <Badge>
+          {workflow.label ? workflow.label : ""}
+        </Badge>
+      </Table.Cell> */}
+      <Table.Cell>
+        <SubframeCore.Icon
+          className="text-body font-body text-subtext-color"
+          name="FeatherUser"
+        />
+        <span className="whitespace-nowrap text-body font-body text-neutral-500">
+          {workflow.id}
+        </span>
+      </Table.Cell>
+      <Table.Cell>
+        <Switch
+          checked={workflow.status === "deployed"}
+          onCheckedChange={(checked: boolean) => {toggleStatus(workflow.id, checked ? "deployed" : "draft")}}
+        />
+      </Table.Cell>
+    </Table.Row>
+  );
+}
+
 export function WorkflowList() {
-  const { listWorkflows, isLoading } = useWorkflow();
-  const { session } = useAuth();
   const [workflows, setWorkflows] = useState<Array<Workflow>>([]);
-  const { bearer, appId } = useUserStateContext();
+  const { listWorkflows, setWorkflowStatus, isLoading } = useWorkflow();
+  const { bearer } = useUserStateContext();
   
   useEffect(() => {
-    if (bearer && appId) {
-      listWorkflows(bearer, appId).then((data) => {
+    if (bearer) {
+      listWorkflows(bearer).then((data) => {
         console.log(data)
         setWorkflows(data);
-        console.log(isLoading)
       });
     }
-  }, [bearer, appId]);
-  // const workflows = [
-  //   { id: "123", name: "Workflow 1", status: "draft", active: true },
-  //   { id: "456", name: "Workflow 2", status: "success", active: false },
-  //   { id: "789", name: "Workflow 3", status: "failed", active: true },
-  // ]
-  const navigate = useNavigate();
+  }, [bearer]);
 
   return (
     <DefaultPageLayout>
@@ -115,102 +208,14 @@ export function WorkflowList() {
                 <Table.HeaderCell>Workflow</Table.HeaderCell>
                 <Table.HeaderCell>Status</Table.HeaderCell>
                 <Table.HeaderCell>Last Run</Table.HeaderCell>
-                <Table.HeaderCell>Label</Table.HeaderCell>
+                {/* <Table.HeaderCell>Label</Table.HeaderCell> */}
                 <Table.HeaderCell>Workflow ID</Table.HeaderCell>
                 <Table.HeaderCell>Active</Table.HeaderCell>
               </Table.HeaderRow>
             }
           >
-            {!isLoading && workflows.map((workflow) => (
-              <Table.Row
-                key={workflow.id}
-              >
-                <Table.Cell>
-                  <Button
-                    disabled={false}
-                    variant="brand-primary"
-                    size="medium"
-                    icon={null}
-                    iconRight="FeatherArrowUpRight"
-                    loading={false}
-                    onClick={() => navigate(`/workflow/${workflow.id}`)}
-                  >
-                    Open
-                  </Button>
-                </Table.Cell>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <SubframeCore.Icon
-                      className="text-heading-3 font-heading-3 text-default-font"
-                      name="FeatherTerminalSquare"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      {workflow.name}
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <SubframeCore.Tooltip.Provider>
-                    <SubframeCore.Tooltip.Root>
-                      <SubframeCore.Tooltip.Trigger asChild={true}>
-                        <SubframeCore.Icon
-                          className="text-heading-3 font-heading-3 text-success-600"
-                          name="FeatherCheckCheck"
-                        />
-                      </SubframeCore.Tooltip.Trigger>
-                      <SubframeCore.Tooltip.Portal>
-                        <SubframeCore.Tooltip.Content
-                          side="bottom"
-                          align="center"
-                          sideOffset={4}
-                          asChild={true}
-                        >
-                          <Tooltip>
-                            {workflow.status === "success"
-                              ? "Last Run Successful"
-                              : workflow.status === "failed"
-                              ? "Last Run Failed"
-                              : "Draft"}
-                          </Tooltip>
-                        </SubframeCore.Tooltip.Content>
-                      </SubframeCore.Tooltip.Portal>
-                    </SubframeCore.Tooltip.Root>
-                  </SubframeCore.Tooltip.Provider>
-                </Table.Cell>
-                <Table.Cell>
-                  <SubframeCore.Icon
-                    className="text-body font-body text-subtext-color"
-                    name="FeatherClock"
-                  />
-                  <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                    1.8s
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <Badge>
-                    {workflow.status === "success"
-                      ? "Output"
-                      : workflow.status === "failed"
-                      ? "Error"
-                      : "Input"}
-                  </Badge>
-                </Table.Cell>
-                <Table.Cell>
-                  <SubframeCore.Icon
-                    className="text-body font-body text-subtext-color"
-                    name="FeatherUser"
-                  />
-                  <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                    {workflow.id}
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <Switch
-                    checked={workflow.active}
-                    onCheckedChange={(checked: boolean) => {}}
-                  />
-                </Table.Cell>
-              </Table.Row>
+            {!isLoading && workflows.sort((a, b) => a.name.localeCompare(b.name)).map((workflow, index) => (
+              <WorkflowRow bearer={bearer} initial_data={workflow}/>
             ))}
           </Table>
         </div>

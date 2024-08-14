@@ -15,13 +15,15 @@ from models.models import (
 )
 
 
-class CompleteOnboardingRequest(BaseModel):
-    first_name: str
-    last_name: str
-
-
 class UpsertWorkflowRequest(BaseModel):
-    workflow: Workflow
+    id: Optional[str] = None
+    name: Optional[str] = None
+    status: Optional[WorkflowStatus] = None
+    nodes: Optional[List[Node]] = None
+    edges: Optional[List[Edge]] = None
+
+class SetWorkflowStatusRequest(BaseModel):
+    status: WorkflowStatus
 
 
 class GetWorkflowRequest(BaseModel):
