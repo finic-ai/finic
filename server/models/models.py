@@ -49,22 +49,17 @@ class NodeType(str, Enum):
 
 
 class SourceNodeData(BaseModel):
-    title: str
-    source_type: str
-    description: str
+    name: str
     configuration: Optional[GCSSourceConfig] = None
 
 
 class DestinationNodeData(BaseModel):
-    title: str
-    destination_type: str
-    description: str
+    name: str
     configuration: Optional[SnowflakeDestinationConfig] = None
 
 
 class TransformNodeData(BaseModel):
-    title: str
-    description: str
+    name: str
     configuration: Optional[PythonTransformConfig] = None
 
 

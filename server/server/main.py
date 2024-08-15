@@ -110,7 +110,7 @@ async def upsert_workflow(
                     status_code=404, detail="Workflow not found with the given ID"
                 )
             for key, value in request.dict().items():
-                if value:
+                if value is not None:
                     setattr(workflow, key, value)
         else:
             new_id = str(uuid.uuid4())
