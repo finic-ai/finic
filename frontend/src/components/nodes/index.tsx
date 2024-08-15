@@ -28,7 +28,7 @@ export function NodeLayout({ nodeId, children, title, nodeType, isSelected, resu
   const stopPropagation = (event: React.MouseEvent) => {
     event.stopPropagation();
   };
-  
+
   useEffect(() => {
     const resultTable = resultTableRef.current;
     if (!resultTable) {
@@ -40,9 +40,8 @@ export function NodeLayout({ nodeId, children, title, nodeType, isSelected, resu
   });
 
   const onOpenButtonClick = useCallback(() => {
-      const { addSelectedNodes } = store.getState();
-      addSelectedNodes([nodeId]);
-      console.log(store.getState());
+    const { addSelectedNodes } = store.getState();
+    addSelectedNodes([nodeId]);
     },
     [store]
   );

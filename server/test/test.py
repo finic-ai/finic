@@ -106,7 +106,7 @@ workflow = Workflow(
         Node(
             id="1",
             position={"x": 0, "y": 0},
-            node_data=SourceNodeData(
+            data=SourceNodeData(
                 configuration=GCSSourceConfig(
                     credentials=GCS_CREDENTIALS,
                     bucket=GCS_BUCKET,
@@ -127,7 +127,7 @@ workflow = Workflow(
         Node(
             id="3",
             position={"x": 0, "y": 0},
-            node_data=DestinationNodeData(
+            data=DestinationNodeData(
                 configuration=SnowflakeDestinationConfig(
                     credentials=SNOWFLAKE_CREDENTIALS,
                     account=SNOWFLAKE_ACCOUNT,

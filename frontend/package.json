@@ -46,7 +46,7 @@
     "remark-breaks": "^3.0.3",
     "states-us": "^1.0.4",
     "tailwindcss": "^3.3.3",
-    "uuid": "^9.0.0",
+    "uuid": "^10.0.0",
     "yarn": "^1.22.21"
   },
   "devDependencies": {

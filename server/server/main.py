@@ -26,10 +26,10 @@ from models.api import (
     GetWorkflowRequest,
     UpsertWorkflowRequest,
     ListWorkflowsRequest,
-    SetWorkflowStatusRequest,
+    DeleteWorkflowRequest
 )
 import uuid
-from models.models import AppConfig
+from models.models import AppConfig, Node, NodeType
 from database import Database
 import io
 import datetime
@@ -120,6 +120,18 @@ async def upsert_workflow(
             if value:
                 setattr(workflow, key, value)
         await db.upsert_workflow(workflow=workflow)
+        return workflow
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/delete-workflow")
+async def delete_workflow(
+    request: DeleteWorkflowRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        workflow = await db.delete_workflow(request.id, config.app_id)
         return workflow
     except Exception as e:
         print(e)

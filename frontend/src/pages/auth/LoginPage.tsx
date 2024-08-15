@@ -4,7 +4,6 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 
 function LoginPage() {
-  console.log('here')
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">

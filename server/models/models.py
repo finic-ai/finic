@@ -38,31 +38,34 @@ class Edge(BaseModel):
 
 
 class NodePosition(BaseModel):
-    x: int
-    y: int
+    x: float
+    y: float
 
 
 class NodeType(str, Enum):
-    source = "source"
-    destination = "destination"
-    transform = "transform"
+    SOURCE = "source"
+    DESTINATION = "destination"
+    TRANSFORMATION = "transformation"
 
 
 class SourceNodeData(BaseModel):
-    node_type: Literal[NodeType.source] = NodeType.source
-    configuration: GCSSourceConfig
+    title: str
+    source_type: str
+    description: str
+    configuration: Optional[GCSSourceConfig] = None
 
 
 class DestinationNodeData(BaseModel):
-    node_type: Literal[NodeType.destination] = NodeType.destination
-    configuration: SnowflakeDestinationConfig
+    title: str
+    destination_type: str
+    description: str
+    configuration: Optional[SnowflakeDestinationConfig] = None
 
 
 class TransformNodeData(BaseModel):
-    node_type: Literal[NodeType.transform] = NodeType.transform
-    configuration: Union[
-        MappingTransformConfig, PythonTransformConfig, JoinTransformConfig
-    ] = Field(..., discriminator="transform_type")
+    title: str
+    description: str
+    configuration: Optional[PythonTransformConfig] = None
 
 
 class WorkflowStatus(str, Enum):
@@ -80,10 +83,20 @@ class WorkflowRunStatus(str, Enum):
 
 class Node(BaseModel):
     id: str
+    type: NodeType
     position: NodePosition
-    node_data: Union[SourceNodeData, DestinationNodeData, TransformNodeData] = Field(
-        ..., discriminator="node_type"
-    )
+    data: Union[SourceNodeData, DestinationNodeData, TransformNodeData]
+
+    def __init__(self, **data):
+        node_type = data.get("type")
+        if node_type == NodeType.SOURCE:
+            data["data"] = SourceNodeData(**data["data"])
+        elif node_type == NodeType.DESTINATION:
+            data["data"] = DestinationNodeData(**data["data"])
+        elif node_type == NodeType.TRANSFORMATION:
+            data["data"] = TransformNodeData(**data["data"])
+        
+        super().__init__(**data)
 
 
 class Workflow(BaseModel):

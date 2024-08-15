@@ -11,6 +11,7 @@ from models.models import (
     Edge,
     Node,
     NodeType,
+    NodePosition,
     WorkflowStatus,
 )
 
@@ -19,14 +20,13 @@ class UpsertWorkflowRequest(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     status: Optional[WorkflowStatus] = None
-    nodes: Optional[List[Node]] = None
-    edges: Optional[List[Edge]] = None
-
-class SetWorkflowStatusRequest(BaseModel):
-    status: WorkflowStatus
-
+    nodes: Optional[List[Dict]] = None
+    edges: Optional[List[Dict]] = None
 
 class GetWorkflowRequest(BaseModel):
+    id: str
+
+class DeleteWorkflowRequest(BaseModel):
     id: str
 
 

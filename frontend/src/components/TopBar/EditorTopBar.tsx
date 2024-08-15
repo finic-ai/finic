@@ -12,8 +12,9 @@ import { useAuth } from "@/hooks/useAuth";
 interface EditorTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   workflowName?: string;
+  deleteWorkflow: () => void;
 }
-export default function EditorTopBar({ className, workflowName }: EditorTopBarProps) {
+export default function EditorTopBar({ className, workflowName, deleteWorkflow }: EditorTopBarProps) {
   const { logOut } = useAuth();
   const navigate = useNavigate();
 
@@ -66,7 +67,10 @@ export default function EditorTopBar({ className, workflowName }: EditorTopBarPr
                 <DropdownMenu.DropdownItem icon="FeatherWrench">
                   Advanced settings
                 </DropdownMenu.DropdownItem>
-                <DropdownMenu.DropdownItem icon="FeatherTrash">
+                <DropdownMenu.DropdownItem 
+                  icon="FeatherTrash"
+                  onClick={() => deleteWorkflow()}
+                >
                   Delete
                 </DropdownMenu.DropdownItem>
               </DropdownMenu>
