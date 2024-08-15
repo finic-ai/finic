@@ -15,15 +15,14 @@ import { NodeTypeNames, configurationDrawerTypes } from "@/types";
 
 interface ConfigurationDrawerProps {
   className?: string;
-  title: string;
-  description?: string;
+  nodeName: string;
   nodeType: string;
   nodeData?: any;
   iconName: IconName;
   closeDrawer: () => void;
 }
 
-export function ConfigurationDrawer({ className, title, description, nodeType, nodeData, iconName, closeDrawer }: ConfigurationDrawerProps) {
+export function ConfigurationDrawer({ className, nodeName, nodeType, nodeData, iconName, closeDrawer }: ConfigurationDrawerProps) {
   return (
     <div
       className={
@@ -34,7 +33,7 @@ export function ConfigurationDrawer({ className, title, description, nodeType, n
       <div className="flex flex-grow w-full overflow-auto flex-col items-start">
         <div className="flex w-full items-center justify-center gap-6 pt-4 pr-4 pb-4 pl-4">
           <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
-            {title}
+            {nodeName}
           </span>
           <div className="flex items-center justify-end gap-2">
             <span className="text-body-bold font-body-bold text-default-font">
@@ -48,21 +47,6 @@ export function ConfigurationDrawer({ className, title, description, nodeType, n
             />
           </div>
         </div>
-        <PropertiesAccordion title="Description">
-          <TextArea
-            className="h-auto w-full flex-none"
-            variant="filled"
-            label=""
-            helpText=""
-          >
-            <TextArea.Input
-              className="h-auto min-h-[96px] w-full flex-none"
-              placeholder="Receive data from FiveTran's Salesforce connector"
-              value={description ? description : ""}
-              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {}}
-            />
-          </TextArea>
-        </PropertiesAccordion>
         {React.createElement(
           configurationDrawerTypes[nodeType as keyof typeof configurationDrawerTypes] as React.ElementType<{ nodeData: any }>,
           { nodeData }

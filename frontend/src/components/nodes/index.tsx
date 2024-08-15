@@ -15,13 +15,13 @@ import {
 interface NodeLayoutProps {
   nodeId: string;
   children?: React.ReactNode;
-  title: string;
+  nodeName: string;
   nodeType: string;
   isSelected: boolean;
   results?: NodeResults;
 }
 
-export function NodeLayout({ nodeId, children, title, nodeType, isSelected, results }: NodeLayoutProps) {
+export function NodeLayout({ nodeId, children, nodeName, nodeType, isSelected, results }: NodeLayoutProps) {
   const resultTableRef = useRef<HTMLTableElement>(null);
   const store = useStoreApi();
 
@@ -104,7 +104,7 @@ export function NodeLayout({ nodeId, children, title, nodeType, isSelected, resu
             </SubframeCore.DropdownMenu.Root>
           </div>
           <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
-            {title}
+            {nodeName}
           </span>
         </div>
         <div

@@ -24,7 +24,7 @@ import { NodeLayout } from "@/components/Nodes/index";
 
 type SourceNode = Node<
   {
-    title: string;
+    nodeName: string;
     nodeType: string;
     results: NodeResults;
     onNodeOpen: (node_id: string) => void;
@@ -40,7 +40,7 @@ export default function SourceNode(props: NodeProps<SourceNode>) {
   return (
     <NodeLayout
       nodeId={props.id}
-      title={props.data.title}
+      nodeName={props.data.nodeName}
       results={props.data.results}
       isSelected={props.selected || false}
       nodeType={props.type}
@@ -76,7 +76,7 @@ interface SourceNodeConfigurationDrawerProps {
 export function SourceNodeConfigurationDrawer({ nodeData }: SourceNodeConfigurationDrawerProps) {
   return (
     React.createElement(
-      SourceConfigurationDrawerType[nodeData.sourceType as keyof typeof SourceConfigurationDrawerType] as React.ElementType,
+      SourceConfigurationDrawerType[nodeData.configuration.sourceType as keyof typeof SourceConfigurationDrawerType] as React.ElementType,
     )
   );
 }

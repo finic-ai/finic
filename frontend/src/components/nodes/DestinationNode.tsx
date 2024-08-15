@@ -23,7 +23,7 @@ import { NodeLayout } from "@/components/Nodes/index";
 
 type DestinationNode = Node<
   {
-    title: string;
+    nodeName: string;
     nodeType: string;
     results: NodeResults;
   },
@@ -34,7 +34,7 @@ export default function DestinationNode(props: NodeProps<DestinationNode>) {
   return (
     <NodeLayout
       nodeId={props.id}
-      title={props.data.title}
+      nodeName={props.data.nodeName}
       results={props.data.results}
       isSelected={props.selected || false}
       nodeType={props.type}

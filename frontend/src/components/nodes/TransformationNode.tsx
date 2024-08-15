@@ -25,7 +25,7 @@ import { ConfigurationDrawer } from "../ConfigurationDrawer";
 
 type TransformationNode = Node<
   {
-    title: string;
+    nodeName: string;
     nodeType: string;
     results: NodeResults;
   },
@@ -36,7 +36,7 @@ export default function TransformationNode(props: NodeProps<TransformationNode>)
   return (
     <NodeLayout
       nodeId={props.id}
-      title={props.data.title}
+      nodeName={props.data.nodeName}
       results={props.data.results}
       isSelected={props.selected || false}
       nodeType={props.type}
@@ -73,21 +73,6 @@ interface TransformationNodeConfigurationDrawerProps {
 export function TransformationNodeConfigurationDrawer({ }: TransformationNodeConfigurationDrawerProps) {
   return (
     <div>
-      <PropertiesAccordion title="Description">
-        <TextArea
-          className="h-auto w-full flex-none"
-          variant="filled"
-          label=""
-          helpText=""
-        >
-          <TextArea.Input
-            className="h-auto min-h-[96px] w-full flex-none"
-            placeholder="Receive data from FiveTran's Salesforce connector"
-            value=""
-            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {}}
-          />
-        </TextArea>
-      </PropertiesAccordion>
       <PropertiesAccordion title="Python Version">
         <Select
           className="h-auto w-full flex-none"

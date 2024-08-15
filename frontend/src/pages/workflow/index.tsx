@@ -36,13 +36,13 @@ const initialNodes = [
   {
     id: "1",
     position: { x: 0, y: 0 },
-    data: { title: "Example Source Node", description: "Test Description", sourceType: "gcs" },
+    data: { name: "example_source_node", configuration: {sourceType: "gcs"} },
     type: "source",
   },
   {
     id: "2",
     position: { x: 500, y: 0 },
-    data: { title: "Example Transformation Node", description: "Test Description"},
+    data: { name: "example_source_node"},
     type: "transformation",
   },
 ];
@@ -133,10 +133,7 @@ export default function WorkflowPage() {
       id: uuidv4(),
       position: { x: 0, y: 500 },
       data: {
-        title: "New Node",
-        description: "New Node Description",
-        sourceType: nodeType === FinicNodeType.SOURCE ? "gcs" : undefined,
-        destinationType: nodeType === FinicNodeType.DESTINATION ? "snowflake" : undefined,
+        name: "New Node",
       },
       type: nodeType,
     };
@@ -228,8 +225,7 @@ export default function WorkflowPage() {
             <ConfigurationDrawer
               className={isDrawerOpen ? undefined : "hidden"}
               closeDrawer={() => closeDrawer()}
-              title={selectedNode.data.title as string}
-              description={selectedNode.data.description as string}
+              nodeName={selectedNode.data.name as string}
               nodeType={selectedNode.type as string}
               nodeData={selectedNode.data}
               iconName={
