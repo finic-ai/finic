@@ -38,14 +38,14 @@ class Edge(BaseModel):
 
 
 class NodePosition(BaseModel):
-    x: int
-    y: int
+    x: float
+    y: float
 
 
 class NodeType(str, Enum):
     SOURCE = "source"
     DESTINATION = "destination"
-    TRANSFORM = "transform"
+    TRANSFORMATION = "transformation"
 
 
 class SourceNodeData(BaseModel):
@@ -93,7 +93,7 @@ class Node(BaseModel):
             data["data"] = SourceNodeData(**data["data"])
         elif node_type == NodeType.DESTINATION:
             data["data"] = DestinationNodeData(**data["data"])
-        elif node_type == NodeType.TRANSFORM:
+        elif node_type == NodeType.TRANSFORMATION:
             data["data"] = TransformNodeData(**data["data"])
         
         super().__init__(**data)

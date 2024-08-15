@@ -91,8 +91,8 @@ export default function WorkflowPage() {
   const { bearer } = useUserStateContext();
   const { getWorkflow, deleteWorkflow, updateNodesAndEdges } = useWorkflow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -102,8 +102,7 @@ export default function WorkflowPage() {
   useEffect(() => {
     if (bearer && workflowId) {
       getWorkflow(bearer, workflowId!).then((data) => {
-        if ("id" in data) {
-          console.log(data);
+        if (data && "id" in data) {
           setNodes(data.nodes);
           setEdges(data.edges);
           setWorkflowName(data.name);
@@ -118,7 +117,6 @@ export default function WorkflowPage() {
   useOnSelectionChange({
     onChange: useCallback(
       ({ nodes, edges }) => {
-        console.log(nodes);
         if (nodes.length === 0) {
           setSelectedNode(null);
           setSelectedEdge(null);
@@ -139,7 +137,7 @@ export default function WorkflowPage() {
   );
 
   function handleAddNode(nodeType: FinicNodeType) {
-    const newNode = {
+    const newNode: Node = {
       id: uuidv4(),
       position: { x: 0, y: 500 },
       data: {
@@ -149,13 +147,6 @@ export default function WorkflowPage() {
         destinationType: nodeType === FinicNodeType.DESTINATION ? "snowflake" : undefined,
       },
       type: nodeType,
-    };
-    const workflow = {
-      id: workflowId!,
-      name: workflowName,
-      status: workflowStatus,
-      nodes: [...nodes, newNode],
-      edges: edges,
     };
     const newNodes = [...nodes, newNode];
     setNodes(newNodes);
@@ -198,10 +189,10 @@ export default function WorkflowPage() {
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
-        // onNodesChange={onNodesChange}
+        onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        // onNodesDelete={handleDeleteNode}
-        // onNodeDragStop={handleRepositionNode}
+        onNodesDelete={handleDeleteNode}
+        onNodeDragStop={handleRepositionNode}
         onConnect={onConnect}
         selectNodesOnDrag={false}
       >

@@ -41,9 +41,7 @@ export function NodeLayout({ nodeId, children, title, nodeType, isSelected, resu
 
   const onOpenButtonClick = useCallback(() => {
     const { addSelectedNodes } = store.getState();
-    console.log(nodeId)
     addSelectedNodes([nodeId]);
-    console.log(store.getState());
     },
     [store]
   );

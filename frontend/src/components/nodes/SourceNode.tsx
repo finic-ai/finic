@@ -76,7 +76,7 @@ interface SourceNodeConfigurationDrawerProps {
 export function SourceNodeConfigurationDrawer({ nodeData }: SourceNodeConfigurationDrawerProps) {
   return (
     React.createElement(
-      SourceConfigurationDrawerType[nodeData.sourceType as keyof typeof SourceConfigurationDrawerType],
+      SourceConfigurationDrawerType[nodeData.sourceType as keyof typeof SourceConfigurationDrawerType] as React.ElementType,
     )
   );
 }

@@ -75,7 +75,7 @@ export default function useWorkflow() {
         })
       });
       const data = await response.json();
-      return data;
+      return humps.camelizeKeys(data);
     } catch (err: any) {
       setError(err);
     } finally {
@@ -159,7 +159,6 @@ export default function useWorkflow() {
       //
     });
     const data = await response.json();
-    console.log(data);
   };
 
   return {

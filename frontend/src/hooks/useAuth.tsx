@@ -6,9 +6,6 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
-console.log("supabaseUrl", supabaseUrl);
-console.log("supabaseKey", supabaseKey);
-
 if (!supabaseUrl) {
   throw new Error("Missing env.SUPABASE_URL");
 } else if (!supabaseKey) {
@@ -94,7 +91,6 @@ export function UserStateProvider({
       const id = user!.id;
       // Select the row corresponding to this userId
       const { data } = await supabase.from("user").select().eq("id", id);
-      console.log(data);
 
       if (data && data[0]) {
         setBearer(data[0].secret_key);
@@ -116,7 +112,6 @@ export function UserStateProvider({
             avatar_url: metadata.avatar_url,
           })
           .select();
-        console.log(response);
 
         if (response.data && response.data[0]) {
           const data = response.data[0];
