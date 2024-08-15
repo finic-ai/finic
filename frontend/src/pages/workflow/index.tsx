@@ -16,6 +16,7 @@ import {
   type Node,
   type Edge,
   type NodeTypes,
+  type Connection,
 } from "@xyflow/react";
 import * as SubframeCore from "@subframe/core";
 import { WorkflowPageLayout } from "@/layouts/WorkflowPageLayout";
@@ -41,17 +42,7 @@ const initialNodes = [
   {
     id: "2",
     position: { x: 500, y: 0 },
-    data: {
-      title: "Example Destination Node",
-      description: "Test Description",
-      destinationType: "snowflake",
-    },
-    type: "destination",
-  },
-  {
-    id: "9",
-    position: { x: 1000, y: 0 },
-    data: { title: "Example Transformation Node", description: "Test Description" },
+    data: { title: "Example Transformation Node", description: "Test Description"},
     type: "transformation",
   },
 ];
@@ -92,7 +83,7 @@ export default function WorkflowPage() {
   const { getWorkflow, deleteWorkflow, updateNodesAndEdges } = useWorkflow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -131,10 +122,11 @@ export default function WorkflowPage() {
     ),
   });
 
-  const onConnect = useCallback(
-    (params: any) => setEdges((edges) => addEdge(params, edges)),
-    [setEdges]
-  );
+  const handleConnectNodes = (connection: Connection) => {
+    const newEdge = { id: uuidv4(), source: connection.source, target: connection.target }
+    setEdges([...edges, newEdge]);
+    updateNodesAndEdges(bearer, workflowId!, nodes, [...edges, newEdge]);
+  };
 
   function handleAddNode(nodeType: FinicNodeType) {
     const newNode: Node = {
@@ -155,6 +147,10 @@ export default function WorkflowPage() {
 
   function handleDeleteNode(nodesToDelete: Node[]) {
     updateNodesAndEdges(bearer, workflowId!, nodes.filter((node) => !nodesToDelete.includes(node)), edges);
+  }
+
+  function handleDeleteEdge(edgesToDelete: Edge[]) {
+    updateNodesAndEdges(bearer, workflowId!, nodes, edges.filter((edge) => !edgesToDelete.includes(edge)));
   }
 
   function handleDeleteWorkflow() {
@@ -193,7 +189,8 @@ export default function WorkflowPage() {
         onEdgesChange={onEdgesChange}
         onNodesDelete={handleDeleteNode}
         onNodeDragStop={handleRepositionNode}
-        onConnect={onConnect}
+        onConnect={handleConnectNodes}
+        onEdgesDelete={handleDeleteEdge}
         selectNodesOnDrag={false}
       >
         <Controls />
