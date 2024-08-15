@@ -49,7 +49,7 @@ SNOWFLAKE_TABLE = os.getenv("SNOWFLAKE_TABLE")
 def upsert_workflow(workflow: Workflow):
     response = requests.post(
         "http://localhost:8080/upsert-workflow",
-        json={"workflow": workflow.dict()},
+        json=workflow.dict(),
         headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
     return response
@@ -76,13 +76,23 @@ import pandas as pd
 from typing import List, Optional, Dict, Any, Tuple, Type, Union
 import json
 
-print('Pandas version:', pd.__version__)
 # Key: node name, Value: output data from that node
 # Transform the data and output as a 2d table. The first row should be the column names.
 
 def finic_handler(inputs: Dict[str, List[List[Any]]]) -> List[List[Any]]:
-    input_table = inputs["2"]
-    return input_table
+    input_table = inputs["1"]
+    # Rename the columns
+    data_frame = pd.DataFrame(input_table[1:], columns=input_table[0])
+    data_frame = data_frame.rename(
+        columns={
+            "Index": "ID",
+            "Name": "NAME",
+            "Linkedin Url": "LINKEDIN_URL",
+            "Est. Revenue (USD)": "ACCOUNT_SIZE",
+        }
+    )
+    data_frame = data_frame[["ID", "NAME", "LINKEDIN_URL", "ACCOUNT_SIZE"]]
+    return [data_frame.columns.tolist()] + data_frame.values.tolist()
 
 """
 
@@ -107,42 +117,15 @@ workflow = Workflow(
         Node(
             id="2",
             position={"x": 0, "y": 0},
-            data=TransformNodeData(
-                configuration=MappingTransformConfig(
-                    mappings=[
-                        ColumnMapping(old_name="Index", new_name="ID"),
-                        ColumnMapping(old_name="Name", new_name="NAME"),
-                        ColumnMapping(old_name="Linkedin Url", new_name="LINKEDIN_URL"),
-                        ColumnMapping(
-                            old_name="Est. Revenue (USD)",
-                            new_name="ACCOUNT_SIZE",
-                        ),
-                    ],
+            node_data=TransformNodeData(
+                configuration=PythonTransformConfig(
+                    code=code,
+                    dependencies=["pandas==2.2.1"],
                 ),
             ),
         ),
         Node(
             id="3",
-            position={"x": 0, "y": 0},
-            node_data=TransformNodeData(
-                configuration=PythonTransformConfig(
-                    code=code,
-                    dependencies=["pandas==2.2.1"],
-                ),
-            ),
-        ),
-        Node(
-            id="4",
-            position={"x": 0, "y": 0},
-            node_data=TransformNodeData(
-                configuration=PythonTransformConfig(
-                    code=code,
-                    dependencies=["pandas==2.2.1"],
-                ),
-            ),
-        ),
-        Node(
-            id="4",
             position={"x": 0, "y": 0},
             data=DestinationNodeData(
                 configuration=SnowflakeDestinationConfig(
@@ -159,7 +142,6 @@ workflow = Workflow(
     edges=[
         Edge(id="1", source="1", target="2"),
         Edge(id="2", source="2", target="3"),
-        Edge(id="3", source="3", target="4"),
     ],
 )
 

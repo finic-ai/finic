@@ -18,6 +18,7 @@ import pandas as pd
 import subprocess
 import venv
 import os
+import ast
 
 
 def run_mapping_node(
@@ -80,10 +81,10 @@ def run_python_node(
     script = f"inputs = {script_input}\n" + script
 
     # Get the output of the python script
-    script += "\nprint(json.dumps(finic_handler(inputs)))"
+    script += "\nprint(finic_handler(inputs))"
 
     result = subprocess.run(
-        [python_path, "-c", node_config.code],
+        [python_path, "-c", script],
         input=str(interim_results[inputs[0]]),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -95,22 +96,9 @@ def run_python_node(
     print("error", result.stderr)
     print(result)
 
-    return interim_results[inputs[0]]
+    output = ast.literal_eval(result.stdout)
 
+    # replace all NaN values with None
+    output = [[None if pd.isna(value) else value for value in row] for row in output]
 
-def run_join_node(
-    node_config: JoinTransformConfig,
-    inputs: List[str],
-    interim_results: Dict,
-):
-    # Run the join transformation
-
-    input_tables = [interim_results[input] for input in inputs]
-    join_column = node_config.join_column
-
-    # Join the tables with pandas
-    output_table = input_tables[0]
-    for table in input_tables[1:]:
-        output_table = pd.merge(output_table, table, on=join_column)
-
-    return [output_table.columns.tolist()] + output_table.values.tolist()
+    return output

@@ -103,25 +103,22 @@ async def upsert_workflow(
     config: AppConfig = Depends(validate_token),
 ):
     try:
+        workflow = Workflow(
+            id=str(uuid.uuid4()),
+            app_id=config.app_id,
+            name=request.name if request.name else "New Workflow",
+            status=request.status if request.status else "draft",
+            nodes=request.nodes if request.nodes else [],
+            edges=request.edges if request.edges else [],
+        )
         if request.id:
-            workflow = await db.get_workflow(request.id, config.app_id)
-            if not workflow:
-                raise HTTPException(
-                    status_code=404, detail="Workflow not found with the given ID"
-                )
-            for key, value in request.dict().items():
-                if value is not None:
-                    setattr(workflow, key, value)
-        else:
-            new_id = str(uuid.uuid4())
-            workflow = Workflow(
-                id=new_id,
-                app_id=config.app_id,
-                name=request.name if request.name else "New Workflow",
-                status=request.status if request.status else "draft",
-                nodes=request.nodes if request.nodes else [],
-                edges=request.edges if request.edges else [],
-            )
+            print(request.id)
+            existing_workflow = await db.get_workflow(request.id, config.app_id)
+            if existing_workflow:
+                workflow = existing_workflow
+        for key, value in request.dict().items():
+            if value:
+                setattr(workflow, key, value)
         await db.upsert_workflow(workflow=workflow)
         return workflow
     except Exception as e:

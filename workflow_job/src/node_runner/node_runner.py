@@ -26,7 +26,7 @@ import datetime
 import tempfile
 import pdb
 from collections import deque
-from .transformations import run_mapping_node, run_python_node, run_join_node
+from .transformations import run_mapping_node, run_python_node
 from .sources import run_gcs_source
 from .destinations import run_snowflake_destination
 
@@ -87,12 +87,6 @@ class NodeRunner:
 
         if node_config.transform_type == TransformType.python:
             return run_python_node(
-                node_config=node_config,
-                inputs=inputs,
-                interim_results=interim_results,
-            )
-        elif node_config.transform_type == TransformType.join_tables:
-            return run_join_node(
                 node_config=node_config,
                 inputs=inputs,
                 interim_results=interim_results,
