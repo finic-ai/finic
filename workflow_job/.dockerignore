@@ -1,9 +1,7 @@
 # Ignore files that are already ignored by git
 .gitignore
 
-scripts/
-tests/
-examples/
+src/subprocess_env
 *.md
 *.pyc
 .dockerignore

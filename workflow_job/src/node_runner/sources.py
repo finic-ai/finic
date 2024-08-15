@@ -55,4 +55,7 @@ def run_gcs_source(
     result = []
     result.append(df.columns.tolist())
     result.extend(df.values.tolist())
+
+    # replace all NaN values with None
+    result = [[None if pd.isna(value) else value for value in row] for row in result]
     return result
