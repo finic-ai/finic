@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   ReactFlow,
   useOnSelectionChange,
@@ -102,6 +103,7 @@ export default function WorkflowPage() {
     if (bearer && workflowId) {
       getWorkflow(bearer, workflowId!).then((data) => {
         if ("id" in data) {
+          console.log(data);
           setNodes(data.nodes);
           setEdges(data.edges);
           setWorkflowName(data.name);
@@ -127,7 +129,7 @@ export default function WorkflowPage() {
           setIsDrawerOpen(true);
         }
       },
-      [selectedNode]
+      []
     ),
   });
 
@@ -138,7 +140,7 @@ export default function WorkflowPage() {
 
   function handleAddNode(nodeType: FinicNodeType) {
     const newNode = {
-      id: (nodes.length + 1).toString(),
+      id: uuidv4(),
       position: { x: 0, y: 500 },
       data: {
         title: "New Node",
@@ -161,13 +163,7 @@ export default function WorkflowPage() {
   }
 
   function handleDeleteNode(nodesToDelete: Node[]) {
-    const workflow = {
-      id: workflowId,
-      name: workflowName,
-      status: "draft",
-      nodes: nodes.filter((node) => !nodesToDelete.includes(node)),
-      edges: edges,
-    };
+    updateNodesAndEdges(bearer, workflowId!, nodes.filter((node) => !nodesToDelete.includes(node)), edges);
   }
 
   function handleDeleteWorkflow() {
@@ -178,6 +174,10 @@ export default function WorkflowPage() {
         console.error("Failed to delete workflow: ", data);
       }
     });
+  }
+
+  function handleRepositionNode(event: React.MouseEvent, _node: Node, __nodes: Node[]) {
+    updateNodesAndEdges(bearer, workflowId!, nodes, edges);
   }
 
   function handleRenameWorkflow(newName: string) {
@@ -198,9 +198,10 @@ export default function WorkflowPage() {
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
+        // onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onNodesDelete={handleDeleteNode}
+        // onNodesDelete={handleDeleteNode}
+        // onNodeDragStop={handleRepositionNode}
         onConnect={onConnect}
         selectNodesOnDrag={false}
       >
