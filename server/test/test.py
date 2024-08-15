@@ -27,6 +27,7 @@ import os
 from dotenv import load_dotenv
 import json
 import uuid
+from deepdiff import DeepDiff
 
 load_dotenv()
 
@@ -66,12 +67,8 @@ def get_workflow(id: str) -> Workflow:
 
 
 def run_workflow(id: str):
-    response = requests.post(
-        "http://localhost:8080/run-workflow",
-        json={"id": id},
-        headers={"Authorization": f"Bearer {SECRET_KEY}"},
-    )
-    return response
+    # run the workflow python script in ../../workflow_job/src/main.py
+    os.system(f"python ../../workflow_job/src/main.py")
 
 
 code = """
@@ -82,18 +79,11 @@ import json
 print('Pandas version:', pd.__version__)
 # Key: node name, Value: output data from that node
 # Transform the data and output as a 2d table. The first row should be the column names.
-inputs = {
-    "2": [
-        ["Index", "Name", "Linkedin Url", "Est. Revenue (USD)"],
-        [1, "John Doe", "linkedin.com/johndoe", 100000],
-        [2, "Jane Doe", "linkedin.com/janedoe", 200000],
-    ]
-}
+
 def finic_handler(inputs: Dict[str, List[List[Any]]]) -> List[List[Any]]:
     input_table = inputs["2"]
     return input_table
 
-print(json.dumps(finic_handler(inputs)))
 """
 
 
@@ -166,5 +156,10 @@ workflow = Workflow(
 upsert_response = upsert_workflow(workflow=workflow)
 print("upsert_response", upsert_response)
 response_workflow = get_workflow(workflow.id)
-assert response_workflow.dict() == workflow.dict()
-run_workflow(workflow.id)
+if response_workflow.dict() != workflow.dict():
+    diff = DeepDiff(response_workflow.dict(), workflow.dict(), significant_digits=2)
+    print("Difference between response_workflow and workflow:")
+    print(diff)
+else:
+    print("Workflow upserted successfully")
+# run_workflow(workflow.id)

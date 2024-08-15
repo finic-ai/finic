@@ -21,7 +21,6 @@ import datetime
 import tempfile
 import pdb
 from collections import deque
-from node_runner import NodeRunner
 from database import Database
 import json
 from google.cloud import run_v2
@@ -43,7 +42,16 @@ class WorkflowJobRunner:
         location = os.getenv("GCLOUD_LOCATION")
         job = os.getenv("GCLOUD_JOB_NAME")
         request = run_v2.RunJobRequest(
-            name=f"projects/{project}/locations/{location}/jobs/{job}"
+            name=f"projects/{project}/locations/{location}/jobs/{job}",
+            overrides={
+                "container_overrides": [
+                    {
+                        "env": [
+                            {"name": "WORKFLOW_ID", "value": workflow_id},
+                        ]
+                    }
+                ]
+            },
         )
         operation = client.run_job(request)
         print(f"Started job: {operation}")

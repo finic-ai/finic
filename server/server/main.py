@@ -36,7 +36,6 @@ import datetime
 import pdb
 import logging
 import sentry_sdk
-from workflow_runner import WorkflowRunner
 from workflow_job_runner import WorkflowJobRunner
 
 sentry_sdk.init(

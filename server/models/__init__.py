@@ -9,6 +9,8 @@ from .models import (
     DestinationNodeData,
     TransformNodeData,
     WorkflowStatus,
+    WorkflowRun,
+    WorkflowRunStatus,
 )
 from .node_configurations import (
     GCSSourceConfig,

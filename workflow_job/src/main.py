@@ -3,59 +3,61 @@ import os
 import random
 import sys
 import time
+from workflow_runner import WorkflowRunner
+from workflow_database import Database
+from models import WorkflowRunStatus
+from dotenv import load_dotenv
 
+load_dotenv()
 # Retrieve Job-defined env vars
 TASK_INDEX = os.getenv("CLOUD_RUN_TASK_INDEX", 0)
 TASK_ATTEMPT = os.getenv("CLOUD_RUN_TASK_ATTEMPT", 0)
 # Retrieve User-defined env vars
-SLEEP_MS = os.getenv("SLEEP_MS", 0)
-FAIL_RATE = os.getenv("FAIL_RATE", 0)
+WORKFLOW_ID = os.getenv("WORKFLOW_ID")
+SECRET_KEY = os.getenv("SECRET_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+VARIABLE = os.getenv("VARIABLE")
+print(WORKFLOW_ID)
+print(SUPABASE_URL)
+print(VARIABLE)
+
+env_vars = os.environ
+
+# Print all environment variables
+for key, value in env_vars.items():
+    print(f"{key}: {value}")
 
 
 # Define main script
-def main(sleep_ms=0, fail_rate=0):
-    """Program that simulates work using the sleep method and random failures.
+def main(workflow_id):
+    db = Database()
+    config = db.get_config(SECRET_KEY)
+    workflow_runner = WorkflowRunner(db=db, config=config)
+    try:
+        workflow = db.get_workflow(workflow_id, config.app_id)
+        workflow_runner.run_workflow(workflow)
+    except Exception as err:
+        message = (
+            f"Workflow {WORKFLOW_ID}, " + f"Attempt #{TASK_ATTEMPT} failed: {str(err)}"
+        )
 
-    Args:
-        sleep_ms: number of milliseconds to sleep
-        fail_rate: rate of simulated errors
-    """
-    print(f"Starting Task #{TASK_INDEX}, Attempt #{TASK_ATTEMPT}...")
-    # Simulate work by waiting for a specific amount of time
-    time.sleep(float(sleep_ms) / 1000)  # Convert to seconds
-
-    # Simulate errors
-    random_failure(float(fail_rate))
+        print(json.dumps({"message": message, "severity": "ERROR"}))
+        workflow_runner.save_workflow_run(
+            workflow_id=workflow_id,
+            status=WorkflowRunStatus.failed,
+            results={},
+        )
 
     print(f"Completed Task #{TASK_INDEX}.")
-
-
-def random_failure(rate):
-    """Throws an error based on fail rate
-
-    Args:
-        rate: a float between 0 and 1
-    """
-    if rate < 0 or rate > 1:
-        # Return without retrying the Job Task
-        print(
-            f"Invalid FAIL_RATE env var value: {rate}. "
-            + "Must be a float between 0 and 1 inclusive."
-        )
-        return
-
-    random_failure = random.random()
-    if random_failure < rate:
-        raise Exception("Task failed.")
 
 
 # Start script
 if __name__ == "__main__":
     try:
-        main(SLEEP_MS, FAIL_RATE)
+        main(WORKFLOW_ID)
     except Exception as err:
         message = (
-            f"Task #{TASK_INDEX}, " + f"Attempt #{TASK_ATTEMPT} failed: {str(err)}"
+            f"Workflow {WORKFLOW_ID}, " + f"Attempt #{TASK_ATTEMPT} failed: {str(err)}"
         )
 
         print(json.dumps({"message": message, "severity": "ERROR"}))

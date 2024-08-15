@@ -1,1 +1,5 @@
 pandas==2.1.1
+google-auth==2.32.0
+snowflake-connector-python[pandas]==3.12.0
+google-cloud==0.34.0
+google-cloud-storage==2.18.2
