@@ -21,7 +21,7 @@ function WorkflowRow({ bearer, initial_data }: { bearer: string, initial_data: W
   const { setWorkflowStatus } = useWorkflow();
   const navigate = useNavigate();
   
-  function toggleStatus(workflowId: string, status: string) {
+  function handleToggleStatus(workflowId: string, status: string) {
     setWorkflowStatus(bearer, workflowId, status).then((data) => {
       data.last_run = new Date();
       setWorkflow(data);
@@ -110,7 +110,7 @@ function WorkflowRow({ bearer, initial_data }: { bearer: string, initial_data: W
       <Table.Cell>
         <Switch
           checked={workflow.status === "deployed"}
-          onCheckedChange={(checked: boolean) => {toggleStatus(workflow.id, checked ? "deployed" : "draft")}}
+          onCheckedChange={(checked: boolean) => {handleToggleStatus(workflow.id, checked ? "deployed" : "draft")}}
         />
       </Table.Cell>
     </Table.Row>
@@ -119,17 +119,26 @@ function WorkflowRow({ bearer, initial_data }: { bearer: string, initial_data: W
 
 export function WorkflowList() {
   const [workflows, setWorkflows] = useState<Array<Workflow>>([]);
-  const { listWorkflows, setWorkflowStatus, isLoading } = useWorkflow();
+  const { createWorkflow, listWorkflows, setWorkflowStatus, isLoading } = useWorkflow();
   const { bearer } = useUserStateContext();
+
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (bearer) {
       listWorkflows(bearer).then((data) => {
-        console.log(data)
-        setWorkflows(data);
+        if (data) {
+          setWorkflows(data);
+        }
       });
     }
   }, [bearer]);
+
+  function handleCreateWorkflow() {
+    createWorkflow(bearer).then((data) => {
+      navigate(`/workflow/${data.id}`);
+    });
+  }
 
   return (
     <DefaultPageLayout>
@@ -168,7 +177,7 @@ export function WorkflowList() {
             <Button
               className="mobile:h-8 mobile:w-auto mobile:flex-none"
               icon="FeatherPlus"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {handleCreateWorkflow()}}
             >
               New Workflow
             </Button>
@@ -214,9 +223,9 @@ export function WorkflowList() {
               </Table.HeaderRow>
             }
           >
-            {!isLoading && workflows.sort((a, b) => a.name.localeCompare(b.name)).map((workflow, index) => (
+            {!isLoading && workflows.length > 0 ?  workflows.sort((a, b) => a.name.localeCompare(b.name)).map((workflow, index) => (
               <WorkflowRow bearer={bearer} initial_data={workflow}/>
-            ))}
+            )) : null }
           </Table>
         </div>
       </div>

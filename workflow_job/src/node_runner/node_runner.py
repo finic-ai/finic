@@ -61,11 +61,11 @@ class NodeRunner:
 
     def run_destination_node(
         self,
-        node_data: DestinationNodeData,
+        data: DestinationNodeData,
         inputs: List[str],
         interim_results: Dict,
     ):
-        node_config = node_data.configuration
+        node_config = data.configuration
         if node_config.destination_type == IntegrationType.snowflake:
             return run_snowflake_destination(
                 node_config=node_config,
@@ -79,11 +79,11 @@ class NodeRunner:
 
     def run_transform_node(
         self,
-        node_data: TransformNodeData,
+        data: TransformNodeData,
         inputs: List[str],
         interim_results: Dict,
     ):
-        node_config = node_data.configuration
+        node_config = data.configuration
 
         if node_config.transform_type == TransformType.python:
             return run_python_node(

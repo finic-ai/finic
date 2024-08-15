@@ -96,7 +96,7 @@ workflow = Workflow(
         Node(
             id="1",
             position={"x": 0, "y": 0},
-            node_data=SourceNodeData(
+            data=SourceNodeData(
                 configuration=GCSSourceConfig(
                     credentials=GCS_CREDENTIALS,
                     bucket=GCS_BUCKET,
@@ -107,7 +107,7 @@ workflow = Workflow(
         Node(
             id="2",
             position={"x": 0, "y": 0},
-            node_data=TransformNodeData(
+            data=TransformNodeData(
                 configuration=MappingTransformConfig(
                     mappings=[
                         ColumnMapping(old_name="Index", new_name="ID"),
@@ -134,7 +134,17 @@ workflow = Workflow(
         Node(
             id="4",
             position={"x": 0, "y": 0},
-            node_data=DestinationNodeData(
+            node_data=TransformNodeData(
+                configuration=PythonTransformConfig(
+                    code=code,
+                    dependencies=["pandas==2.2.1"],
+                ),
+            ),
+        ),
+        Node(
+            id="4",
+            position={"x": 0, "y": 0},
+            data=DestinationNodeData(
                 configuration=SnowflakeDestinationConfig(
                     credentials=SNOWFLAKE_CREDENTIALS,
                     account=SNOWFLAKE_ACCOUNT,

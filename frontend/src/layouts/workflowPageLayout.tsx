@@ -12,16 +12,17 @@ import { FinicNodeType } from "@/types/index";
 interface WorkflowPageLayoutProps {
   children?: React.ReactNode;
   addNode: (type: FinicNodeType) => void;
+  deleteWorkflow: () => void;
 }
 
 export function WorkflowPageLayout({
   children,
   addNode,
-  ...otherProps
+  deleteWorkflow
 }: WorkflowPageLayoutProps) {
   return (
     <div className="flex flex-col h-screen bg-default-background">
-      <EditorTopBar className="flex-none" />
+      <EditorTopBar className="flex-none" deleteWorkflow={deleteWorkflow}/>
       <div className="flex flex-1 bg-default-background w-full items-start overflow-auto">
         <div className="flex w-32 flex-col items-start justify-between border-r border-solid border-neutral-border h-full">
           <div className="flex flex-1 w-full overflow-auto flex-col items-start gap-px border-b border-solid border-neutral-border bg-neutral-border">

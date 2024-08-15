@@ -78,6 +78,19 @@ class Database:
             return Workflow(**row)
         return None
 
+    async def delete_workflow(self, workflow_id: str, app_id: str) -> Optional[Workflow]:
+        response = (
+            self.supabase.table("workflow")
+            .delete()
+            .filter("id", "eq", workflow_id)
+            .filter("app_id", "eq", app_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Workflow(**row)
+        return None
+
     async def list_workflows(self, app_id: str) -> Optional[List[Workflow]]:
         response = (
             self.supabase.table("workflow")

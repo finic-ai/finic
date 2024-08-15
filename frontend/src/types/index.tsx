@@ -49,7 +49,6 @@ export type Workflow = {
   id: string;
   name: string;
   status: string;
-  last_run: Date;
   nodes: Array<Node>;
   edges: Array<Edge>;
 };

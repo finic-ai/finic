@@ -1,16 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
+import humps from "humps";
 import { type Node, type Edge, type NodeTypes } from "@xyflow/react";
 import { useAuth } from "@/hooks/useAuth";
+import { Workflow } from "@/types";
 
 const server_url = import.meta.env.VITE_APP_SERVER_URL;
-
-interface Workflow {
-  id: string;
-  app_id: string;
-  name: string;
-  nodes: Array<Node>;
-  edges: Array<Edge>;
-}
 
 interface WorkflowOptions {
   id: string;
@@ -20,12 +14,11 @@ export default function useWorkflow() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const createWorkflow = useCallback(async (bearer: string, appId: string) => {
+  const createWorkflow = useCallback(async (bearer: string) => {
     setIsLoading(true);
     setError(null);
-    
     try {
-      const response = await fetch("/upsert-workflow", {
+      const response = await fetch(`${server_url}/upsert-workflow`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,6 +27,29 @@ export default function useWorkflow() {
         body: JSON.stringify({
           name: "New Workflow",
         }),
+      });
+      const data = await response.json();
+      return data;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const deleteWorkflow = useCallback(async (bearer: string, workflowId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${server_url}/delete-workflow`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer}`,
+        },
+        body: JSON.stringify({
+          id: workflowId
+        })
       });
       const data = await response.json();
       return data;
@@ -91,7 +107,7 @@ export default function useWorkflow() {
     }
   }, []);
 
-  const updateWorkflow = useCallback(async (bearer: string, appId: string, workflow: Workflow) => {
+  const updateNodesAndEdges = useCallback(async (bearer: string, workflowId: string, nodes: Node[], edges: Edge[]) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -102,9 +118,9 @@ export default function useWorkflow() {
           Authorization: `Bearer ${bearer}`,
         },
         body: JSON.stringify({
-          id: workflow.id,
-          nodes: workflow.nodes,
-          edges: workflow.edges,
+          id: workflowId,
+          nodes: humps.decamelizeKeys(nodes),
+          edges: humps.decamelizeKeys(edges),
         })
       });
       const data = await response.json();
@@ -149,7 +165,8 @@ export default function useWorkflow() {
   return {
     isLoading,
     createWorkflow,
-    updateWorkflow,
+    deleteWorkflow,
+    updateNodesAndEdges,
     setWorkflowStatus,
     getWorkflow,
     listWorkflows,
