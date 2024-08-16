@@ -164,6 +164,17 @@ export default function WorkflowPage() {
     updateNodesAndEdges(bearer, workflowId!, nodes, edges);
   }
 
+  function handleNodeConfigurationUpdate(nodeId: string, configuration: any) {
+    const updatedNodes = nodes.map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, data: { ...node.data, configuration } };
+      }
+      return node;
+    });
+    setNodes(updatedNodes);
+    updateNodesAndEdges(bearer, workflowId!, updatedNodes, edges);
+  }
+
   function handleRenameWorkflow(newName: string) {
     //
   }
@@ -225,9 +236,10 @@ export default function WorkflowPage() {
             <ConfigurationDrawer
               className={isDrawerOpen ? undefined : "hidden"}
               closeDrawer={() => closeDrawer()}
-              nodeName={selectedNode.data.name as string}
+              nodeId={selectedNode.id}
               nodeType={selectedNode.type as string}
               nodeData={selectedNode.data}
+              updateNodeConfiguration={handleNodeConfigurationUpdate}
               iconName={
                 NodeIcons[selectedNode.type as keyof SubframeCore.IconName]
               }

@@ -23,9 +23,9 @@ import { NodeLayout } from "@/components/Nodes/index";
 
 type DestinationNode = Node<
   {
-    nodeName: string;
+    name: string;
     nodeType: string;
-    results: NodeResults;
+    results?: NodeResults;
   },
   "destination"
 >;
@@ -34,7 +34,7 @@ export default function DestinationNode(props: NodeProps<DestinationNode>) {
   return (
     <NodeLayout
       nodeId={props.id}
-      nodeName={props.data.nodeName}
+      nodeName={props.data.name}
       results={props.data.results}
       isSelected={props.selected || false}
       nodeType={props.type}
@@ -63,9 +63,10 @@ export default function DestinationNode(props: NodeProps<DestinationNode>) {
 
 interface DestinationNodeConfigurationDrawerProps {
   nodeData?: any;
+  updateNodeConfiguration: (configuration: any) => void;
 }
 
-export function DestinationNodeConfigurationDrawer({ }: DestinationNodeConfigurationDrawerProps) {
+export function DestinationNodeConfigurationDrawer({ updateNodeConfiguration }: DestinationNodeConfigurationDrawerProps) {
   return (
     <div>
       <PropertiesAccordion title="Python Version">

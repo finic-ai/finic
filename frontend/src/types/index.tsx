@@ -62,5 +62,5 @@ export enum DestinationNodeType {
 }
 
 export const SourceConfigurationDrawerType: Record<string, React.ComponentType> = {
-  gcs: GCSConfigurationDrawer,
+  google_cloud_storage: GCSConfigurationDrawer,
 };

@@ -1,17 +1,66 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { Select } from "@/subframe/components/Select";
 import { PropertiesAccordion } from "@/subframe/components/PropertiesAccordion";
 import { Button } from "@/subframe/components/Button";
 import { TextField } from "@/subframe/components/TextField";
 import { PropertiesRow } from "../../../subframe/components/PropertiesRow";
 import { Switch } from "../../../subframe/components/Switch";
-import { SourceConfigurationDrawerType } from "@/types";
+import { validate } from "uuid";
 
-// interface GCSConfigurationDrawer {
+type GCSConfiguration = {
+  authFile: File;
+  bucketName: string;
+  fileName: string;
+};
 
-// }
+interface GCSConfigurationDrawer {
+  updateConfiguration: (configuration: GCSConfiguration) => void;
+}
 
-export function GCSConfigurationDrawer() {
+export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawer, ref) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [authFile, setAuthFile] = useState<File | null>(null);
+  const [bucketName, setBucketName] = useState("");
+  const [fileName, setFileName] = useState("");
+
+  const validateData = () => {
+      const errors: Record<string, string> = {};
+      if (!authFile) {
+        errors.authFile = "Please upload a file";
+      }
+      if (!bucketName) {
+        errors.bucketName = "Please enter a bucket name";
+      }
+      if (!fileName) {
+        errors.fileName = "Please enter a file name";
+      }
+      return errors;
+  };
+
+  useImperativeHandle(ref, () => ({
+    saveData: () => {
+      const configuration = {
+        authFile: authFile,
+        bucketName: bucketName,
+        fileName: fileName,
+      };
+      // props.updateConfiguration(configuration);
+    }
+  }))
+
+  const handleClickUploadFile = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAuthFile(file);
+    }
+  };
+
   return (
     <div>
       <PropertiesAccordion title="Authentication">
@@ -22,16 +71,20 @@ export function GCSConfigurationDrawer() {
             here.
           </span>
           <div className="flex flex-col items-start gap-2">
-            <Button
-              variant="neutral-secondary"
-              icon="FeatherUpload"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-            >
-              Upload
-            </Button>
-            <span className="text-caption font-caption text-subtext-color">
-              Upload your service account credentials as a JSON file.
-            </span>
+            <div>
+              <Button
+                variant="neutral-secondary"
+                icon="FeatherUpload"
+                onClick={handleClickUploadFile}
+              >
+                Upload
+              </Button>
+              <span className="text-caption font-caption text-subtext-color">
+                {authFile ? `File: ${authFile.name}` : "No file uploaded"}
+              </span>
+            </div>
+            <input className="hidden" type="file" ref={fileInputRef} onChange={handleUploadFile}>
+            </input>
           </div>
         </div>
       </PropertiesAccordion>
@@ -50,8 +103,8 @@ export function GCSConfigurationDrawer() {
           >
             <TextField.Input
               placeholder=""
-              value=""
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              value={bucketName}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setBucketName(event.target.value)}}
             />
           </TextField>
           <TextField
@@ -65,8 +118,8 @@ export function GCSConfigurationDrawer() {
           >
             <TextField.Input
               placeholder=""
-              value=""
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              value={fileName}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setFileName(event.target.value)}}
             />
           </TextField>
         </div>
@@ -191,4 +244,4 @@ export function GCSConfigurationDrawer() {
       </PropertiesRow>
     </div>
   );
-}
+});

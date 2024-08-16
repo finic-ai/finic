@@ -24,10 +24,9 @@ import { NodeLayout } from "@/components/Nodes/index";
 
 type SourceNode = Node<
   {
-    nodeName: string;
-    nodeType: string;
-    results: NodeResults;
-    onNodeOpen: (node_id: string) => void;
+    name: string;
+    configuration: any;
+    results?: NodeResults;
   },
   "source"
 >;
@@ -40,7 +39,7 @@ export default function SourceNode(props: NodeProps<SourceNode>) {
   return (
     <NodeLayout
       nodeId={props.id}
-      nodeName={props.data.nodeName}
+      nodeName={props.data.name}
       results={props.data.results}
       isSelected={props.selected || false}
       nodeType={props.type}
@@ -71,12 +70,33 @@ export default function SourceNode(props: NodeProps<SourceNode>) {
 
 interface SourceNodeConfigurationDrawerProps {
   nodeData?: any;
+  updateNodeConfiguration: (configuration: any) => void;
 }
 
-export function SourceNodeConfigurationDrawer({ nodeData }: SourceNodeConfigurationDrawerProps) {
+export function SourceNodeConfigurationDrawer({ nodeData, updateNodeConfiguration }: SourceNodeConfigurationDrawerProps) {
+  
+  const [sourceType, setSourceType] = useState(nodeData.configuration ? nodeData.configuration.sourceType : null);
+
+  function onValueChange (value: string) {
+    setSourceType(value);
+  };
+  
   return (
-    React.createElement(
-      SourceConfigurationDrawerType[nodeData.configuration.sourceType as keyof typeof SourceConfigurationDrawerType] as React.ElementType,
-    )
+    <div className="w-full">
+      <PropertiesRow text="Source">
+        <Select
+          className={sourceType ? "" : "w-40"}
+          placeholder="Weekly"
+          helpText=""
+          value={sourceType}
+          onValueChange={onValueChange}
+        >
+          <Select.Item value="google_cloud_storage">Google Cloud Storage</Select.Item>
+        </Select>
+      </PropertiesRow>
+      {sourceType && React.createElement(
+        SourceConfigurationDrawerType[sourceType as keyof typeof SourceConfigurationDrawerType] as React.ElementType,
+      )}
+    </div>
   );
 }

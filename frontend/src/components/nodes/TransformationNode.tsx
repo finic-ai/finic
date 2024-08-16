@@ -25,7 +25,7 @@ import { ConfigurationDrawer } from "../ConfigurationDrawer";
 
 type TransformationNode = Node<
   {
-    nodeName: string;
+    name: string;
     nodeType: string;
     results: NodeResults;
   },
@@ -36,7 +36,7 @@ export default function TransformationNode(props: NodeProps<TransformationNode>)
   return (
     <NodeLayout
       nodeId={props.id}
-      nodeName={props.data.nodeName}
+      nodeName={props.data.name}
       results={props.data.results}
       isSelected={props.selected || false}
       nodeType={props.type}
@@ -68,6 +68,7 @@ export default function TransformationNode(props: NodeProps<TransformationNode>)
 
 interface TransformationNodeConfigurationDrawerProps {
   nodeData?: any;
+  updateNodeConfiguration: (configuration: any) => void;
 }
 
 export function TransformationNodeConfigurationDrawer({ }: TransformationNodeConfigurationDrawerProps) {
