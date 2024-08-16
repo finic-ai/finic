@@ -16,10 +16,8 @@ TASK_ATTEMPT = os.getenv("CLOUD_RUN_TASK_ATTEMPT", 0)
 WORKFLOW_ID = os.getenv("WORKFLOW_ID")
 SECRET_KEY = os.getenv("SECRET_KEY")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-VARIABLE = os.getenv("VARIABLE")
 print(WORKFLOW_ID)
 print(SUPABASE_URL)
-print(VARIABLE)
 
 env_vars = os.environ
 

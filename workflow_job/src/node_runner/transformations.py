@@ -49,7 +49,7 @@ def run_mapping_node(
 
 def run_python_node(
     node_config: PythonTransformConfig,
-    inputs: List[str],
+    inputs: List[Node],
     interim_results: Dict,
 ):
     assert len(inputs) >= 1
@@ -76,7 +76,9 @@ def run_python_node(
 
     script_input = {}
     for input in inputs:
-        script_input[input] = interim_results[input]
+        node_name = input.data.name
+        node_id = input.id
+        script_input[node_name] = interim_results[node_id]
 
     script = f"inputs = {script_input}\n" + script
 
@@ -85,16 +87,13 @@ def run_python_node(
 
     result = subprocess.run(
         [python_path, "-c", script],
-        input=str(interim_results[inputs[0]]),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
         env={**os.environ, "PYTHONPATH": venv_dir},
     )
 
-    print("result", result.stdout)
     print("error", result.stderr)
-    print(result)
 
     output = ast.literal_eval(result.stdout)
 

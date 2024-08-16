@@ -80,7 +80,7 @@ import json
 # Transform the data and output as a 2d table. The first row should be the column names.
 
 def finic_handler(inputs: Dict[str, List[List[Any]]]) -> List[List[Any]]:
-    input_table = inputs["1"]
+    input_table = inputs["GCS Source"]
     # Rename the columns
     data_frame = pd.DataFrame(input_table[1:], columns=input_table[0])
     data_frame = data_frame.rename(
@@ -106,28 +106,34 @@ workflow = Workflow(
         Node(
             id="1",
             position={"x": 0, "y": 0},
+            type=NodeType.SOURCE,
             data=SourceNodeData(
+                name="GCS Source",
                 configuration=GCSSourceConfig(
                     credentials=GCS_CREDENTIALS,
                     bucket=GCS_BUCKET,
                     filename=GCS_FILENAME,
                 ),
-            ),
+            ).dict(),
         ),
         Node(
             id="2",
             position={"x": 0, "y": 0},
-            node_data=TransformNodeData(
+            type=NodeType.TRANSFORMATION,
+            data=TransformNodeData(
+                name="Python Transform",
                 configuration=PythonTransformConfig(
                     code=code,
                     dependencies=["pandas==2.2.1"],
                 ),
-            ),
+            ).dict(),
         ),
         Node(
             id="3",
             position={"x": 0, "y": 0},
+            type=NodeType.DESTINATION,
             data=DestinationNodeData(
+                name="Snowflake Destination",
                 configuration=SnowflakeDestinationConfig(
                     credentials=SNOWFLAKE_CREDENTIALS,
                     account=SNOWFLAKE_ACCOUNT,
@@ -136,7 +142,7 @@ workflow = Workflow(
                     table_schema=SNOWFLAKE_SCHEMA,
                     table=SNOWFLAKE_TABLE,
                 ),
-            ),
+            ).dict(),
         ),
     ],
     edges=[
