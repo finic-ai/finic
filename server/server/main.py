@@ -26,7 +26,8 @@ from models.api import (
     GetWorkflowRequest,
     UpsertWorkflowRequest,
     ListWorkflowsRequest,
-    DeleteWorkflowRequest
+    DeleteWorkflowRequest,
+    UpdateNodeConfigurationRequest
 )
 import uuid
 from models.models import AppConfig, Node, NodeType
@@ -96,6 +97,30 @@ async def validate_optional_token(
         return None
     return app_config
 
+@app.post("/update-node-config")
+async def update_node_config(
+    request: UpdateNodeConfigurationRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        workflow = await db.get_workflow(request.workflow_id, config.app_id)
+        for node in workflow.nodes:
+            if node.id == request.node_id:
+                pdb.set_trace()
+                if "credentials" in request.configuration:
+                    node.data.configuration = request.configuration
+                else:
+                    if hasattr(node.data.configuration, "credentials"):
+                        credentials = node.data.configuration.credentials
+                    else:
+                        credentials = None
+                    node.data.configuration = request.configuration
+                    setattr(node.data.configuration, "credentials", credentials)
+        await db.upsert_workflow(workflow=workflow)
+        return workflow
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/upsert-workflow")
 async def upsert_workflow(
@@ -144,7 +169,14 @@ async def get_workflow(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        workflow = await db.get_workflow(request.id, config.app_id)
+        workflow = (await db.get_workflow(request.id, config.app_id)).dict()
+        for node in workflow["nodes"]:
+            if node["type"] == NodeType.SOURCE or node["type"] == NodeType.DESTINATION:
+                if node["data"]["configuration"] and "credentials" in node["data"]["configuration"]:
+                    node["data"]["configuration"]["credentials"] = None
+                    node["data"]["configuration"]["has_credentials"] = True
+                else:
+                    node["data"]["configuration"] = {"has_credentials": False}
         return workflow
     except Exception as e:
         print(e)

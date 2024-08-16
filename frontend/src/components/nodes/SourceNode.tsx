@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import {
   Handle,
   Position,
@@ -65,38 +65,5 @@ export default function SourceNode(props: NodeProps<SourceNode>) {
         </div>
       </div>
     </NodeLayout>
-  );
-}
-
-interface SourceNodeConfigurationDrawerProps {
-  nodeData?: any;
-  updateNodeConfiguration: (configuration: any) => void;
-}
-
-export function SourceNodeConfigurationDrawer({ nodeData, updateNodeConfiguration }: SourceNodeConfigurationDrawerProps) {
-  
-  const [sourceType, setSourceType] = useState(nodeData.configuration ? nodeData.configuration.sourceType : null);
-
-  function onValueChange (value: string) {
-    setSourceType(value);
-  };
-  
-  return (
-    <div className="w-full">
-      <PropertiesRow text="Source">
-        <Select
-          className={sourceType ? "" : "w-40"}
-          placeholder="Weekly"
-          helpText=""
-          value={sourceType}
-          onValueChange={onValueChange}
-        >
-          <Select.Item value="google_cloud_storage">Google Cloud Storage</Select.Item>
-        </Select>
-      </PropertiesRow>
-      {sourceType && React.createElement(
-        SourceConfigurationDrawerType[sourceType as keyof typeof SourceConfigurationDrawerType] as React.ElementType,
-      )}
-    </div>
   );
 }

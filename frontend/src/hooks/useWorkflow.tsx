@@ -107,6 +107,32 @@ export default function useWorkflow() {
     }
   }, []);
 
+  const updateNodeConfig = useCallback(async (bearer: string, workflowId: string, nodeId: string, configuration: any) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const payload = {
+        workflow_id: workflowId,
+        node_id: nodeId,
+        configuration: configuration
+      }
+      const response = await fetch(`${server_url}/update-node-config`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer}`,
+        },
+        body: JSON.stringify(humps.decamelizeKeys(payload))
+      });
+      const data = await response.json();
+      return data;
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const updateNodesAndEdges = useCallback(async (bearer: string, workflowId: string, nodes: Node[], edges: Edge[]) => {
     setIsLoading(true);
     setError(null);
@@ -169,6 +195,7 @@ export default function useWorkflow() {
     setWorkflowStatus,
     getWorkflow,
     listWorkflows,
+    updateNodeConfig,
     runWorkflow,
   };
 }

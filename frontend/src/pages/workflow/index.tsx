@@ -26,17 +26,17 @@ import {
   configurationDrawerTypes,
   NodeIcons,
 } from "../../types";
-import { ConfigurationDrawer } from "../../components/ConfigurationDrawer";
 import "@xyflow/react/dist/style.css";
 import { useParams, useNavigate } from "react-router-dom";
 import useWorkflow from "@/hooks/useWorkflow";
 import { useUserStateContext } from "@/hooks/useAuth";
+import { SourceNodeConfigurationDrawer, DestinationNodeConfigurationDrawer, TransformationNodeConfigurationDrawer } from "@/components/ConfigurationDrawer";
 
 const initialNodes = [
   {
     id: "1",
     position: { x: 0, y: 0 },
-    data: { name: "example_source_node", configuration: {sourceType: "gcs"} },
+    data: { name: "example_source_node", configuration: {sourceType: "google_cloud_storage"} },
     type: "source",
   },
   {
@@ -80,7 +80,7 @@ export default function WorkflowPage() {
   const store = useStoreApi();
   const { unselectNodesAndEdges } = store.getState();
   const { bearer } = useUserStateContext();
-  const { getWorkflow, deleteWorkflow, updateNodesAndEdges } = useWorkflow();
+  const { getWorkflow, deleteWorkflow, updateNodesAndEdges, updateNodeConfig } = useWorkflow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -172,7 +172,7 @@ export default function WorkflowPage() {
       return node;
     });
     setNodes(updatedNodes);
-    updateNodesAndEdges(bearer, workflowId!, updatedNodes, edges);
+    updateNodeConfig(bearer, workflowId!, nodeId, configuration);
   }
 
   function handleRenameWorkflow(newName: string) {
@@ -208,6 +208,47 @@ export default function WorkflowPage() {
     );
   }
 
+  function renderConfigurationDrawer() {
+    switch (selectedNode!.type) {
+      case "source":
+        return (
+          <SourceNodeConfigurationDrawer
+            nodeData={selectedNode!.data}
+            nodeId={selectedNode!.id}
+            closeDrawer={() => closeDrawer()}
+            iconName={
+              NodeIcons[selectedNode!.type as keyof SubframeCore.IconName]
+            }
+            updateNodeConfiguration={handleNodeConfigurationUpdate}
+          />
+        );
+      case "destination":
+        return (
+          <DestinationNodeConfigurationDrawer
+            nodeData={selectedNode!.data}
+            nodeId={selectedNode!.id}
+            closeDrawer={() => closeDrawer()}
+            iconName={
+              NodeIcons[selectedNode!.type as keyof SubframeCore.IconName]
+            }
+            updateNodeConfiguration={handleNodeConfigurationUpdate}
+          />
+        );
+      case "transformation":
+        return (
+          <TransformationNodeConfigurationDrawer
+            nodeData={selectedNode!.data}
+            nodeId={selectedNode!.id}
+            closeDrawer={() => closeDrawer()}
+            iconName={
+              NodeIcons[selectedNode!.type as keyof SubframeCore.IconName]
+            }
+            updateNodeConfiguration={handleNodeConfigurationUpdate}
+          />
+        );
+    }
+  }
+
   return (
     <WorkflowPageLayout addNode={handleAddNode} deleteWorkflow={handleDeleteWorkflow}>
       <div className="flex h-full w-full flex-col items-start bg-default-background">
@@ -232,19 +273,7 @@ export default function WorkflowPage() {
               </div>
             )}
           </div>
-          {selectedNode && (
-            <ConfigurationDrawer
-              className={isDrawerOpen ? undefined : "hidden"}
-              closeDrawer={() => closeDrawer()}
-              nodeId={selectedNode.id}
-              nodeType={selectedNode.type as string}
-              nodeData={selectedNode.data}
-              updateNodeConfiguration={handleNodeConfigurationUpdate}
-              iconName={
-                NodeIcons[selectedNode.type as keyof SubframeCore.IconName]
-              }
-            />
-          )}
+          {selectedNode && renderConfigurationDrawer()}
         </div>
       </div>
     </WorkflowPageLayout>

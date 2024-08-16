@@ -4,11 +4,9 @@ import {
   SourceNode,
   DestinationNode,
   TransformationNode,
-  SourceNodeConfigurationDrawer,
-  DestinationNodeConfigurationDrawer,
-  TransformationNodeConfigurationDrawer,
 } from "@/components/Nodes";
-import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/SourceNode/GCSConfigurationDrawer.tsx";
+import { SourceNodeConfigurationDrawer, DestinationNodeConfigurationDrawer, TransformationNodeConfigurationDrawer } from "@/components/ConfigurationDrawer";
+import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/Sources/GCSConfigurationDrawer.tsx";
 
 export enum FinicNodeType {
   SOURCE = "source",
@@ -54,7 +52,7 @@ export type Workflow = {
 };
 
 export enum SourceNodeType {
-  GCS = "gcs",
+  GOOGLE_CLOUD_STORAGE = "google_cloud_storage",
 }
 
 export enum DestinationNodeType {
