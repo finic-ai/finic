@@ -3,7 +3,7 @@ from enum import Enum
 import datetime
 import uuid
 from typing import List, Optional, Dict, Any
-from models.models import (
+from .models import (
     AppConfig,
     User,
     Workflow,
@@ -23,8 +23,10 @@ class UpsertWorkflowRequest(BaseModel):
     nodes: Optional[List[Dict]] = None
     edges: Optional[List[Dict]] = None
 
+
 class GetWorkflowRequest(BaseModel):
     id: str
+
 
 class DeleteWorkflowRequest(BaseModel):
     id: str

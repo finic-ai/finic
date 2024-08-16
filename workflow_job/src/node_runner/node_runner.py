@@ -1,10 +1,12 @@
 from typing import List, Dict
-from models import (
+from models.models import (
     Node,
     NodeType,
     SourceNodeData,
     DestinationNodeData,
     TransformNodeData,
+)
+from models.node_configurations import (
     IntegrationType,
     TransformType,
 )

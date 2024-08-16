@@ -50,8 +50,12 @@ def run_python_node(
     print("Running python node")
 
     # Step 1: Create a new virtual environment
-    env_name = f"subprocess_env"
-    venv_dir = os.path.join(os.getcwd(), env_name)
+
+    temp_dir = os.path.join(os.getcwd(), "temp")
+
+    env_name = "subprocess_env"
+
+    venv_dir = os.path.join(temp_dir, env_name)
 
     venv.create(venv_dir, with_pip=True)
 
@@ -64,8 +68,6 @@ def run_python_node(
 
     script = node_config.code
 
-    # pass the input data to the python script
-
     script_input = {}
     for input in inputs:
         node_name = input.data.name
@@ -77,8 +79,14 @@ def run_python_node(
     # Get the output of the python script
     script += "\nprint(finic_handler(inputs))"
 
+    # Write the script to a temp file
+    script_file = os.path.join(temp_dir, "script.py")
+
+    with open(script_file, "w") as f:
+        f.write(script)
+
     result = subprocess.run(
-        [python_path, "-c", script],
+        [python_path, script_file],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
