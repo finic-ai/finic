@@ -1,0 +1,15 @@
+#!/bin/bash
+
+mkdir -p tmp/models
+
+# Copy the actual models directory to tmp directory
+cp -r ../server/models tmp/models
+
+# login to docker
+docker login
+
+# Build the docker image
+sudo docker build -t us-central1-docker.pkg.dev/{PROJECT_ID}/{FOLDER}/workflow_job:latest .
+
+# delete the tmp directory
+rm -rf tmp

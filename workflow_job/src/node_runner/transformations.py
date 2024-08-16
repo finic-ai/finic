@@ -1,19 +1,11 @@
-import io
-from fastapi import UploadFile
 from typing import List, Optional, Tuple, Dict, Any
 from models.models import (
-    AppConfig,
-    User,
-    Workflow,
-    Edge,
     Node,
     NodeType,
     MappingTransformConfig,
     PythonTransformConfig,
     JoinTransformConfig,
 )
-import copy
-import numpy as np
 import pandas as pd
 import subprocess
 import venv
@@ -49,7 +41,7 @@ def run_mapping_node(
 
 def run_python_node(
     node_config: PythonTransformConfig,
-    inputs: List[str],
+    inputs: List[Node],
     interim_results: Dict,
 ):
     assert len(inputs) >= 1
@@ -58,8 +50,12 @@ def run_python_node(
     print("Running python node")
 
     # Step 1: Create a new virtual environment
-    env_name = f"subprocess_env"
-    venv_dir = os.path.join(os.getcwd(), env_name)
+
+    temp_dir = os.path.join(os.getcwd(), "temp")
+
+    env_name = "subprocess_env"
+
+    venv_dir = os.path.join(temp_dir, env_name)
 
     venv.create(venv_dir, with_pip=True)
 
@@ -72,29 +68,32 @@ def run_python_node(
 
     script = node_config.code
 
-    # pass the input data to the python script
-
     script_input = {}
     for input in inputs:
-        script_input[input] = interim_results[input]
+        node_name = input.data.name
+        node_id = input.id
+        script_input[node_name] = interim_results[node_id]
 
     script = f"inputs = {script_input}\n" + script
 
     # Get the output of the python script
     script += "\nprint(finic_handler(inputs))"
 
+    # Write the script to a temp file
+    script_file = os.path.join(temp_dir, "script.py")
+
+    with open(script_file, "w") as f:
+        f.write(script)
+
     result = subprocess.run(
-        [python_path, "-c", script],
-        input=str(interim_results[inputs[0]]),
+        [python_path, script_file],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
         env={**os.environ, "PYTHONPATH": venv_dir},
     )
 
-    print("result", result.stdout)
     print("error", result.stderr)
-    print(result)
 
     output = ast.literal_eval(result.stdout)
 

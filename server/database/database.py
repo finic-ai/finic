@@ -52,6 +52,17 @@ class Database:
             return AppConfig(user_id=row["id"], app_id=row["app_id"])
         return None
 
+    async def get_secret_key_for_user(self, user_id: str):
+        response = (
+            self.supabase.table("user")
+            .select("secret_key")
+            .filter("id", "eq", user_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            return response.data[0]["secret_key"]
+        return None
+
     async def upsert_workflow(self, workflow: Workflow) -> Optional[Workflow]:
         response = (
             self.supabase.table("workflow")
@@ -78,7 +89,9 @@ class Database:
             return Workflow(**row)
         return None
 
-    async def delete_workflow(self, workflow_id: str, app_id: str) -> Optional[Workflow]:
+    async def delete_workflow(
+        self, workflow_id: str, app_id: str
+    ) -> Optional[Workflow]:
         response = (
             self.supabase.table("workflow")
             .delete()

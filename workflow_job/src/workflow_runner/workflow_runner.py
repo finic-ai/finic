@@ -1,5 +1,4 @@
 import io
-from fastapi import UploadFile
 from typing import List, Optional, Tuple, Dict
 from models.models import (
     AppConfig,
@@ -9,17 +8,8 @@ from models.models import (
     WorkflowRunStatus,
     WorkflowRun,
 )
-from supabase import create_client, Client
-import os
-from storage3.utils import StorageException
 
-from io import StringIO
-from bs4 import BeautifulSoup
 import pandas as pd
-import httpx
-import datetime
-import tempfile
-import pdb
 from collections import deque
 from node_runner import NodeRunner
 from workflow_database import Database
@@ -81,7 +71,10 @@ class WorkflowRunner:
 
             # Execute the current node
             # Collect input nodes (dependencies) for this node
-            input_nodes = [edge.source for edge in edges if edge.target == current_node]
+            input_node_ids = [
+                edge.source for edge in edges if edge.target == current_node
+            ]
+            input_nodes = [node_id_to_node[node_id] for node_id in input_node_ids]
 
             node_runner.run_node(node_id_to_node[current_node], input_nodes, results)
 

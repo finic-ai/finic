@@ -41,6 +41,7 @@ class WorkflowJobRunner:
         project = os.getenv("GCLOUD_PROJECT")
         location = os.getenv("GCLOUD_LOCATION")
         job = os.getenv("GCLOUD_JOB_NAME")
+        secret_key = await self.db.get_secret_key_for_user(self.config.user_id)
         request = run_v2.RunJobRequest(
             name=f"projects/{project}/locations/{location}/jobs/{job}",
             overrides={
@@ -48,6 +49,7 @@ class WorkflowJobRunner:
                     {
                         "env": [
                             {"name": "WORKFLOW_ID", "value": workflow_id},
+                            {"name": "SECRET_KEY", "value": secret_key},
                         ]
                     }
                 ]
@@ -66,5 +68,5 @@ class WorkflowJobRunner:
         return run
 
     async def get_run_status(self, workflow_id: str) -> WorkflowRun:
-        run = self.db.get_workflow_run(workflow_id)
+        run = await self.db.get_workflow_run(workflow_id)
         return run
