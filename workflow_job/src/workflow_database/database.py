@@ -1,6 +1,5 @@
 import io
-from fastapi import UploadFile
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from models.models import (
     AppConfig,
     User,
@@ -9,15 +8,8 @@ from models.models import (
 )
 from supabase import create_client, Client
 import os
-from storage3.utils import StorageException
 
-from io import StringIO
-from bs4 import BeautifulSoup
-import pandas as pd
-import httpx
 import datetime
-import tempfile
-import pdb
 
 
 def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
