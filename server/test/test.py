@@ -44,11 +44,15 @@ SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
 SNOWFLAKE_DATABASE = os.getenv("SNOWFLAKE_DATABASE")
 SNOWFLAKE_SCHEMA = os.getenv("SNOWFLAKE_SCHEMA")
 SNOWFLAKE_TABLE = os.getenv("SNOWFLAKE_TABLE")
+PROD = os.getenv("PROD") == "true"
+LOCAL_SERVER_URL = os.getenv("LOCAL_SERVER_URL")
+PROD_SERVER_URL = os.getenv("PROD_SERVER_URL")
+SERVER_URL = PROD_SERVER_URL if PROD else LOCAL_SERVER_URL
 
 
 def upsert_workflow(workflow: Workflow):
     response = requests.post(
-        "http://localhost:8080/upsert-workflow",
+        f"{SERVER_URL}/upsert-workflow",
         json=workflow.dict(),
         headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
@@ -57,7 +61,7 @@ def upsert_workflow(workflow: Workflow):
 
 def get_workflow(id: str) -> Workflow:
     response = requests.post(
-        "http://localhost:8080/get-workflow",
+        f"{SERVER_URL}/get-workflow",
         json={"id": id},
         headers={"Authorization": f"Bearer {SECRET_KEY}"},
     )
@@ -67,8 +71,15 @@ def get_workflow(id: str) -> Workflow:
 
 
 def run_workflow(id: str):
-    # run the workflow python script in ../../workflow_job/src/main.py
-    os.system(f"python ../../workflow_job/src/main.py")
+    if PROD:
+        response = requests.post(
+            f"{SERVER_URL}/run-workflow",
+            json={"id": id},
+            headers={"Authorization": f"Bearer {SECRET_KEY}"},
+        )
+        return response
+    else:
+        print("Go to the workflow job directory and run src/main.py")
 
 
 code = """
@@ -160,4 +171,4 @@ if response_workflow.dict() != workflow.dict():
     print(diff)
 else:
     print("Workflow upserted successfully")
-# run_workflow(workflow.id)
+run_workflow(workflow.id)

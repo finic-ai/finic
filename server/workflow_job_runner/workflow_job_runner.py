@@ -68,5 +68,5 @@ class WorkflowJobRunner:
         return run
 
     async def get_run_status(self, workflow_id: str) -> WorkflowRun:
-        run = self.db.get_workflow_run(workflow_id)
+        run = await self.db.get_workflow_run(workflow_id)
         return run
