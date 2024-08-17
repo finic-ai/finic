@@ -93,7 +93,7 @@ export default function WorkflowPage() {
   const { getWorkflow, deleteWorkflow, updateNodesAndEdges, updateNodeConfig } =
     useWorkflow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<any>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
@@ -112,6 +112,8 @@ export default function WorkflowPage() {
     // Mapping of node id to results
     const results = workflowRun.results;
 
+    console.log("Rendering workflow results: ", results);
+
     // Update each node with the results
     const updatedNodes = nodes.map((node) => {
       if (node.id in results) {
@@ -121,10 +123,18 @@ export default function WorkflowPage() {
         };
 
         return { ...node, data: { ...node.data, results: nodeResults } };
+      } else {
+        return { ...node, data: { ...node.data, results: null } };
       }
       return node as any;
     });
-    setNodes(updatedNodes);
+
+    // Check if the results are different from the current nodes.
+    const isDifferent = updatedNodes.some((node, index) => {
+      return node.data.results !== nodes[index].data.results;
+    });
+
+    if (isDifferent) setNodes(updatedNodes);
   }
 
   useEffect(() => {
