@@ -6,7 +6,8 @@ import {
   TransformationNode,
 } from "@/components/Nodes";
 import { SourceNodeConfigurationDrawer, DestinationNodeConfigurationDrawer, TransformationNodeConfigurationDrawer } from "@/components/ConfigurationDrawer";
-import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/Sources/GCSConfigurationDrawer.tsx";
+import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/Sources/GCSConfigurationDrawer";
+import { SnowflakeConfigurationDrawer } from "@/components/ConfigurationDrawer/Destinations/SnowflakeConfigurationDrawer";
 
 export enum FinicNodeType {
   SOURCE = "source",
@@ -61,4 +62,8 @@ export enum DestinationNodeType {
 
 export const SourceConfigurationDrawerType: Record<string, React.ComponentType> = {
   google_cloud_storage: GCSConfigurationDrawer,
+};
+
+export const DestinationConfigurationDrawerType: Record<string, React.ComponentType> = {
+  snowflake: SnowflakeConfigurationDrawer,
 };

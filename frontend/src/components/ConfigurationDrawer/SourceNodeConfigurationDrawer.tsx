@@ -52,7 +52,7 @@ export default function SourceNodeConfigurationDrawer({ nodeData, nodeId, iconNa
           <PropertiesRow text="Source">
             <Select
               className={sourceType ? "" : "w-40"}
-              placeholder="Weekly"
+              placeholder="Choose Source"
               helpText=""
               value={sourceType}
               onValueChange={onValueChange}
