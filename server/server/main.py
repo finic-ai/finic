@@ -27,10 +27,11 @@ from models.api import (
     UpsertWorkflowRequest,
     ListWorkflowsRequest,
     DeleteWorkflowRequest,
-    UpdateNodeConfigurationRequest
+    UpdateNodeConfigurationRequest,
+    CheckCredentialsRequest
 )
 import uuid
-from models.models import AppConfig, Node, NodeType
+from models.models import AppConfig, Node, NodeType, Credential
 from database import Database
 import io
 import datetime
@@ -97,6 +98,20 @@ async def validate_optional_token(
         return None
     return app_config
 
+@app.post("/check-credentials")
+async def check_credentials(
+    request: CheckCredentialsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        credentials = await db.get_credentials(request.workflow_id, config.app_id)
+        if credentials:
+            return {"has_credentials": True}
+        return {"has_credentials": False}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/update-node-config")
 async def update_node_config(
     request: UpdateNodeConfigurationRequest = Body(...),
@@ -106,18 +121,26 @@ async def update_node_config(
         workflow = await db.get_workflow(request.workflow_id, config.app_id)
         for node in workflow.nodes:
             if node.id == request.node_id:
-                pdb.set_trace()
                 if "credentials" in request.configuration:
-                    node.data.configuration = request.configuration
+                    old_credentials = await db.get_credentials(request.workflow_id, request.node_id, config.user_id)
+                    new_credentials = Credential(
+                        id=old_credentials["id"] if old_credentials else str(uuid.uuid4()), 
+                        workflow_id=request.workflow_id, 
+                        node_id=request.node_id,
+                        app_id=config.app_id, 
+                        user_id=config.user_id, 
+                        credentials=request.configuration["credentials"])
+                    await db.upsert_credentials(new_credentials)
+                    config = request.configuration
+                    config.pop("credentials")
+                    config["has_credentials"] = True
+                    node.data.configuration = config
                 else:
-                    if hasattr(node.data.configuration, "credentials"):
-                        credentials = node.data.configuration.credentials
-                    else:
-                        credentials = None
                     node.data.configuration = request.configuration
-                    setattr(node.data.configuration, "credentials", credentials)
-        await db.upsert_workflow(workflow=workflow)
-        return workflow
+        new_workflow = await db.upsert_workflow(workflow=workflow)
+        if not new_credentials or not new_workflow:
+            raise HTTPException(status_code=500, detail="Failed to update node configuration")
+        return new_workflow
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -169,14 +192,7 @@ async def get_workflow(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        workflow = (await db.get_workflow(request.id, config.app_id)).dict()
-        for node in workflow["nodes"]:
-            if node["type"] == NodeType.SOURCE or node["type"] == NodeType.DESTINATION:
-                if node["data"]["configuration"] and "credentials" in node["data"]["configuration"]:
-                    node["data"]["configuration"]["credentials"] = None
-                    node["data"]["configuration"]["has_credentials"] = True
-                else:
-                    node["data"]["configuration"] = {"has_credentials": False}
+        workflow = await db.get_workflow(request.id, config.app_id)
         return workflow
     except Exception as e:
         print(e)

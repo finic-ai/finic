@@ -7,7 +7,6 @@ import { EditorTopBar } from "@/components/TopBar";
 import { SidebarTile } from "@/subframe/components/SidebarTile";
 import { SidebarButton } from "@/subframe/components/SidebarButton";
 import { FinicNodeType } from "@/types/index";
-import { useWorkflowRun } from "@/hooks/useWorkflowRun";
 import { useParams } from "react-router-dom";
 import { useUserStateContext } from "@/hooks/useAuth";
 

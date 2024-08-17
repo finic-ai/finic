@@ -60,9 +60,18 @@ export enum SourceNodeType {
   GOOGLE_CLOUD_STORAGE = "google_cloud_storage",
 }
 
+export enum SourceTypeNames {
+  google_cloud_storage = "Google Cloud Storage",
+}
+
 export enum DestinationNodeType {
   SNOWFLAKE = "snowflake",
 }
+
+export enum DestinationTypeNames {
+  snowflake = "Snowflake",
+}
+
 
 export const SourceConfigurationDrawerType: Record<
   string,
@@ -74,7 +83,10 @@ export const SourceConfigurationDrawerType: Record<
 export type FinicNode = {
   id: string;
   position: { x: number; y: number };
-  data: any;
+  data: {
+    name: string;
+    configuration?: any;
+  };
   type: string;
 };
 
@@ -83,4 +95,21 @@ export const DestinationConfigurationDrawerType: Record<
   React.ComponentType
 > = {
   snowflake: SnowflakeConfigurationDrawer,
+};
+
+export const SourceConfigFields: Record<string, { [key: string]: string }> = { 
+  google_cloud_storage: {
+    bucket: "Bucket",
+    filename: "Filename",
+  }
+};
+
+export const DestinationConfigFields: Record<string, { [key: string]: string }> = { 
+  snowflake: {
+    account: "Account",
+    warehouse: "Warehouse",
+    database: "Database",
+    tableSchema: "Table Schema",
+    table: "Table",
+  }
 };

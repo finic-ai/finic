@@ -28,6 +28,10 @@ class UpdateNodeConfigurationRequest(BaseModel):
     node_id: str
     configuration: Dict[str, Any]
 
+class CheckCredentialsRequest(BaseModel):
+    workflow_id: str
+    node_id: str
+
 class GetWorkflowRequest(BaseModel):
     id: str
 

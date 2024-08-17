@@ -45,16 +45,15 @@ const initialNodes = [
     position: { x: 0, y: 0 },
     data: {
       name: "example_source_node",
-      configuration: { sourceType: "google_cloud_storage" },
     },
     type: "source",
-  },
+  } as FinicNode,
   {
     id: "2",
     position: { x: 500, y: 0 },
     data: { name: "example_source_node" },
     type: "transformation",
-  },
+  } as FinicNode,
 ];
 const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 
@@ -93,7 +92,7 @@ export default function WorkflowPage() {
   const { getWorkflow, deleteWorkflow, updateNodesAndEdges, updateNodeConfig } =
     useWorkflow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<any>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes as FinicNode[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);

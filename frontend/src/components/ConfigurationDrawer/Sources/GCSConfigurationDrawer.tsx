@@ -49,7 +49,7 @@ export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawerP
             sourceType: SourceNodeType.GOOGLE_CLOUD_STORAGE,
             bucket: bucket,
             filename: filename,
-            credentials: JSON.parse(event.target?.result as string)
+            credentials: event.target?.result as string
           };
           console.log(newConfig);
           props.updateNodeConfiguration(newConfig);

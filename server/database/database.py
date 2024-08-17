@@ -1,11 +1,13 @@
 import io
 from fastapi import UploadFile
+import json
 from typing import List, Optional, Tuple
 from models.models import (
     AppConfig,
     User,
     Workflow,
     WorkflowRun,
+    Credential
 )
 from supabase import create_client, Client
 import os
@@ -76,6 +78,17 @@ class Database:
             return Workflow(**row)
         return None
 
+    async def upsert_credentials(self, credential: Credential) -> Optional[Workflow]:
+        response = (
+            self.supabase.table("credentials")
+            .upsert(credential.dict())
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Credential(**row)
+        return None
+
     async def get_workflow(self, workflow_id: str, app_id: str) -> Optional[Workflow]:
         response = (
             self.supabase.table("workflow")
@@ -87,6 +100,20 @@ class Database:
         if len(response.data) > 0:
             row = response.data[0]
             return Workflow(**row)
+        return None
+    
+    async def get_credentials(self, workflow_id: str, node_id: str, user_id: str) -> Optional[str]:
+        response = (
+            self.supabase.table("credentials")
+            .select("*")
+            .filter("workflow_id", "eq", workflow_id)
+            .filter("node_id", "eq", node_id)
+            .filter("user_id", "eq", user_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Credential(**row)
         return None
 
     async def delete_workflow(

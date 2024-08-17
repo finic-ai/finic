@@ -29,8 +29,7 @@ class GCSSourceConfig(BaseModel):
     source_type: Literal[IntegrationType.google_cloud_storage] = (
         IntegrationType.google_cloud_storage
     )
-
-    credentials: Dict[str, Any]
+    has_credentials: bool
     bucket: str
     filename: str
 
@@ -40,7 +39,7 @@ class GCSSourceConfig(BaseModel):
 
 class SnowflakeDestinationConfig(BaseModel):
     destination_type: Literal[IntegrationType.snowflake] = IntegrationType.snowflake
-    credentials: Dict[str, Any]
+    has_credentials: bool
     account: str
     warehouse: str
     database: str

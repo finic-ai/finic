@@ -60,6 +60,9 @@ export function useWorkflowRun(bearer: string, workflowId: string) {
       setWorkflowRun(newRun);
     } else {
       setWorkflowRun(null);
+      setPollInterval(null);
+      setWorkflowRunLoading(false);
+      return;
     }
     if (newRun.status === "running") {
       setPollInterval(5000);

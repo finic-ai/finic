@@ -105,3 +105,11 @@ class WorkflowRun(BaseModel):
     start_time: Optional[datetime.datetime] = None
     end_time: Optional[datetime.datetime] = None
     results: Dict[str, Any] = {}
+
+class Credential(BaseModel):
+    id: str
+    workflow_id: str
+    node_id: str
+    app_id: str
+    user_id: str
+    credentials: str
