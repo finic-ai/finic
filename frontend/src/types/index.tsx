@@ -4,11 +4,14 @@ import {
   SourceNode,
   DestinationNode,
   TransformationNode,
+} from "@/components/Nodes";
+import {
   SourceNodeConfigurationDrawer,
   DestinationNodeConfigurationDrawer,
   TransformationNodeConfigurationDrawer,
-} from "@/components/Nodes";
-import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/SourceNode/GCSConfigurationDrawer.tsx";
+} from "@/components/ConfigurationDrawer";
+import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/Sources/GCSConfigurationDrawer";
+import { SnowflakeConfigurationDrawer } from "@/components/ConfigurationDrawer/Destinations/SnowflakeConfigurationDrawer";
 
 export enum FinicNodeType {
   SOURCE = "source",
@@ -54,7 +57,7 @@ export type Workflow = {
 };
 
 export enum SourceNodeType {
-  GCS = "gcs",
+  GOOGLE_CLOUD_STORAGE = "google_cloud_storage",
 }
 
 export enum DestinationNodeType {
@@ -73,4 +76,11 @@ export type FinicNode = {
   position: { x: number; y: number };
   data: any;
   type: string;
+};
+
+export const DestinationConfigurationDrawerType: Record<
+  string,
+  React.ComponentType
+> = {
+  snowflake: SnowflakeConfigurationDrawer,
 };

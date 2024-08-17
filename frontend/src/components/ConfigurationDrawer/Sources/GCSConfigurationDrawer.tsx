@@ -6,45 +6,56 @@ import { TextField } from "@/subframe/components/TextField";
 import { PropertiesRow } from "../../../subframe/components/PropertiesRow";
 import { Switch } from "../../../subframe/components/Switch";
 import { validate } from "uuid";
+import { SourceNodeType } from "@/types/index";
 
 type GCSConfiguration = {
-  authFile: File;
-  bucketName: string;
-  fileName: string;
+  sourceType: string;
+  hasCredentials?: boolean;
+  bucket?: string;
+  filename?: string;
 };
 
-interface GCSConfigurationDrawer {
-  updateConfiguration: (configuration: GCSConfiguration) => void;
+interface GCSConfigurationDrawerProps {
+  configuration: GCSConfiguration;
+  updateNodeConfiguration: (configuration: GCSConfiguration) => void;
 }
 
-export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawer, ref) => {
+export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawerProps, ref) => {
+  const { configuration = { sourceType: SourceNodeType.GOOGLE_CLOUD_STORAGE, hasCredentials: false, bucket: "", filename: "" }} = props;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [authFile, setAuthFile] = useState<File | null>(null);
-  const [bucketName, setBucketName] = useState("");
-  const [fileName, setFileName] = useState("");
-
-  const validateData = () => {
-      const errors: Record<string, string> = {};
-      if (!authFile) {
-        errors.authFile = "Please upload a file";
-      }
-      if (!bucketName) {
-        errors.bucketName = "Please enter a bucket name";
-      }
-      if (!fileName) {
-        errors.fileName = "Please enter a file name";
-      }
-      return errors;
-  };
+  const [authFile, setAuthFile] = useState<any | null>(null);
+  const [bucket, setBucket] = useState<string>(configuration.bucket || "");
+  const [filename, setFilename] = useState<string>(configuration.filename || "");
 
   useImperativeHandle(ref, () => ({
     saveData: () => {
-      const configuration = {
-        authFile: authFile,
-        bucketName: bucketName,
-        fileName: fileName,
-      };
-      // props.updateConfiguration(configuration);
+      if (!authFile && configuration.hasCredentials || bucket.length == 0 || filename.length == 0) {
+        console.log("Invalid data");
+        return;
+      }
+      console.log(authFile);
+      console.log(configuration.hasCredentials);
+      if (!authFile && configuration.hasCredentials) {
+        const newConfig = {
+          sourceType: SourceNodeType.GOOGLE_CLOUD_STORAGE,
+          bucket: bucket,
+          filename: filename,
+        };
+        props.updateNodeConfiguration(newConfig);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const newConfig = {
+            sourceType: SourceNodeType.GOOGLE_CLOUD_STORAGE,
+            bucket: bucket,
+            filename: filename,
+            credentials: JSON.parse(event.target?.result as string)
+          };
+          console.log(newConfig);
+          props.updateNodeConfiguration(newConfig);
+        };
+        reader.readAsText(authFile);
+      }
     }
   }))
 
@@ -80,10 +91,10 @@ export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawer,
                 Upload
               </Button>
               <span className="text-caption font-caption text-subtext-color">
-                {authFile ? `File: ${authFile.name}` : "No file uploaded"}
+                {authFile ? `File: ${authFile.name}` : (configuration.hasCredentials ? "Credentials already provided": "No credentials provided")}
               </span>
             </div>
-            <input className="hidden" type="file" ref={fileInputRef} onChange={handleUploadFile}>
+            <input className="hidden" type="file" accept=".json,application/json" ref={fileInputRef} onChange={handleUploadFile}>
             </input>
           </div>
         </div>
@@ -103,8 +114,8 @@ export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawer,
           >
             <TextField.Input
               placeholder=""
-              value={bucketName}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setBucketName(event.target.value)}}
+              value={bucket}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setBucket(event.target.value)}}
             />
           </TextField>
           <TextField
@@ -118,8 +129,8 @@ export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawer,
           >
             <TextField.Input
               placeholder=""
-              value={fileName}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setFileName(event.target.value)}}
+              value={filename}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setFilename(event.target.value)}}
             />
           </TextField>
         </div>

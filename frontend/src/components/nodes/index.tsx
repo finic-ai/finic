@@ -194,13 +194,10 @@ export function NodeLayout({ nodeId, children, nodeName, nodeType, isSelected, r
 
 export {
   default as TransformationNode,
-  TransformationNodeConfigurationDrawer,
 } from "@/components/Nodes/TransformationNode";
 export {
   default as SourceNode,
-  SourceNodeConfigurationDrawer,
 } from "@/components/Nodes/SourceNode";
 export {
   default as DestinationNode,
-  DestinationNodeConfigurationDrawer,
 } from "@/components/Nodes/DestinationNode";
