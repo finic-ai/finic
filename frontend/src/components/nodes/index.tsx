@@ -21,7 +21,14 @@ interface NodeLayoutProps {
   results?: NodeResults;
 }
 
-export function NodeLayout({ nodeId, children, nodeName, nodeType, isSelected, results }: NodeLayoutProps) {
+export function NodeLayout({
+  nodeId,
+  children,
+  nodeName,
+  nodeType,
+  isSelected,
+  results,
+}: NodeLayoutProps) {
   const resultTableRef = useRef<HTMLTableElement>(null);
   const store = useStoreApi();
 
@@ -42,9 +49,7 @@ export function NodeLayout({ nodeId, children, nodeName, nodeType, isSelected, r
   const onOpenButtonClick = useCallback(() => {
     const { addSelectedNodes } = store.getState();
     addSelectedNodes([nodeId]);
-    },
-    [store]
-  );
+  }, [store]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -178,7 +183,7 @@ export function NodeLayout({ nodeId, children, nodeName, nodeType, isSelected, r
                         key={index}
                         className="text-body font-body text-default-font"
                       >
-                        {cell.toString()}
+                        {cell?.toString() ?? "null"}
                       </td>
                     ))}
                   </tr>
@@ -192,12 +197,6 @@ export function NodeLayout({ nodeId, children, nodeName, nodeType, isSelected, r
   );
 }
 
-export {
-  default as TransformationNode,
-} from "@/components/Nodes/TransformationNode";
-export {
-  default as SourceNode,
-} from "@/components/Nodes/SourceNode";
-export {
-  default as DestinationNode,
-} from "@/components/Nodes/DestinationNode";
+export { default as TransformationNode } from "@/components/Nodes/TransformationNode";
+export { default as SourceNode } from "@/components/Nodes/SourceNode";
+export { default as DestinationNode } from "@/components/Nodes/DestinationNode";

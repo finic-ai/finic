@@ -130,7 +130,7 @@ export default function WorkflowPage() {
   useEffect(() => {
     if (workflowRun) {
       console.log("workflowRun", workflowRun);
-      // renderWorkflowResults(workflowRun);
+      renderWorkflowResults(workflowRun);
     }
   }, [workflowRun]);
 
