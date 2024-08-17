@@ -24,25 +24,28 @@ import {
   nodeTypes,
   FinicNodeType,
   configurationDrawerTypes,
+  FinicNode,
   NodeIcons,
+  NodeResults,
 } from "../../types";
 import { ConfigurationDrawer } from "../../components/ConfigurationDrawer";
 import "@xyflow/react/dist/style.css";
 import { useParams, useNavigate } from "react-router-dom";
 import useWorkflow from "@/hooks/useWorkflow";
 import { useUserStateContext } from "@/hooks/useAuth";
+import { useWorkflowRun } from "@/hooks/useWorkflowRun";
 
 const initialNodes = [
   {
     id: "1",
     position: { x: 0, y: 0 },
-    data: { name: "example_source_node", configuration: {sourceType: "gcs"} },
+    data: { name: "example_source_node", configuration: { sourceType: "gcs" } },
     type: "source",
   },
   {
     id: "2",
     position: { x: 500, y: 0 },
-    data: { name: "example_source_node"},
+    data: { name: "example_source_node" },
     type: "transformation",
   },
 ];
@@ -90,6 +93,39 @@ export default function WorkflowPage() {
   const [workflowName, setWorkflowName] = useState("");
   const [workflowStatus, setWorkflowStatus] = useState("draft");
 
+  const {
+    runWorkflowAndPoll,
+    workflowRunLoading,
+    workflowRun,
+    getWorkflowRunAndPoll,
+  } = useWorkflowRun(bearer, workflowId!);
+
+  function renderWorkflowResults(workflowRun: any) {
+    // Mapping of node id to results
+    const results = workflowRun.results;
+
+    // Update each node with the results
+    const updatedNodes = nodes.map((node) => {
+      if (node.id in results) {
+        const nodeResults: NodeResults = {
+          columns: results[node.id][0],
+          data: results[node.id].slice(1),
+        };
+
+        return { ...node, data: { ...node.data, results: nodeResults } };
+      }
+      return node as any;
+    });
+    setNodes(updatedNodes);
+  }
+
+  useEffect(() => {
+    if (workflowRun) {
+      console.log("workflowRun", workflowRun);
+      // renderWorkflowResults(workflowRun);
+    }
+  }, [workflowRun]);
+
   useEffect(() => {
     if (bearer && workflowId) {
       getWorkflow(bearer, workflowId!).then((data) => {
@@ -102,28 +138,30 @@ export default function WorkflowPage() {
           console.error("Failed to get workflow: ", data);
         }
       });
+      getWorkflowRunAndPoll();
     }
   }, [bearer, workflowId]);
 
   useOnSelectionChange({
-    onChange: useCallback(
-      ({ nodes, edges }) => {
-        if (nodes.length === 0) {
-          setSelectedNode(null);
-          setSelectedEdge(null);
-          setIsDrawerOpen(false);
-        } else {
-          setSelectedNode(nodes[0]);
-          setSelectedEdge(null);
-          setIsDrawerOpen(true);
-        }
-      },
-      []
-    ),
+    onChange: useCallback(({ nodes, edges }) => {
+      if (nodes.length === 0) {
+        setSelectedNode(null);
+        setSelectedEdge(null);
+        setIsDrawerOpen(false);
+      } else {
+        setSelectedNode(nodes[0]);
+        setSelectedEdge(null);
+        setIsDrawerOpen(true);
+      }
+    }, []),
   });
 
   const handleConnectNodes = (connection: Connection) => {
-    const newEdge = { id: uuidv4(), source: connection.source, target: connection.target }
+    const newEdge = {
+      id: uuidv4(),
+      source: connection.source,
+      target: connection.target,
+    };
     setEdges([...edges, newEdge]);
     updateNodesAndEdges(bearer, workflowId!, nodes, [...edges, newEdge]);
   };
@@ -143,11 +181,21 @@ export default function WorkflowPage() {
   }
 
   function handleDeleteNode(nodesToDelete: Node[]) {
-    updateNodesAndEdges(bearer, workflowId!, nodes.filter((node) => !nodesToDelete.includes(node)), edges);
+    updateNodesAndEdges(
+      bearer,
+      workflowId!,
+      nodes.filter((node) => !nodesToDelete.includes(node)),
+      edges
+    );
   }
 
   function handleDeleteEdge(edgesToDelete: Edge[]) {
-    updateNodesAndEdges(bearer, workflowId!, nodes, edges.filter((edge) => !edgesToDelete.includes(edge)));
+    updateNodesAndEdges(
+      bearer,
+      workflowId!,
+      nodes,
+      edges.filter((edge) => !edgesToDelete.includes(edge))
+    );
   }
 
   function handleDeleteWorkflow() {
@@ -160,7 +208,11 @@ export default function WorkflowPage() {
     });
   }
 
-  function handleRepositionNode(event: React.MouseEvent, _node: Node, __nodes: Node[]) {
+  function handleRepositionNode(
+    event: React.MouseEvent,
+    _node: Node,
+    __nodes: Node[]
+  ) {
     updateNodesAndEdges(bearer, workflowId!, nodes, edges);
   }
 
@@ -178,13 +230,13 @@ export default function WorkflowPage() {
   function handleRenameWorkflow(newName: string) {
     //
   }
-  
+
   function handleDuplicateNode(nodeId: string) {
     //
   }
 
   function closeDrawer() {
-    unselectNodesAndEdges({nodes: [selectedNode!]})
+    unselectNodesAndEdges({ nodes: [selectedNode!] });
   }
 
   function renderWorkflow() {
@@ -209,7 +261,12 @@ export default function WorkflowPage() {
   }
 
   return (
-    <WorkflowPageLayout addNode={handleAddNode} deleteWorkflow={handleDeleteWorkflow}>
+    <WorkflowPageLayout
+      addNode={handleAddNode}
+      deleteWorkflow={handleDeleteWorkflow}
+      workflowRunLoading={workflowRunLoading}
+      runWorkflow={runWorkflowAndPoll}
+    >
       <div className="flex h-full w-full flex-col items-start bg-default-background">
         <div className="flex w-full h-full flex-wrap items-start mobile:flex-col mobile:flex-wrap mobile:gap-0">
           <div className="flex grow shrink-0 basis-0 flex-col items-center justify-center gap-2 self-stretch bg-neutral-50 mobile:border mobile:border-solid mobile:border-neutral-border mobile:pt-12 mobile:pr-12 mobile:pb-12 mobile:pl-12">

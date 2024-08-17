@@ -6,23 +6,34 @@ import * as SubframeCore from "@subframe/core";
 import { EditorTopBar } from "@/components/TopBar";
 import { SidebarTile } from "@/subframe/components/SidebarTile";
 import { SidebarButton } from "@/subframe/components/SidebarButton";
-
 import { FinicNodeType } from "@/types/index";
+import { useWorkflowRun } from "@/hooks/useWorkflowRun";
+import { useParams } from "react-router-dom";
+import { useUserStateContext } from "@/hooks/useAuth";
 
 interface WorkflowPageLayoutProps {
   children?: React.ReactNode;
   addNode: (type: FinicNodeType) => void;
   deleteWorkflow: () => void;
+  workflowRunLoading: boolean;
+  runWorkflow: () => void;
 }
 
 export function WorkflowPageLayout({
   children,
   addNode,
-  deleteWorkflow
+  deleteWorkflow,
+  workflowRunLoading,
+  runWorkflow,
 }: WorkflowPageLayoutProps) {
   return (
     <div className="flex flex-col h-screen bg-default-background">
-      <EditorTopBar className="flex-none" deleteWorkflow={deleteWorkflow}/>
+      <EditorTopBar
+        className="flex-none"
+        deleteWorkflow={deleteWorkflow}
+        workflowRunLoading={workflowRunLoading}
+        runWorkflow={runWorkflow}
+      />
       <div className="flex flex-1 bg-default-background w-full items-start overflow-auto">
         <div className="flex w-32 flex-col items-start justify-between border-r border-solid border-neutral-border h-full">
           <div className="flex flex-1 w-full overflow-auto flex-col items-start gap-px border-b border-solid border-neutral-border bg-neutral-border">

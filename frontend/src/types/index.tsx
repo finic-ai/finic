@@ -61,6 +61,16 @@ export enum DestinationNodeType {
   SNOWFLAKE = "snowflake",
 }
 
-export const SourceConfigurationDrawerType: Record<string, React.ComponentType> = {
+export const SourceConfigurationDrawerType: Record<
+  string,
+  React.ComponentType
+> = {
   google_cloud_storage: GCSConfigurationDrawer,
+};
+
+export type FinicNode = {
+  id: string;
+  position: { x: number; y: number };
+  data: any;
+  type: string;
 };

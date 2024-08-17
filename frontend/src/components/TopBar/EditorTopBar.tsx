@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as SubframeCore from "@subframe/core";
 import { ToggleGroup } from "@/subframe/components/ToggleGroup";
@@ -8,18 +8,33 @@ import { IconButton } from "@/subframe/components/IconButton";
 import { DropdownMenu } from "@/subframe/components/DropdownMenu";
 import { Button } from "@/subframe/components/Button";
 import { useAuth } from "@/hooks/useAuth";
+import useWorkflow from "@/hooks/useWorkflow";
+import { useUserStateContext } from "@/hooks/useAuth";
+import { useParams } from "react-router-dom";
+import useUtils from "@/hooks/useUtils";
 
 interface EditorTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   workflowName?: string;
+  workflowRunLoading: boolean;
+  runWorkflow: () => void;
   deleteWorkflow: () => void;
 }
-export default function EditorTopBar({ className, workflowName, deleteWorkflow }: EditorTopBarProps) {
+export default function EditorTopBar({
+  className,
+  workflowName,
+  workflowRunLoading,
+  runWorkflow,
+  deleteWorkflow,
+}: EditorTopBarProps) {
   const { logOut } = useAuth();
+  const { id: workflowId } = useParams();
   const navigate = useNavigate();
 
   return (
-    <div className={`flex w-full items-center gap-2 border-b border-solid border-neutral-border bg-default-background pt-3 pr-4 pb-3 pl-4 ${className}`}>
+    <div
+      className={`flex w-full items-center gap-2 border-b border-solid border-neutral-border bg-default-background pt-3 pr-4 pb-3 pl-4 ${className}`}
+    >
       <div className="flex grow shrink-0 basis-0 items-center gap-4">
         <img
           className="h-6 flex-none"
@@ -36,9 +51,13 @@ export default function EditorTopBar({ className, workflowName, deleteWorkflow }
       </div>
       <div className="flex grow shrink-0 basis-0 flex-col items-center justify-center gap-2 self-stretch">
         <Breadcrumbs>
-          <Breadcrumbs.Item onClick={() => navigate("/")}>Workflows</Breadcrumbs.Item>
+          <Breadcrumbs.Item onClick={() => navigate("/")}>
+            Workflows
+          </Breadcrumbs.Item>
           <Breadcrumbs.Divider />
-          <Breadcrumbs.Item active={true}>{workflowName ? workflowName : "New Workflow"}</Breadcrumbs.Item>
+          <Breadcrumbs.Item active={true}>
+            {workflowName ? workflowName : "New Workflow"}
+          </Breadcrumbs.Item>
         </Breadcrumbs>
       </div>
       <div className="flex grow shrink-0 basis-0 items-center justify-end gap-2 self-stretch">
@@ -67,7 +86,7 @@ export default function EditorTopBar({ className, workflowName, deleteWorkflow }
                 <DropdownMenu.DropdownItem icon="FeatherWrench">
                   Advanced settings
                 </DropdownMenu.DropdownItem>
-                <DropdownMenu.DropdownItem 
+                <DropdownMenu.DropdownItem
                   icon="FeatherTrash"
                   onClick={() => deleteWorkflow()}
                 >
@@ -77,8 +96,14 @@ export default function EditorTopBar({ className, workflowName, deleteWorkflow }
             </SubframeCore.DropdownMenu.Content>
           </SubframeCore.DropdownMenu.Portal>
         </SubframeCore.DropdownMenu.Root>
-        <Button onClick={() => logOut()}>Publish</Button>
+        <Button
+          disabled={workflowRunLoading}
+          loading={workflowRunLoading}
+          onClick={runWorkflow}
+        >
+          Run
+        </Button>
       </div>
     </div>
   );
-};
+}

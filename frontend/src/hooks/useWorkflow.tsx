@@ -37,100 +37,117 @@ export default function useWorkflow() {
     }
   }, []);
 
-  const deleteWorkflow = useCallback(async (bearer: string, workflowId: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${server_url}/delete-workflow`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer}`,
-        },
-        body: JSON.stringify({
-          id: workflowId
-        })
-      });
-      const data = await response.json();
-      return data;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const deleteWorkflow = useCallback(
+    async (bearer: string, workflowId: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${server_url}/delete-workflow`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${bearer}`,
+          },
+          body: JSON.stringify({
+            id: workflowId,
+          }),
+        });
+        const data = await response.json();
+        return data;
+      } catch (err: any) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
-  const getWorkflow = useCallback(async (bearer: string, workflowId: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${server_url}/get-workflow`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer}`,
-        },
-        body: JSON.stringify({
-          id: workflowId
-        })
-      });
-      const data = await response.json();
-      return humps.camelizeKeys(data);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const getWorkflow = useCallback(
+    async (bearer: string, workflowId: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${server_url}/get-workflow`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${bearer}`,
+          },
+          body: JSON.stringify({
+            id: workflowId,
+          }),
+        });
+        const data = await response.json();
+        return humps.camelizeKeys(data);
+      } catch (err: any) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
-  const setWorkflowStatus = useCallback(async (bearer: string, workflowId: string, status: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${server_url}/upsert-workflow`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer}`,
-        },
-        body: JSON.stringify({
-          id: workflowId,
-          status: status
-        })
-      });
-      const data = await response.json();
-      return data;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const setWorkflowStatus = useCallback(
+    async (bearer: string, workflowId: string, status: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${server_url}/upsert-workflow`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${bearer}`,
+          },
+          body: JSON.stringify({
+            id: workflowId,
+            status: status,
+          }),
+        });
+        const data = await response.json();
+        return data;
+      } catch (err: any) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
-  const updateNodesAndEdges = useCallback(async (bearer: string, workflowId: string, nodes: Node[], edges: Edge[]) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${server_url}/upsert-workflow`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer}`,
-        },
-        body: JSON.stringify({
-          id: workflowId,
-          nodes: humps.decamelizeKeys(nodes),
-          edges: humps.decamelizeKeys(edges),
-        })
-      });
-      const data = await response.json();
-      return data;
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const updateNodesAndEdges = useCallback(
+    async (
+      bearer: string,
+      workflowId: string,
+      nodes: Node[],
+      edges: Edge[]
+    ) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${server_url}/upsert-workflow`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${bearer}`,
+          },
+          body: JSON.stringify({
+            id: workflowId,
+            nodes: humps.decamelizeKeys(nodes),
+            edges: humps.decamelizeKeys(edges),
+          }),
+        });
+        const data = await response.json();
+        return data;
+      } catch (err: any) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
   const listWorkflows = useCallback(async (bearer: string) => {
     setIsLoading(true);
@@ -142,24 +159,17 @@ export default function useWorkflow() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${bearer}`,
         },
-        body: JSON.stringify({})
+        body: JSON.stringify({}),
       });
       const data = await response.json();
       return data;
     } catch (err: any) {
-      console.log(err)
+      console.log(err);
       setError(err);
     } finally {
       setIsLoading(false);
     }
   }, []);
-
-  const runWorkflow = async (bearer: string, appId: string) => {
-    const response = await fetch("/run-workflow", {
-      //
-    });
-    const data = await response.json();
-  };
 
   return {
     isLoading,
@@ -169,6 +179,5 @@ export default function useWorkflow() {
     setWorkflowStatus,
     getWorkflow,
     listWorkflows,
-    runWorkflow,
   };
 }
