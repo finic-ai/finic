@@ -7,7 +7,8 @@ from models.models import (
     User,
     Workflow,
     WorkflowRun,
-    Credential
+    Credential,
+    Transformation
 )
 from supabase import create_client, Client
 import os
@@ -168,4 +169,28 @@ class Database:
         if len(response.data) > 0:
             row = response.data[0]
             return WorkflowRun(**row)
+        return None
+
+    async def get_transformation(self, workflow_id: str, node_id: str) -> Optional[Workflow]:
+        response = (
+            self.supabase.table("transformation")
+            .select("*")
+            .filter("workflow_id", "eq", workflow_id)
+            .filter("node_id", "eq", node_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Transformation(**row)
+        return None
+    
+    async def upsert_transformation(self, transformation: Transformation) -> Optional[Workflow]:
+        response = (
+            self.supabase.table("transformation")
+            .upsert(transformation.dict())
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Transformation(**row)
         return None

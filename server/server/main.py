@@ -28,10 +28,12 @@ from models.api import (
     ListWorkflowsRequest,
     DeleteWorkflowRequest,
     UpdateNodeConfigurationRequest,
-    CheckCredentialsRequest
+    CheckCredentialsRequest,
+    GetTransformationRequest,
+    UpsertTransformationRequest
 )
 import uuid
-from models.models import AppConfig, Node, NodeType, Credential
+from models.models import AppConfig, Node, NodeType, Credential, Transformation
 from database import Database
 import io
 import datetime
@@ -169,6 +171,37 @@ async def upsert_workflow(
                 setattr(workflow, key, value)
         await db.upsert_workflow(workflow=workflow)
         return workflow
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/get-transformation")
+async def get_transformation(
+    request: GetTransformationRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        # pdb.set_trace()
+        transformation = await db.get_transformation(request.workflow_id, request.node_id)
+        return transformation
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/upsert-transformation")
+async def upsert_transformation(
+    request: UpsertTransformationRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        transformation = Transformation(
+            workflow_id=request.workflow_id,
+            node_id=request.node_id,
+            code=request.code,
+            app_id=config.app_id,
+        )
+        transformation = await db.upsert_transformation(transformation)
+        return transformation
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

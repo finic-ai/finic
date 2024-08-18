@@ -113,3 +113,9 @@ class Credential(BaseModel):
     app_id: str
     user_id: str
     credentials: str
+
+class Transformation(BaseModel):
+    node_id: str
+    workflow_id: str
+    code: str
+    language: str = "python"

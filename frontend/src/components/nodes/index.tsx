@@ -13,6 +13,8 @@ import {
 } from "@/types/index";
 
 interface NodeLayoutProps {
+  nodeClassName?: string;
+  resultsClassName?: string;
   nodeId: string;
   children?: React.ReactNode;
   nodeName: string;
@@ -22,6 +24,8 @@ interface NodeLayoutProps {
 }
 
 export function NodeLayout({
+  nodeClassName,
+  resultsClassName,
   nodeId,
   children,
   nodeName,
@@ -52,11 +56,11 @@ export function NodeLayout({
   }, [store]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2">
+    <div className={`flex flex-col items-center justify-center gap-2 ${nodeClassName}`}>
       <div
         className={`flex w-112 flex-col items-start gap-6 rounded bg-default-background pt-6 pr-6 pb-6 pl-6 border border-solid border-neutral-border shadow-overlay ${
           isSelected && "shadow-selected-glow"
-        }`}
+        } ${nodeClassName}`}
       >
         <div className="flex w-full flex-col gap-4">
           <div className="flex w-full items-center justify-between">
@@ -141,7 +145,7 @@ export function NodeLayout({
         </div>
       </div>
       {results && (
-        <div className="flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-neutral-100 pt-6 pr-6 pb-6 pl-6 shadow-overlay">
+        <div className={`flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-neutral-100 pt-6 pr-6 pb-6 pl-6 shadow-overlay ${resultsClassName}`}>
           <div className="flex w-full items-center justify-center gap-6">
             <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
               Results

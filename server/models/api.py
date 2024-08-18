@@ -23,6 +23,15 @@ class UpsertWorkflowRequest(BaseModel):
     nodes: Optional[List[Dict]] = None
     edges: Optional[List[Dict]] = None
 
+class GetTransformationRequest(BaseModel):
+    workflow_id: str
+    node_id: str
+
+class UpsertTransformationRequest(BaseModel):
+    workflow_id: str
+    node_id: str
+    code: str
+
 class UpdateNodeConfigurationRequest(BaseModel):
     workflow_id: str
     node_id: str

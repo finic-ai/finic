@@ -33,8 +33,6 @@ export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawerP
         console.log("Invalid data");
         return;
       }
-      console.log(authFile);
-      console.log(configuration.hasCredentials);
       if (!authFile && configuration.hasCredentials) {
         const newConfig = {
           sourceType: SourceNodeType.GOOGLE_CLOUD_STORAGE,
@@ -51,7 +49,6 @@ export const GCSConfigurationDrawer = forwardRef((props: GCSConfigurationDrawerP
             filename: filename,
             credentials: event.target?.result as string
           };
-          console.log(newConfig);
           props.updateNodeConfiguration(newConfig);
         };
         reader.readAsText(authFile);

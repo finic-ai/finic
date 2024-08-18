@@ -89,7 +89,7 @@ export default function WorkflowPage() {
   const store = useStoreApi();
   const { unselectNodesAndEdges } = store.getState();
   const { bearer } = useUserStateContext();
-  const { getWorkflow, deleteWorkflow, updateNodesAndEdges, updateNodeConfig } =
+  const { getWorkflow, deleteWorkflow, updateNodesAndEdges, updateNodeConfig, setWorkflowId } =
     useWorkflow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes as FinicNode[]);
@@ -147,6 +147,7 @@ export default function WorkflowPage() {
     if (bearer && workflowId) {
       getWorkflow(bearer, workflowId!).then((data) => {
         if (data && "id" in data) {
+          setWorkflowId(workflowId);
           setNodes(data.nodes);
           setEdges(data.edges);
           setWorkflowName(data.name);
@@ -157,7 +158,7 @@ export default function WorkflowPage() {
       });
       getWorkflowRunAndPoll();
     }
-  }, [bearer, workflowId]);
+  }, [bearer]);
 
   useOnSelectionChange({
     onChange: useCallback(({ nodes, edges }) => {

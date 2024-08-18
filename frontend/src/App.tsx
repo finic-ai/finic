@@ -6,6 +6,7 @@ import { useAuth, UserStateProvider, supabase } from "@/hooks/useAuth";
 import WorkflowList from "@/pages/home";
 import WorkflowPage from "@/pages/workflow";
 import LoginPage from "@/pages/auth/LoginPage";
+import { WorkflowProvider } from "@/hooks/useWorkflow";
 
 function App() {
   const { session, setSession } = useAuth();
@@ -26,7 +27,9 @@ function App() {
           path="/workflow/:id"
           element={
             <ReactFlowProvider>
-              <WorkflowPage />
+              <WorkflowProvider>
+                <WorkflowPage />
+              </WorkflowProvider>
             </ReactFlowProvider>
           }
         />

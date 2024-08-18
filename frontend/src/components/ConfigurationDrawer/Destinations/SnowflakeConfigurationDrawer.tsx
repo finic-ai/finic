@@ -47,8 +47,6 @@ export const SnowflakeConfigurationDrawer = forwardRef((props: SnowflakeConfigur
         console.log("Invalid data");
         return;
       }
-      console.log(authFile);
-      console.log(configuration.hasCredentials);
       if (!authFile && configuration.hasCredentials) {
         const newConfig = {
           destinationType: DestinationNodeType.SNOWFLAKE,
