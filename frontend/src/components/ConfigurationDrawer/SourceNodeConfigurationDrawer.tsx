@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Select } from "@/subframe/components/Select";
 import { PropertiesRow } from "@/subframe/components/PropertiesRow";
 import { SourceConfigurationDrawerType } from "@/types";
 import { IconWithBackground, IconName } from "@/subframe/components/IconWithBackground";
 import { Button } from "@/subframe/components/Button";
+import { TextField } from "@/subframe/components/TextField";
 
 interface SourceNodeConfigurationDrawerProps {
   className?: string;
@@ -18,6 +19,24 @@ export default function SourceNodeConfigurationDrawer({ nodeData, nodeId, iconNa
   const configuration = nodeData.configuration || {};
   const childRef = useRef<{ saveData: () => void }>(null);
   const [sourceType, setSourceType] = useState(nodeData.configuration ? nodeData.configuration.sourceType : null);
+  const [editingName, setEditingName] = useState(false);
+  const [nodeName, setNodeName] = useState(nodeData.name);
+  const nodeNameRef = useRef<HTMLSpanElement>(null);
+
+  const handleClickOutsideNodeName = (event: MouseEvent) => {
+    if (nodeNameRef.current && !nodeNameRef.current.contains(event.target as Node)) {
+      // Logic to trigger when clicking outside the span
+      setEditingName(false);
+      // console.log(nodeData)
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutsideNodeName);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideNodeName);
+    };
+  }, []);
 
   function handleSaveClick() {
     if (childRef.current) {
@@ -29,12 +48,25 @@ export default function SourceNodeConfigurationDrawer({ nodeData, nodeId, iconNa
     setSourceType(value);
   };
   
+  
   return (
     <div className="flex w-80 h-full flex-none flex-col items-start border-l border-solid border-neutral-border">
       <div className="flex flex-grow w-full overflow-auto flex-col items-start">
         <div className="flex w-full items-center justify-center gap-6 pt-4 pr-4 pb-4 pl-4">
-          <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
-            {nodeData.name}
+          <span 
+            className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font" 
+            ref={nodeNameRef}
+            onClick={() => setEditingName(true)}
+          >
+            {editingName ? <TextField
+              variant="outline"
+            >
+              <TextField.Input
+                placeholder=""
+                value={nodeName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setNodeName(event.target.value)}}
+              />
+            </TextField> : nodeName}
           </span>
           <div className="flex items-center justify-end gap-2">
             <span className="text-body-bold font-body-bold text-default-font">
