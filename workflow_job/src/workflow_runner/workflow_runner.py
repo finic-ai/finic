@@ -38,6 +38,7 @@ class WorkflowRunner:
 
         workflow_run = WorkflowRun(
             workflow_id=workflow_id,
+            app_id=self.config.app_id,
             results=validated_results,
             status=status,
         )

@@ -60,6 +60,7 @@ class WorkflowJobRunner:
         # update the workflow run status to running
         run = WorkflowRun(
             workflow_id=workflow_id,
+            app_id=self.config.app_id,
             status=WorkflowRunStatus.running,
         )
         await self.db.save_workflow_run(
@@ -68,5 +69,5 @@ class WorkflowJobRunner:
         return run
 
     async def get_run_status(self, workflow_id: str) -> WorkflowRun:
-        run = await self.db.get_workflow_run(workflow_id)
+        run = await self.db.get_workflow_run(workflow_id, self.config.app_id)
         return run

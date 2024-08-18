@@ -4,7 +4,7 @@ import pandas as pd
 from typing import List, Optional, Dict, Any, Tuple, Type, Union
 import json
 
-# Key: node name, Value: output data from that node
+# Keys: node name, Value: output data from that node
 # Transform the data and output as a 2d table. The first row should be the column names.
 
 def finic_handler(inputs: Dict[str, List[List[Any]]]) -> List[List[Any]]:

@@ -55,8 +55,17 @@ export function NodeLayout({
     addSelectedNodes([nodeId]);
   }, [store]);
 
+  const formatCell = (cell: any) => {
+    const text = cell?.toString() ?? "null";
+    // Limit to 50 characters
+    const maxLength = 50;
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
-    <div className={`flex flex-col items-center justify-center gap-2 ${nodeClassName}`}>
+    <div
+      className={`flex flex-col items-center justify-center gap-2 ${nodeClassName}`}
+    >
       <div
         className={`flex w-112 flex-col items-start gap-6 rounded bg-default-background pt-6 pr-6 pb-6 pl-6 border border-solid border-neutral-border shadow-overlay ${
           isSelected && "shadow-selected-glow"
@@ -145,20 +154,22 @@ export function NodeLayout({
         </div>
       </div>
       {results && (
-        <div className={`flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-neutral-100 pt-6 pr-6 pb-6 pl-6 shadow-overlay ${resultsClassName}`}>
+        <div
+          className={`flex w-112 flex-col items-start gap-6 rounded border border-solid border-neutral-border bg-neutral-100 pt-6 pr-6 pb-6 pl-6 shadow-overlay ${resultsClassName}`}
+        >
           <div className="flex w-full items-center justify-center gap-6">
             <span className="grow shrink-0 basis-0 text-heading-2 font-heading-2 text-default-font">
               Results
             </span>
           </div>
-          <div className="flex items-start gap-1">
+          {/* <div className="flex items-start gap-1">
             <span className="text-heading-3 font-heading-3 text-default-font">
               Last Run:
             </span>
             <span className="text-body font-body text-default-font">
               6 Hours 41 Minutes Ago
             </span>
-          </div>
+          </div> */}
           <div
             className="nodrag cursor-default select-text w-full overflow-auto max-h-80"
             onClick={stopPropagation}
@@ -187,7 +198,7 @@ export function NodeLayout({
                         key={index}
                         className="text-body font-body text-default-font"
                       >
-                        {cell?.toString() ?? "null"}
+                        {formatCell(cell)}
                       </td>
                     ))}
                   </tr>
