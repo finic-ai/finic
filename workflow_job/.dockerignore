@@ -8,3 +8,4 @@ src/subprocess_env
 Dockerfile
 build.sh
 src/.env
+src/models

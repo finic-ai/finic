@@ -45,6 +45,7 @@ class WorkflowRunner:
         self.db.save_workflow_run(workflow_run)
 
     def run_workflow(self, workflow: Workflow) -> Dict:
+        print(f"Running workflow {workflow.id}")
         nodes = workflow.nodes
         edges = workflow.edges
 
@@ -63,7 +64,9 @@ class WorkflowRunner:
         queue = deque([node_id for node_id in in_degree if in_degree[node_id] == 0])
         topological_order = []
 
-        node_runner = NodeRunner(app_id=self.config.app_id)
+        node_runner = NodeRunner(
+            app_id=self.config.app_id, workflow_id=workflow.id, db=self.db
+        )
 
         while queue:
             current_node = queue.popleft()
@@ -75,10 +78,9 @@ class WorkflowRunner:
                 edge.source for edge in edges if edge.target == current_node
             ]
             input_nodes = [node_id_to_node[node_id] for node_id in input_node_ids]
+            print(f"Executing node {current_node} with inputs {input_nodes}")
 
             node_runner.run_node(node_id_to_node[current_node], input_nodes, results)
-
-            print(f"Executing node {current_node} with inputs {input_nodes}")
 
             # Reduce in-degree of neighboring nodes
             for neighbor in graph[current_node]:

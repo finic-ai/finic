@@ -5,10 +5,11 @@ from models.models import (
     User,
     Workflow,
     WorkflowRun,
+    Credential,
 )
 from supabase import create_client, Client
 import os
-
+import json
 import datetime
 
 
@@ -104,4 +105,22 @@ class Database:
         if len(response.data) > 0:
             row = response.data[0]
             return WorkflowRun(**row)
+        return None
+
+    def get_credentials(
+        self, workflow_id: str, node_id: str, app_id: str
+    ) -> Optional[str]:
+        response = (
+            self.supabase.table("credentials")
+            .select("*")
+            .filter("workflow_id", "eq", workflow_id)
+            .filter("node_id", "eq", node_id)
+            .filter("app_id", "eq", app_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            if "credentials" in row and type(row["credentials"]) == str:
+                row["credentials"] = json.loads(row["credentials"])
+            return Credential(**row)
         return None

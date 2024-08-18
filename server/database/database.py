@@ -8,7 +8,8 @@ from models.models import (
     Workflow,
     WorkflowRun,
     Credential,
-    Transformation
+    Transformation,
+    Node,
 )
 from supabase import create_client, Client
 import os
@@ -81,9 +82,7 @@ class Database:
 
     async def upsert_credentials(self, credential: Credential) -> Optional[Workflow]:
         response = (
-            self.supabase.table("credentials")
-            .upsert(credential.dict())
-            .execute()
+            self.supabase.table("credentials").upsert(credential.dict()).execute()
         )
         if len(response.data) > 0:
             row = response.data[0]
@@ -102,8 +101,10 @@ class Database:
             row = response.data[0]
             return Workflow(**row)
         return None
-    
-    async def get_credentials(self, workflow_id: str, node_id: str, user_id: str) -> Optional[str]:
+
+    async def get_credentials(
+        self, workflow_id: str, node_id: str, user_id: str
+    ) -> Optional[str]:
         response = (
             self.supabase.table("credentials")
             .select("*")
@@ -145,7 +146,8 @@ class Database:
         return None
 
     async def save_workflow_run(
-        self, workflow_run: WorkflowRun
+        self,
+        workflow_run: WorkflowRun,
     ) -> Optional[WorkflowRun]:
         response = (
             self.supabase.table("workflow_run")
@@ -159,11 +161,14 @@ class Database:
             return WorkflowRun(**row)
         return None
 
-    async def get_workflow_run(self, workflow_id: str) -> Optional[WorkflowRun]:
+    async def get_workflow_run(
+        self, workflow_id: str, app_id: str
+    ) -> Optional[WorkflowRun]:
         response = (
             self.supabase.table("workflow_run")
             .select("*")
             .filter("workflow_id", "eq", workflow_id)
+            .filter("app_id", "eq", app_id)
             .execute()
         )
         if len(response.data) > 0:
@@ -171,26 +176,34 @@ class Database:
             return WorkflowRun(**row)
         return None
 
-    async def get_transformation(self, workflow_id: str, node_id: str) -> Optional[Workflow]:
-        response = (
-            self.supabase.table("transformation")
-            .select("*")
-            .filter("workflow_id", "eq", workflow_id)
-            .filter("node_id", "eq", node_id)
-            .execute()
-        )
-        if len(response.data) > 0:
-            row = response.data[0]
-            return Transformation(**row)
+    async def get_node(
+        self, app_id: str, workflow_id: str, node_id: str
+    ) -> Optional[Node]:
+        # Get the workflow
+        workflow = await self.get_workflow(workflow_id, app_id)
+        if workflow is None:
+            return None
+
+        # Get the node
+        for node in workflow.nodes:
+            if node.id == node_id:
+                return node
+
         return None
-    
-    async def upsert_transformation(self, transformation: Transformation) -> Optional[Workflow]:
-        response = (
-            self.supabase.table("transformation")
-            .upsert(transformation.dict())
-            .execute()
-        )
-        if len(response.data) > 0:
-            row = response.data[0]
-            return Transformation(**row)
-        return None
+
+    async def upsert_node(
+        self, app_id: str, workflow_id: str, node: Node
+    ) -> Optional[Workflow]:
+        # Get the workflow
+        workflow = await self.get_workflow(workflow_id, app_id)
+        if workflow is None:
+            return None
+
+        # Update the node
+        for i, n in enumerate(workflow.nodes):
+            if n.id == node.id:
+                workflow.nodes[i] = node
+                break
+
+        await self.upsert_workflow(workflow)
+        return node

@@ -1,7 +1,5 @@
 from typing import List, Optional, Tuple, Dict, Any
-from models.models import (
-    SnowflakeDestinationConfig,
-)
+from models.models import SnowflakeDestinationConfig, Credential
 import snowflake.connector
 import pandas as pd
 from snowflake.connector.pandas_tools import write_pandas
@@ -9,12 +7,16 @@ from snowflake.connector.pandas_tools import write_pandas
 
 def run_snowflake_destination(
     node_config: SnowflakeDestinationConfig,
+    credential: Optional[Credential],
     inputs: List[str],
     interim_results: Dict[str, List[List[Any]]],
 ):
+    if not credential:
+        raise ValueError("Missing credentials")
+    credentials = credential.credentials
     connection_params = {
-        "user": node_config.credentials["user"],
-        "password": node_config.credentials["password"],
+        "user": credentials["user"],
+        "password": credentials["password"],
         "account": node_config.account,
         "warehouse": node_config.warehouse,
         "database": node_config.database,
