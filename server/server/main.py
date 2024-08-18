@@ -46,8 +46,9 @@ import sentry_sdk
 from workflow_job_runner import WorkflowJobRunner
 import json
 
+SENTRY_DSN = os.environ.get("SENTRY_DSN")
 sentry_sdk.init(
-    dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
+    dsn=SENTRY_DSN,
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     traces_sample_rate=1.0,
