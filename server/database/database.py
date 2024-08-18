@@ -161,11 +161,14 @@ class Database:
             return WorkflowRun(**row)
         return None
 
-    async def get_workflow_run(self, workflow_id: str) -> Optional[WorkflowRun]:
+    async def get_workflow_run(
+        self, workflow_id: str, app_id: str
+    ) -> Optional[WorkflowRun]:
         response = (
             self.supabase.table("workflow_run")
             .select("*")
             .filter("workflow_id", "eq", workflow_id)
+            .filter("app_id", "eq", app_id)
             .execute()
         )
         if len(response.data) > 0:
