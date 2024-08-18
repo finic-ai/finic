@@ -34,7 +34,8 @@ export const SnowflakeConfigurationDrawer = forwardRef((props: SnowflakeConfigur
     table: ""
   }} = props;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [authFile, setAuthFile] = useState<any | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [account, setAccount] = useState<string>(configuration.account || "");
   const [warehouse, setWarehouse] = useState<string>(configuration.warehouse || "");
   const [database, setDatabase] = useState<string>(configuration.database || "");
@@ -43,11 +44,12 @@ export const SnowflakeConfigurationDrawer = forwardRef((props: SnowflakeConfigur
 
   useImperativeHandle(ref, () => ({
     saveData: () => {
-      if (!authFile && configuration.hasCredentials || account.length == 0 || warehouse.length == 0 || database.length == 0 || tableSchema.length == 0 || table.length == 0) {
+      if ((!username && !password) && configuration.hasCredentials || account.length == 0 || warehouse.length == 0 || database.length == 0 || tableSchema.length == 0 || table.length == 0) {
         console.log("Invalid data");
         return;
       }
-      if (!authFile && configuration.hasCredentials) {
+      if ((!username && !password) && configuration.hasCredentials) {
+        console.log((!username && !password) && configuration.hasCredentials)
         const newConfig = {
           destinationType: DestinationNodeType.SNOWFLAKE,
           account: account,
@@ -58,61 +60,65 @@ export const SnowflakeConfigurationDrawer = forwardRef((props: SnowflakeConfigur
         };
         props.updateNodeConfiguration(newConfig);
       } else {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const newConfig = {
-            destinationType: DestinationNodeType.SNOWFLAKE,
-            account: account,
-            warehouse: warehouse,
-            database: database,
-            tableSchema: tableSchema,
-            table: table,
-            credentials: JSON.parse(event.target?.result as string)
-          };
-          props.updateNodeConfiguration(newConfig);
+        const newConfig = {
+          destinationType: DestinationNodeType.SNOWFLAKE,
+          account: account,
+          warehouse: warehouse,
+          database: database,
+          tableSchema: tableSchema,
+          table: table,
+          credentials: JSON.stringify({
+            username: username,
+            password: password
+          })
         };
-        reader.readAsText(authFile);
+        props.updateNodeConfiguration(newConfig);
       }
     }
   }))
-
-  const handleClickUploadFile = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setAuthFile(file);
-    }
-  };
 
   return (
     <div>
       <PropertiesAccordion title="Authentication">
         <div className="flex flex-col items-start gap-4">
           <span className="text-caption font-caption text-default-font">
-            In order to connect to Snowflake, you&#39;ll need to set up
-            a service account and upload the credentials as a JSON file. Learn more
-            here.
+            In order to connect to Snowflake, you&#39;ll need to provide .
           </span>
           <div className="flex flex-col items-start gap-2">
-            <div>
-              <Button
-                variant="neutral-secondary"
-                icon="FeatherUpload"
-                onClick={handleClickUploadFile}
-              >
-                Upload
-              </Button>
-              <span className="text-caption font-caption text-subtext-color">
-                {authFile ? `File: ${authFile.name}` : (configuration.hasCredentials ? "Credentials already provided": "No credentials provided")}
-              </span>
-            </div>
-            <input className="hidden" type="file" accept=".json,application/json" ref={fileInputRef} onChange={handleUploadFile}>
-            </input>
+            <TextField
+              disabled={false}
+              error={false}
+              variant="outline"
+              label="Username"
+              helpText={
+                'The username you use to sign in to Snowflake.'
+              }
+              icon={null}
+              iconRight={null}
+            >
+              <TextField.Input
+                placeholder=""
+                value={username}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setUsername(event.target.value)}}
+              />
+            </TextField>
+            <TextField
+              disabled={false}
+              error={false}
+              variant="outline"
+              label="Password"
+              helpText={
+                'The password for your Snowflake account.'
+              }
+              icon={null}
+              iconRight={null}
+            >
+              <TextField.Input
+                placeholder=""
+                value={password}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setPassword(event.target.value)}}
+              />
+            </TextField>
           </div>
         </div>
       </PropertiesAccordion>

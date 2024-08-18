@@ -235,6 +235,7 @@ export default function WorkflowPage() {
   }
 
   function handleNodeConfigurationUpdate(nodeId: string, configuration: any) {
+    console.log("here")
     const updatedNodes = nodes.map((node) => {
       if (node.id === nodeId) {
         return { ...node, data: { ...node.data, configuration } };

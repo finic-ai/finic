@@ -22,7 +22,10 @@ function App() {
   const renderAppRoutes = () => {
     return (
       <Routes>
-        <Route path="/" element={<WorkflowList />} />
+        <Route path="/" element={
+          <WorkflowProvider>
+            <WorkflowList />
+          </WorkflowProvider>} />
         <Route
           path="/workflow/:id"
           element={
