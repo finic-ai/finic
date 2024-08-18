@@ -38,7 +38,7 @@ export default function EditorTopBar({
       <div className="flex grow shrink-0 basis-0 items-center gap-4">
         <img
           className="h-6 flex-none"
-          src="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/y2rsnhq3mex4auk54aye.png"
+          src="https://res.cloudinary.com/subframe/image/upload/v1724010987/uploads/132/vdukkkatrcoseixgwmft.png"
         />
         <ToggleGroup>
           <ToggleGroup.Item icon={null} value="2f498b92">
@@ -63,7 +63,7 @@ export default function EditorTopBar({
       <div className="flex grow shrink-0 basis-0 items-center justify-end gap-2 self-stretch">
         <Avatar
           size="small"
-          image="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif"
+          image="https://res.cloudinary.com/subframe/image/upload/v1724011327/uploads/132/zs2vi4x6ljxiflntvdgv.png"
         >
           AB
         </Avatar>

@@ -11,14 +11,19 @@ import { useAuth } from "@/hooks/useAuth";
 interface EditorTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
-export default function EditorTopBar({ className, ...otherProps }: EditorTopBarProps) {
+export default function EditorTopBar({
+  className,
+  ...otherProps
+}: EditorTopBarProps) {
   const { logOut } = useAuth();
   return (
-    <div className={`flex w-full items-center gap-2 border-b border-solid border-neutral-border bg-default-background pt-3 pr-4 pb-3 pl-4 ${className}`}>
+    <div
+      className={`flex w-full items-center gap-2 border-b border-solid border-neutral-border bg-default-background pt-3 pr-4 pb-3 pl-4 ${className}`}
+    >
       <div className="flex grow shrink-0 basis-0 items-center gap-4">
         <img
           className="h-6 flex-none"
-          src="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/y2rsnhq3mex4auk54aye.png"
+          src="https://res.cloudinary.com/subframe/image/upload/v1724010987/uploads/132/vdukkkatrcoseixgwmft.png"
         />
       </div>
       <div className="flex grow shrink-0 basis-0 flex-col items-center justify-center gap-2 self-stretch">
@@ -32,7 +37,7 @@ export default function EditorTopBar({ className, ...otherProps }: EditorTopBarP
             <Avatar
               className="cursor-pointer"
               size="small"
-              image="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif"
+              image="https://res.cloudinary.com/subframe/image/upload/v1724011327/uploads/132/zs2vi4x6ljxiflntvdgv.png"
             >
               AB
             </Avatar>
@@ -45,7 +50,10 @@ export default function EditorTopBar({ className, ...otherProps }: EditorTopBarP
               asChild={true}
             >
               <DropdownMenu>
-                <DropdownMenu.DropdownItem icon="FeatherLogOut" onClick={() => logOut()}>
+                <DropdownMenu.DropdownItem
+                  icon="FeatherLogOut"
+                  onClick={() => logOut()}
+                >
                   Sign Out
                 </DropdownMenu.DropdownItem>
               </DropdownMenu>
@@ -55,4 +63,4 @@ export default function EditorTopBar({ className, ...otherProps }: EditorTopBarP
       </div>
     </div>
   );
-};
+}
