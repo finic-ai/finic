@@ -17,7 +17,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from typing import List, Optional
-from models.models import AppConfig, Workflow, WorkflowRunStatus
+from models.models import AppConfig, Workflow, WorkflowRunStatus, PythonTransformConfig
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -31,6 +31,9 @@ from models.api import (
     CheckCredentialsRequest,
     GetTransformationRequest,
     UpsertTransformationRequest,
+    UpsertNodeRequest,
+    GetNodeRequest,
+    DeleteNodeRequest,
 )
 import uuid
 from models.models import AppConfig, Node, NodeType, Credential, Transformation
@@ -179,7 +182,6 @@ async def upsert_workflow(
             edges=request.edges if request.edges else [],
         )
         if request.id:
-            print(request.id)
             existing_workflow = await db.get_workflow(request.id, config.app_id)
             if existing_workflow:
                 workflow = existing_workflow
@@ -193,6 +195,34 @@ async def upsert_workflow(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/upsert-node")
+async def upsert_node(
+    request: UpsertNodeRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        new_node = await db.upsert_node(
+            config.app_id, request.workflow_id, request.node
+        )
+        return new_node
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/get-node")
+async def get_node(
+    request: GetNodeRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        node = await db.get_node(config.app_id, request.workflow_id, request.node_id)
+        return node
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/get-transformation")
 async def get_transformation(
     request: GetTransformationRequest = Body(...),
@@ -200,10 +230,8 @@ async def get_transformation(
 ):
     try:
         # pdb.set_trace()
-        transformation = await db.get_transformation(
-            request.workflow_id, request.node_id
-        )
-        return transformation
+        node = await db.get_node(config.app_id, request.workflow_id, request.node_id)
+        return node.data.configuration
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -215,14 +243,20 @@ async def upsert_transformation(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        transformation = Transformation(
-            workflow_id=request.workflow_id,
-            node_id=request.node_id,
-            code=request.code,
-            app_id=config.app_id,
-        )
-        transformation = await db.upsert_transformation(transformation)
-        return transformation
+        node = await db.get_node(config.app_id, request.workflow_id, request.node_id)
+        if not node:
+            raise HTTPException(
+                status_code=404, detail="Node not found in the workflow"
+            )
+        if not type(node.data.configuration) == PythonTransformConfig:
+            raise HTTPException(
+                status_code=400, detail="Node is not a transformation node"
+            )
+
+        node.data.configuration.code = request.code
+
+        new_node = await db.upsert_node(config.app_id, request.workflow_id, node)
+        return new_node
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

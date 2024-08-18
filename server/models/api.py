@@ -23,23 +23,28 @@ class UpsertWorkflowRequest(BaseModel):
     nodes: Optional[List[Dict]] = None
     edges: Optional[List[Dict]] = None
 
+
 class GetTransformationRequest(BaseModel):
     workflow_id: str
     node_id: str
+
 
 class UpsertTransformationRequest(BaseModel):
     workflow_id: str
     node_id: str
     code: str
 
+
 class UpdateNodeConfigurationRequest(BaseModel):
     workflow_id: str
     node_id: str
     configuration: Dict[str, Any]
 
+
 class CheckCredentialsRequest(BaseModel):
     workflow_id: str
     node_id: str
+
 
 class GetWorkflowRequest(BaseModel):
     id: str
@@ -47,6 +52,21 @@ class GetWorkflowRequest(BaseModel):
 
 class DeleteWorkflowRequest(BaseModel):
     id: str
+
+
+class UpsertNodeRequest(BaseModel):
+    workflow_id: str
+    node: Node
+
+
+class GetNodeRequest(BaseModel):
+    workflow_id: str
+    node_id: str
+
+
+class DeleteNodeRequest(BaseModel):
+    workflow_id: str
+    node_id: str
 
 
 class ListWorkflowsRequest(BaseModel):

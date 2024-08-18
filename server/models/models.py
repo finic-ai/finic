@@ -101,6 +101,7 @@ class Workflow(BaseModel):
 
 class WorkflowRun(BaseModel):
     workflow_id: str
+    app_id: str
     status: WorkflowRunStatus
     start_time: Optional[datetime.datetime] = None
     end_time: Optional[datetime.datetime] = None
