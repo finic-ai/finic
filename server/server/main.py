@@ -30,7 +30,7 @@ from models.api import (
     UpdateNodeConfigurationRequest,
     CheckCredentialsRequest,
     GetTransformationRequest,
-    UpsertTransformationRequest
+    UpsertTransformationRequest,
 )
 import uuid
 from models.models import AppConfig, Node, NodeType, Credential, Transformation
@@ -41,6 +41,7 @@ import pdb
 import logging
 import sentry_sdk
 from workflow_job_runner import WorkflowJobRunner
+import json
 
 sentry_sdk.init(
     dsn="https://d21096400be95ff5557a332e54e828d6@us.sentry.io/4506696496644096",
@@ -100,6 +101,7 @@ async def validate_optional_token(
         return None
     return app_config
 
+
 @app.post("/check-credentials")
 async def check_credentials(
     request: CheckCredentialsRequest = Body(...),
@@ -114,6 +116,7 @@ async def check_credentials(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/update-node-config")
 async def update_node_config(
     request: UpdateNodeConfigurationRequest = Body(...),
@@ -124,14 +127,25 @@ async def update_node_config(
         for node in workflow.nodes:
             if node.id == request.node_id:
                 if "credentials" in request.configuration:
-                    old_credentials = await db.get_credentials(request.workflow_id, request.node_id, config.user_id)
+                    if type(request.configuration["credentials"]) == str:
+                        request.configuration["credentials"] = json.loads(
+                            request.configuration["credentials"]
+                        )
+                    old_credentials = await db.get_credentials(
+                        request.workflow_id, request.node_id, config.user_id
+                    )
                     new_credentials = Credential(
-                        id=old_credentials["id"] if old_credentials else str(uuid.uuid4()), 
-                        workflow_id=request.workflow_id, 
+                        id=(
+                            old_credentials["id"]
+                            if old_credentials
+                            else str(uuid.uuid4())
+                        ),
+                        workflow_id=request.workflow_id,
                         node_id=request.node_id,
-                        app_id=config.app_id, 
-                        user_id=config.user_id, 
-                        credentials=request.configuration["credentials"])
+                        app_id=config.app_id,
+                        user_id=config.user_id,
+                        credentials=request.configuration["credentials"],
+                    )
                     await db.upsert_credentials(new_credentials)
                     config = request.configuration
                     config.pop("credentials")
@@ -141,11 +155,14 @@ async def update_node_config(
                     node.data.configuration = request.configuration
         new_workflow = await db.upsert_workflow(workflow=workflow)
         if not new_credentials or not new_workflow:
-            raise HTTPException(status_code=500, detail="Failed to update node configuration")
+            raise HTTPException(
+                status_code=500, detail="Failed to update node configuration"
+            )
         return new_workflow
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/upsert-workflow")
 async def upsert_workflow(
@@ -175,6 +192,7 @@ async def upsert_workflow(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/get-transformation")
 async def get_transformation(
     request: GetTransformationRequest = Body(...),
@@ -182,11 +200,14 @@ async def get_transformation(
 ):
     try:
         # pdb.set_trace()
-        transformation = await db.get_transformation(request.workflow_id, request.node_id)
+        transformation = await db.get_transformation(
+            request.workflow_id, request.node_id
+        )
         return transformation
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/upsert-transformation")
 async def upsert_transformation(
@@ -205,7 +226,8 @@ async def upsert_transformation(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+
 @app.post("/delete-workflow")
 async def delete_workflow(
     request: DeleteWorkflowRequest = Body(...),

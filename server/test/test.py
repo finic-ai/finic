@@ -107,6 +107,11 @@ def finic_handler(inputs: Dict[str, List[List[Any]]]) -> List[List[Any]]:
 
 """
 
+node_ids = [
+    "ddf6988f-3105-4471-b395-acc03ebb723f",
+    "ea0afa26-fdd7-488e-afb9-f358c47141c6",
+    "41044cd6-f8a9-4d7b-bda8-a5639ba4e332",
+]
 
 workflow = Workflow(
     name="Test Workflow",
@@ -115,7 +120,7 @@ workflow = Workflow(
     app_id=APP_ID,
     nodes=[
         Node(
-            id="1",
+            id=node_ids[0],
             position={"x": 0, "y": 0},
             type=NodeType.SOURCE,
             data=SourceNodeData(
@@ -128,7 +133,7 @@ workflow = Workflow(
             ).dict(),
         ),
         Node(
-            id="2",
+            id=node_ids[1],
             position={"x": 0, "y": 0},
             type=NodeType.TRANSFORMATION,
             data=TransformNodeData(
@@ -140,7 +145,7 @@ workflow = Workflow(
             ).dict(),
         ),
         Node(
-            id="3",
+            id=node_ids[2],
             position={"x": 0, "y": 0},
             type=NodeType.DESTINATION,
             data=DestinationNodeData(
@@ -157,8 +162,8 @@ workflow = Workflow(
         ),
     ],
     edges=[
-        Edge(id="1", source="1", target="2"),
-        Edge(id="2", source="2", target="3"),
+        Edge(id="1", source=node_ids[0], target=node_ids[1]),
+        Edge(id="2", source=node_ids[1], target=node_ids[2]),
     ],
 )
 
@@ -171,4 +176,4 @@ if response_workflow.dict() != workflow.dict():
     print(diff)
 else:
     print("Workflow upserted successfully")
-run_workflow(workflow.id)
+# run_workflow(workflow.id)

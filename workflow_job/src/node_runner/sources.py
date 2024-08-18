@@ -11,13 +11,18 @@ from urllib.parse import quote
 import pandas as pd
 from google.cloud import storage
 from google.oauth2 import service_account
+from models.models import Credential
 
 
 def run_gcs_source(
     node_config: GCSSourceConfig,
+    credential: Optional[Credential],
     interim_results: Dict[str, List[List[Any]]],
 ):
-    service_account_info = node_config.credentials
+    if not credential:
+        raise ValueError("Missing credentials")
+
+    service_account_info = credential.credentials
     bucket = node_config.bucket
     # url encode the filename
     filename = quote(node_config.filename, safe="")
