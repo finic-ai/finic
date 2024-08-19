@@ -46,7 +46,7 @@ export default function TransformationNode(
   useEffect(() => {
     if (bearer && nodeId && workflowId) {
       getTransformationNodeCode(bearer, nodeId).then((data) => {
-        setCode(data.code || "");
+        setCode(data ? data.code : "");
       });
     }
   }, [bearer, nodeId]);
