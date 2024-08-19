@@ -27,7 +27,9 @@ def run_snowflake_destination(
 
     try:
         df = pd.DataFrame(input_table[1:], columns=input_table[0])
-        success, nchunks, nrows, _ = write_pandas(conn, df, node_config.table)
+        success, nchunks, nrows, _ = write_pandas(
+            conn=conn, df=df, table_name=node_config.table, overwrite=True
+        )
     except Exception as e:
         print(e)
         raise e
