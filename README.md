@@ -16,6 +16,8 @@
 
 [Finic](https://finic.ai/) is an open source python-based integration platform (iPaaS), an alternative for enterprise integration platforms like **Boomi**, **MuleSoft**, and **Tray**. Finic is designed to be simple enough for business users to use, but flexible enough for developers and solutions architects to build complex integrations directly in code.
 
+https://github.com/user-attachments/assets/00f1ebd0-868b-4383-9050-ad714e48e890
+
 Features:
 * 🐣 **Drag and Drop UI:** A web UI for designing and testing new integration workflows.
 * 🐣 **Declarative Connector Engine (TBD):** Finic will launch with a connector engine that supports API and SFTP connections configured via JSON. The connector engine will handle all network-level infrastructure (auth, retries, error handling, secrets management) so new connectors can be built in a matter of hours.
