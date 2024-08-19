@@ -16,22 +16,25 @@ import { useUserStateContext } from "@/hooks/useAuth";
 import useWorkflow from "@/hooks/useWorkflow";
 import { Workflow } from "@/types";
 
-function WorkflowRow({ bearer, initial_data }: { bearer: string, initial_data: Workflow }) {
+function WorkflowRow({
+  bearer,
+  initial_data,
+}: {
+  bearer: string;
+  initial_data: Workflow;
+}) {
   const [workflow, setWorkflow] = useState<Workflow>(initial_data);
   const { setWorkflowStatus } = useWorkflow();
   const navigate = useNavigate();
-  
+
   function handleToggleStatus(workflowId: string, status: string) {
     setWorkflowStatus(bearer, workflowId, status).then((data) => {
-      data.last_run = new Date();
       setWorkflow(data);
     });
   }
 
   return (
-    <Table.Row
-      key={workflow.id}
-    >
+    <Table.Row key={workflow.id}>
       <Table.Cell>
         <Button
           disabled={false}
@@ -110,7 +113,9 @@ function WorkflowRow({ bearer, initial_data }: { bearer: string, initial_data: W
       <Table.Cell>
         <Switch
           checked={workflow.status === "deployed"}
-          onCheckedChange={(checked: boolean) => {handleToggleStatus(workflow.id, checked ? "deployed" : "draft")}}
+          onCheckedChange={(checked: boolean) => {
+            handleToggleStatus(workflow.id, checked ? "deployed" : "draft");
+          }}
         />
       </Table.Cell>
     </Table.Row>
@@ -119,11 +124,12 @@ function WorkflowRow({ bearer, initial_data }: { bearer: string, initial_data: W
 
 export function WorkflowList() {
   const [workflows, setWorkflows] = useState<Array<Workflow>>([]);
-  const { createWorkflow, listWorkflows, setWorkflowStatus, isLoading } = useWorkflow();
+  const { createWorkflow, listWorkflows, setWorkflowStatus, isLoading } =
+    useWorkflow();
   const { bearer } = useUserStateContext();
 
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (bearer) {
       listWorkflows(bearer).then((data) => {
@@ -177,7 +183,9 @@ export function WorkflowList() {
             <Button
               className="mobile:h-8 mobile:w-auto mobile:flex-none"
               icon="FeatherPlus"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {handleCreateWorkflow()}}
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                handleCreateWorkflow();
+              }}
             >
               New Workflow
             </Button>
@@ -223,9 +231,13 @@ export function WorkflowList() {
               </Table.HeaderRow>
             }
           >
-            {!isLoading && workflows.length > 0 ?  workflows.sort((a, b) => a.name.localeCompare(b.name)).map((workflow, index) => (
-              <WorkflowRow bearer={bearer} initial_data={workflow}/>
-            )) : null }
+            {!isLoading && workflows.length > 0
+              ? workflows
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((workflow, index) => (
+                    <WorkflowRow bearer={bearer} initial_data={workflow} />
+                  ))
+              : null}
           </Table>
         </div>
       </div>

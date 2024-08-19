@@ -14,7 +14,7 @@ interface AccountSettingsPageProps {
 export default function AccountSettingsPage({
   className,
 }: AccountSettingsPageProps) {
-  return <SettingsPageLayout></SettingsPageLayout>;
+  return <SettingsPageLayout selectedPage=""></SettingsPageLayout>;
 }
 
 // export { default as GenerativeAINode, GenerativeAINodeConfigurationDrawer } from "./GenerativeAINode";

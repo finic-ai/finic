@@ -7,3 +7,4 @@
 .subframe/access-token
 
 build.sh
+deploy.sh
