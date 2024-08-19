@@ -48,6 +48,7 @@ PROD = os.getenv("PROD") == "true"
 LOCAL_SERVER_URL = os.getenv("LOCAL_SERVER_URL")
 PROD_SERVER_URL = os.getenv("PROD_SERVER_URL")
 SERVER_URL = PROD_SERVER_URL if PROD else LOCAL_SERVER_URL
+GCS_FILENAME_REVENUE = os.getenv("GCS_FILENAME_REVENUE")
 
 
 def upsert_workflow(workflow: Workflow):
@@ -91,15 +92,21 @@ import json
 # Transform the data and output as a 2d table. The first row should be the column names.
 
 def finic_handler(inputs: Dict[str, List[List[Any]]]) -> List[List[Any]]:
-    input_table = inputs["GCS Source"]
+    lead_inputs = inputs["Lead contact list"]
+    revenue_inputs = inputs["Revenue list"]
+    lead_inputs = pd.DataFrame(lead_inputs[1:], columns=lead_inputs[0])
+    revenue_inputs = pd.DataFrame(revenue_inputs[1:], columns=revenue_inputs[0])
+
+    # Join the two tables on the Index column
+    data_frame = pd.merge(lead_inputs, revenue_inputs, on="Index", how="inner")
+
     # Rename the columns
-    data_frame = pd.DataFrame(input_table[1:], columns=input_table[0])
     data_frame = data_frame.rename(
         columns={
             "Index": "ID",
             "Name": "NAME",
             "Linkedin Url": "LINKEDIN_URL",
-            "Est. Revenue (USD)": "ACCOUNT_SIZE",
+            "Revenue": "ACCOUNT_SIZE",
         }
     )
     data_frame = data_frame[["ID", "NAME", "LINKEDIN_URL", "ACCOUNT_SIZE"]]
@@ -111,6 +118,7 @@ node_ids = [
     "ddf6988f-3105-4471-b395-acc03ebb723f",
     "ea0afa26-fdd7-488e-afb9-f358c47141c6",
     "41044cd6-f8a9-4d7b-bda8-a5639ba4e332",
+    "784b6ea9-b03b-4bbc-a76f-edfbf2d112ad",
 ]
 
 workflow = Workflow(
@@ -124,7 +132,7 @@ workflow = Workflow(
             position={"x": 0, "y": 0},
             type=NodeType.SOURCE,
             data=SourceNodeData(
-                name="GCS Source",
+                name="Lead contact list",
                 configuration=GCSSourceConfig(
                     credentials=GCS_CREDENTIALS,
                     bucket=GCS_BUCKET,
@@ -134,6 +142,19 @@ workflow = Workflow(
         ),
         Node(
             id=node_ids[1],
+            position={"x": 0, "y": 0},
+            type=NodeType.SOURCE,
+            data=SourceNodeData(
+                name="Revenue list",
+                configuration=GCSSourceConfig(
+                    credentials=GCS_CREDENTIALS,
+                    bucket=GCS_BUCKET,
+                    filename=GCS_FILENAME_REVENUE,
+                ),
+            ).dict(),
+        ),
+        Node(
+            id=node_ids[2],
             position={"x": 0, "y": 0},
             type=NodeType.TRANSFORMATION,
             data=TransformNodeData(
@@ -145,7 +166,7 @@ workflow = Workflow(
             ).dict(),
         ),
         Node(
-            id=node_ids[2],
+            id=node_ids[3],
             position={"x": 0, "y": 0},
             type=NodeType.DESTINATION,
             data=DestinationNodeData(
@@ -162,8 +183,9 @@ workflow = Workflow(
         ),
     ],
     edges=[
-        Edge(id="1", source=node_ids[0], target=node_ids[1]),
+        Edge(id="1", source=node_ids[0], target=node_ids[2]),
         Edge(id="2", source=node_ids[1], target=node_ids[2]),
+        Edge(id="3", source=node_ids[2], target=node_ids[3]),
     ],
 )
 
@@ -176,4 +198,4 @@ if response_workflow.dict() != workflow.dict():
     print(diff)
 else:
     print("Workflow upserted successfully")
-# run_workflow(workflow.id)
+run_workflow(workflow.id)

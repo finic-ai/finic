@@ -15,6 +15,7 @@ import { NodeLayout } from "@/components/Nodes/index";
 import { python } from "@codemirror/lang-python";
 import useWorkflow from "@/hooks/useWorkflow";
 import { useUserStateContext } from "@/hooks/useAuth";
+import { Dialog } from "@/subframe/components/Dialog";
 
 type TransformationNode = Node<
   {
@@ -40,6 +41,7 @@ export default function TransformationNode(
   const { bearer } = useUserStateContext();
   const [code, setCode] = useState<string>("");
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (bearer && nodeId && workflowId) {
@@ -84,10 +86,33 @@ export default function TransformationNode(
             value={code}
             extensions={[python()]}
             onChange={(code) => setCode(code)}
+            onClick={() => {
+              console.log("clicked");
+              setModalOpen(true);
+            }}
           />
           <Button onClick={onClickSave}>Save</Button>
         </div>
       </div>
+
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <Dialog.Content>
+          <div className="flex w-300 flex-col items-start gap-6 px-6 py-6">
+            <div className="flex flex-col items-start gap-1">
+              <CodeMirror
+                style={{ height: "500px", width: "800px" }}
+                height="500px"
+                value={code}
+                extensions={[python()]}
+                onChange={(code) => setCode(code)}
+                onClick={() => {
+                  setModalOpen(true);
+                }}
+              />
+            </div>
+          </div>
+        </Dialog.Content>
+      </Dialog>
     </NodeLayout>
   );
 }

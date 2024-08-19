@@ -44,7 +44,8 @@ def run_gcs_source(
     blob = bucket.blob(filename)
     data = blob.download_as_string()
     if filename.endswith(".csv"):
-        df = pd.read_csv(io.StringIO(data))
+        df = pd.read_csv(io.BytesIO(data))
+        print(df)
     else:
         df = pd.read_excel(io.BytesIO(data))
 
