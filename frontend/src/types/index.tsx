@@ -25,7 +25,7 @@ export const nodeTypes: NodeTypes = {
   transformation: TransformationNode,
 };
 
-export const configurationDrawerTypes: Record<string, React.ComponentType> = {
+export const configurationDrawerTypes = {
   source: SourceNodeConfigurationDrawer,
   destination: DestinationNodeConfigurationDrawer,
   transformation: TransformationNodeConfigurationDrawer,
@@ -73,10 +73,7 @@ export enum DestinationTypeNames {
 }
 
 
-export const SourceConfigurationDrawerType: Record<
-  string,
-  React.ComponentType
-> = {
+export const SourceConfigurationDrawerType = {
   google_cloud_storage: GCSConfigurationDrawer,
 };
 
@@ -86,14 +83,12 @@ export type FinicNode = {
   data: {
     name: string;
     configuration?: any;
+    results?: any
   };
   type: string;
 };
 
-export const DestinationConfigurationDrawerType: Record<
-  string,
-  React.ComponentType
-> = {
+export const DestinationConfigurationDrawerType = {
   snowflake: SnowflakeConfigurationDrawer,
 };
 

@@ -13,6 +13,7 @@ import {
   useStore,
   useStoreApi,
   addEdge,
+  BackgroundVariant,
   type Node,
   type Edge,
   type NodeTypes,
@@ -93,7 +94,7 @@ export default function WorkflowPage() {
     useWorkflow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes as FinicNode[]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([] as Edge[]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -148,7 +149,7 @@ export default function WorkflowPage() {
       getWorkflow(bearer, workflowId!).then((data) => {
         if (data && "id" in data) {
           setWorkflowId(workflowId);
-          setNodes(data.nodes);
+          setNodes(data.nodes as FinicNode[]);
           setEdges(data.edges);
           setWorkflowName(data.name);
           setWorkflowStatus(data.status);
@@ -185,7 +186,7 @@ export default function WorkflowPage() {
   };
 
   function handleAddNode(nodeType: FinicNodeType) {
-    const newNode: Node = {
+    const newNode: FinicNode = {
       id: uuidv4(),
       position: { x: 0, y: 500 },
       data: {
@@ -274,7 +275,7 @@ export default function WorkflowPage() {
       >
         <Controls />
         <MiniMap />
-        <Background variant="dots" gap={12} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
     );
   }
