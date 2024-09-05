@@ -6,6 +6,9 @@
 # subframe
 .subframe/access-token
 
+# DS_Store
+**/.DS_Store
+
 build.sh
 deploy.sh
 **/__pycache__/

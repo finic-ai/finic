@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: finicapi
+Version: 0.1.0
+Summary: Finic.ai is a platform for deploying integrations and workflow automations in Python. This is the Python client for Finic
+Author: Ayan Bandyopadhyay
+Author-email: ayan@finic.ai
+Description-Content-Type: text/markdown
+
+# `Finic`
+
+Finic.ai is a platform for deploying integrations and workflow automations in Python. This is the Python client for Finic

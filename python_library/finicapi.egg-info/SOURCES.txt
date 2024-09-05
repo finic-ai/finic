@@ -1,0 +1,9 @@
+README.md
+setup.py
+finicapi/__init__.py
+finicapi/finic.py
+finicapi.egg-info/PKG-INFO
+finicapi.egg-info/SOURCES.txt
+finicapi.egg-info/dependency_links.txt
+finicapi.egg-info/requires.txt
+finicapi.egg-info/top_level.txt
