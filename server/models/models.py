@@ -4,13 +4,6 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any, Tuple, Type, Union
 from enum import Enum
 import datetime
-from .node_configurations import (
-    GCSSourceConfig,
-    SnowflakeDestinationConfig,
-    MappingTransformConfig,
-    PythonTransformConfig,
-    JoinTransformConfig,
-)
 
 
 class AppConfig(BaseModel):
@@ -27,98 +20,33 @@ class User(BaseModel):
     completed_onboarding: Optional[bool] = None
 
 
-class Edge(BaseModel):
-    id: str
-    source: str
-    target: str
-
-
-class NodePosition(BaseModel):
-    x: float
-    y: float
-
-
-class NodeType(str, Enum):
-    SOURCE = "source"
-    DESTINATION = "destination"
-    TRANSFORMATION = "transformation"
-
-
-class SourceNodeData(BaseModel):
-    name: str
-    configuration: Optional[GCSSourceConfig] = None
-
-
-class DestinationNodeData(BaseModel):
-    name: str
-    configuration: Optional[SnowflakeDestinationConfig] = None
-
-
-class TransformNodeData(BaseModel):
-    name: str
-    configuration: Optional[PythonTransformConfig] = None
-
-
-class WorkflowStatus(str, Enum):
-    draft = "draft"
+class JobStatus(str, Enum):
+    deploying = "deploying"
     deployed = "deployed"
-    successful = "successful"
-    failed = "failed"
+    failed = "deploy_failed"
 
 
-class WorkflowRunStatus(str, Enum):
+class ExecutionStatus(str, Enum):
     running = "running"
     successful = "successful"
     failed = "failed"
 
 
-class Node(BaseModel):
-    id: str
-    type: NodeType
-    position: NodePosition
-    data: Union[SourceNodeData, DestinationNodeData, TransformNodeData]
-
-    def __init__(self, **data):
-        node_type = data.get("type")
-        if node_type == NodeType.SOURCE:
-            data["data"] = SourceNodeData(**data["data"])
-        elif node_type == NodeType.DESTINATION:
-            data["data"] = DestinationNodeData(**data["data"])
-        elif node_type == NodeType.TRANSFORMATION:
-            data["data"] = TransformNodeData(**data["data"])
-
-        super().__init__(**data)
-
-
-class Workflow(BaseModel):
+class Job(BaseModel):
     id: str
     app_id: str
     name: str
-    status: WorkflowStatus
-    nodes: List[Node] = []
-    edges: List[Edge] = []
+    status: JobStatus
+
+    @staticmethod
+    def get_full_id(job: "Job") -> str:
+        return f"{job.app_id}-{job.id}"
 
 
-class WorkflowRun(BaseModel):
-    workflow_id: str
+class Execution(BaseModel):
+    job_id: str
     app_id: str
-    status: WorkflowRunStatus
+    status: ExecutionStatus
     start_time: Optional[datetime.datetime] = None
     end_time: Optional[datetime.datetime] = None
     results: Dict[str, Any] = {}
-
-
-class Credential(BaseModel):
-    id: str
-    workflow_id: str
-    node_id: str
-    app_id: str
-    user_id: str
-    credentials: Dict
-
-
-class Transformation(BaseModel):
-    node_id: str
-    workflow_id: str
-    code: str
-    language: str = "python"

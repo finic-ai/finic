@@ -1,8 +1,0 @@
-google-auth==2.32.0
-snowflake-connector-python[pandas]==3.12.0
-google-cloud==0.34.0
-google-cloud-storage==2.18.2
-pydantic==1.10.11
-supabase==2.3.5
-python-dotenv==1.0.0
-openpyxl==3.1.2

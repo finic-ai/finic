@@ -1,9 +1,0 @@
-README.md
-setup.py
-finic/__init__.py
-finic/finic.py
-finic.egg-info/PKG-INFO
-finic.egg-info/SOURCES.txt
-finic.egg-info/dependency_links.txt
-finic.egg-info/requires.txt
-finic.egg-info/top_level.txt

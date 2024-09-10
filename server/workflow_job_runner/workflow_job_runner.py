@@ -4,10 +4,6 @@ from typing import List, Optional, Tuple, Dict
 from models.models import (
     AppConfig,
     User,
-    Workflow,
-    Edge,
-    WorkflowRunStatus,
-    WorkflowRun,
 )
 from supabase import create_client, Client
 import os
@@ -36,7 +32,7 @@ class WorkflowJobRunner:
             service_account_info
         )
 
-    async def start_job(self, workflow_id: str) -> WorkflowRun:
+    async def start_job(self, workflow_id: str):
         client = run_v2.JobsClient(credentials=self.credentials)
         project = os.getenv("GCLOUD_PROJECT")
         location = os.getenv("GCLOUD_LOCATION")
@@ -58,16 +54,17 @@ class WorkflowJobRunner:
         operation = client.run_job(request)
         print(f"Started job: {operation}")
         # update the workflow run status to running
-        run = WorkflowRun(
-            workflow_id=workflow_id,
-            app_id=self.config.app_id,
-            status=WorkflowRunStatus.running,
-        )
-        await self.db.save_workflow_run(
-            workflow_run=run,
-        )
-        return run
 
-    async def get_run_status(self, workflow_id: str) -> WorkflowRun:
-        run = await self.db.get_workflow_run(workflow_id, self.config.app_id)
-        return run
+    #     run = WorkflowRun(
+    #         workflow_id=workflow_id,
+    #         app_id=self.config.app_id,
+    #         status=WorkflowRunStatus.running,
+    #     )
+    #     await self.db.save_workflow_run(
+    #         workflow_run=run,
+    #     )
+    #     return run
+
+    # async def get_run_status(self, workflow_id: str) -> WorkflowRun:
+    #     run = await self.db.get_workflow_run(workflow_id, self.config.app_id)
+    #     return run

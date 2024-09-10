@@ -17,26 +17,17 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from typing import List, Optional
-from models.models import AppConfig, Workflow, WorkflowRunStatus, PythonTransformConfig
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
 from models.api import (
-    GetWorkflowRequest,
-    UpsertWorkflowRequest,
-    ListWorkflowsRequest,
-    DeleteWorkflowRequest,
-    UpdateNodeConfigurationRequest,
-    CheckCredentialsRequest,
-    GetTransformationRequest,
-    UpsertTransformationRequest,
-    UpsertNodeRequest,
-    GetNodeRequest,
-    DeleteNodeRequest,
+    GetJobRequest,
+    GetExecutionRequest,
+    DeployJobRequest,
 )
 import uuid
-from models.models import AppConfig, Node, NodeType, Credential, Transformation
+from models.models import AppConfig, Job
 from database import Database
 import io
 import datetime
@@ -45,6 +36,7 @@ import logging
 import sentry_sdk
 from workflow_job_runner import WorkflowJobRunner
 import json
+from job_deployer.job_deployer import JobDeployer
 
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 sentry_sdk.init(
@@ -106,230 +98,54 @@ async def validate_optional_token(
     return app_config
 
 
-@app.post("/check-credentials")
-async def check_credentials(
-    request: CheckCredentialsRequest = Body(...),
+@app.post("/deploy-job")
+async def deploy_job(
+    request: DeployJobRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        credentials = await db.get_credentials(request.workflow_id, config.app_id)
-        if credentials:
-            return {"has_credentials": True}
-        return {"has_credentials": False}
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/update-node-config")
-async def update_node_config(
-    request: UpdateNodeConfigurationRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflow = await db.get_workflow(request.workflow_id, config.app_id)
-        for node in workflow.nodes:
-            if node.id == request.node_id:
-                if "credentials" in request.configuration:
-                    if type(request.configuration["credentials"]) == str:
-                        request.configuration["credentials"] = json.loads(
-                            request.configuration["credentials"]
-                        )
-                    old_credentials = await db.get_credentials(
-                        request.workflow_id, request.node_id, config.user_id
-                    )
-                    new_credentials = Credential(
-                        id=(
-                            old_credentials["id"]
-                            if old_credentials
-                            else str(uuid.uuid4())
-                        ),
-                        workflow_id=request.workflow_id,
-                        node_id=request.node_id,
-                        app_id=config.app_id,
-                        user_id=config.user_id,
-                        credentials=request.configuration["credentials"],
-                    )
-                    await db.upsert_credentials(new_credentials)
-                    config = request.configuration
-                    config.pop("credentials")
-                    config["has_credentials"] = True
-                    node.data.configuration = config
-                else:
-                    node.data.configuration = request.configuration
-        new_workflow = await db.upsert_workflow(workflow=workflow)
-        if not new_credentials or not new_workflow:
-            raise HTTPException(
-                status_code=500, detail="Failed to update node configuration"
-            )
-        return new_workflow
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/upsert-workflow")
-async def upsert_workflow(
-    request: UpsertWorkflowRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflow = Workflow(
-            id=str(uuid.uuid4()),
+        job = Job(
+            id=request.job_id,
             app_id=config.app_id,
-            name=request.name if request.name else "New Workflow",
-            status=request.status if request.status else "draft",
-            nodes=request.nodes if request.nodes else [],
-            edges=request.edges if request.edges else [],
+            name=request.job_name,
+            status="deploying",
         )
-        if request.id:
-            existing_workflow = await db.get_workflow(request.id, config.app_id)
-            if existing_workflow:
-                workflow = existing_workflow
-        for key, value in request.dict().items():
-            if value:
-                setattr(workflow, key, value)
-        await db.upsert_workflow(workflow=workflow)
-        return workflow
+        await db.upsert_job(job)
+        deployer = JobDeployer(db=db, config=config)
+        job = await deployer.deploy_job(job=job)
+        return job
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/upsert-node")
-async def upsert_node(
-    request: UpsertNodeRequest = Body(...),
+@app.post("/get-job-upload-link")
+async def get_job_upload_link(
+    request: DeployJobRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        new_node = await db.upsert_node(
-            config.app_id, request.workflow_id, request.node
+        deployer = JobDeployer(db=db, config=config)
+        job = Job(
+            id=request.job_id,
+            app_id=config.app_id,
+            name=request.job_name,
+            status="deploying",
         )
-        return new_node
+        link = await deployer.get_job_upload_link(job=job)
+        return {"upload_link": link}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/get-node")
-async def get_node(
-    request: GetNodeRequest = Body(...),
+@app.post("/get-execution")
+async def get_execution(
+    request: GetExecutionRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        node = await db.get_node(config.app_id, request.workflow_id, request.node_id)
-        return node
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/get-transformation")
-async def get_transformation(
-    request: GetTransformationRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        # pdb.set_trace()
-        node = await db.get_node(config.app_id, request.workflow_id, request.node_id)
-        return node.data.configuration
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/upsert-transformation")
-async def upsert_transformation(
-    request: UpsertTransformationRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        node = await db.get_node(config.app_id, request.workflow_id, request.node_id)
-        if not node:
-            raise HTTPException(
-                status_code=404, detail="Node not found in the workflow"
-            )
-        if not type(node.data.configuration) == PythonTransformConfig:
-            raise HTTPException(
-                status_code=400, detail="Node is not a transformation node"
-            )
-
-        node.data.configuration.code = request.code
-
-        new_node = await db.upsert_node(config.app_id, request.workflow_id, node)
-        return new_node
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/delete-workflow")
-async def delete_workflow(
-    request: DeleteWorkflowRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflow = await db.delete_workflow(request.id, config.app_id)
-        return workflow
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/get-workflow")
-async def get_workflow(
-    request: GetWorkflowRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflow = await db.get_workflow(request.id, config.app_id)
-        return workflow
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/list-workflows")
-async def list_workflows(
-    request: ListWorkflowsRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflows = await db.list_workflows(config.app_id)
-        return workflows
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/run-workflow")
-async def run_workflow(
-    request: GetWorkflowRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflow_id = request.id
-        runner = WorkflowJobRunner(db=db, config=config)
-        latest_run = await runner.get_run_status(workflow_id)
-        if latest_run and latest_run.status == WorkflowRunStatus.running:
-            raise HTTPException(status_code=400, detail="Workflow is already running")
-        run = await runner.start_job(workflow_id)
-        return run
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/get-workflow-run")
-async def get_workflow_run(
-    request: GetWorkflowRequest = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        workflow_id = request.id
-        runner = WorkflowJobRunner(db=db, config=config)
-        run = await runner.get_run_status(workflow_id)
-        return run
+        return {}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

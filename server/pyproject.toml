@@ -39,6 +39,7 @@ google-cloud = "^0.34.0"
 google-cloud-storage = "^2.18.2"
 openpyxl = "^3.1.5"
 google-cloud-run = "^0.10.8"
+google-cloud-build = "^3.24.2"
 
 [tool.poetry.scripts]
 start = "server.main:start"

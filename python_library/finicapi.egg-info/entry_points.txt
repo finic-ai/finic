@@ -1,0 +1,3 @@
+[console_scripts]
+create-finic-app = finicapi.cli:create_finic_app
+finic deploy = finicapi.cli:deploy

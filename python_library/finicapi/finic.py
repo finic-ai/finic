@@ -3,6 +3,7 @@ from functools import wraps
 import json
 import os
 from enum import Enum
+import requests
 
 
 class FinicEnvironment(str, Enum):
@@ -13,12 +14,60 @@ class FinicEnvironment(str, Enum):
 
 class Finic:
     def __init__(
-        self, api_key: str, environment: FinicEnvironment = FinicEnvironment.LOCAL
+        self,
+        api_key: str,
+        environment: FinicEnvironment = FinicEnvironment.LOCAL,
+        url: str = "https://finic-521298051240.us-central1.run.app",
     ):
         finic_env = os.environ.get("FINIC_ENV")
         self.environment = FinicEnvironment(finic_env) if finic_env else environment
         self.api_key = api_key
         self.secrets_manager = FinicSecretsManager(api_key, environment=environment)
+        self.url = url
+
+    def deploy_job(self, job_id: str, job_name: str, project_zipfile: str):
+        with open(project_zipfile, "rb") as f:
+            upload_file = f.read()
+
+        response = requests.post(
+            f"{self.url}/get-job-upload-link",
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "job_id": job_id,
+                "job_name": job_name,
+            },
+        )
+
+        response_json = response.json()
+
+        upload_link = response_json["upload_link"]
+
+        # Upload the project zip file to the upload link
+        requests.put(upload_link, data=upload_file)
+
+        print("Project files uploaded for build. Deploying job...")
+
+        response = requests.post(
+            f"{self.url}/deploy-job",
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "job_id": job_id,
+                "job_name": job_name,
+            },
+        )
+
+        response_json = response.json()
+
+        if "id" in response_json:
+            return "Job deployed successfully"
+        else:
+            return "Error in deploying job"
 
     def start_run(self, job_id: str, input_data: Dict):
         # TODO
@@ -43,7 +92,7 @@ class Finic:
             path = os.path.join(os.getcwd(), "input.json")
             if not os.path.exists(path):
                 raise Exception(
-                    "If you are running the workflow locally, please provide input.json file in the base directory containing pyproject.toml"
+                    "If you are running the job locally, please provide input.json file in the base directory containing pyproject.toml"
                 )
 
             try:
@@ -60,11 +109,11 @@ class Finic:
         @wraps(func)
         def wrapper():
             try:
-                self.log_run_status("job_id", "running", "Workflow started")
+                self.log_run_status("job_id", "running", "Job started")
                 func(input_data)
-                self.log_run_status("job_id", "success", "Workflow completed")
+                self.log_run_status("job_id", "success", "Job completed")
             except Exception as e:
-                print("Error in workflow entrypoint: ", e)
+                print("Error in job: ", e)
 
         return wrapper
 
