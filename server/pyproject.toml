@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "dealwise-lending"
+name = "finic"
 version = "0.1.0"
 description = ""
 authors = ["ayan <ayan@psychic.dev>"]

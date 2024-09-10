@@ -8,6 +8,7 @@ from google.oauth2 import service_account
 import json
 from google.cloud import storage
 from datetime import timedelta
+from google.cloud import run_v2
 
 
 class JobDeployer:
@@ -25,11 +26,12 @@ class JobDeployer:
 
         self.storage_client = storage.Client(credentials=credentials)
         self.build_client = cloudbuild_v1.CloudBuildClient(credentials=credentials)
+        self.jobs_client = run_v2.JobsClient(credentials=credentials)
 
     async def get_job_upload_link(self, job: Job, expiration_minutes: int = 15) -> str:
+
         bucket = self.storage_client.get_bucket(self.deployments_bucket)
-        job_full_id = Job.get_full_id(job)
-        blob = bucket.blob(f"{job_full_id}.zip")
+        blob = bucket.blob(f"{job.id}.zip")
         url = blob.generate_signed_url(
             version="v4",
             expiration=timedelta(minutes=expiration_minutes),
@@ -37,10 +39,18 @@ class JobDeployer:
         )
         return url
 
-    async def deploy_job(self, job: Job) -> Job:
-        """Use Google Cloud Build to build the Docker image."""
+    async def deploy_job(self, job: Job):
+        # Check if the job already exists in Cloud Run
+        try:
+            self.jobs_client.get_job(
+                name=f"projects/{self.project_id}/locations/us-central1/jobs/job-{job.id}"
+            )
+            job_exists = True
+        except Exception:
+            job_exists = False
+
         # Define the build steps
-        build_config = self._get_build_config(job=job)
+        build_config = self._get_build_config(job=job, job_exists=job_exists)
 
         # Trigger the build
         build = cloudbuild_v1.Build(
@@ -49,7 +59,7 @@ class JobDeployer:
             source=cloudbuild_v1.Source(
                 storage_source=cloudbuild_v1.StorageSource(
                     bucket=self.deployments_bucket,
-                    object_=f"{Job.get_full_id(job)}.zip",
+                    object_=f"{job.id}.zip",
                 )
             ),
         )
@@ -62,12 +72,12 @@ class JobDeployer:
         if result.status != cloudbuild_v1.Build.Status.SUCCESS:
             raise Exception(f"Build failed with status: {result.status}")
 
-        print(f"Built and pushed Docker image: {Job.get_full_id(job)}")
+        print(f"Built and pushed Docker image: {job.id}")
 
-    def _get_build_config(self, job: Job) -> dict:
-        full_job_id = Job.get_full_id(job)
-        image_name = f"gcr.io/{self.project_id}/{full_job_id}:latest"
-        gcs_source = f"gs://{self.deployments_bucket}/{full_job_id}.zip"
+    def _get_build_config(self, job: Job, job_exists: bool) -> dict:
+        image_name = f"gcr.io/{self.project_id}/{job.id}:latest"
+        gcs_source = f"gs://{self.deployments_bucket}/{job.id}.zip"
+        job_command = "update" if job_exists else "create"
         return {
             "steps": [
                 {
@@ -95,7 +105,7 @@ class JobDeployer:
                     "entrypoint": "bash",
                     "args": [
                         "-c",
-                        f"gcloud run jobs create job-{Job.get_full_id(job)} --image {image_name} --region us-central1 "
+                        f"gcloud run jobs {job_command} {Job.get_cloud_job_id(job)} --image {image_name} --region us-central1 "
                         f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
                     ],
                 },

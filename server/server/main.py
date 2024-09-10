@@ -27,7 +27,7 @@ from models.api import (
     DeployJobRequest,
 )
 import uuid
-from models.models import AppConfig, Job
+from models.models import AppConfig, Job, JobStatus
 from database import Database
 import io
 import datetime
@@ -104,16 +104,20 @@ async def deploy_job(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        job = Job(
-            id=request.job_id,
-            app_id=config.app_id,
-            name=request.job_name,
-            status="deploying",
-        )
+
+        job = await db.get_job(config=config, user_defined_id=request.job_id)
+        job.status = JobStatus.deploying
         await db.upsert_job(job)
         deployer = JobDeployer(db=db, config=config)
-        job = await deployer.deploy_job(job=job)
-        return job
+        try:
+            await deployer.deploy_job(job=job)
+            job.status = JobStatus.deployed
+            await db.upsert_job(job)
+            return job
+        except Exception as e:
+            job.status = JobStatus.failed
+            await db.upsert_job(job)
+            raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -126,12 +130,16 @@ async def get_job_upload_link(
 ):
     try:
         deployer = JobDeployer(db=db, config=config)
-        job = Job(
-            id=request.job_id,
-            app_id=config.app_id,
-            name=request.job_name,
-            status="deploying",
-        )
+        job = await db.get_job(config=config, user_defined_id=request.job_id)
+        if job is None:
+            job = Job(
+                id=str(uuid.uuid4()),
+                app_id=config.app_id,
+                user_defined_id=request.job_id,
+                name=request.job_name,
+                status="deploying",
+            )
+            await db.upsert_job(job)
         link = await deployer.get_job_upload_link(job=job)
         return {"upload_link": link}
     except Exception as e:
@@ -139,13 +147,81 @@ async def get_job_upload_link(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/get-execution")
-async def get_execution(
-    request: GetExecutionRequest = Body(...),
+@app.post("/run-job")
+async def run_job(
+    request: DeployJobRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        return {}
+        runner = WorkflowJobRunner(db=db, config=config)
+        job = await db.get_job(config=config, user_defined_id=request.job_id)
+        if job is None:
+            job = Job(
+                id=str(uuid.uuid4()),
+                app_id=config.app_id,
+                user_defined_id=request.job_id,
+                name=request.job_name,
+                status="deploying",
+            )
+            await db.upsert_job(job)
+        await runner.run_job(job=job)
+        return job
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/get-job")
+async def get_job(
+    job_id: str = Query(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        job = await db.get_job(config=config, user_defined_id=job_id)
+        return job
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/list-jobs")
+async def list_jobs(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        jobs = await db.list_jobs(config=config)
+        return jobs
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/get-execution")
+async def get_execution(
+    execution_id: str = Query(...),
+    job_id: str = Query(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        job = await db.get_job(config=config, user_defined_id=job_id)
+        execution = await db.get_execution(
+            config=config, job_id=job.id, execution_id=execution_id
+        )
+        return execution
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/list-executions")
+async def list_executions(
+    job_id: str = Query(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        job = await db.get_job(config=config, user_defined_id=job_id)
+        executions = await db.list_executions(config=config, job_id=job.id)
+        return executions
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

@@ -7,12 +7,12 @@ from .models import AppConfig, User, Job
 
 
 class GetJobRequest(BaseModel):
-    id: str
+    job_id: str
 
 
 class GetExecutionRequest(BaseModel):
     job_id: str
-    run_id: str
+    execution_id: str
 
 
 class DeployJobRequest(BaseModel):
