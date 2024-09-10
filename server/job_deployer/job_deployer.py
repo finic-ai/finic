@@ -96,7 +96,7 @@ class JobDeployer:
                     "args": [
                         "-c",
                         f"gcloud run jobs create job-{Job.get_full_id(job)} --image {image_name} --region us-central1 "
-                        f"--tasks=1 --max-retries=3 --task-timeout=86400s",
+                        f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
                     ],
                 },
             ],
