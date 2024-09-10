@@ -1,2 +1,2 @@
-from .models import AppConfig, User, Job, JobStatus, Execution, ExecutionStatus
-from .api import GetJobRequest, GetExecutionRequest
+from .models import AppConfig, User, Agent, AgentStatus, Execution, ExecutionStatus
+from .api import GetAgentRequest, GetExecutionRequest

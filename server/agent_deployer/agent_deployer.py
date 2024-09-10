@@ -1,5 +1,5 @@
 from database import Database
-from models import AppConfig, Job
+from models import AppConfig, Agent
 from fastapi import UploadFile
 import os
 import zipfile
@@ -11,7 +11,7 @@ from datetime import timedelta
 from google.cloud import run_v2
 
 
-class JobDeployer:
+class AgentDeployer:
 
     def __init__(self, db: Database, config: AppConfig):
         self.db = db
@@ -26,12 +26,12 @@ class JobDeployer:
 
         self.storage_client = storage.Client(credentials=credentials)
         self.build_client = cloudbuild_v1.CloudBuildClient(credentials=credentials)
-        self.jobs_client = run_v2.JobsClient(credentials=credentials)
+        self.agents_client = run_v2.AgentsClient(credentials=credentials)
 
-    async def get_job_upload_link(self, job: Job, expiration_minutes: int = 15) -> str:
+    async def get_agent_upload_link(self, agent: Agent, expiration_minutes: int = 15) -> str:
 
         bucket = self.storage_client.get_bucket(self.deployments_bucket)
-        blob = bucket.blob(f"{job.id}.zip")
+        blob = bucket.blob(f"{agent.id}.zip")
         url = blob.generate_signed_url(
             version="v4",
             expiration=timedelta(minutes=expiration_minutes),
@@ -39,18 +39,18 @@ class JobDeployer:
         )
         return url
 
-    async def deploy_job(self, job: Job):
-        # Check if the job already exists in Cloud Run
+    async def deploy_agent(self, agent: Agent):
+        # Check if the agent already exists in Cloud Run
         try:
-            self.jobs_client.get_job(
-                name=f"projects/{self.project_id}/locations/us-central1/jobs/job-{job.id}"
+            self.agents_client.get_agent(
+                name=f"projects/{self.project_id}/locations/us-central1/agents/agent-{agent.id}"
             )
-            job_exists = True
+            agent_exists = True
         except Exception:
-            job_exists = False
+            agent_exists = False
 
         # Define the build steps
-        build_config = self._get_build_config(job=job, job_exists=job_exists)
+        build_config = self._get_build_config(agent=agent, agent_exists=agent_exists)
 
         # Trigger the build
         build = cloudbuild_v1.Build(
@@ -59,7 +59,7 @@ class JobDeployer:
             source=cloudbuild_v1.Source(
                 storage_source=cloudbuild_v1.StorageSource(
                     bucket=self.deployments_bucket,
-                    object_=f"{job.id}.zip",
+                    object_=f"{agent.id}.zip",
                 )
             ),
         )
@@ -72,12 +72,12 @@ class JobDeployer:
         if result.status != cloudbuild_v1.Build.Status.SUCCESS:
             raise Exception(f"Build failed with status: {result.status}")
 
-        print(f"Built and pushed Docker image: {job.id}")
+        print(f"Built and pushed Docker image: {agent.id}")
 
-    def _get_build_config(self, job: Job, job_exists: bool) -> dict:
-        image_name = f"gcr.io/{self.project_id}/{job.id}:latest"
-        gcs_source = f"gs://{self.deployments_bucket}/{job.id}.zip"
-        job_command = "update" if job_exists else "create"
+    def _get_build_config(self, agent: Agent, agent_exists: bool) -> dict:
+        image_name = f"gcr.io/{self.project_id}/{agent.id}:latest"
+        gcs_source = f"gs://{self.deployments_bucket}/{agent.id}.zip"
+        agent_command = "update" if agent_exists else "create"
         return {
             "steps": [
                 {
@@ -105,7 +105,7 @@ class JobDeployer:
                     "entrypoint": "bash",
                     "args": [
                         "-c",
-                        f"gcloud run jobs {job_command} {Job.get_cloud_job_id(job)} --image {image_name} --region us-central1 "
+                        f"gcloud run agents {agent_command} {Agent.get_cloud_agent_id(agent)} --image {image_name} --region us-central1 "
                         f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
                     ],
                 },

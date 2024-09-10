@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple
 from models.models import (
     AppConfig,
     User,
-    Job,
+    Agent,
     Execution,
 )
 from supabase import create_client, Client
@@ -64,22 +64,22 @@ class Database:
             return response.data[0]["secret_key"]
         return None
 
-    async def upsert_job(self, job: Job) -> Optional[Job]:
+    async def upsert_agent(self, agent: Agent) -> Optional[Agent]:
         response = (
-            self.supabase.table("job")
+            self.supabase.table("agent")
             .upsert(
-                job.dict(),
+                agent.dict(),
             )
             .execute()
         )
         if len(response.data) > 0:
             row = response.data[0]
-            return Job(**row)
+            return Agent(**row)
         return None
 
-    async def get_job(self, config: AppConfig, user_defined_id: str) -> Optional[Job]:
+    async def get_agent(self, config: AppConfig, user_defined_id: str) -> Optional[Agent]:
         response = (
-            self.supabase.table("job")
+            self.supabase.table("agent")
             .select("*")
             .filter("app_id", "eq", config.app_id)
             .filter("user_defined_id", "eq", user_defined_id)
@@ -87,36 +87,36 @@ class Database:
         )
         if len(response.data) > 0:
             row = response.data[0]
-            return Job(**row)
+            return Agent(**row)
         return None
 
-    async def list_jobs(self, config: AppConfig) -> List[Job]:
+    async def list_agents(self, config: AppConfig) -> List[Agent]:
         response = (
-            self.supabase.table("job")
+            self.supabase.table("agent")
             .select("*")
             .filter("app_id", "eq", config.app_id)
             .execute()
         )
-        return [Job(**row) for row in response.data]
+        return [Agent(**row) for row in response.data]
 
-    async def list_executions(self, config: AppConfig, job_id: str) -> List[Execution]:
+    async def list_executions(self, config: AppConfig, agent_id: str) -> List[Execution]:
         response = (
             self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("job_id", "eq", job_id)
+            .filter("agent_id", "eq", agent_id)
             .execute()
         )
         return [Execution(**row) for row in response.data]
 
     async def get_execution(
-        self, config: AppConfig, job_id: str, execution_id: str
+        self, config: AppConfig, agent_id: str, execution_id: str
     ) -> Optional[Execution]:
         response = (
             self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("job_id", "eq", job_id)
+            .filter("agent_id", "eq", agent_id)
             .filter("id", "eq", execution_id)
             .execute()
         )

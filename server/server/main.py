@@ -22,21 +22,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
 from models.api import (
-    GetJobRequest,
+    GetAgentRequest,
     GetExecutionRequest,
-    DeployJobRequest,
+    DeployAgentRequest,
 )
 import uuid
-from models.models import AppConfig, Job, JobStatus
+from models.models import AppConfig, Agent, AgentStatus
 from database import Database
 import io
 import datetime
 import pdb
 import logging
 import sentry_sdk
-from workflow_job_runner import WorkflowJobRunner
+from agent_runner import AgentRunner
 import json
-from job_deployer.job_deployer import JobDeployer
+from agent_deployer import AgentDeployer
 
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 sentry_sdk.init(
@@ -98,99 +98,99 @@ async def validate_optional_token(
     return app_config
 
 
-@app.post("/deploy-job")
-async def deploy_job(
-    request: DeployJobRequest = Body(...),
+@app.post("/deploy-agent")
+async def deploy_agent(
+    request: DeployAgentRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
 
-        job = await db.get_job(config=config, user_defined_id=request.job_id)
-        job.status = JobStatus.deploying
-        await db.upsert_job(job)
-        deployer = JobDeployer(db=db, config=config)
+        agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
+        agent.status = AgentStatus.deploying
+        await db.upsert_agent(agent)
+        deployer = AgentDeployer(db=db, config=config)
         try:
-            await deployer.deploy_job(job=job)
-            job.status = JobStatus.deployed
-            await db.upsert_job(job)
-            return job
+            await deployer.deploy_agent(agent=agent)
+            agent.status = AgentStatus.deployed
+            await db.upsert_agent(agent)
+            return agent
         except Exception as e:
-            job.status = JobStatus.failed
-            await db.upsert_job(job)
+            agent.status = AgentStatus.failed
+            await db.upsert_agent(agent)
             raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/get-job-upload-link")
-async def get_job_upload_link(
-    request: DeployJobRequest = Body(...),
+@app.post("/get-agent-upload-link")
+async def get_agent_upload_link(
+    request: DeployAgentRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        deployer = JobDeployer(db=db, config=config)
-        job = await db.get_job(config=config, user_defined_id=request.job_id)
-        if job is None:
-            job = Job(
+        deployer = AgentDeployer(db=db, config=config)
+        agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
+        if agent is None:
+            agent = Agent(
                 id=str(uuid.uuid4()),
                 app_id=config.app_id,
-                user_defined_id=request.job_id,
-                name=request.job_name,
+                user_defined_id=request.agent_id,
+                name=request.agent_name,
                 status="deploying",
             )
-            await db.upsert_job(job)
-        link = await deployer.get_job_upload_link(job=job)
+            await db.upsert_agent(agent)
+        link = await deployer.get_agent_upload_link(agent=agent)
         return {"upload_link": link}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/run-job")
-async def run_job(
-    request: DeployJobRequest = Body(...),
+@app.post("/run-agent")
+async def run_agent(
+    request: DeployAgentRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        runner = WorkflowJobRunner(db=db, config=config)
-        job = await db.get_job(config=config, user_defined_id=request.job_id)
-        if job is None:
-            job = Job(
+        runner = WorkflowAgentRunner(db=db, config=config)
+        agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
+        if agent is None:
+            agent = Agent(
                 id=str(uuid.uuid4()),
                 app_id=config.app_id,
-                user_defined_id=request.job_id,
-                name=request.job_name,
+                user_defined_id=request.agent_id,
+                name=request.agent_name,
                 status="deploying",
             )
-            await db.upsert_job(job)
-        await runner.run_job(job=job)
-        return job
+            await db.upsert_agent(agent)
+        await runner.run_agent(agent=agent)
+        return agent
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/get-job")
-async def get_job(
-    job_id: str = Query(...),
+@app.get("/get-agent")
+async def get_agent(
+    agent_id: str = Query(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        job = await db.get_job(config=config, user_defined_id=job_id)
-        return job
+        agent = await db.get_agent(config=config, user_defined_id=agent_id)
+        return agent
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/list-jobs")
-async def list_jobs(
+@app.get("/list-agents")
+async def list_agents(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        jobs = await db.list_jobs(config=config)
-        return jobs
+        agents = await db.list_agents(config=config)
+        return agents
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -199,13 +199,13 @@ async def list_jobs(
 @app.get("/get-execution")
 async def get_execution(
     execution_id: str = Query(...),
-    job_id: str = Query(...),
+    agent_id: str = Query(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        job = await db.get_job(config=config, user_defined_id=job_id)
+        agent = await db.get_agent(config=config, user_defined_id=agent_id)
         execution = await db.get_execution(
-            config=config, job_id=job.id, execution_id=execution_id
+            config=config, agent_id=agent.id, execution_id=execution_id
         )
         return execution
     except Exception as e:
@@ -215,12 +215,12 @@ async def get_execution(
 
 @app.get("/list-executions")
 async def list_executions(
-    job_id: str = Query(...),
+    agent_id: str = Query(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        job = await db.get_job(config=config, user_defined_id=job_id)
-        executions = await db.list_executions(config=config, job_id=job.id)
+        agent = await db.get_agent(config=config, user_defined_id=agent_id)
+        executions = await db.list_executions(config=config, agent_id=agent.id)
         return executions
     except Exception as e:
         print(e)

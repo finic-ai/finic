@@ -23,7 +23,7 @@ from google.cloud import run_v2
 from google.oauth2 import service_account
 
 
-class JobRunner:
+class AgentRunner:
     def __init__(self, db: Database, config: AppConfig):
         self.db = db
         self.config = config
@@ -32,14 +32,14 @@ class JobRunner:
             service_account_info
         )
 
-    async def start_job(self, workflow_id: str):
-        client = run_v2.JobsClient(credentials=self.credentials)
+    async def start_agent(self, workflow_id: str):
+        client = run_v2.AgentsClient(credentials=self.credentials)
         project = os.getenv("GCLOUD_PROJECT")
         location = os.getenv("GCLOUD_LOCATION")
-        job = os.getenv("GCLOUD_JOB_NAME")
+        agent = os.getenv("GCLOUD_JOB_NAME")
         secret_key = await self.db.get_secret_key_for_user(self.config.user_id)
-        request = run_v2.RunJobRequest(
-            name=f"projects/{project}/locations/{location}/jobs/{job}",
+        request = run_v2.RunAgentRequest(
+            name=f"projects/{project}/locations/{location}/agents/{agent}",
             overrides={
                 "container_overrides": [
                     {
@@ -51,8 +51,8 @@ class JobRunner:
                 ]
             },
         )
-        operation = client.run_job(request)
-        print(f"Started job: {operation}")
+        operation = client.run_agent(request)
+        print(f"Started agent: {operation}")
         # update the workflow run status to running
 
     #     run = WorkflowRun(

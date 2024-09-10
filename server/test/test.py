@@ -80,7 +80,7 @@ def run_workflow(id: str):
         )
         return response
     else:
-        print("Go to the workflow job directory and run src/main.py")
+        print("Go to the workflow agent directory and run src/main.py")
 
 
 code = """

@@ -20,7 +20,7 @@ class User(BaseModel):
     completed_onboarding: Optional[bool] = None
 
 
-class JobStatus(str, Enum):
+class AgentStatus(str, Enum):
     deploying = "deploying"
     deployed = "deployed"
     failed = "deploy_failed"
@@ -32,21 +32,21 @@ class ExecutionStatus(str, Enum):
     failed = "failed"
 
 
-class Job(BaseModel):
+class Agent(BaseModel):
     id: str
     user_defined_id: str
     app_id: str
     name: str
-    status: JobStatus
+    status: AgentStatus
 
     @staticmethod
-    def get_cloud_job_id(job: "Job") -> str:
-        return f"job-{job.id}"
+    def get_cloud_agent_id(agent: "Agent") -> str:
+        return f"agent-{agent.id}"
 
 
 class Execution(BaseModel):
     id: str
-    job_id: str
+    agent_id: str
     app_id: str
     status: ExecutionStatus
     start_time: Optional[datetime.datetime] = None
