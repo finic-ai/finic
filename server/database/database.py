@@ -6,6 +6,7 @@ from models.models import (
     AppConfig,
     User,
     Job,
+    Execution,
 )
 from supabase import create_client, Client
 import os
@@ -87,4 +88,39 @@ class Database:
         if len(response.data) > 0:
             row = response.data[0]
             return Job(**row)
+        return None
+
+    async def list_jobs(self, config: AppConfig) -> List[Job]:
+        response = (
+            self.supabase.table("job")
+            .select("*")
+            .filter("app_id", "eq", config.app_id)
+            .execute()
+        )
+        return [Job(**row) for row in response.data]
+
+    async def list_executions(self, config: AppConfig, job_id: str) -> List[Execution]:
+        response = (
+            self.supabase.table("execution")
+            .select("*")
+            .filter("app_id", "eq", config.app_id)
+            .filter("job_id", "eq", job_id)
+            .execute()
+        )
+        return [Execution(**row) for row in response.data]
+
+    async def get_execution(
+        self, config: AppConfig, job_id: str, execution_id: str
+    ) -> Optional[Execution]:
+        response = (
+            self.supabase.table("execution")
+            .select("*")
+            .filter("app_id", "eq", config.app_id)
+            .filter("job_id", "eq", job_id)
+            .filter("id", "eq", execution_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Execution(**row)
         return None

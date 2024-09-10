@@ -23,7 +23,7 @@ from google.cloud import run_v2
 from google.oauth2 import service_account
 
 
-class WorkflowJobRunner:
+class JobRunner:
     def __init__(self, db: Database, config: AppConfig):
         self.db = db
         self.config = config

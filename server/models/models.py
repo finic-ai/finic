@@ -39,8 +39,13 @@ class Job(BaseModel):
     name: str
     status: JobStatus
 
+    @staticmethod
+    def get_cloud_job_id(job: "Job") -> str:
+        return f"job-{job.id}"
+
 
 class Execution(BaseModel):
+    id: str
     job_id: str
     app_id: str
     status: ExecutionStatus

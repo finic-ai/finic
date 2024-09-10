@@ -105,7 +105,7 @@ class JobDeployer:
                     "entrypoint": "bash",
                     "args": [
                         "-c",
-                        f"gcloud run jobs {job_command} job-{job.id} --image {image_name} --region us-central1 "
+                        f"gcloud run jobs {job_command} {Job.get_cloud_job_id(job)} --image {image_name} --region us-central1 "
                         f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
                     ],
                 },
