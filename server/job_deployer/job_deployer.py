@@ -8,6 +8,7 @@ from google.oauth2 import service_account
 import json
 from google.cloud import storage
 from datetime import timedelta
+from google.cloud import run_v2
 
 
 class JobDeployer:
@@ -25,6 +26,7 @@ class JobDeployer:
 
         self.storage_client = storage.Client(credentials=credentials)
         self.build_client = cloudbuild_v1.CloudBuildClient(credentials=credentials)
+        self.jobs_client = run_v2.JobsClient(credentials=credentials)
 
     async def get_job_upload_link(self, job: Job, expiration_minutes: int = 15) -> str:
 
@@ -38,9 +40,17 @@ class JobDeployer:
         return url
 
     async def deploy_job(self, job: Job):
-        """Use Google Cloud Build to build the Docker image."""
+        # Check if the job already exists in Cloud Run
+        try:
+            self.jobs_client.get_job(
+                name=f"projects/{self.project_id}/locations/us-central1/jobs/job-{job.id}"
+            )
+            job_exists = True
+        except Exception:
+            job_exists = False
+
         # Define the build steps
-        build_config = self._get_build_config(job=job)
+        build_config = self._get_build_config(job=job, job_exists=job_exists)
 
         # Trigger the build
         build = cloudbuild_v1.Build(
@@ -64,9 +74,10 @@ class JobDeployer:
 
         print(f"Built and pushed Docker image: {job.id}")
 
-    def _get_build_config(self, job: Job) -> dict:
+    def _get_build_config(self, job: Job, job_exists: bool) -> dict:
         image_name = f"gcr.io/{self.project_id}/{job.id}:latest"
         gcs_source = f"gs://{self.deployments_bucket}/{job.id}.zip"
+        job_command = "update" if job_exists else "create"
         return {
             "steps": [
                 {
@@ -94,7 +105,7 @@ class JobDeployer:
                     "entrypoint": "bash",
                     "args": [
                         "-c",
-                        f"gcloud run jobs create job-{job.id} --image {image_name} --region us-central1 "
+                        f"gcloud run jobs {job_command} job-{job.id} --image {image_name} --region us-central1 "
                         f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
                     ],
                 },
