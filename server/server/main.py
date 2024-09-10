@@ -27,7 +27,7 @@ from models.api import (
     DeployJobRequest,
 )
 import uuid
-from models.models import AppConfig, Job
+from models.models import AppConfig, Job, JobStatus
 from database import Database
 import io
 import datetime
@@ -104,12 +104,9 @@ async def deploy_job(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        job = Job(
-            id=request.job_id,
-            app_id=config.app_id,
-            name=request.job_name,
-            status="deploying",
-        )
+
+        job = await db.get_job(config=config, user_defined_id=request.user_defined_id)
+        job.status = JobStatus.deploying
         await db.upsert_job(job)
         deployer = JobDeployer(db=db, config=config)
         job = await deployer.deploy_job(job=job)
