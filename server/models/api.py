@@ -7,7 +7,7 @@ from .models import AppConfig, User, Job
 
 
 class GetJobRequest(BaseModel):
-    id: str
+    user_defined_id: str
 
 
 class GetExecutionRequest(BaseModel):
@@ -16,5 +16,5 @@ class GetExecutionRequest(BaseModel):
 
 
 class DeployJobRequest(BaseModel):
-    job_id: str
+    user_defined_id: str
     job_name: str

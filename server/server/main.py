@@ -126,12 +126,16 @@ async def get_job_upload_link(
 ):
     try:
         deployer = JobDeployer(db=db, config=config)
-        job = Job(
-            id=request.job_id,
-            app_id=config.app_id,
-            name=request.job_name,
-            status="deploying",
-        )
+        job = await db.get_job(config=config, user_defined_id=request.user_defined_id)
+        if job is None:
+            job = Job(
+                id=str(uuid.uuid4()),
+                app_id=config.app_id,
+                user_defined_id=request.user_defined_id,
+                name=request.job_name,
+                status="deploying",
+            )
+            await db.upsert_job(job)
         link = await deployer.get_job_upload_link(job=job)
         return {"upload_link": link}
     except Exception as e:

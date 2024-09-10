@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 from functools import wraps
 import json
 import os
@@ -17,13 +17,16 @@ class Finic:
         self,
         api_key: str,
         environment: FinicEnvironment = FinicEnvironment.LOCAL,
-        url: str = "https://finic-521298051240.us-central1.run.app",
+        url: Optional[str] = None,
     ):
         finic_env = os.environ.get("FINIC_ENV")
         self.environment = FinicEnvironment(finic_env) if finic_env else environment
         self.api_key = api_key
         self.secrets_manager = FinicSecretsManager(api_key, environment=environment)
-        self.url = url
+        if url:
+            self.url = url
+        else:
+            self.url = "https://finic-521298051240.us-central1.run.app"
 
     def deploy_job(self, job_id: str, job_name: str, project_zipfile: str):
         with open(project_zipfile, "rb") as f:
@@ -36,7 +39,7 @@ class Finic:
                 "Content-Type": "application/json",
             },
             json={
-                "job_id": job_id,
+                "user_defined_id": job_id,
                 "job_name": job_name,
             },
         )
@@ -57,7 +60,7 @@ class Finic:
                 "Content-Type": "application/json",
             },
             json={
-                "job_id": job_id,
+                "user_defined_id": job_id,
                 "job_name": job_name,
             },
         )

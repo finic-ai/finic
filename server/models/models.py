@@ -34,13 +34,10 @@ class ExecutionStatus(str, Enum):
 
 class Job(BaseModel):
     id: str
+    user_defined_id: str
     app_id: str
     name: str
     status: JobStatus
-
-    @staticmethod
-    def get_full_id(job: "Job") -> str:
-        return f"{job.app_id}-{job.id}"
 
 
 class Execution(BaseModel):

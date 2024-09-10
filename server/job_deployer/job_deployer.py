@@ -27,9 +27,9 @@ class JobDeployer:
         self.build_client = cloudbuild_v1.CloudBuildClient(credentials=credentials)
 
     async def get_job_upload_link(self, job: Job, expiration_minutes: int = 15) -> str:
+
         bucket = self.storage_client.get_bucket(self.deployments_bucket)
-        job_full_id = Job.get_full_id(job)
-        blob = bucket.blob(f"{job_full_id}.zip")
+        blob = bucket.blob(f"{job.id}.zip")
         url = blob.generate_signed_url(
             version="v4",
             expiration=timedelta(minutes=expiration_minutes),
@@ -49,7 +49,7 @@ class JobDeployer:
             source=cloudbuild_v1.Source(
                 storage_source=cloudbuild_v1.StorageSource(
                     bucket=self.deployments_bucket,
-                    object_=f"{Job.get_full_id(job)}.zip",
+                    object_=f"{job.id}.zip",
                 )
             ),
         )
@@ -65,9 +65,8 @@ class JobDeployer:
         print(f"Built and pushed Docker image: {Job.get_full_id(job)}")
 
     def _get_build_config(self, job: Job) -> dict:
-        full_job_id = Job.get_full_id(job)
-        image_name = f"gcr.io/{self.project_id}/{full_job_id}:latest"
-        gcs_source = f"gs://{self.deployments_bucket}/{full_job_id}.zip"
+        image_name = f"gcr.io/{self.project_id}/{job.id}:latest"
+        gcs_source = f"gs://{self.deployments_bucket}/{job.id}.zip"
         return {
             "steps": [
                 {
@@ -95,7 +94,7 @@ class JobDeployer:
                     "entrypoint": "bash",
                     "args": [
                         "-c",
-                        f"gcloud run jobs create job-{Job.get_full_id(job)} --image {image_name} --region us-central1 "
+                        f"gcloud run jobs create job-{job.id} --image {image_name} --region us-central1 "
                         f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
                     ],
                 },

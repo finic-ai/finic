@@ -75,3 +75,16 @@ class Database:
             row = response.data[0]
             return Job(**row)
         return None
+
+    async def get_job(self, config: AppConfig, user_defined_id: str) -> Optional[Job]:
+        response = (
+            self.supabase.table("job")
+            .select("*")
+            .filter("app_id", "eq", config.app_id)
+            .filter("user_defined_id", "eq", user_defined_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Job(**row)
+        return None
