@@ -1965,6 +1965,11 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
+"@rollup/rollup-linux-x64-gnu@4.13.0":
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.13.0.tgz#f672f6508f090fc73f08ba40ff76c20b57424778"
+  integrity sha512-yUD/8wMffnTKuiIsl6xU+4IA8UNhQ/f1sAnQebmE/lyQ8abjsVyDkyRkWop0kdMhKMprpNIhPmYlCxgHrPoXoA==
+
 "@sendbird/chat@^4.10.9":
   version "4.10.10"
   resolved "https://registry.npmjs.org/@sendbird/chat/-/chat-4.10.10.tgz"
@@ -2029,10 +2034,10 @@
     swr "2.1.1"
     uuid "8.3.2"
 
-"@subframe/core@1.118.0":
-  version "1.118.0"
-  resolved "https://registry.yarnpkg.com/@subframe/core/-/core-1.118.0.tgz#5eaf8485669c6db6ccf8c352ba834941e446e52d"
-  integrity sha512-+YDqxDL2bSZbhiHX4yeuQxGcFyR5n98FABEns+idDbTv1thmNd+p30dfbKxJLMvWzcWAuZacDajdxjKVQjw0IQ==
+"@subframe/core@1.121.0":
+  version "1.121.0"
+  resolved "https://registry.yarnpkg.com/@subframe/core/-/core-1.121.0.tgz#7640f5c03c869c416371f7d84990b88d41fec149"
+  integrity sha512-ewoXHMVWVygXufF3W/OzQR3Qm2FfuZ2afpKqK1kk6ysA58oql2sHN6n8khOgpMYg9+ZtZGVJbaeOIGCRtYf3cQ==
   dependencies:
     "@radix-ui/react-checkbox" "^1.0.3"
     "@radix-ui/react-collapsible" "^1.0.2"
@@ -2049,10 +2054,13 @@
     "@radix-ui/react-toggle-group" "^1.0.4"
     "@radix-ui/react-tooltip" "1.0.7"
     copy-to-clipboard "^3.3.3"
+    react-day-picker "^9.0.4"
     react-virtualized-auto-sizer "^1.0.20"
     recharts "^2.10.3"
     sonner "^0.7.0"
-    tailwind-merge "^1.9.0"
+    tailwind-merge "^2.3.0"
+  optionalDependencies:
+    "@rollup/rollup-linux-x64-gnu" "4.13.0"
 
 "@supabase/auth-ui-react@^0.4.2":
   version "0.4.2"
@@ -3168,7 +3176,7 @@ date-fns@^2.16.1, date-fns@^2.30.0:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-date-fns@^3.3.1:
+date-fns@^3.3.1, date-fns@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-3.6.0.tgz#f20ca4fe94f8b754951b24240676e8618c0206bf"
   integrity sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==
@@ -4855,6 +4863,13 @@ react-datepicker@^6.9.0:
     prop-types "^15.7.2"
     react-onclickoutside "^6.13.0"
 
+react-day-picker@^9.0.4:
+  version "9.0.9"
+  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-9.0.9.tgz#4664b1b0afa83a71c14836e78782754241eff9cc"
+  integrity sha512-Sj+1UuuUmdxSKPmJlQFb6h1wKw9N7gG0K4db9mQtHm/qzd94t6LT9X8cGwDHaW9Pdb9dua4/sLhUSW06A1Xqkg==
+  dependencies:
+    date-fns "^3.6.0"
+
 react-dom@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
@@ -5475,10 +5490,15 @@ tabbable@^6.0.0, tabbable@^6.0.1:
   resolved "https://registry.npmjs.org/tabbable/-/tabbable-6.2.0.tgz"
   integrity sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==
 
-tailwind-merge@^1.13.2, tailwind-merge@^1.9.0:
+tailwind-merge@^1.13.2:
   version "1.13.2"
   resolved "https://registry.npmjs.org/tailwind-merge/-/tailwind-merge-1.13.2.tgz"
   integrity sha512-R2/nULkdg1VR/EL4RXg4dEohdoxNUJGLMnWIQnPKL+O9Twu7Cn3Rxi4dlXkDzZrEGtR+G+psSXFouWlpTyLhCQ==
+
+tailwind-merge@^2.3.0:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/tailwind-merge/-/tailwind-merge-2.5.2.tgz#000f05a703058f9f9f3829c644235f81d4c08a1f"
+  integrity sha512-kjEBm+pvD+6eAwzJL2Bi+02/9LFLal1Gs61+QB7HvTfQQ0aXwC5LGT8PEt1gS0CWKktKe6ysPTAy3cBC5MeiIg==
 
 tailwindcss@^3.3.3:
   version "3.3.3"

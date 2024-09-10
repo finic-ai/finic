@@ -3,10 +3,12 @@ import {ReactFlowProvider} from "@xyflow/react"
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useAuth, UserStateProvider, supabase } from "@/hooks/useAuth";
-import WorkflowList from "@/pages/home";
-import WorkflowPage from "@/pages/workflow";
+import DeploymentPage from "@/pages/deployment";
+import MonitoringPage from "@/pages/monitoring";
+import SecretsPage from "@/pages/secrets";
+import SettingsPage from "@/pages/settings";
 import LoginPage from "@/pages/auth/LoginPage";
-import { WorkflowProvider } from "@/hooks/useWorkflow";
+import { FinicAppProvider } from "@/hooks/useFinicApp";
 
 function App() {
   const { session, setSession } = useAuth();
@@ -21,22 +23,15 @@ function App() {
 
   const renderAppRoutes = () => {
     return (
-      <Routes>
-        <Route path="/" element={
-          <WorkflowProvider>
-            <WorkflowList />
-          </WorkflowProvider>} />
-        <Route
-          path="/workflow/:id"
-          element={
-            <ReactFlowProvider>
-              <WorkflowProvider>
-                <WorkflowPage />
-              </WorkflowProvider>
-            </ReactFlowProvider>
-          }
-        />
+      <FinicAppProvider>
+        <Routes>
+          <Route path="/" element={<DeploymentPage />} />
+          <Route path="/deployment" element={<DeploymentPage />} />
+          <Route path="/monitoring" element={<MonitoringPage />} />
+          <Route path="/secrets" element={<SecretsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
+      </FinicAppProvider>
     );
   }
 

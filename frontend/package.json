@@ -19,7 +19,7 @@
     "@pdftron/webviewer": "^10.2.3",
     "@rollup/plugin-alias": "^5.0.1",
     "@sendbird/uikit-react": "^3.9.2",
-    "@subframe/core": "1.118.0",
+    "@subframe/core": "1.121.0",
     "@supabase/auth-ui-react": "^0.4.2",
     "@supabase/supabase-js": "^2.31.0",
     "@typeform/embed": "^4.10.0",

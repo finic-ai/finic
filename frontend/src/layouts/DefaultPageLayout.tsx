@@ -9,11 +9,7 @@
  */
 
 import React from "react";
-import * as SubframeCore from "@subframe/core";
-import { Button } from "../subframe/components/Button";
-import { IconButton } from "../subframe/components/IconButton";
-import { DropdownMenu } from "../subframe/components/DropdownMenu";
-import { Avatar } from "../subframe/components/Avatar";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AppTopBar } from "@/components/TopBar";
 
 interface DefaultPageLayoutRootProps {
@@ -21,10 +17,12 @@ interface DefaultPageLayoutRootProps {
 }
 
 export function DefaultPageLayout({ children }: DefaultPageLayoutRootProps) {
+  const location = useLocation();
+  const currentPath = location.pathname;
   return (
     <div className="flex h-screen w-full items-center bg-default-background">
       <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch">
-        <AppTopBar className="flex-none" />
+        <AppTopBar className="flex-none" path={currentPath}/>
         {children ? (
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-4 overflow-y-auto">
             {children}

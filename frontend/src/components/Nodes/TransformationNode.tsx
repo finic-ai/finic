@@ -13,7 +13,7 @@ import { Button } from "@/subframe/components/Button";
 import { type NodeResults } from "@/types/index";
 import { NodeLayout } from "@/components/Nodes/index";
 import { python } from "@codemirror/lang-python";
-import useWorkflow from "@/hooks/useWorkflow";
+import useAgent from "@/hooks/useAgent";
 import { useUserStateContext } from "@/hooks/useAuth";
 import { Dialog } from "@/subframe/components/Dialog";
 
@@ -36,15 +36,15 @@ export default function TransformationNode(
   const {
     updateTransformationNodeCode,
     getTransformationNodeCode,
-    workflowId,
-  } = useWorkflow();
+    agentId,
+  } = useAgent();
   const { bearer } = useUserStateContext();
   const [code, setCode] = useState<string>("");
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    if (bearer && nodeId && workflowId) {
+    if (bearer && nodeId && agentId) {
       getTransformationNodeCode(bearer, nodeId).then((data) => {
         setCode(data ? data.code : "");
       });

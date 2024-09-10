@@ -12,7 +12,7 @@ function LoginPage() {
           supabaseClient={supabase}
           providers={["google"]}
           appearance={{ theme: ThemeSupa }}
-          redirectTo={"http://localhost:3000/workflow/123"}
+          redirectTo={"http://localhost:3000/agent/123"}
         />
       </div>
     </div>

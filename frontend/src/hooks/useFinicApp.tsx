@@ -2,69 +2,69 @@ import React, { useState, useEffect, useCallback, createContext, useContext } fr
 import humps from "humps";
 import { type Node, type Edge, type NodeTypes } from "@xyflow/react";
 import { useAuth } from "@/hooks/useAuth";
-import { Workflow } from "@/types";
+import { Agent } from "@/types";
 
 const server_url = import.meta.env.VITE_APP_SERVER_URL;
 
-interface WorkflowContextType {
-  workflowId: string | null;
-  setWorkflowId: (id: string) => void;
+interface FinicAppContextType {
+  agentId: string | null;
+  setAgentId: (id: string) => void;
   isLoading: boolean;
-  createWorkflow: (bearer: string) => Promise<Workflow>;
-  deleteWorkflow: (bearer: string, workflowId: string) => Promise<Workflow>;
+  createAgent: (bearer: string) => Promise<Agent>;
+  deleteAgent: (bearer: string, agentId: string) => Promise<Agent>;
   updateNodesAndEdges: (
     bearer: string,
-    workflowId: string,
+    agentId: string,
     nodes: Node[],
     edges: Edge[]
-  ) => Promise<Workflow>;
-  setWorkflowStatus: (
+  ) => Promise<Agent>;
+  setAgentStatus: (
     bearer: string,
-    workflowId: string,
+    agentId: string,
     status: string
-  ) => Promise<Workflow>;
-  getWorkflow: (bearer: string, workflowId: string) => Promise<Workflow | undefined>;
-  listWorkflows: (bearer: string) => Promise<Workflow[]>;
+  ) => Promise<Agent>;
+  getAgent: (bearer: string, agentId: string) => Promise<Agent | undefined>;
+  listAgents: (bearer: string) => Promise<Agent[]>;
   updateNodeConfig: (
     bearer: string,
-    workflowId: string,
+    agentId: string,
     nodeId: string,
     configuration: any
-  ) => Promise<Workflow>;
+  ) => Promise<Agent>;
   updateTransformationNodeCode: (
     bearer: string,
     nodeId: string,
     code: string
-  ) => Promise<Workflow>;
+  ) => Promise<Agent>;
   getTransformationNodeCode: (
     bearer: string,
     nodeId: string
   ) => Promise<any>;
 }
 
-const WorkflowContext = createContext<WorkflowContextType | undefined>(undefined);
+const FinicAppContext = createContext<FinicAppContextType | undefined>(undefined);
 
-export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [workflowId, setWorkflowId] = useState<string | null>(null);
+export const FinicAppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [agentId, setAgentId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    console.log("workflowId has been updated:", workflowId);
-  }, [workflowId]);
+    console.log("agentId has been updated:", agentId);
+  }, [agentId]);
 
-  const createWorkflow = useCallback(async (bearer: string) => {
+  const createAgent = useCallback(async (bearer: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${server_url}/upsert-workflow`, {
+      const response = await fetch(`${server_url}/upsert-agent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${bearer}`,
         },
         body: JSON.stringify({
-          name: "New Workflow",
+          name: "New Agent",
         }),
       });
       const data = await response.json();
@@ -76,19 +76,19 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, []);
 
-  const deleteWorkflow = useCallback(
-    async (bearer: string, workflowId: string) => {
+  const deleteAgent = useCallback(
+    async (bearer: string, agentId: string) => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${server_url}/delete-workflow`, {
+        const response = await fetch(`${server_url}/delete-agent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${bearer}`,
           },
           body: JSON.stringify({
-            id: workflowId,
+            id: agentId,
           }),
         });
         const data = await response.json();
@@ -102,23 +102,23 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     []
   );
 
-  const getWorkflow = useCallback(
-    async (bearer: string, workflowId: string) => {
+  const getAgent = useCallback(
+    async (bearer: string, agentId: string) => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${server_url}/get-workflow`, {
+        const response = await fetch(`${server_url}/get-agent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${bearer}`,
           },
           body: JSON.stringify({
-            id: workflowId,
+            id: agentId,
           }),
         });
         const data = await response.json();
-        return humps.camelizeKeys(data) as Workflow;
+        return humps.camelizeKeys(data) as Agent;
       } catch (err: any) {
         setError(err);
       } finally {
@@ -128,19 +128,19 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     []
   );
 
-  const setWorkflowStatus = useCallback(
-    async (bearer: string, workflowId: string, status: string) => {
+  const setAgentStatus = useCallback(
+    async (bearer: string, agentId: string, status: string) => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${server_url}/upsert-workflow`, {
+        const response = await fetch(`${server_url}/upsert-agent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${bearer}`,
           },
           body: JSON.stringify({
-            id: workflowId,
+            id: agentId,
             status: status,
           }),
         });
@@ -158,7 +158,7 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const updateNodeConfig = useCallback(
     async (
       bearer: string,
-      workflowId: string,
+      agentId: string,
       nodeId: string,
       configuration: any
     ) => {
@@ -166,7 +166,7 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setError(null);
       try {
         const payload = {
-          workflow_id: workflowId,
+          agent_id: agentId,
           node_id: nodeId,
           configuration: configuration,
         };
@@ -192,21 +192,21 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const updateNodesAndEdges = useCallback(
     async (
       bearer: string,
-      workflowId: string,
+      agentId: string,
       nodes: Node[],
       edges: Edge[]
     ) => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${server_url}/upsert-workflow`, {
+        const response = await fetch(`${server_url}/upsert-agent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${bearer}`,
           },
           body: JSON.stringify({
-            id: workflowId,
+            id: agentId,
             nodes: humps.decamelizeKeys(nodes),
             edges: humps.decamelizeKeys(edges),
           }),
@@ -222,11 +222,11 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     []
   );
 
-  const listWorkflows = useCallback(async (bearer: string) => {
+  const listAgents = useCallback(async (bearer: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${server_url}/list-workflows`, {
+      const response = await fetch(`${server_url}/list-agents`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -249,7 +249,7 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setError(null);
     try {
       const payload = {
-        workflowId,
+        agentId,
         nodeId,
       };
       console.log(payload)
@@ -269,15 +269,15 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setIsLoading(false);
     }
-  }, [workflowId]);
+  }, [agentId]);
 
   const updateTransformationNodeCode = useCallback(async (bearer: string, nodeId: string, code: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      console.log(workflowId)
+      console.log(agentId)
       const payload = {
-        workflowId,
+        agentId,
         nodeId,
         code
       };
@@ -297,36 +297,36 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setIsLoading(false);
     }
-  }, [workflowId]);
+  }, [agentId]);
 
   return (
-    <WorkflowContext.Provider
+    <FinicAppContext.Provider
       value={{ 
-        workflowId,
-        setWorkflowId,
+        agentId,
+        setAgentId,
         isLoading,
-        createWorkflow,
-        deleteWorkflow,
+        createAgent,
+        deleteAgent,
         updateNodesAndEdges,
-        setWorkflowStatus,
-        getWorkflow,
-        listWorkflows,
+        setAgentStatus,
+        getAgent,
+        listAgents,
         updateNodeConfig,
         updateTransformationNodeCode,
         getTransformationNodeCode
       }}
     >
       {children}
-    </WorkflowContext.Provider>
+    </FinicAppContext.Provider>
   );
 };
 
-const useWorkflow = (): WorkflowContextType => {
-  const context = useContext(WorkflowContext);
+const useFinicApp = (): FinicAppContextType => {
+  const context = useContext(FinicAppContext);
   if (context === undefined) {
-    throw new Error('useWorkflow must be used within a WorkflowProvider');
+    throw new Error('useFinicApp must be used within a FinicAppProvider');
   }
   return context;
 };
 
-export default useWorkflow;
+export default useFinicApp;

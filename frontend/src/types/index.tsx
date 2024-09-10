@@ -13,6 +13,19 @@ import {
 import { GCSConfigurationDrawer } from "@/components/ConfigurationDrawer/Sources/GCSConfigurationDrawer";
 import { SnowflakeConfigurationDrawer } from "@/components/ConfigurationDrawer/Destinations/SnowflakeConfigurationDrawer";
 
+export enum SecretType {
+  PASSWORD = "password",
+  API_KEY = "api_key",
+  AUTH_TOKEN = "auth_token"
+}
+
+export type FinicSecret = {
+  id: string;
+  type: SecretType;
+  service_name: string;
+  value: string;
+};
+
 export enum FinicNodeType {
   SOURCE = "source",
   DESTINATION = "destination",
@@ -48,7 +61,7 @@ export type NodeResults = {
   data: Array<Array<string | number | boolean>>;
 };
 
-export type Workflow = {
+export type Agent = {
   id: string;
   name: string;
   status: string;

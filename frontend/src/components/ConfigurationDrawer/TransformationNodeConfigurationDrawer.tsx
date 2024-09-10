@@ -57,8 +57,8 @@ export default function TransformationNodeConfigurationDrawer({ nodeData, nodeId
             <div className="flex flex-col items-start gap-4">
               <span className="text-caption font-caption text-default-font">
                 You can specify python packages to import during the execution of this
-                workflow. Imported packages will be available across all nodes in this
-                workflow.
+                agent. Imported packages will be available across all nodes in this
+                agent.
               </span>
               <div className="flex items-center gap-4">
                 <span className="text-caption font-caption text-default-font">

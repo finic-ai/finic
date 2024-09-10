@@ -142,9 +142,19 @@ module.exports = {
         "monospace-body": "monospace",
       },
       boxShadow: {
+        sm: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",
         default: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",
+        md: "0px 4px 16px -2px rgba(0, 0, 0, 0.08), 0px 2px 4px -1px rgba(0, 0, 0, 0.08)",
+        lg: "0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)",
         overlay:
           "0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)",
+      },
+      borderRadius: {
+        sm: "2px",
+        md: "4px",
+        DEFAULT: "4px",
+        lg: "8px",
+        full: "9999px",
       },
       container: {
         padding: {
