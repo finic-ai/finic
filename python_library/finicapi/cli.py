@@ -34,14 +34,14 @@ def deploy(argv=sys.argv):
         config = json.load(f)
         if "finic_url" in config:
             server_url = config["finic_url"]
-        if "job_name" not in config:
-            print("Please specify the job_name in the finic_config.json file")
+        if "agent_name" not in config:
+            print("Please specify the agent_name in the finic_config.json file")
             return
-        job_name = config["job_name"]
-        if "job_id" not in config:
-            print("Please specify the job_id in the finic_config.json file")
+        agent_name = config["agent_name"]
+        if "agent_id" not in config:
+            print("Please specify the agent_id in the finic_config.json file")
             return
-        job_id = config["job_id"]
+        agent_id = config["agent_id"]
 
     finic = Finic(api_key=api_key, url=server_url)
 
@@ -57,6 +57,6 @@ def deploy(argv=sys.argv):
         f"git ls-files -z --others --exclude-standard | xargs -0 zip -r {zip_file} && git ls-files -z | xargs -0 zip -ur {zip_file}"
     )
 
-    result = finic.deploy_job(job_id, job_name, zip_file)
+    result = finic.deploy_agent(agent_id, agent_name, zip_file)
 
     print(result)
