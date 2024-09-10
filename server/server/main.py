@@ -109,8 +109,15 @@ async def deploy_job(
         job.status = JobStatus.deploying
         await db.upsert_job(job)
         deployer = JobDeployer(db=db, config=config)
-        job = await deployer.deploy_job(job=job)
-        return job
+        try:
+            await deployer.deploy_job(job=job)
+            job.status = JobStatus.deployed
+            await db.upsert_job(job)
+            return job
+        except Exception as e:
+            job.status = JobStatus.failed
+            await db.upsert_job(job)
+            raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

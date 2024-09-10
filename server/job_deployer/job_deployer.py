@@ -37,7 +37,7 @@ class JobDeployer:
         )
         return url
 
-    async def deploy_job(self, job: Job) -> Job:
+    async def deploy_job(self, job: Job):
         """Use Google Cloud Build to build the Docker image."""
         # Define the build steps
         build_config = self._get_build_config(job=job)
@@ -62,7 +62,7 @@ class JobDeployer:
         if result.status != cloudbuild_v1.Build.Status.SUCCESS:
             raise Exception(f"Build failed with status: {result.status}")
 
-        print(f"Built and pushed Docker image: {Job.get_full_id(job)}")
+        print(f"Built and pushed Docker image: {job.id}")
 
     def _get_build_config(self, job: Job) -> dict:
         image_name = f"gcr.io/{self.project_id}/{job.id}:latest"
