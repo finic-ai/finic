@@ -41,14 +41,21 @@ class Agent(BaseModel):
 
     @staticmethod
     def get_cloud_job_id(agent: "Agent") -> str:
-        return f"job-{agent.id}"
+        return f"agent-{agent.id}"
 
 
 class Execution(BaseModel):
     id: str
     agent_id: str
     app_id: str
+    cloud_provider_id: str
     status: ExecutionStatus
     start_time: Optional[datetime.datetime] = None
     end_time: Optional[datetime.datetime] = None
     results: Dict[str, Any] = {}
+
+
+class FinicEnvironment(str, Enum):
+    LOCAL = "local"
+    DEV = "dev"
+    PROD = "prod"

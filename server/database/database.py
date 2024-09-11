@@ -77,7 +77,9 @@ class Database:
             return Agent(**row)
         return None
 
-    async def get_agent(self, config: AppConfig, user_defined_id: str) -> Optional[Agent]:
+    async def get_agent(
+        self, config: AppConfig, user_defined_id: str
+    ) -> Optional[Agent]:
         response = (
             self.supabase.table("agent")
             .select("*")
@@ -99,7 +101,9 @@ class Database:
         )
         return [Agent(**row) for row in response.data]
 
-    async def list_executions(self, config: AppConfig, agent_id: str) -> List[Execution]:
+    async def list_executions(
+        self, config: AppConfig, agent_id: str
+    ) -> List[Execution]:
         response = (
             self.supabase.table("execution")
             .select("*")
@@ -118,6 +122,19 @@ class Database:
             .filter("app_id", "eq", config.app_id)
             .filter("agent_id", "eq", agent_id)
             .filter("id", "eq", execution_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return Execution(**row)
+        return None
+
+    async def upsert_execution(self, execution: Execution) -> Optional[Execution]:
+        response = (
+            self.supabase.table("execution")
+            .upsert(
+                execution.dict(),
+            )
             .execute()
         )
         if len(response.data) > 0:

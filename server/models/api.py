@@ -18,3 +18,8 @@ class GetExecutionRequest(BaseModel):
 class DeployAgentRequest(BaseModel):
     agent_id: str
     agent_name: str
+
+
+class RunAgentRequest(BaseModel):
+    agent_id: str
+    input: Dict[str, Any] = {}

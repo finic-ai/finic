@@ -25,6 +25,7 @@ from models.api import (
     GetAgentRequest,
     GetExecutionRequest,
     DeployAgentRequest,
+    RunAgentRequest,
 )
 import uuid
 from models.models import AppConfig, Agent, AgentStatus
@@ -149,23 +150,19 @@ async def get_agent_upload_link(
 
 @app.post("/run-agent")
 async def run_agent(
-    request: DeployAgentRequest = Body(...),
+    request: RunAgentRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
         runner = AgentRunner(db=db, config=config)
         agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
         if agent is None:
-            agent = Agent(
-                id=str(uuid.uuid4()),
-                app_id=config.app_id,
-                user_defined_id=request.agent_id,
-                name=request.agent_name,
-                status="deploying",
+            raise HTTPException(
+                status_code=404, detail=f"Agent {request.agent_id} not found"
             )
-            await db.upsert_agent(agent)
-        await runner.run_agent(agent=agent)
-        return agent
+        execution = await runner.start_agent(agent=agent, input=request.input)
+        await db.upsert_execution(execution)
+        return execution
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

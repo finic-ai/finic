@@ -4,6 +4,10 @@ from typing import List, Optional, Tuple, Dict
 from models.models import (
     AppConfig,
     User,
+    FinicEnvironment,
+    Agent,
+    Execution,
+    ExecutionStatus,
 )
 from supabase import create_client, Client
 import os
@@ -21,6 +25,7 @@ from database import Database
 import json
 from google.cloud import run_v2
 from google.oauth2 import service_account
+import uuid
 
 
 class AgentRunner:
@@ -31,40 +36,36 @@ class AgentRunner:
         self.credentials = service_account.Credentials.from_service_account_info(
             service_account_info
         )
+        self.project = os.getenv("GCLOUD_PROJECT")
+        self.location = os.getenv("GCLOUD_LOCATION")
 
-    async def start_agent(self, workflow_id: str):
+    async def start_agent(self, agent: Agent, input: Dict) -> Execution:
         client = run_v2.JobsClient(credentials=self.credentials)
-        project = os.getenv("GCLOUD_PROJECT")
-        location = os.getenv("GCLOUD_LOCATION")
-        job = os.getenv("GCLOUD_JOB_NAME")
+
         secret_key = await self.db.get_secret_key_for_user(self.config.user_id)
         request = run_v2.RunJobRequest(
-            name=f"projects/{project}/locations/{location}/jobs/{job}",
+            name=f"projects/{self.project}/locations/{self.location}/jobs/{Agent.get_cloud_job_id(agent)}",
             overrides={
                 "container_overrides": [
                     {
                         "env": [
-                            {"name": "WORKFLOW_ID", "value": workflow_id},
-                            {"name": "SECRET_KEY", "value": secret_key},
+                            {"name": "FINIC_ENV", "value": FinicEnvironment.PROD.value},
+                            {"name": "FINIC_INPUT", "value": json.dumps(input)},
+                            {"name": "FINIC_API_KEY", "value": secret_key},
                         ]
                     }
                 ]
             },
         )
         operation = client.run_job(request)
-        print(f"Started job: {operation}")
-        # update the workflow run status to running
 
-    #     run = WorkflowRun(
-    #         workflow_id=workflow_id,
-    #         app_id=self.config.app_id,
-    #         status=WorkflowRunStatus.running,
-    #     )
-    #     await self.db.save_workflow_run(
-    #         workflow_run=run,
-    #     )
-    #     return run
-
-    # async def get_run_status(self, workflow_id: str) -> WorkflowRun:
-    #     run = await self.db.get_workflow_run(workflow_id, self.config.app_id)
-    #     return run
+        execution_path = operation.metadata.name
+        execution_id = execution_path.split("/")[-1]
+        print(f"Started execution: {execution_id}")
+        return Execution(
+            id=str(uuid.uuid4()),
+            agent_id=agent.id,
+            app_id=agent.app_id,
+            cloud_provider_id=execution_id,
+            status=ExecutionStatus.running,
+        )
