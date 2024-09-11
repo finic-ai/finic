@@ -17,9 +17,12 @@ class GetExecutionRequest(BaseModel):
 
 class DeployAgentRequest(BaseModel):
     agent_id: str
-    agent_name: str
+    agent_description: str
     num_retries: int
 
+class DeleteAgentRequest(BaseModel):
+    agent_id: str
+    num_retries: int
 
 class RunAgentRequest(BaseModel):
     agent_id: str
