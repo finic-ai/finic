@@ -3,6 +3,8 @@ import { supabase } from "@/hooks/useAuth";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 
+const redirectUrl = import.meta.env.VITE_APP_REDIRECT_URL;
+
 function LoginPage() {
 
   return (
@@ -12,7 +14,7 @@ function LoginPage() {
           supabaseClient={supabase}
           providers={["google"]}
           appearance={{ theme: ThemeSupa }}
-          redirectTo={"http://localhost:3000/agent/123"}
+          redirectTo={redirectUrl}
         />
       </div>
     </div>

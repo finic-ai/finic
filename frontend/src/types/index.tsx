@@ -63,10 +63,11 @@ export type NodeResults = {
 
 export type Agent = {
   id: string;
+  userDefinedId: string;
   name: string;
   status: string;
-  nodes: Array<Node>;
-  edges: Array<Edge>;
+  created_at: string;
+  url: string;
 };
 
 export enum SourceNodeType {

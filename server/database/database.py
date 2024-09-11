@@ -84,7 +84,7 @@ class Database:
             self.supabase.table("agent")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("user_defined_id", "eq", user_defined_id)
+            .filter("id", "eq", user_defined_id)
             .execute()
         )
         if len(response.data) > 0:

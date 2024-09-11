@@ -38,6 +38,8 @@ class Agent(BaseModel):
     app_id: str
     name: str
     status: AgentStatus
+    created_at: Optional[datetime.datetime] = None
+    url: Optional[str] = None
 
     @staticmethod
     def get_cloud_job_id(agent: "Agent") -> str:

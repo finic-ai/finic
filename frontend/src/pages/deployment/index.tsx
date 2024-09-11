@@ -17,26 +17,21 @@ import { DefaultPageLayout } from "@/layouts/DefaultPageLayout";
 import { useUserStateContext } from "@/hooks/useAuth";
 import useFinicApp from "@/hooks/useFinicApp";
 import { Agent } from "@/types";
+import { RunAgentModal } from "@/components/Modals";
 
-function AgentRow({
-  bearer,
-  initial_data,
-}: {
+interface AgentRowProps {
   bearer: string;
   initial_data: Agent;
-}) {
+  openRunAgentModal: () => void;
+  setSelectedAgentId: (agentId: string) => void;
+}
+
+function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId }: AgentRowProps) {
   const [agent, setAgent] = useState<Agent>(initial_data);
-  const { setAgentStatus } = useFinicApp();
-  const navigate = useNavigate();
 
-  function handleToggleStatus(agentId: string, status: string) {
-    setAgentStatus(bearer, agentId, status).then((data) => {
-      setAgent(data);
-    });
-  }
-
-  function handleRunAgent(agentId: string) {
-
+  function handleClickRunAgent() {
+    openRunAgentModal();
+    setSelectedAgentId(agent.id);
   }
 
   function handleDeleteAgent(agentId: string) {
@@ -55,7 +50,7 @@ function AgentRow({
           icon={null}
           iconRight="FeatherArrowUpRight"
           loading={false}
-          onClick={() => handleRunAgent(agent.id)}
+          onClick={() => handleClickRunAgent()}
         >
           Run
         </Button>
@@ -151,15 +146,14 @@ function AgentRow({
 
 export function DeploymentPage() {
   const [agents, setAgents] = useState<Array<Agent>>([]);
-  const { createAgent, listAgents, setAgentStatus, isLoading } =
-    useFinicApp();
+  const [runAgentModalOpen, setRunAgentModalOpen] = useState(false);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const { isLoading, listAgents } = useFinicApp();
   const { bearer } = useUserStateContext();
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (bearer) {
-      listAgents(bearer).then((data) => {
+      listAgents().then((data) => {
         if (data) {
           setAgents(data);
         }
@@ -167,14 +161,9 @@ export function DeploymentPage() {
     }
   }, [bearer]);
 
-  function handleCreateAgent() {
-    createAgent(bearer).then((data) => {
-      navigate(`/agent/${data.id}`);
-    });
-  }
-
   return (
     <DefaultPageLayout>
+      <RunAgentModal isOpen={runAgentModalOpen} setIsOpen={setRunAgentModalOpen} agentId={selectedAgentId}/>
       <div className="flex w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
         <Alert
           variant="neutral"
@@ -231,9 +220,6 @@ export function DeploymentPage() {
             <Button
               className="mobile:h-8 mobile:w-auto mobile:flex-none"
               icon="FeatherPlus"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                handleCreateAgent();
-              }}
             >
               New Agent
             </Button>
@@ -245,8 +231,8 @@ export function DeploymentPage() {
               <Table.HeaderRow>
                 <Table.HeaderCell />
                 <Table.HeaderCell>Agent Name</Table.HeaderCell>
-                <Table.HeaderCell>Last Run Status</Table.HeaderCell>
-                <Table.HeaderCell>Last Run Date</Table.HeaderCell>
+                <Table.HeaderCell>Status</Table.HeaderCell>
+                <Table.HeaderCell>Created Date</Table.HeaderCell>
                 <Table.HeaderCell>Agent ID</Table.HeaderCell>
                 <Table.HeaderCell>-</Table.HeaderCell>
               </Table.HeaderRow>
@@ -256,7 +242,13 @@ export function DeploymentPage() {
               ? agents
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((agent, index) => (
-                    <AgentRow bearer={bearer} initial_data={agent} />
+                    <AgentRow 
+                      bearer={bearer} 
+                      initial_data={agent} 
+                      openRunAgentModal={() => setRunAgentModalOpen(true)} 
+                      setSelectedAgentId={setSelectedAgentId}
+                      key={index}
+                    />
                   ))
               : null}
           </Table>
