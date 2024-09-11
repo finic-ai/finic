@@ -28,7 +28,9 @@ class AgentDeployer:
         self.build_client = cloudbuild_v1.CloudBuildClient(credentials=credentials)
         self.jobs_client = run_v2.JobsClient(credentials=credentials)
 
-    async def get_agent_upload_link(self, agent: Agent, expiration_minutes: int = 15) -> str:
+    async def get_agent_upload_link(
+        self, agent: Agent, expiration_minutes: int = 15
+    ) -> str:
 
         bucket = self.storage_client.get_bucket(self.deployments_bucket)
         blob = bucket.blob(f"{agent.id}.zip")
@@ -43,7 +45,7 @@ class AgentDeployer:
         # Check if the job already exists in Cloud Run
         try:
             self.jobs_client.get_job(
-                name=f"projects/{self.project_id}/locations/us-central1/jobs/job-{agent.id}"
+                name=f"projects/{self.project_id}/locations/us-central1/jobs/{Agent.get_cloud_job_id(agent)}"
             )
             job_exists = True
         except Exception:
@@ -106,7 +108,7 @@ class AgentDeployer:
                     "args": [
                         "-c",
                         f"gcloud run jobs {job_command} {Agent.get_cloud_job_id(job)} --image {image_name} --region us-central1 "
-                        f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
+                        f"--tasks=1 --max-retries={job.num_retries} --task-timeout=86400s --memory=4Gi",
                     ],
                 },
             ],

@@ -52,6 +52,7 @@ class AgentRunner:
                             {"name": "FINIC_ENV", "value": FinicEnvironment.PROD.value},
                             {"name": "FINIC_INPUT", "value": json.dumps(input)},
                             {"name": "FINIC_API_KEY", "value": secret_key},
+                            {"name": "FINIC_AGENT_ID", "value": agent.id},
                         ]
                     }
                 ]

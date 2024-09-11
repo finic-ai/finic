@@ -38,6 +38,7 @@ class Agent(BaseModel):
     app_id: str
     name: str
     status: AgentStatus
+    num_retries: int = 3
 
     @staticmethod
     def get_cloud_job_id(agent: "Agent") -> str:
