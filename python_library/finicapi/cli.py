@@ -42,6 +42,10 @@ def deploy(argv=sys.argv):
             print("Please specify the agent_id in the finic_config.json file")
             return
         agent_id = config["agent_id"]
+        if "num_retries" not in config:
+            print("Please specify the num_retries in the finic_config.json file")
+            return
+        num_retries = config["num_retries"]
 
     finic = Finic(api_key=api_key, url=server_url)
 
@@ -57,6 +61,6 @@ def deploy(argv=sys.argv):
         f"git ls-files -z --others --exclude-standard | xargs -0 zip -r {zip_file} && git ls-files -z | xargs -0 zip -ur {zip_file}"
     )
 
-    result = finic.deploy_agent(agent_id, agent_name, zip_file)
+    result = finic.deploy_agent(agent_id, agent_name, num_retries, zip_file)
 
     print(result)

@@ -105,7 +105,6 @@ async def deploy_agent(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-
         agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
         agent.status = AgentStatus.deploying
         await db.upsert_agent(agent)
@@ -138,6 +137,7 @@ async def get_agent_upload_link(
                 app_id=config.app_id,
                 user_defined_id=request.agent_id,
                 name=request.agent_name,
+                num_retries=request.num_retries,
                 status="deploying",
             )
             await db.upsert_agent(agent)

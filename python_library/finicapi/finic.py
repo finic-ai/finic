@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from functools import wraps
 import json
 import os
@@ -28,7 +28,9 @@ class Finic:
         else:
             self.url = "https://finic-521298051240.us-central1.run.app"
 
-    def deploy_agent(self, agent_id: str, agent_name: str, project_zipfile: str):
+    def deploy_agent(
+        self, agent_id: str, agent_name: str, num_retries: int, project_zipfile: str
+    ):
         with open(project_zipfile, "rb") as f:
             upload_file = f.read()
 
@@ -41,6 +43,7 @@ class Finic:
             json={
                 "agent_id": agent_id,
                 "agent_name": agent_name,
+                "num_retries": num_retries,
             },
         )
 
@@ -62,6 +65,7 @@ class Finic:
             json={
                 "agent_id": agent_id,
                 "agent_name": agent_name,
+                "num_retries": num_retries,
             },
         )
 
@@ -84,9 +88,26 @@ class Finic:
         # TODO
         pass
 
-    def log_run_status(self, agent_id: str, status: str, message: str):
-        # TODO
-        print(f"Logging status: {status} - {message}")
+    def log_attempt(self, agent_id: str, success: bool, logs: List[str], result: Dict):
+        if self.environment == FinicEnvironment.LOCAL:
+            if success:
+                print("Successful execution. Results: ", result)
+            else:
+                print("Failed execution. Logs: ", logs)
+        else:
+            requests.post(
+                f"{self.url}/log-execution-attempt",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "agent_id": agent_id,
+                    "success": success,
+                    "logs": logs,
+                    "result": result,
+                },
+            )
 
     def workflow_entrypoint(self, func):
 

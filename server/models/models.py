@@ -39,7 +39,7 @@ class Agent(BaseModel):
     name: str
     status: AgentStatus
     created_at: Optional[datetime.datetime] = None
-    url: Optional[str] = None
+    num_retries: int = 3
 
     @staticmethod
     def get_cloud_job_id(agent: "Agent") -> str:
