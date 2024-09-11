@@ -27,4 +27,8 @@ class RunAgentRequest(BaseModel):
 
 
 class LogExecutionAttemptRequest(BaseModel):
+    execution_id: str
+    agent_id: str
+    app_id: str
+    result: Dict[str, Any]
     attempt: ExecutionAttempt

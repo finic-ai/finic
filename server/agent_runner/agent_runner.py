@@ -44,6 +44,7 @@ class AgentRunner:
         self, secret_key: str, agent: Agent, input: Dict
     ) -> Execution:
         client = run_v2.JobsClient(credentials=self.credentials)
+        execution_id = str(uuid.uuid4())
         request = run_v2.RunJobRequest(
             name=f"projects/{self.project}/locations/{self.location}/jobs/{Agent.get_cloud_job_id(agent)}",
             overrides={
@@ -53,7 +54,8 @@ class AgentRunner:
                             {"name": "FINIC_ENV", "value": FinicEnvironment.PROD.value},
                             {"name": "FINIC_INPUT", "value": json.dumps(input)},
                             {"name": "FINIC_API_KEY", "value": secret_key},
-                            {"name": "FINIC_AGENT_ID", "value": agent.id},
+                            {"name": "FINIC_AGENT_ID", "value": agent.finic_id},
+                            {"name": "FINIC_EXECUTION_ID", "value": execution_id},
                         ]
                     }
                 ]
@@ -62,15 +64,17 @@ class AgentRunner:
         operation = client.run_job(request)
 
         execution_path = operation.metadata.name
-        execution_id = execution_path.split("/")[-1]
+        cloud_provider_id = execution_path.split("/")[-1]
         print(f"Started execution: {execution_id}")
         return Execution(
-            id=str(uuid.uuid4()),
-            agent_id=agent.id,
+            id=execution_id,
+            finic_agent_id=agent.finic_id,
             app_id=agent.app_id,
-            cloud_provider_id=execution_id,
+            cloud_provider_id=cloud_provider_id,
             status=ExecutionStatus.running,
         )
 
-    async def update_execution(self, execution: Execution, attempt: ExecutionAttempt):
+    async def update_execution(
+        self, agent: Agent, execution: Execution, attempt: ExecutionAttempt
+    ):
         pass

@@ -33,36 +33,34 @@ class ExecutionStatus(str, Enum):
 
 
 class Agent(BaseModel):
+    finic_id: str
     id: str
-    user_defined_id: str
     app_id: str
     name: str
     status: AgentStatus
+    created_at: Optional[datetime.datetime] = None
     num_retries: int = 3
 
     @staticmethod
     def get_cloud_job_id(agent: "Agent") -> str:
-        return f"agent-{agent.id}"
+        return f"job-{agent.finic_id}"
 
 
 class Execution(BaseModel):
     id: str
-    agent_id: str
+    finic_agent_id: str
     app_id: str
     cloud_provider_id: str
     status: ExecutionStatus
     start_time: Optional[datetime.datetime] = None
     end_time: Optional[datetime.datetime] = None
     results: Dict[str, Any] = {}
+    attempts: List["ExecutionAttempt"] = []
 
 
 class ExecutionAttempt(BaseModel):
-    execution_id: str
-    agent_id: str
-    app_id: str
     success: bool
     logs: List[str]
-    result: Dict[str, Any]
 
 
 class FinicEnvironment(str, Enum):

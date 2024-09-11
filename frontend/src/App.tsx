@@ -8,7 +8,7 @@ import MonitoringPage from "@/pages/monitoring";
 import SecretsPage from "@/pages/secrets";
 import SettingsPage from "@/pages/settings";
 import LoginPage from "@/pages/auth/LoginPage";
-import { FinicAppProvider } from "@/hooks/useFinicApp";
+import { FinicAppContextProvider } from "@/hooks/useFinicApp";
 
 function App() {
   const { session, setSession } = useAuth();
@@ -23,7 +23,7 @@ function App() {
 
   const renderAppRoutes = () => {
     return (
-      <FinicAppProvider>
+      <FinicAppContextProvider>
         <Routes>
           <Route path="/" element={<DeploymentPage />} />
           <Route path="/deployment" element={<DeploymentPage />} />
@@ -31,7 +31,7 @@ function App() {
           <Route path="/secrets" element={<SecretsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
-      </FinicAppProvider>
+      </FinicAppContextProvider>
     );
   }
 

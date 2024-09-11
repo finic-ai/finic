@@ -77,14 +77,12 @@ class Database:
             return Agent(**row)
         return None
 
-    async def get_agent(
-        self, config: AppConfig, user_defined_id: str
-    ) -> Optional[Agent]:
+    async def get_agent(self, config: AppConfig, id: str) -> Optional[Agent]:
         response = (
             self.supabase.table("agent")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("user_defined_id", "eq", user_defined_id)
+            .filter("id", "eq", id)
             .execute()
         )
         if len(response.data) > 0:
@@ -114,13 +112,13 @@ class Database:
         return [Execution(**row) for row in response.data]
 
     async def get_execution(
-        self, config: AppConfig, agent_id: str, execution_id: str
+        self, config: AppConfig, finic_agent_id: str, execution_id: str
     ) -> Optional[Execution]:
         response = (
             self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("agent_id", "eq", agent_id)
+            .filter("finic_agent_id", "eq", finic_agent_id)
             .filter("id", "eq", execution_id)
             .execute()
         )

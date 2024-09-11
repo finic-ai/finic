@@ -106,7 +106,7 @@ async def deploy_agent(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
+        agent = await db.get_agent(config=config, id=request.agent_id)
         agent.status = AgentStatus.deploying
         await db.upsert_agent(agent)
         deployer = AgentDeployer(db=db, config=config)
@@ -131,12 +131,12 @@ async def get_agent_upload_link(
 ):
     try:
         deployer = AgentDeployer()
-        agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
+        agent = await db.get_agent(config=config, id=request.agent_id)
         if agent is None:
             agent = Agent(
-                id=str(uuid.uuid4()),
+                finic_id=str(uuid.uuid4()),
                 app_id=config.app_id,
-                user_defined_id=request.agent_id,
+                id=request.agent_id,
                 name=request.agent_name,
                 num_retries=request.num_retries,
                 status="deploying",
@@ -156,7 +156,7 @@ async def run_agent(
 ):
     try:
         runner = AgentRunner()
-        agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
+        agent = await db.get_agent(config=config, id=request.agent_id)
         if agent is None:
             raise HTTPException(
                 status_code=404, detail=f"Agent {request.agent_id} not found"
@@ -202,7 +202,7 @@ async def get_agent(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        agent = await db.get_agent(config=config, user_defined_id=agent_id)
+        agent = await db.get_agent(config=config, id=agent_id)
         return agent
     except Exception as e:
         print(e)
@@ -228,9 +228,9 @@ async def get_execution(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        agent = await db.get_agent(config=config, user_defined_id=agent_id)
+        agent = await db.get_agent(config=config, id=agent_id)
         execution = await db.get_execution(
-            config=config, agent_id=agent.id, execution_id=execution_id
+            config=config, agent_id=agent.finic_id, execution_id=execution_id
         )
         return execution
     except Exception as e:
@@ -244,8 +244,8 @@ async def list_executions(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        agent = await db.get_agent(config=config, user_defined_id=agent_id)
-        executions = await db.list_executions(config=config, agent_id=agent.id)
+        agent = await db.get_agent(config=config, id=agent_id)
+        executions = await db.list_executions(config=config, agent_id=agent.finic_id)
         return executions
     except Exception as e:
         print(e)
