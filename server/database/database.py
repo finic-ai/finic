@@ -78,13 +78,13 @@ class Database:
         return None
 
     async def get_agent(
-        self, config: AppConfig, user_defined_id: str
+        self, config: AppConfig, id: str
     ) -> Optional[Agent]:
         response = (
             self.supabase.table("agent")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("id", "eq", user_defined_id)
+            .filter("id", "eq", id)
             .execute()
         )
         if len(response.data) > 0:

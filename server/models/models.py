@@ -33,8 +33,8 @@ class ExecutionStatus(str, Enum):
 
 
 class Agent(BaseModel):
+    finic_id: str
     id: str
-    user_defined_id: str
     app_id: str
     name: str
     status: AgentStatus
