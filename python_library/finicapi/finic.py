@@ -39,7 +39,7 @@ class Finic:
                 "Content-Type": "application/json",
             },
             json={
-                "user_defined_id": agent_id,
+                "agent_id": agent_id,
                 "agent_name": agent_name,
             },
         )
@@ -60,7 +60,7 @@ class Finic:
                 "Content-Type": "application/json",
             },
             json={
-                "user_defined_id": agent_id,
+                "agent_id": agent_id,
                 "agent_name": agent_name,
             },
         )
