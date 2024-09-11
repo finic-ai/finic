@@ -13,10 +13,7 @@ from google.cloud import run_v2
 
 class AgentDeployer:
 
-    def __init__(self, db: Database, config: AppConfig):
-        self.db = db
-        self.config = config
-
+    def __init__(self):
         service_account_string = os.getenv("GCLOUD_SERVICE_ACCOUNT")
         self.deployments_bucket = os.getenv("DEPLOYMENTS_BUCKET")
         self.project_id = os.getenv("GCLOUD_PROJECT")

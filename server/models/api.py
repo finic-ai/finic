@@ -3,7 +3,7 @@ from enum import Enum
 import datetime
 import uuid
 from typing import List, Optional, Dict, Any
-from .models import AppConfig, User, Agent
+from .models import AppConfig, User, Agent, ExecutionAttempt
 
 
 class GetAgentRequest(BaseModel):
@@ -24,3 +24,7 @@ class DeployAgentRequest(BaseModel):
 class RunAgentRequest(BaseModel):
     agent_id: str
     input: Dict[str, Any] = {}
+
+
+class LogExecutionAttemptRequest(BaseModel):
+    attempt: ExecutionAttempt

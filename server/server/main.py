@@ -26,6 +26,7 @@ from models.api import (
     GetExecutionRequest,
     DeployAgentRequest,
     RunAgentRequest,
+    LogExecutionAttemptRequest,
 )
 import uuid
 from models.models import AppConfig, Agent, AgentStatus
@@ -129,7 +130,7 @@ async def get_agent_upload_link(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        deployer = AgentDeployer(db=db, config=config)
+        deployer = AgentDeployer()
         agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
         if agent is None:
             agent = Agent(
@@ -154,13 +155,40 @@ async def run_agent(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        runner = AgentRunner(db=db, config=config)
+        runner = AgentRunner()
         agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
         if agent is None:
             raise HTTPException(
                 status_code=404, detail=f"Agent {request.agent_id} not found"
             )
-        execution = await runner.start_agent(agent=agent, input=request.input)
+        secret_key = await db.get_secret_key_for_user(config.user_id)
+        execution = await runner.start_agent(
+            secret_key=secret_key, agent=agent, input=request.input
+        )
+        await db.upsert_execution(execution)
+        return execution
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/log-execution-attempt")
+async def log_execution_attempt(
+    request: LogExecutionAttemptRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        runner = AgentRunner()
+        attempt = request.attempt
+        agent = await db.get_agent(config=config, user_defined_id=attempt.agent_id)
+        if agent is None:
+            raise HTTPException(
+                status_code=404, detail=f"Agent {attempt.agent_id} not found"
+            )
+        execution = await db.get_execution(
+            config=config, agent_id=agent.id, execution_id=attempt.execution_id
+        )
+        updated_execution = await runner.update_execution(execution, attempt)
         await db.upsert_execution(execution)
         return execution
     except Exception as e:

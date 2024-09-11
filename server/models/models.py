@@ -56,6 +56,15 @@ class Execution(BaseModel):
     results: Dict[str, Any] = {}
 
 
+class ExecutionAttempt(BaseModel):
+    execution_id: str
+    agent_id: str
+    app_id: str
+    success: bool
+    logs: List[str]
+    result: Dict[str, Any]
+
+
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
     DEV = "dev"
