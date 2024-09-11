@@ -20,9 +20,11 @@ class DeployAgentRequest(BaseModel):
     agent_description: str
     num_retries: int
 
+
 class DeleteAgentRequest(BaseModel):
     agent_id: str
     num_retries: int
+
 
 class RunAgentRequest(BaseModel):
     agent_id: str
@@ -32,6 +34,5 @@ class RunAgentRequest(BaseModel):
 class LogExecutionAttemptRequest(BaseModel):
     execution_id: str
     agent_id: str
-    app_id: str
-    result: Dict[str, Any]
+    results: Dict[str, Any]
     attempt: ExecutionAttempt

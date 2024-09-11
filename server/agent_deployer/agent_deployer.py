@@ -104,7 +104,7 @@ class AgentDeployer:
                     "entrypoint": "bash",
                     "args": [
                         "-c",
-                        f"gcloud run jobs {job_command} {Agent.get_cloud_job_id(job)} --image {image_name} --region us-central1 "
+                        f"gcloud run jobs {job_command} {Agent.get_cloud_job_id(agent)} --image {image_name} --region us-central1 "
                         f"--tasks=1 --max-retries={agent.num_retries} --task-timeout=86400s --memory=4Gi",
                     ],
                 },

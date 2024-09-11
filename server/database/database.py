@@ -65,10 +65,13 @@ class Database:
         return None
 
     async def upsert_agent(self, agent: Agent) -> Optional[Agent]:
+        payload = agent.dict()
+        # Remove created_at field
+        payload.pop("created_at", None)
         response = (
             self.supabase.table("agent")
             .upsert(
-                agent.dict(),
+                payload,
             )
             .execute()
         )

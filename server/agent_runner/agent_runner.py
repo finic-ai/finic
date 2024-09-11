@@ -54,7 +54,7 @@ class AgentRunner:
                             {"name": "FINIC_ENV", "value": FinicEnvironment.PROD.value},
                             {"name": "FINIC_INPUT", "value": json.dumps(input)},
                             {"name": "FINIC_API_KEY", "value": secret_key},
-                            {"name": "FINIC_AGENT_ID", "value": agent.finic_id},
+                            {"name": "FINIC_AGENT_ID", "value": agent.id},
                             {"name": "FINIC_EXECUTION_ID", "value": execution_id},
                         ]
                     }
@@ -75,7 +75,11 @@ class AgentRunner:
         )
 
     async def update_execution(
-        self, agent: Agent, execution: Execution, attempt: ExecutionAttempt
+        self,
+        agent: Agent,
+        execution: Execution,
+        attempt: ExecutionAttempt,
+        results: Dict,
     ):
         # Update the execution status
         if attempt.success:
@@ -87,5 +91,7 @@ class AgentRunner:
 
         # Add the attempt to the execution
         execution.attempts.append(attempt.dict())
+
+        execution.results = results
 
         return execution

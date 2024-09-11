@@ -109,7 +109,7 @@ async def deploy_agent(
         agent = await db.get_agent(config=config, id=request.agent_id)
         agent.status = AgentStatus.deploying
         await db.upsert_agent(agent)
-        deployer = AgentDeployer(db=db, config=config)
+        deployer = AgentDeployer()
         try:
             await deployer.deploy_agent(agent=agent)
             agent.status = AgentStatus.deployed
@@ -189,7 +189,7 @@ async def log_execution_attempt(
             config=config, finic_agent_id=agent.id, execution_id=request.execution_id
         )
         updated_execution = await runner.update_execution(
-            agent=agent, execution=execution, attempt=attempt
+            agent=agent, execution=execution, attempt=attempt, results=request.results
         )
         await db.upsert_execution(updated_execution)
         return execution
@@ -232,7 +232,7 @@ async def delete_agent(
         agent = await db.get_agent(config=config, id=request.agent_id)
         agent.status = AgentStatus.deploying
         await db.upsert_agent(agent)
-        deployer = AgentDeployer(db=db, config=config)
+        deployer = AgentDeployer()
         try:
             await deployer.deploy_agent(agent=agent)
             agent.status = AgentStatus.deployed
