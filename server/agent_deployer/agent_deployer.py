@@ -26,7 +26,7 @@ class AgentDeployer:
 
         self.storage_client = storage.Client(credentials=credentials)
         self.build_client = cloudbuild_v1.CloudBuildClient(credentials=credentials)
-        self.agents_client = run_v2.AgentsClient(credentials=credentials)
+        self.jobs_client = run_v2.JobsClient(credentials=credentials)
 
     async def get_agent_upload_link(self, agent: Agent, expiration_minutes: int = 15) -> str:
 
@@ -40,17 +40,17 @@ class AgentDeployer:
         return url
 
     async def deploy_agent(self, agent: Agent):
-        # Check if the agent already exists in Cloud Run
+        # Check if the job already exists in Cloud Run
         try:
-            self.agents_client.get_agent(
-                name=f"projects/{self.project_id}/locations/us-central1/agents/agent-{agent.id}"
+            self.jobs_client.get_job(
+                name=f"projects/{self.project_id}/locations/us-central1/jobs/job-{agent.id}"
             )
-            agent_exists = True
+            job_exists = True
         except Exception:
-            agent_exists = False
+            job_exists = False
 
         # Define the build steps
-        build_config = self._get_build_config(agent=agent, agent_exists=agent_exists)
+        build_config = self._get_build_config(job=agent, job_exists=job_exists)
 
         # Trigger the build
         build = cloudbuild_v1.Build(
@@ -74,10 +74,10 @@ class AgentDeployer:
 
         print(f"Built and pushed Docker image: {agent.id}")
 
-    def _get_build_config(self, agent: Agent, agent_exists: bool) -> dict:
-        image_name = f"gcr.io/{self.project_id}/{agent.id}:latest"
-        gcs_source = f"gs://{self.deployments_bucket}/{agent.id}.zip"
-        agent_command = "update" if agent_exists else "create"
+    def _get_build_config(self, job: Agent, job_exists: bool) -> dict:
+        image_name = f"gcr.io/{self.project_id}/{job.id}:latest"
+        gcs_source = f"gs://{self.deployments_bucket}/{job.id}.zip"
+        job_command = "update" if job_exists else "create"
         return {
             "steps": [
                 {
@@ -105,7 +105,7 @@ class AgentDeployer:
                     "entrypoint": "bash",
                     "args": [
                         "-c",
-                        f"gcloud run agents {agent_command} {Agent.get_cloud_agent_id(agent)} --image {image_name} --region us-central1 "
+                        f"gcloud run jobs {job_command} {Agent.get_cloud_job_id(job)} --image {image_name} --region us-central1 "
                         f"--tasks=1 --max-retries=3 --task-timeout=86400s --memory=4Gi",
                     ],
                 },

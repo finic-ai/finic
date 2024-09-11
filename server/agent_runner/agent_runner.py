@@ -33,13 +33,13 @@ class AgentRunner:
         )
 
     async def start_agent(self, workflow_id: str):
-        client = run_v2.AgentsClient(credentials=self.credentials)
+        client = run_v2.JobsClient(credentials=self.credentials)
         project = os.getenv("GCLOUD_PROJECT")
         location = os.getenv("GCLOUD_LOCATION")
-        agent = os.getenv("GCLOUD_JOB_NAME")
+        job = os.getenv("GCLOUD_JOB_NAME")
         secret_key = await self.db.get_secret_key_for_user(self.config.user_id)
-        request = run_v2.RunAgentRequest(
-            name=f"projects/{project}/locations/{location}/agents/{agent}",
+        request = run_v2.RunJobRequest(
+            name=f"projects/{project}/locations/{location}/jobs/{job}",
             overrides={
                 "container_overrides": [
                     {
@@ -51,8 +51,8 @@ class AgentRunner:
                 ]
             },
         )
-        operation = client.run_agent(request)
-        print(f"Started agent: {operation}")
+        operation = client.run_job(request)
+        print(f"Started job: {operation}")
         # update the workflow run status to running
 
     #     run = WorkflowRun(

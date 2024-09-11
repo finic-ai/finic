@@ -40,8 +40,8 @@ class Agent(BaseModel):
     status: AgentStatus
 
     @staticmethod
-    def get_cloud_agent_id(agent: "Agent") -> str:
-        return f"agent-{agent.id}"
+    def get_cloud_job_id(agent: "Agent") -> str:
+        return f"job-{agent.id}"
 
 
 class Execution(BaseModel):
