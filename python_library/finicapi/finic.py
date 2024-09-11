@@ -28,19 +28,19 @@ class Finic:
         else:
             self.url = "https://finic-521298051240.us-central1.run.app"
 
-    def deploy_job(self, job_id: str, job_name: str, project_zipfile: str):
+    def deploy_agent(self, agent_id: str, agent_name: str, project_zipfile: str):
         with open(project_zipfile, "rb") as f:
             upload_file = f.read()
 
         response = requests.post(
-            f"{self.url}/get-job-upload-link",
+            f"{self.url}/get-agent-upload-link",
             headers={
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
             },
             json={
-                "user_defined_id": job_id,
-                "job_name": job_name,
+                "user_defined_id": agent_id,
+                "agent_name": agent_name,
             },
         )
 
@@ -51,40 +51,40 @@ class Finic:
         # Upload the project zip file to the upload link
         requests.put(upload_link, data=upload_file)
 
-        print("Project files uploaded for build. Deploying job...")
+        print("Project files uploaded for build. Deploying agent...")
 
         response = requests.post(
-            f"{self.url}/deploy-job",
+            f"{self.url}/deploy-agent",
             headers={
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
             },
             json={
-                "user_defined_id": job_id,
-                "job_name": job_name,
+                "user_defined_id": agent_id,
+                "agent_name": agent_name,
             },
         )
 
         response_json = response.json()
 
         if "id" in response_json:
-            return "Job deployed successfully"
+            return "agent deployed successfully"
         else:
-            return "Error in deploying job"
+            return "Error in deploying agent"
 
-    def start_run(self, job_id: str, input_data: Dict):
+    def start_run(self, agent_id: str, input_data: Dict):
         # TODO
         pass
 
-    def get_runs(self, job_id: str):
+    def get_runs(self, agent_id: str):
         # TODO
         pass
 
-    def get_run_status(self, job_id: str, run_id: str):
+    def get_run_status(self, agent_id: str, run_id: str):
         # TODO
         pass
 
-    def log_run_status(self, job_id: str, status: str, message: str):
+    def log_run_status(self, agent_id: str, status: str, message: str):
         # TODO
         print(f"Logging status: {status} - {message}")
 
@@ -95,7 +95,7 @@ class Finic:
             path = os.path.join(os.getcwd(), "input.json")
             if not os.path.exists(path):
                 raise Exception(
-                    "If you are running the job locally, please provide input.json file in the base directory containing pyproject.toml"
+                    "If you are running the agent locally, please provide input.json file in the base directory containing pyproject.toml"
                 )
 
             try:
@@ -112,11 +112,11 @@ class Finic:
         @wraps(func)
         def wrapper():
             try:
-                self.log_run_status("job_id", "running", "Job started")
+                self.log_run_status("agent_id", "running", "agent started")
                 func(input_data)
-                self.log_run_status("job_id", "success", "Job completed")
+                self.log_run_status("agent_id", "success", "agent completed")
             except Exception as e:
-                print("Error in job: ", e)
+                print("Error in agent: ", e)
 
         return wrapper
 
