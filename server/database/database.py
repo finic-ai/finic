@@ -100,13 +100,13 @@ class Database:
         return [Agent(**row) for row in response.data]
 
     async def list_executions(
-        self, config: AppConfig, agent_id: str
+        self, config: AppConfig, finic_agent_id: str
     ) -> List[Execution]:
         response = (
             self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("agent_id", "eq", agent_id)
+            .filter("finic_agent_id", "eq", finic_agent_id)
             .execute()
         )
         return [Execution(**row) for row in response.data]
@@ -118,7 +118,7 @@ class Database:
             self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("finic_agent_id", "eq", finic_agent_id)
+            .filter("agent_id", "eq", finic_agent_id)
             .filter("id", "eq", execution_id)
             .execute()
         )

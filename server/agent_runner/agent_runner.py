@@ -77,4 +77,15 @@ class AgentRunner:
     async def update_execution(
         self, agent: Agent, execution: Execution, attempt: ExecutionAttempt
     ):
-        pass
+        # Update the execution status
+        if attempt.success:
+            execution.status = ExecutionStatus.successful
+        elif len(execution.attempts) == agent.num_retries:
+            execution.status = ExecutionStatus.failed
+        else:
+            execution.status = ExecutionStatus.running
+
+        # Add the attempt to the execution
+        execution.attempts.append(attempt.dict())
+
+        return execution
