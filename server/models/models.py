@@ -43,12 +43,12 @@ class Agent(BaseModel):
 
     @staticmethod
     def get_cloud_job_id(agent: "Agent") -> str:
-        return f"agent-{agent.id}"
+        return f"job-{agent.finic_id}"
 
 
 class Execution(BaseModel):
     id: str
-    agent_id: str
+    finic_agent_id: str
     app_id: str
     cloud_provider_id: str
     status: ExecutionStatus

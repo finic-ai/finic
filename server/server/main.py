@@ -202,7 +202,7 @@ async def get_execution(
     try:
         agent = await db.get_agent(config=config, id=agent_id)
         execution = await db.get_execution(
-            config=config, agent_id=agent.id, execution_id=execution_id
+            config=config, agent_id=agent.finic_id, execution_id=execution_id
         )
         return execution
     except Exception as e:
@@ -217,7 +217,7 @@ async def list_executions(
 ):
     try:
         agent = await db.get_agent(config=config, id=agent_id)
-        executions = await db.list_executions(config=config, agent_id=agent.id)
+        executions = await db.list_executions(config=config, agent_id=agent.finic_id)
         return executions
     except Exception as e:
         print(e)

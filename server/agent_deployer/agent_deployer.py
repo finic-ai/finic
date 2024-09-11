@@ -33,7 +33,7 @@ class AgentDeployer:
     ) -> str:
 
         bucket = self.storage_client.get_bucket(self.deployments_bucket)
-        blob = bucket.blob(f"{agent.id}.zip")
+        blob = bucket.blob(f"{agent.finic_id}.zip")
         url = blob.generate_signed_url(
             version="v4",
             expiration=timedelta(minutes=expiration_minutes),
@@ -61,7 +61,7 @@ class AgentDeployer:
             source=cloudbuild_v1.Source(
                 storage_source=cloudbuild_v1.StorageSource(
                     bucket=self.deployments_bucket,
-                    object_=f"{agent.id}.zip",
+                    object_=f"{agent.finic_id}.zip",
                 )
             ),
         )
@@ -74,7 +74,7 @@ class AgentDeployer:
         if result.status != cloudbuild_v1.Build.Status.SUCCESS:
             raise Exception(f"Build failed with status: {result.status}")
 
-        print(f"Built and pushed Docker image: {agent.id}")
+        print(f"Built and pushed Docker image: {agent.finic_id}")
 
     def _get_build_config(self, job: Agent, job_exists: bool) -> dict:
         image_name = f"gcr.io/{self.project_id}/{job.id}:latest"

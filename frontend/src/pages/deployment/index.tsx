@@ -62,9 +62,14 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
             name="FeatherTerminalSquare"
           />
           <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-            {agent.name}
+            {agent.id}
           </span>
         </div>
+      </Table.Cell>
+      <Table.Cell>
+        <span className="whitespace-nowrap text-body font-body text-neutral-500">
+          {agent.name}
+        </span>
       </Table.Cell>
       <Table.Cell>
         <SubframeCore.Tooltip.Provider>
@@ -101,15 +106,6 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
         />
         <span className="whitespace-nowrap text-body font-body text-neutral-500">
           1.8s
-        </span>
-      </Table.Cell>
-      <Table.Cell>
-        <SubframeCore.Icon
-          className="text-body font-body text-subtext-color"
-          name="FeatherUser"
-        />
-        <span className="whitespace-nowrap text-body font-body text-neutral-500">
-          {agent.id}
         </span>
       </Table.Cell>
       <Table.Cell>
@@ -230,10 +226,10 @@ export function DeploymentPage() {
             header={
               <Table.HeaderRow>
                 <Table.HeaderCell />
-                <Table.HeaderCell>Agent Name</Table.HeaderCell>
+                <Table.HeaderCell>Agent ID</Table.HeaderCell>
+                <Table.HeaderCell>Description</Table.HeaderCell>
                 <Table.HeaderCell>Status</Table.HeaderCell>
                 <Table.HeaderCell>Created Date</Table.HeaderCell>
-                <Table.HeaderCell>Agent ID</Table.HeaderCell>
                 <Table.HeaderCell>-</Table.HeaderCell>
               </Table.HeaderRow>
             }

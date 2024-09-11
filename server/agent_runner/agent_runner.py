@@ -52,7 +52,7 @@ class AgentRunner:
                             {"name": "FINIC_ENV", "value": FinicEnvironment.PROD.value},
                             {"name": "FINIC_INPUT", "value": json.dumps(input)},
                             {"name": "FINIC_API_KEY", "value": secret_key},
-                            {"name": "FINIC_AGENT_ID", "value": agent.id},
+                            {"name": "FINIC_AGENT_ID", "value": agent.finic_id},
                         ]
                     }
                 ]
@@ -65,7 +65,7 @@ class AgentRunner:
         print(f"Started execution: {execution_id}")
         return Execution(
             id=str(uuid.uuid4()),
-            agent_id=agent.id,
+            finic_agent_id=agent.finic_id,
             app_id=agent.app_id,
             cloud_provider_id=execution_id,
             status=ExecutionStatus.running,
