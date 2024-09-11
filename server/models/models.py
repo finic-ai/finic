@@ -36,7 +36,7 @@ class Agent(BaseModel):
     finic_id: str
     id: str
     app_id: str
-    name: str
+    description: str
     status: AgentStatus
     created_at: Optional[datetime.datetime] = None
     num_retries: int = 3

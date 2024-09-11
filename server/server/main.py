@@ -137,7 +137,7 @@ async def get_agent_upload_link(
                 finic_id=str(uuid.uuid4()),
                 app_id=config.app_id,
                 id=request.agent_id,
-                name=request.agent_name,
+                description=request.agent_description,
                 num_retries=request.num_retries,
                 status="deploying",
             )
@@ -216,6 +216,29 @@ async def list_agents(
     try:
         agents = await db.list_agents(config=config)
         return agents
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/delete-agent")
+async def delete_agent(
+    request: DeployAgentRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        agent = await db.get_agent(config=config, id=request.agent_id)
+        agent.status = AgentStatus.deploying
+        await db.upsert_agent(agent)
+        deployer = AgentDeployer(db=db, config=config)
+        try:
+            await deployer.deploy_agent(agent=agent)
+            agent.status = AgentStatus.deployed
+            await db.upsert_agent(agent)
+            return agent
+        except Exception as e:
+            agent.status = AgentStatus.failed
+            await db.upsert_agent(agent)
+            raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

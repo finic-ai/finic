@@ -16,7 +16,7 @@ import { Alert } from "@/subframe/components/Alert";
 import { DefaultPageLayout } from "@/layouts/DefaultPageLayout";
 import { useUserStateContext } from "@/hooks/useAuth";
 import useFinicApp from "@/hooks/useFinicApp";
-import { Agent } from "@/types";
+import { Agent, Execution } from "@/types";
 import { RunAgentModal } from "@/components/Modals";
 
 interface AgentRowProps {
@@ -68,7 +68,7 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
       </Table.Cell>
       <Table.Cell>
         <span className="whitespace-nowrap text-body font-body text-neutral-500">
-          {agent.name}
+          {agent.description}
         </span>
       </Table.Cell>
       <Table.Cell>
@@ -144,6 +144,7 @@ export function DeploymentPage() {
   const [agents, setAgents] = useState<Array<Agent>>([]);
   const [runAgentModalOpen, setRunAgentModalOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [newExecution, setNewExecution] = useState<Execution | null>(null);
   const { isLoading, listAgents } = useFinicApp();
   const { bearer } = useUserStateContext();
 
@@ -159,21 +160,39 @@ export function DeploymentPage() {
 
   return (
     <DefaultPageLayout>
-      <RunAgentModal isOpen={runAgentModalOpen} setIsOpen={setRunAgentModalOpen} agentId={selectedAgentId}/>
+      <RunAgentModal 
+        isOpen={runAgentModalOpen} 
+        setIsOpen={setRunAgentModalOpen} 
+        setNewExecution={setNewExecution}
+        agentId={selectedAgentId}
+      />
       <div className="flex w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
-        <Alert
+        {newExecution ? <Alert
           variant="neutral"
-          icon="FeatherLoader2"
-          title="Amazon Scraper Running"
-          description="Click here to view the status."
+          icon="FeatherRocket"
+          title="We have liftoff!"
+          description={`Agent ${selectedAgentId} is now running.`}
           actions={
-            <IconButton
-              size="medium"
-              icon="FeatherX"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-            />
+            <>
+              <Button
+                disabled={false}
+                variant="neutral-secondary"
+                size="medium"
+                icon={null}
+                iconRight={null}
+                loading={false}
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+              >
+                View Status
+              </Button>
+              <IconButton
+                size="medium"
+                icon="FeatherX"
+                onClick={() => {setNewExecution(null)}}
+              />
+            </>
           }
-        />
+        />: null}
         <div className="flex flex-col items-start gap-2">
           <span className="text-heading-1 font-heading-1 text-default-font">
             Deployment

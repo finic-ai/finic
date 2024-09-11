@@ -49,7 +49,7 @@ class AgentDeployer:
             job_exists = False
 
         # Define the build steps
-        build_config = self._get_build_config(job=agent, job_exists=job_exists)
+        build_config = self._get_build_config(agent=agent, job_exists=job_exists)
 
         # Trigger the build
         build = cloudbuild_v1.Build(
@@ -73,9 +73,9 @@ class AgentDeployer:
 
         print(f"Built and pushed Docker image: {agent.finic_id}")
 
-    def _get_build_config(self, job: Agent, job_exists: bool) -> dict:
-        image_name = f"gcr.io/{self.project_id}/{job.id}:latest"
-        gcs_source = f"gs://{self.deployments_bucket}/{job.id}.zip"
+    def _get_build_config(self, agent: Agent, job_exists: bool) -> dict:
+        image_name = f"gcr.io/{self.project_id}/{agent.finic_id}:latest"
+        gcs_source = f"gs://{self.deployments_bucket}/{agent.finic_id}.zip"
         job_command = "update" if job_exists else "create"
         return {
             "steps": [
@@ -105,7 +105,7 @@ class AgentDeployer:
                     "args": [
                         "-c",
                         f"gcloud run jobs {job_command} {Agent.get_cloud_job_id(job)} --image {image_name} --region us-central1 "
-                        f"--tasks=1 --max-retries={job.num_retries} --task-timeout=86400s --memory=4Gi",
+                        f"--tasks=1 --max-retries={agent.num_retries} --task-timeout=86400s --memory=4Gi",
                     ],
                 },
             ],

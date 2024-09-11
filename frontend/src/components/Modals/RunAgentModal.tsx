@@ -7,25 +7,30 @@ import { Button } from "@/subframe/components/Button";
 import { Alert } from "@/subframe/components/Alert";
 import { Select } from "@/subframe/components/Select";
 import useFinicApp from "@/hooks/useFinicApp";
+import { Execution } from "@/types";
 
 interface RunAgentDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  setNewExecution: (execution: Execution) => void;
   agentId: string | null;
 }
 
-export default function RunAgentDialog({ isOpen, agentId, setIsOpen }: RunAgentDialogProps) {
+export default function RunAgentDialog({ isOpen, agentId, setIsOpen, setNewExecution }: RunAgentDialogProps) {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [args, setArgs] = React.useState<string>("");
-  const { runAgent, isLoading } = useFinicApp();
+  const { runAgent, error, isLoading } = useFinicApp();
   const dialogRef = useRef<HTMLDivElement>(null);
 
   function handleClickRunAgent() {
     try {
       const input = JSON.parse(args == "" ? "{}" : args);
       setErrorMessage(null);
-      runAgent(agentId!, input).then((data) => {
-        // Configure refresh behavior
+      runAgent(agentId!, input).then((execution: Execution) => {
+        if (execution != null) {
+          setNewExecution(execution);
+          setIsOpen(false);
+        }
       });
     } catch (error: any) {
       if (error instanceof Error) {
