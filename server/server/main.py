@@ -180,16 +180,18 @@ async def log_execution_attempt(
     try:
         runner = AgentRunner()
         attempt = request.attempt
-        agent = await db.get_agent(config=config, user_defined_id=attempt.agent_id)
+        agent = await db.get_agent(config=config, id=request.agent_id)
         if agent is None:
             raise HTTPException(
-                status_code=404, detail=f"Agent {attempt.agent_id} not found"
+                status_code=404, detail=f"Agent {request.agent_id} not found"
             )
         execution = await db.get_execution(
-            config=config, agent_id=agent.id, execution_id=attempt.execution_id
+            config=config, finic_agent_id=agent.id, execution_id=request.execution_id
         )
-        updated_execution = await runner.update_execution(execution, attempt)
-        await db.upsert_execution(execution)
+        updated_execution = await runner.update_execution(
+            agent=agent, execution=execution, attempt=attempt
+        )
+        await db.upsert_execution(updated_execution)
         return execution
     except Exception as e:
         print(e)
@@ -219,6 +221,7 @@ async def list_agents(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/delete-agent")
 async def delete_agent(
