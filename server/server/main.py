@@ -153,7 +153,7 @@ async def run_agent(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        runner = WorkflowAgentRunner(db=db, config=config)
+        runner = AgentRunner(db=db, config=config)
         agent = await db.get_agent(config=config, user_defined_id=request.agent_id)
         if agent is None:
             agent = Agent(
