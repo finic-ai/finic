@@ -65,10 +65,13 @@ class Database:
         return None
 
     async def upsert_agent(self, agent: Agent) -> Optional[Agent]:
+        payload = agent.dict()
+        # Remove created_at field
+        payload.pop("created_at", None)
         response = (
             self.supabase.table("agent")
             .upsert(
-                agent.dict(),
+                payload,
             )
             .execute()
         )
@@ -77,9 +80,7 @@ class Database:
             return Agent(**row)
         return None
 
-    async def get_agent(
-        self, config: AppConfig, id: str
-    ) -> Optional[Agent]:
+    async def get_agent(self, config: AppConfig, id: str) -> Optional[Agent]:
         response = (
             self.supabase.table("agent")
             .select("*")
@@ -102,25 +103,27 @@ class Database:
         return [Agent(**row) for row in response.data]
 
     async def list_executions(
-        self, config: AppConfig, agent_id: str = None
+        self, config: AppConfig, finic_agent_id: str = None, user_defined_agent_id: str = None
     ) -> List[Execution]:
         query =  (self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
         )
-        if agent_id:
-            query = query.filter("agent_id", "eq", agent_id)
+        if finic_agent_id:
+            query = query.filter("finic_agent_id", "eq", finic_agent_id)
+        if user_defined_agent_id:
+            query = query.filter("user_defined_agent_id", "eq", user_defined_agent_id)
         response = query.execute()
         return [Execution(**row) for row in response.data]
 
     async def get_execution(
-        self, config: AppConfig, agent_id: str, execution_id: str
+        self, config: AppConfig, finic_agent_id: str, execution_id: str
     ) -> Optional[Execution]:
         response = (
             self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("agent_id", "eq", agent_id)
+            .filter("finic_agent_id", "eq", finic_agent_id)
             .filter("id", "eq", execution_id)
             .execute()
         )

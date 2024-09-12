@@ -26,6 +26,7 @@ from models.api import (
     GetExecutionRequest,
     DeployAgentRequest,
     RunAgentRequest,
+    LogExecutionAttemptRequest,
 )
 import uuid
 from models.models import AppConfig, Agent, AgentStatus
@@ -81,8 +82,10 @@ async def validate_token(
     try:
         app_config = await db.get_config(credentials.credentials)
     except Exception:
+        print(credentials.credentials)
         raise HTTPException(status_code=401, detail="Invalid or missing public key")
     if credentials.scheme != "Bearer" or app_config is None:
+        print(credentials.credentials)
         raise HTTPException(status_code=401, detail="Invalid or missing public key")
     return app_config
 
@@ -108,7 +111,7 @@ async def deploy_agent(
         agent = await db.get_agent(config=config, id=request.agent_id)
         agent.status = AgentStatus.deploying
         await db.upsert_agent(agent)
-        deployer = AgentDeployer(db=db, config=config)
+        deployer = AgentDeployer()
         try:
             await deployer.deploy_agent(agent=agent)
             agent.status = AgentStatus.deployed
@@ -129,7 +132,7 @@ async def get_agent_upload_link(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        deployer = AgentDeployer(db=db, config=config)
+        deployer = AgentDeployer()
         agent = await db.get_agent(config=config, id=request.agent_id)
         if agent is None:
             agent = Agent(
@@ -154,14 +157,45 @@ async def run_agent(
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        runner = AgentRunner(db=db, config=config)
+        runner = AgentRunner()
         agent = await db.get_agent(config=config, id=request.agent_id)
         if agent is None:
             raise HTTPException(
                 status_code=404, detail=f"Agent {request.agent_id} not found"
             )
-        execution = await runner.start_agent(agent=agent, input=request.input)
+        secret_key = await db.get_secret_key_for_user(config.user_id)
+        execution = await runner.start_agent(
+            secret_key=secret_key, agent=agent, input=request.input
+        )
         await db.upsert_execution(execution)
+        return execution
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/log-execution-attempt")
+async def log_execution_attempt(
+    request: LogExecutionAttemptRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        runner = AgentRunner()
+        attempt = request.attempt
+        agent = await db.get_agent(config=config, id=request.agent_id)
+        if agent is None:
+            raise HTTPException(
+                status_code=404, detail=f"Agent {request.agent_id} not found"
+            )
+        execution = await db.get_execution(
+            config=config,
+            finic_agent_id=agent.finic_id,
+            execution_id=request.execution_id,
+        )
+        updated_execution = await runner.update_execution(
+            agent=agent, execution=execution, attempt=attempt, results=request.results
+        )
+        await db.upsert_execution(updated_execution)
         return execution
     except Exception as e:
         print(e)
@@ -192,6 +226,7 @@ async def list_agents(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/delete-agent")
 async def delete_agent(
     request: DeployAgentRequest = Body(...),
@@ -201,7 +236,7 @@ async def delete_agent(
         agent = await db.get_agent(config=config, id=request.agent_id)
         agent.status = AgentStatus.deploying
         await db.upsert_agent(agent)
-        deployer = AgentDeployer(db=db, config=config)
+        deployer = AgentDeployer()
         try:
             await deployer.deploy_agent(agent=agent)
             agent.status = AgentStatus.deployed
@@ -236,14 +271,14 @@ async def get_execution(
 @app.get("/list-executions")
 async def list_executions(
     agent_id: Optional[str] = Query(None),
+    finic_agent_id: Optional[str] = Query(None),
     config: AppConfig = Depends(validate_token),
 ):
     try:
         if agent_id is None:
             executions = await db.list_executions(config=config)
             return executions
-        agent = await db.get_agent(config=config, id=agent_id)
-        executions = await db.list_executions(config=config, agent_id=agent.finic_id)
+        executions = await db.list_executions(config=config, finic_agent_id=finic_agent_id, user_defined_agent_id=agent_id)
         return executions
     except Exception as e:
         print(e)

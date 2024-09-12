@@ -56,6 +56,12 @@ class Execution(BaseModel):
     start_time: Optional[datetime.datetime] = None
     end_time: Optional[datetime.datetime] = None
     results: Dict[str, Any] = {}
+    attempts: List["ExecutionAttempt"] = []
+
+
+class ExecutionAttempt(BaseModel):
+    success: bool
+    logs: List[str]
 
 
 class FinicEnvironment(str, Enum):

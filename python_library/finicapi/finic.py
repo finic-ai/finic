@@ -15,18 +15,21 @@ class FinicEnvironment(str, Enum):
 class Finic:
     def __init__(
         self,
-        api_key: str,
+        api_key: Optional[str] = None,
         environment: FinicEnvironment = FinicEnvironment.LOCAL,
         url: Optional[str] = None,
     ):
         finic_env = os.environ.get("FINIC_ENV")
         self.environment = FinicEnvironment(finic_env) if finic_env else environment
-        self.api_key = api_key
         self.secrets_manager = FinicSecretsManager(api_key, environment=environment)
         if url:
             self.url = url
         else:
             self.url = "https://finic-521298051240.us-central1.run.app"
+        if api_key:
+            self.api_key = api_key
+        else:
+            self.api_key = os.getenv("FINIC_API_KEY")
 
     def deploy_agent(
         self, agent_id: str, agent_name: str, num_retries: int, project_zipfile: str
@@ -42,7 +45,7 @@ class Finic:
             },
             json={
                 "agent_id": agent_id,
-                "agent_name": agent_name,
+                "agent_description": agent_name,
                 "num_retries": num_retries,
             },
         )
@@ -64,7 +67,7 @@ class Finic:
             },
             json={
                 "agent_id": agent_id,
-                "agent_name": agent_name,
+                "agent_description": agent_name,
                 "num_retries": num_retries,
             },
         )
@@ -88,13 +91,17 @@ class Finic:
         # TODO
         pass
 
-    def log_attempt(self, agent_id: str, success: bool, logs: List[str], result: Dict):
+    def log_attempt(
+        self, success: bool, logs: List[str], results: Optional[Dict] = None
+    ):
         if self.environment == FinicEnvironment.LOCAL:
             if success:
-                print("Successful execution. Results: ", result)
+                print("Successful execution. Results: ", results)
             else:
                 print("Failed execution. Logs: ", logs)
         else:
+            execution_id = os.getenv("FINIC_EXECUTION_ID")
+            agent_id = os.getenv("FINIC_AGENT_ID")
             requests.post(
                 f"{self.url}/log-execution-attempt",
                 headers={
@@ -102,10 +109,13 @@ class Finic:
                     "Content-Type": "application/json",
                 },
                 json={
+                    "execution_id": execution_id,
                     "agent_id": agent_id,
-                    "success": success,
-                    "logs": logs,
-                    "result": result,
+                    "results": results,
+                    "attempt": {
+                        "success": success,
+                        "logs": logs,
+                    },
                 },
             )
 
@@ -133,11 +143,10 @@ class Finic:
         @wraps(func)
         def wrapper():
             try:
-                self.log_run_status("agent_id", "running", "agent started")
-                func(input_data)
-                self.log_run_status("agent_id", "success", "agent completed")
+                results = func(input_data)
+                self.log_attempt(success=True, logs=[], results=results)
             except Exception as e:
-                print("Error in agent: ", e)
+                self.log_attempt(success=False, logs=[str(e)], results={})
 
         return wrapper
 
