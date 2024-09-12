@@ -16,7 +16,7 @@ export function MonitoringPage() {
   const { listExecutions, error, isLoading } = useFinicApp();
   const { bearer } = useUserStateContext();
 
-  useEffect(() => {
+  function fetchExecutions() {
     if (bearer) {
       listExecutions().then((data) => {
         if (data) {
@@ -24,6 +24,10 @@ export function MonitoringPage() {
         }
       });
     }
+  }
+
+  useEffect(() => {
+    fetchExecutions();
   }, [bearer]);
 
   return (
@@ -38,7 +42,12 @@ export function MonitoringPage() {
           </span>
         </div>
         <div className="flex w-full grow shrink-0 basis-0 items-start gap-6">
-          <ExecutionList executions={executions} selectedRow={selectedRow} setSelectedRow={setSelectedRow}/>
+          <ExecutionList 
+            executions={executions} 
+            selectedRow={selectedRow} 
+            setSelectedRow={setSelectedRow}
+            fetchExecutions={fetchExecutions}
+          />
           {executions.length > 0 ? <ExecutionDetail selectedExecution={executions[selectedRow]} /> : null}
         </div>
       </div>

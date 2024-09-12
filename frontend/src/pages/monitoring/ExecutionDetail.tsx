@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import moment from "moment-timezone";
 import { Accordion } from "@/subframe/components/Accordion";
 import { DefaultPageLayout } from "@/layouts/DefaultPageLayout";
 import { useUserStateContext } from "@/hooks/useAuth";
@@ -35,7 +35,7 @@ export default function ExecutionDetail({ selectedExecution }: ExecutionDetailPr
           {selectedExecution?.userDefinedAgentId}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
-          {moment(selectedExecution?.startTime).format("MMMM D, YYYY h:mm:ss A")}
+          {moment(selectedExecution?.startTime).tz("UTC").format("MMMM D, YYYY h:mm:ss A")}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
           Ran for {calculateRuntime(selectedExecution)}

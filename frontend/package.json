@@ -33,7 +33,7 @@
     "flowbite": "^1.7.0",
     "flowbite-react": "^0.4.11",
     "humps": "^2.0.1",
-    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
     "postcss": "^8.4.26",
     "posthog-js": "^1.133.0",
     "react": "^18.2.0",

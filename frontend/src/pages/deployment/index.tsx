@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import moment from "moment-timezone";
 import * as SubframeCore from "@subframe/core";
 import { TextField } from "@/subframe/components/TextField";
 import { Button } from "@/subframe/components/Button";
@@ -109,7 +110,7 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
           name="FeatherClock"
         />
         <span className="whitespace-nowrap text-body font-body text-neutral-500">
-          {moment(agent.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+          {moment(agent.createdAt).tz("UTC").format("YYYY-MM-DD HH:mm:ss")}
         </span>
       </Table.Cell>
       <Table.Cell>
@@ -151,8 +152,9 @@ export function DeploymentPage() {
   const [newExecution, setNewExecution] = useState<Execution | null>(null);
   const { isLoading, listAgents } = useFinicApp();
   const { bearer } = useUserStateContext();
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  function fetchAgents() {
     if (bearer) {
       listAgents().then((data) => {
         if (data) {
@@ -160,6 +162,10 @@ export function DeploymentPage() {
         }
       });
     }
+  }
+
+  useEffect(() => {
+    fetchAgents();
   }, [bearer]);
 
   return (
@@ -185,7 +191,7 @@ export function DeploymentPage() {
                 icon={null}
                 iconRight={null}
                 loading={false}
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                onClick={() => {navigate(`/monitoring`)}}
               >
                 View Status
               </Button>
@@ -228,11 +234,11 @@ export function DeploymentPage() {
             </Button> */}
           </div>
           <div className="flex items-center gap-2 mobile:h-auto mobile:w-auto mobile:flex-none">
-            {/* <IconButton
-              icon="FeatherRefreshCw"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-            />
             <IconButton
+              icon="FeatherRefreshCw"
+              onClick={() => {fetchAgents()}}
+            />
+            {/* <IconButton
               icon="FeatherSettings"
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
             /> */}

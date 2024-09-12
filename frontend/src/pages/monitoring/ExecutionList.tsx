@@ -1,21 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as SubframeCore from "@subframe/core";
 import { TextField } from "@/subframe/components/TextField";
-import { Button } from "@/subframe/components/Button";
-import { IconButton } from "@/subframe/components/IconButton";
 import { Table } from "@/subframe/components/Table";
-import { Checkbox } from "@/subframe/components/Checkbox";
 import { Tooltip } from "@/subframe/components/Tooltip";
-import { Badge } from "@/subframe/components/Badge";
-import { Accordion } from "@/subframe/components/Accordion";
-import { DropdownMenu } from "@/subframe/components/DropdownMenu";
-import { DefaultPageLayout } from "@/layouts/DefaultPageLayout";
-import { useUserStateContext } from "@/hooks/useAuth";
-import { CopyToClipboardButton } from "@/subframe/components/CopyToClipboardButton";
-import useFinicApp from "@/hooks/useFinicApp";
+import { IconButton } from "@/subframe/components/IconButton";
+import moment from "moment-timezone";
 import { Execution } from "@/types";
 import useUtils from "@/hooks/useUtils";
 
@@ -23,9 +14,10 @@ interface ExecutionListProps {
   executions: Array<Execution>;
   selectedRow: number;
   setSelectedRow: (index: number) => void;
+  fetchExecutions: () => void;
 }
 
-export default function ExecutionList({ executions, selectedRow, setSelectedRow }: ExecutionListProps) {
+export default function ExecutionList({ executions, selectedRow, setSelectedRow, fetchExecutions }: ExecutionListProps) {
 
   const { calculateRuntime } = useUtils();
 
@@ -97,16 +89,16 @@ export default function ExecutionList({ executions, selectedRow, setSelectedRow 
             />
           </TextField>
         </div>
-        {/* <div className="flex items-center gap-2 mobile:h-auto mobile:w-auto mobile:flex-none">
+        <div className="flex items-center gap-2 mobile:h-auto mobile:w-auto mobile:flex-none">
           <IconButton
             icon="FeatherRefreshCw"
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+            onClick={() => {fetchExecutions()}}
           />
-          <IconButton
+          {/* <IconButton
             icon="FeatherSettings"
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-          />
-        </div> */}
+          /> */}
+        </div>
       </div>
       {/* <div className="flex w-full flex-wrap items-start gap-4 mobile:flex-col mobile:flex-wrap mobile:gap-4">
         <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
@@ -138,10 +130,9 @@ export default function ExecutionList({ executions, selectedRow, setSelectedRow 
         <Table
           header={
             <Table.HeaderRow>
-              <Table.HeaderCell />
               <Table.HeaderCell>Agent ID</Table.HeaderCell>
               <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell>Run Time</Table.HeaderCell>
+              <Table.HeaderCell>Start Time</Table.HeaderCell>
             </Table.HeaderRow>
           }
         >
@@ -152,11 +143,6 @@ export default function ExecutionList({ executions, selectedRow, setSelectedRow 
               onClick={() => setSelectedRow(index)}
               key={index}
             >
-              <Table.Cell>
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  {execution.startTime}
-                </span>
-              </Table.Cell>
               <Table.Cell>
                 <div className="flex items-center gap-2">
                   <SubframeCore.Icon
@@ -173,7 +159,7 @@ export default function ExecutionList({ executions, selectedRow, setSelectedRow 
               </Table.Cell>
               <Table.Cell>
                 <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  {calculateRuntime(execution)}
+                  {moment(execution.startTime).tz("UTC").format("MMM D, h:mm A")}
                 </span>
               </Table.Cell>
             </Table.Row>)}
