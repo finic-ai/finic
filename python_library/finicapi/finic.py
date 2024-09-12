@@ -147,6 +147,7 @@ class Finic:
                 self.log_attempt(success=True, logs=[], results=results)
             except Exception as e:
                 self.log_attempt(success=False, logs=[str(e)], results={})
+                raise e
 
         return wrapper
 
