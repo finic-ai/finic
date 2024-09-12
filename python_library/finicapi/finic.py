@@ -16,11 +16,12 @@ class Finic:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        environment: FinicEnvironment = FinicEnvironment.LOCAL,
+        environment: Optional[FinicEnvironment] = None,
         url: Optional[str] = None,
     ):
-        finic_env = os.environ.get("FINIC_ENV")
-        self.environment = FinicEnvironment(finic_env) if finic_env else environment
+
+        default_env = os.environ.get("FINIC_ENV") or FinicEnvironment.LOCAL
+        self.environment = environment if environment else FinicEnvironment(default_env)
         self.secrets_manager = FinicSecretsManager(api_key, environment=environment)
         if url:
             self.url = url
