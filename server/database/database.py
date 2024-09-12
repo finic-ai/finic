@@ -22,13 +22,6 @@ import tempfile
 import pdb
 
 
-def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
-    supabase_format = "%Y-%m-%dT%H:%M:%S.%f%z"
-    if date:
-        return date.strftime(supabase_format)
-    return datetime.datetime.now().strftime(supabase_format)
-
-
 def get_file_size(file: io.BytesIO) -> int:
     return file.getbuffer().nbytes
 
@@ -103,9 +96,13 @@ class Database:
         return [Agent(**row) for row in response.data]
 
     async def list_executions(
-        self, config: AppConfig, finic_agent_id: str = None, user_defined_agent_id: str = None
+        self,
+        config: AppConfig,
+        finic_agent_id: str = None,
+        user_defined_agent_id: str = None,
     ) -> List[Execution]:
-        query =  (self.supabase.table("execution")
+        query = (
+            self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
         )
@@ -133,13 +130,12 @@ class Database:
         return None
 
     async def upsert_execution(self, execution: Execution) -> Optional[Execution]:
-        response = (
-            self.supabase.table("execution")
-            .upsert(
-                execution.dict(),
-            )
-            .execute()
-        )
+        payload = execution.dict()
+        if execution.start_time:
+            payload["start_time"] = execution.start_time.isoformat()
+        if execution.end_time:
+            payload["end_time"] = execution.end_time.isoformat()
+        response = self.supabase.table("execution").upsert(payload).execute()
         if len(response.data) > 0:
             row = response.data[0]
             return Execution(**row)
