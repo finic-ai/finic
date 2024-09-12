@@ -29,7 +29,7 @@ from models.api import (
     LogExecutionAttemptRequest,
 )
 import uuid
-from models.models import AppConfig, Agent, AgentStatus
+from models.models import AppConfig, Agent, AgentStatus, Execution
 from database import Database
 import io
 import datetime
@@ -278,8 +278,23 @@ async def list_executions(
         if agent_id is None:
             executions = await db.list_executions(config=config)
             return executions
-        executions = await db.list_executions(config=config, finic_agent_id=finic_agent_id, user_defined_agent_id=agent_id)
+        executions = await db.list_executions(
+            config=config, finic_agent_id=finic_agent_id, user_defined_agent_id=agent_id
+        )
         return executions
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/upsert-execution")
+async def upsert_execution(
+    execution: Execution = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        await db.upsert_execution(execution)
+        return execution
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
