@@ -10,7 +10,8 @@ interface FinicAppContextType {
   error: Error | null;
   isLoading: boolean;
   listAgents: () => Promise<Agent[]>;
-  runAgent: (agentId: string, input: string) => Promise<Execution>;
+  runAgent: (agentId: string, input: Record<string, any>) => Promise<Execution>;
+  listExecutions: () => Promise<Execution[]>;
 }
 
 const FinicAppContext = createContext<FinicAppContextType | undefined>(undefined);
@@ -36,7 +37,7 @@ export const FinicAppContextProvider: React.FC<{ children: React.ReactNode }> = 
         }),
       });
       const data = await response.json();
-      return data;
+      return humps.camelizeKeys(data) as Execution;
     } catch (err: any) {
       console.log(err);
       setError(err);
@@ -57,7 +58,34 @@ export const FinicAppContextProvider: React.FC<{ children: React.ReactNode }> = 
         }
       });
       const data = await response.json();
-      return data;
+      return humps.camelizeKeys(data);
+    } catch (err: any) {
+      console.log(err);
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [bearer]);
+
+  const listExecutions = useCallback(async (agentId?: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const url = `${server_url}/list-executions`;
+      if (agentId) {
+        const params = new URLSearchParams({ agent_id: agentId });
+        const url = `${server_url}/list-executions?${params.toString()}`;
+      }
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer}`,
+        }
+      });
+      const data = await response.json();
+      console.log(data);
+      return humps.camelizeKeys(data);
     } catch (err: any) {
       console.log(err);
       setError(err);
@@ -73,6 +101,7 @@ export const FinicAppContextProvider: React.FC<{ children: React.ReactNode }> = 
         isLoading,
         listAgents,
         runAgent,
+        listExecutions
       }}
     >
       {children}

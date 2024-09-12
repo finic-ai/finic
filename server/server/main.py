@@ -270,12 +270,15 @@ async def get_execution(
 
 @app.get("/list-executions")
 async def list_executions(
-    agent_id: str = Query(...),
+    agent_id: Optional[str] = Query(None),
+    finic_agent_id: Optional[str] = Query(None),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        agent = await db.get_agent(config=config, id=agent_id)
-        executions = await db.list_executions(config=config, agent_id=agent.finic_id)
+        if agent_id is None:
+            executions = await db.list_executions(config=config)
+            return executions
+        executions = await db.list_executions(config=config, finic_agent_id=finic_agent_id, user_defined_agent_id=agent_id)
         return executions
     except Exception as e:
         print(e)

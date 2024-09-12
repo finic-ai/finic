@@ -70,6 +70,7 @@ class AgentRunner:
         return Execution(
             id=execution_id,
             finic_agent_id=agent.finic_id,
+            user_defined_agent_id=agent.id,
             app_id=agent.app_id,
             cloud_provider_id=cloud_provider_id,
             status=ExecutionStatus.running,
