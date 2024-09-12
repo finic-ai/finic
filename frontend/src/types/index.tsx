@@ -23,6 +23,7 @@ export type Agent = {
 export type Execution = {
   id: string;
   finicAgentId: string;
+  userDefinedAgentId: string;
   cloudProviderId: string
   status: string;
   startTime: string | null;

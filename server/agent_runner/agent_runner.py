@@ -66,6 +66,7 @@ class AgentRunner:
         return Execution(
             id=str(uuid.uuid4()),
             finic_agent_id=agent.finic_id,
+            user_defined_agent_id=agent.id,
             app_id=agent.app_id,
             cloud_provider_id=execution_id,
             status=ExecutionStatus.running,

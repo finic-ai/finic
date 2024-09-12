@@ -53,16 +53,16 @@ export default function RunAgentDialog({ isOpen, agentId, setIsOpen, setNewExecu
             onClick={() => {setIsOpen(false)}}
           />
         </div>
-        <div className="flex w-full min-w-[384px] grow shrink-0 basis-0 flex-col flex-wrap items-start gap-4">
+        <div className="flex w-full min-w-[384px] max-w-[576px] grow shrink-0 basis-0 flex-col flex-wrap items-start gap-4">
           <TextArea
             className="h-auto w-full flex-none"
             error={false}
             variant="outline"
             label="Arguments (JSON format)"
-            helpText="These will be passed to your agent's main function as arguments"
+            helpText="These will be passed to your agent's main function as arguments. If left blank, no arguments will be passed."
           >
             <TextArea.Input
-              className="h-auto min-h-[96px] w-full flex-none"
+              className="h-auto min-h-[128px] w-full flex-none"
               placeholder={
                 '{\n  "openai_api_key": "<api-key>",\n  "server_url": "https://api.example.com/",\n  "product_id": "001777c8-8c9b-4dcb-b062-fe5960d13470"\n}'
               }

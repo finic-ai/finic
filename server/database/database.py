@@ -102,15 +102,15 @@ class Database:
         return [Agent(**row) for row in response.data]
 
     async def list_executions(
-        self, config: AppConfig, agent_id: str
+        self, config: AppConfig, agent_id: str = None
     ) -> List[Execution]:
-        response = (
-            self.supabase.table("execution")
+        query =  (self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("agent_id", "eq", agent_id)
-            .execute()
         )
+        if agent_id:
+            query = query.filter("agent_id", "eq", agent_id)
+        response = query.execute()
         return [Execution(**row) for row in response.data]
 
     async def get_execution(

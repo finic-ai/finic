@@ -49,6 +49,7 @@ class Agent(BaseModel):
 class Execution(BaseModel):
     id: str
     finic_agent_id: str
+    user_defined_agent_id: str
     app_id: str
     cloud_provider_id: str
     status: ExecutionStatus
