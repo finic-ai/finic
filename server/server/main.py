@@ -188,7 +188,9 @@ async def log_execution_attempt(
                 status_code=404, detail=f"Agent {request.agent_id} not found"
             )
         execution = await db.get_execution(
-            config=config, finic_agent_id=agent.id, execution_id=request.execution_id
+            config=config,
+            finic_agent_id=agent.finic_id,
+            execution_id=request.execution_id,
         )
         updated_execution = await runner.update_execution(
             agent=agent, execution=execution, attempt=attempt, results=request.results
