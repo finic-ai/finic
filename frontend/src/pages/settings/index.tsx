@@ -34,6 +34,10 @@ export default function SettingsPage() {
   function handleDeleteAPIKey() {
   }
 
+  function handleCopyAPIKey() {
+
+  }
+
   function renderKeyRow(key: string) {
     const obfuscatedKey = "••••••••••••" + key.slice(-4);
     return (
@@ -41,7 +45,8 @@ export default function SettingsPage() {
         <Table.Cell>
           <CopyToClipboardField
             className="h-auto grow shrink-0 basis-0"
-            text={obfuscatedKey}
+            text={key}
+            visibleText={obfuscatedKey}
           />
         </Table.Cell>
         <Table.Cell>

@@ -12,6 +12,7 @@ import { CopyToClipboardButton } from "./CopyToClipboardButton";
 interface CopyToClipboardFieldRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
   text?: string;
+  visibleText?: string;
   className?: string;
 }
 
@@ -19,7 +20,7 @@ const CopyToClipboardFieldRoot = React.forwardRef<
   HTMLElement,
   CopyToClipboardFieldRootProps
 >(function CopyToClipboardFieldRoot(
-  { text, className, ...otherProps }: CopyToClipboardFieldRootProps,
+  { text, visibleText, className, ...otherProps }: CopyToClipboardFieldRootProps,
   ref
 ) {
   return (
@@ -34,7 +35,7 @@ const CopyToClipboardFieldRoot = React.forwardRef<
       <div className="flex grow shrink-0 basis-0 items-start gap-1 pt-0.5 pb-0.5">
         {text ? (
           <span className="grow shrink-0 basis-0 whitespace-pre-wrap text-monospace-body font-monospace-body text-subtext-color">
-            {text}
+            {visibleText ? visibleText : text}
           </span>
         ) : null}
       </div>
