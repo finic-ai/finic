@@ -17,52 +17,65 @@ import { useUserStateContext } from "@/hooks/useAuth";
 import { CopyToClipboardButton } from "@/subframe/components/CopyToClipboardButton";
 import useFinicApp from "@/hooks/useFinicApp";
 import { Execution } from "@/types";
+import useUtils from "@/hooks/useUtils";
 
 interface ExecutionListProps {
   executions: Array<Execution>;
+  selectedRow: number;
+  setSelectedRow: (index: number) => void;
 }
 
-export default function ExecutionList({ executions }: ExecutionListProps) {
+export default function ExecutionList({ executions, selectedRow, setSelectedRow }: ExecutionListProps) {
 
-  // useEffect(() => {
-  //   if (bearer) {
-  //     listAgents(bearer).then((data) => {
-  //       if (data) {
-  //         setAgents(data);
-  //       }
-  //     });
-  //   }
-  // }, [bearer]);
+  const { calculateRuntime } = useUtils();
 
-  function getStatusIconName(status: string): SubframeCore.IconName {
+  function getStatusIcon(status: string): React.ReactNode {
+    let iconName: SubframeCore.IconName;
+    let iconColor: string;
+    let tooltipText: string;
     switch (status) {
       case "successful":
-        return "FeatherCheckCheck";
+        iconName = "FeatherCheckCheck"
+        iconColor = "text-success-600"
+        tooltipText = "Successful"
+        break;
       case "failed":
-        return "FeatherX";
+        iconName = "FeatherX"
+        iconColor = "text-error-600"
+        tooltipText = "Failed"
+        break;
       case "running":
-        return "FeatherClock";
+        iconName = "FeatherClock"
+        iconColor = "text-neutral-600"
+        tooltipText = "Running"
+        break;
       default:
-        return "FeatherHelpCircle";
+        iconName = "FeatherHelpCircle"
+        iconColor = "text-error-600"
+        tooltipText = "Invalid status"
     }
-  }
-
-  function calculateRuntime(execution: Execution): string {
-    if (!execution.startTime || !execution.endTime) {
-      return "N/A";
-    }
-
-    try {
-      const start = new Date(execution.startTime);
-      const end = new Date(execution.endTime);
-      const diff = end.getTime() - start.getTime();
-      const hours = Math.floor(diff / 1000 / 60 / 60);
-      const minutes = Math.floor((diff / 1000 / 60) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      return `${hours}h ${minutes}m ${seconds}s`;
-    } catch (error) {
-      return "N/A";
-    }
+    return (
+      <SubframeCore.Tooltip.Provider>
+        <SubframeCore.Tooltip.Root>
+          <SubframeCore.Tooltip.Trigger asChild={true}>
+            <SubframeCore.Icon
+              className={"text-heading-3 font-heading-3 " + iconColor}
+              name={iconName}
+            />
+          </SubframeCore.Tooltip.Trigger>
+          <SubframeCore.Tooltip.Portal>
+            <SubframeCore.Tooltip.Content
+              side="bottom"
+              align="center"
+              sideOffset={4}
+              asChild={true}
+            >
+              <Tooltip>{tooltipText}</Tooltip>
+            </SubframeCore.Tooltip.Content>
+          </SubframeCore.Tooltip.Portal>
+        </SubframeCore.Tooltip.Root>
+      </SubframeCore.Tooltip.Provider>
+    );
   }
 
   return (
@@ -132,8 +145,13 @@ export default function ExecutionList({ executions }: ExecutionListProps) {
             </Table.HeaderRow>
           }
         >
-          {executions.map((execution) => 
-            <Table.Row clickable={true}>
+          {executions.map((execution, index) => 
+            <Table.Row 
+              className={`cursor-pointer ${selectedRow == index ? "bg-brand-50" : ""}`} 
+              clickable={true} 
+              onClick={() => setSelectedRow(index)}
+              key={index}
+            >
               <Table.Cell>
                 <span className="whitespace-nowrap text-body font-body text-neutral-500">
                   {execution.startTime}
@@ -151,32 +169,9 @@ export default function ExecutionList({ executions }: ExecutionListProps) {
                 </div>
               </Table.Cell>
               <Table.Cell>
-                <SubframeCore.Tooltip.Provider>
-                  <SubframeCore.Tooltip.Root>
-                    <SubframeCore.Tooltip.Trigger asChild={true}>
-                      <SubframeCore.Icon
-                        className="text-heading-3 font-heading-3 text-success-600"
-                        name={getStatusIconName(execution.status)}
-                      />
-                    </SubframeCore.Tooltip.Trigger>
-                    <SubframeCore.Tooltip.Portal>
-                      <SubframeCore.Tooltip.Content
-                        side="bottom"
-                        align="center"
-                        sideOffset={4}
-                        asChild={true}
-                      >
-                        <Tooltip>Successful</Tooltip>
-                      </SubframeCore.Tooltip.Content>
-                    </SubframeCore.Tooltip.Portal>
-                  </SubframeCore.Tooltip.Root>
-                </SubframeCore.Tooltip.Provider>
+                {getStatusIcon(execution.status)}
               </Table.Cell>
               <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherClock"
-                />
                 <span className="whitespace-nowrap text-body font-body text-neutral-500">
                   {calculateRuntime(execution)}
                 </span>

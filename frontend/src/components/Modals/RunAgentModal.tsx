@@ -26,10 +26,12 @@ export default function RunAgentDialog({ isOpen, agentId, setIsOpen, setNewExecu
     try {
       const input = JSON.parse(args == "" ? "{}" : args);
       setErrorMessage(null);
-      runAgent(agentId!, input).then((execution: Execution) => {
-        if (execution != null) {
+      runAgent(agentId!, input).then((execution: Execution | undefined) => {
+        if (execution) {
           setNewExecution(execution);
           setIsOpen(false);
+        } else {
+          setErrorMessage(error?.message ?? "An unknown error occurred");
         }
       });
     } catch (error: any) {
@@ -74,7 +76,7 @@ export default function RunAgentDialog({ isOpen, agentId, setIsOpen, setNewExecu
         {errorMessage == null ? null : <Alert
           variant="error"
           icon="FeatherAlertCircle"
-          title="Invalid JSON"
+          title="Error"
           description={errorMessage}
         />}
         <div className="flex w-full flex-col items-start gap-2">

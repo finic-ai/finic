@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 import { Accordion } from "@/subframe/components/Accordion";
 import { DefaultPageLayout } from "@/layouts/DefaultPageLayout";
 import { useUserStateContext } from "@/hooks/useAuth";
 import { CopyToClipboardButton } from "@/subframe/components/CopyToClipboardButton";
 import useFinicApp from "@/hooks/useFinicApp";
 import { Execution } from "@/types";
+import useUtils from "@/hooks/useUtils";
 
 interface ExecutionDetailProps {
-  selectedExecution: Execution | null;
+  selectedExecution: Execution;
 }
 
 export default function ExecutionDetail({ selectedExecution }: ExecutionDetailProps) {
@@ -24,17 +26,19 @@ export default function ExecutionDetail({ selectedExecution }: ExecutionDetailPr
   //   }
   // }, [bearer]);
 
+  const { calculateRuntime } = useUtils();
+
   return (
     <div className="flex grow shrink-0 basis-0 flex-col items-start gap-6 self-stretch rounded-md px-4 py-4 shadow-md">
       <div className="flex w-full flex-col items-start gap-1">
         <span className="text-heading-2 font-heading-2 text-default-font">
-          Amazon Scraper
+          {selectedExecution?.userDefinedAgentId}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
-          August 15, 2024 05:35:12 AM PDT
+          {moment(selectedExecution?.startTime).format("MMMM D, YYYY h:mm:ss A")}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
-          Ran for 16m 58s
+          Ran for {calculateRuntime(selectedExecution)}
         </span>
       </div>
       <div className="flex w-full flex-col items-start gap-2">
