@@ -16,16 +16,12 @@ import useFinicApp from "@/hooks/useFinicApp";
 import { Agent } from "@/types";
 
 export default function SettingsPage() {
-  const [keys, setKeys] = useState<string[]>(["test1", "test2"]);
   const { bearer } = useUserStateContext();
+  const [keys, setKeys] = useState<string[]>([bearer || ""]);
 
   useEffect(() => {
     if (bearer) {
-      // listAgents(bearer).then((data) => {
-      //   if (data) {
-      //     setAgents(data);
-      //   }
-      // });
+      setKeys([bearer]);
     }
   }, [bearer]);
 
