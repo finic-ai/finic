@@ -15,18 +15,21 @@ class FinicEnvironment(str, Enum):
 class Finic:
     def __init__(
         self,
-        api_key: str,
+        api_key: Optional[str] = None,
         environment: FinicEnvironment = FinicEnvironment.LOCAL,
         url: Optional[str] = None,
     ):
         finic_env = os.environ.get("FINIC_ENV")
         self.environment = FinicEnvironment(finic_env) if finic_env else environment
-        self.api_key = api_key
         self.secrets_manager = FinicSecretsManager(api_key, environment=environment)
         if url:
             self.url = url
         else:
             self.url = "https://finic-521298051240.us-central1.run.app"
+        if api_key:
+            self.api_key = api_key
+        else:
+            self.api_key = os.getenv("FINIC_API_KEY")
 
     def deploy_agent(
         self, agent_id: str, agent_name: str, num_retries: int, project_zipfile: str

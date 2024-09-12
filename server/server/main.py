@@ -82,8 +82,10 @@ async def validate_token(
     try:
         app_config = await db.get_config(credentials.credentials)
     except Exception:
+        print(credentials.credentials)
         raise HTTPException(status_code=401, detail="Invalid or missing public key")
     if credentials.scheme != "Bearer" or app_config is None:
+        print(credentials.credentials)
         raise HTTPException(status_code=401, detail="Invalid or missing public key")
     return app_config
 

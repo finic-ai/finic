@@ -45,6 +45,7 @@ class AgentRunner:
     ) -> Execution:
         client = run_v2.JobsClient(credentials=self.credentials)
         execution_id = str(uuid.uuid4())
+        print("secret_key", secret_key)
         request = run_v2.RunJobRequest(
             name=f"projects/{self.project}/locations/{self.location}/jobs/{Agent.get_cloud_job_id(agent)}",
             overrides={
