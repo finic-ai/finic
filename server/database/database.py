@@ -121,7 +121,7 @@ class Database:
             self.supabase.table("execution")
             .select("*")
             .filter("app_id", "eq", config.app_id)
-            .filter("agent_id", "eq", finic_agent_id)
+            .filter("finic_agent_id", "eq", finic_agent_id)
             .filter("id", "eq", execution_id)
             .execute()
         )
