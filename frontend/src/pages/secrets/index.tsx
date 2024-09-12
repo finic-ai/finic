@@ -19,12 +19,11 @@ import { useUserStateContext } from "@/hooks/useAuth";
 import useFinicApp from "@/hooks/useFinicApp";
 import { FinicSecret } from "@/types";
 
-function SecretsRow({
-  secret_data,
-}: {
-  secret_data: FinicSecret;
-}) {
-  const [secret, setSecret] = useState<FinicSecret>(secret_data);
+interface SecretsRowProps {
+  secret: FinicSecret;
+}
+
+export function SecretsRow({secret}: SecretsRowProps) {
 
   function handleDeleteSecret(agentId: string) {
   }
@@ -112,30 +111,23 @@ function SecretsRow({
   );
 }
 
-export function SecretsPage() {
-  const [agents, setAgents] = useState<Array<FinicSecret>>([]);
-  const { createAgent, listAgents, setAgentStatus, isLoading } =
-    useFinicApp();
+export default function SecretsPage() {
+  const [secrets, setSecrets] = useState<Array<FinicSecret>>([]);
   const { bearer } = useUserStateContext();
+  const { isLoading, error } = useFinicApp();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (bearer) {
-      listAgents(bearer).then((data) => {
-        if (data) {
-          setAgents(data);
-        }
-      });
-    }
+    // if (bearer) {
+    //   listAgents(bearer).then((data) => {
+    //     if (data) {
+    //       setAgents(data);
+    //     }
+    //   });
+    // }
   }, [bearer]);
-
-  function handleCreateAgent() {
-    createAgent(bearer).then((data) => {
-      navigate(`/agent/${data.id}`);
-    });
-  }
-
+  
   return (
     <DefaultPageLayout>
       <div className="flex w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
@@ -194,9 +186,7 @@ export function SecretsPage() {
             <Button
               variant="neutral-primary"
               icon="FeatherPlus"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                handleCreateAgent();
-              }}
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
             >
               Add Secret
             </Button>
@@ -215,11 +205,11 @@ export function SecretsPage() {
               </Table.HeaderRow>
             }
           >
-            {!isLoading && agents.length > 0
-              ? agents
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((agent, index) => (
-                    <SecretsRow bearer={bearer} initial_data={agent} />
+            {!isLoading && secrets.length > 0
+              ? secrets
+                  .sort((a, b) => a.serviceName.localeCompare(b.serviceName))
+                  .map((secret, index) => (
+                    <SecretsRow secret={secret} />
                   ))
               : null}
           </Table>
@@ -229,5 +219,3 @@ export function SecretsPage() {
     </DefaultPageLayout>
   );
 }
-
-export default SecretsPage;

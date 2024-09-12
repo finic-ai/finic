@@ -201,7 +201,6 @@ async def log_execution_attempt(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.get("/get-agent")
 async def get_agent(
     agent_id: str = Query(...),

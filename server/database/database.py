@@ -85,6 +85,19 @@ class Database:
             row = response.data[0]
             return Agent(**row)
         return None
+    
+    async def get_user(self, config: AppConfig) -> Optional[Agent]:
+        response = (
+            self.supabase.table("user")
+            .select("*")
+            .filter("app_id", "eq", config.app_id)
+            .filter("id", "eq", config.user_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            row = response.data[0]
+            return User(**row)
+        return None
 
     async def list_agents(self, config: AppConfig) -> List[Agent]:
         response = (
