@@ -74,6 +74,7 @@ class AgentRunner:
             app_id=agent.app_id,
             cloud_provider_id=cloud_provider_id,
             status=ExecutionStatus.running,
+            start_time=datetime.datetime.now(),
         )
 
     async def update_execution(
@@ -86,8 +87,10 @@ class AgentRunner:
         # Update the execution status
         if attempt.success:
             execution.status = ExecutionStatus.successful
+            execution.end_time = datetime.datetime.now()
         elif len(execution.attempts) == agent.num_retries:
             execution.status = ExecutionStatus.failed
+            execution.end_time = datetime.datetime.now()
         else:
             execution.status = ExecutionStatus.running
 

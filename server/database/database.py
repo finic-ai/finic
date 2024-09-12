@@ -22,13 +22,6 @@ import tempfile
 import pdb
 
 
-def get_supabase_timestamp(date: Optional[datetime.datetime] = None):
-    supabase_format = "%Y-%m-%dT%H:%M:%S.%f%z"
-    if date:
-        return date.strftime(supabase_format)
-    return datetime.datetime.now().strftime(supabase_format)
-
-
 def get_file_size(file: io.BytesIO) -> int:
     return file.getbuffer().nbytes
 

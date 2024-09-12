@@ -260,7 +260,7 @@ async def get_execution(
     try:
         agent = await db.get_agent(config=config, id=agent_id)
         execution = await db.get_execution(
-            config=config, agent_id=agent.finic_id, execution_id=execution_id
+            config=config, finic_agent_id=agent.finic_id, execution_id=execution_id
         )
         return execution
     except Exception as e:
@@ -282,19 +282,6 @@ async def list_executions(
             config=config, finic_agent_id=finic_agent_id, user_defined_agent_id=agent_id
         )
         return executions
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/upsert-execution")
-async def upsert_execution(
-    execution: Execution = Body(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        await db.upsert_execution(execution)
-        return execution
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
