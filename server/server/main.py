@@ -187,19 +187,23 @@ async def log_execution_attempt(
             raise HTTPException(
                 status_code=404, detail=f"Agent {request.agent_id} not found"
             )
+        print("getting execution")
         execution = await db.get_execution(
             config=config,
             finic_agent_id=agent.finic_id,
             execution_id=request.execution_id,
         )
+        print("updating execution")
         updated_execution = await runner.update_execution(
             agent=agent, execution=execution, attempt=attempt, results=request.results
         )
+        print("upserting execution")
         await db.upsert_execution(updated_execution)
         return execution
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/get-agent")
 async def get_agent(

@@ -83,7 +83,7 @@ class ExecutionLog(BaseModel):
 class ExecutionAttempt(BaseModel):
     success: bool
     attempt_number: int
-    logs: List[ExecutionLog]
+    logs: List[ExecutionLog] = []
 
 
 class FinicEnvironment(str, Enum):
