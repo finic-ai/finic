@@ -15,16 +15,13 @@ import { useUserStateContext } from "@/hooks/useAuth";
 import useFinicApp from "@/hooks/useFinicApp";
 import { Agent } from "@/types";
 
-export function SettingsPage() {
+export default function SettingsPage() {
   const { bearer } = useUserStateContext();
+  const [keys, setKeys] = useState<string[]>([bearer || ""]);
 
   useEffect(() => {
     if (bearer) {
-      // listAgents(bearer).then((data) => {
-      //   if (data) {
-      //     setAgents(data);
-      //   }
-      // });
+      setKeys([bearer]);
     }
   }, [bearer]);
 
@@ -35,6 +32,62 @@ export function SettingsPage() {
   }
 
   function handleDeleteAPIKey() {
+  }
+
+  function handleCopyAPIKey() {
+
+  }
+
+  function renderKeyRow(key: string) {
+    const obfuscatedKey = "••••••••••••" + key.slice(-4);
+    return (
+      <Table.Row key={key}>
+        <Table.Cell>
+          <CopyToClipboardField
+            className="h-auto grow shrink-0 basis-0"
+            text={key}
+            visibleText={obfuscatedKey}
+          />
+        </Table.Cell>
+        <Table.Cell>
+          <span className="text-body font-body text-neutral-500">
+            Feb 28, 2023
+          </span>
+        </Table.Cell>
+        <Table.Cell>
+          <span className="text-body font-body text-neutral-500">
+            Mar 16, 2023
+          </span>
+        </Table.Cell>
+        <Table.Cell>
+          <SubframeCore.DropdownMenu.Root>
+            <SubframeCore.DropdownMenu.Trigger asChild={true}>
+              <IconButton
+                size="medium"
+                icon="FeatherMoreHorizontal"
+                onClick={(
+                  event: React.MouseEvent<HTMLButtonElement>
+                ) => {}}
+              />
+            </SubframeCore.DropdownMenu.Trigger>
+            <SubframeCore.DropdownMenu.Portal>
+              <SubframeCore.DropdownMenu.Content
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                asChild={true}
+              >
+                <DropdownMenu className="h-auto w-auto min-w-[128px] flex-none">
+                  <DropdownMenu.DropdownItem icon="FeatherMinusCircle">
+                    Remove
+                  </DropdownMenu.DropdownItem>
+                </DropdownMenu>
+              </SubframeCore.DropdownMenu.Content>
+            </SubframeCore.DropdownMenu.Portal>
+          </SubframeCore.DropdownMenu.Root>
+        </Table.Cell>
+      </Table.Row>
+    )
   }
 
   return (
@@ -81,147 +134,7 @@ export function SettingsPage() {
                     </Table.HeaderRow>
                   }
                 >
-                  <Table.Row>
-                    <Table.Cell>
-                      <CopyToClipboardField
-                        className="h-auto grow shrink-0 basis-0"
-                        text="sk-••••••••••ICHD"
-                      />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className="text-body font-body text-neutral-500">
-                        Feb 28, 2023
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className="text-body font-body text-neutral-500">
-                        Mar 16, 2023
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <SubframeCore.DropdownMenu.Root>
-                        <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                          <IconButton
-                            size="medium"
-                            icon="FeatherMoreHorizontal"
-                            onClick={(
-                              event: React.MouseEvent<HTMLButtonElement>
-                            ) => {}}
-                          />
-                        </SubframeCore.DropdownMenu.Trigger>
-                        <SubframeCore.DropdownMenu.Portal>
-                          <SubframeCore.DropdownMenu.Content
-                            side="bottom"
-                            align="end"
-                            sideOffset={8}
-                            asChild={true}
-                          >
-                            <DropdownMenu className="h-auto w-auto min-w-[128px] flex-none">
-                              <DropdownMenu.DropdownItem icon="FeatherMinusCircle">
-                                Remove
-                              </DropdownMenu.DropdownItem>
-                            </DropdownMenu>
-                          </SubframeCore.DropdownMenu.Content>
-                        </SubframeCore.DropdownMenu.Portal>
-                      </SubframeCore.DropdownMenu.Root>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell>
-                      <CopyToClipboardField
-                        className="h-auto grow shrink-0 basis-0"
-                        text="sk-••••••••••yzUA"
-                      />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className="text-body font-body text-neutral-500">
-                        Feb 21, 2023
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className="text-body font-body text-neutral-500">
-                        Sept 3, 2023
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <SubframeCore.DropdownMenu.Root>
-                        <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                          <IconButton
-                            size="medium"
-                            icon="FeatherMoreHorizontal"
-                            onClick={(
-                              event: React.MouseEvent<HTMLButtonElement>
-                            ) => {}}
-                          />
-                        </SubframeCore.DropdownMenu.Trigger>
-                        <SubframeCore.DropdownMenu.Portal>
-                          <SubframeCore.DropdownMenu.Content
-                            side="bottom"
-                            align="end"
-                            sideOffset={8}
-                            asChild={true}
-                          >
-                            <DropdownMenu className="h-auto w-auto min-w-[128px] flex-none">
-                              <DropdownMenu.DropdownItem icon="FeatherEdit2">
-                                Edit
-                              </DropdownMenu.DropdownItem>
-                              <DropdownMenu.DropdownItem icon="FeatherMinusCircle">
-                                Remove
-                              </DropdownMenu.DropdownItem>
-                            </DropdownMenu>
-                          </SubframeCore.DropdownMenu.Content>
-                        </SubframeCore.DropdownMenu.Portal>
-                      </SubframeCore.DropdownMenu.Root>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell>
-                      <CopyToClipboardField
-                        className="h-auto grow shrink-0 basis-0"
-                        text="sk-••••••••••pFdM"
-                      />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className="text-body font-body text-neutral-500">
-                        Jan 11, 2023
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className="text-body font-body text-neutral-500">
-                        Never
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <SubframeCore.DropdownMenu.Root>
-                        <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                          <IconButton
-                            size="medium"
-                            icon="FeatherMoreHorizontal"
-                            onClick={(
-                              event: React.MouseEvent<HTMLButtonElement>
-                            ) => {}}
-                          />
-                        </SubframeCore.DropdownMenu.Trigger>
-                        <SubframeCore.DropdownMenu.Portal>
-                          <SubframeCore.DropdownMenu.Content
-                            side="bottom"
-                            align="end"
-                            sideOffset={8}
-                            asChild={true}
-                          >
-                            <DropdownMenu className="h-auto w-auto min-w-[128px] flex-none">
-                              <DropdownMenu.DropdownItem icon="FeatherEdit2">
-                                Edit
-                              </DropdownMenu.DropdownItem>
-                              <DropdownMenu.DropdownItem icon="FeatherMinusCircle">
-                                Remove
-                              </DropdownMenu.DropdownItem>
-                            </DropdownMenu>
-                          </SubframeCore.DropdownMenu.Content>
-                        </SubframeCore.DropdownMenu.Portal>
-                      </SubframeCore.DropdownMenu.Root>
-                    </Table.Cell>
-                  </Table.Row>
+                  {keys.map((key) => renderKeyRow(key))}
                 </Table>
               </div>
             </div>
@@ -231,5 +144,3 @@ export function SettingsPage() {
     </DefaultPageLayout>
   );
 }
-
-export default SettingsPage;

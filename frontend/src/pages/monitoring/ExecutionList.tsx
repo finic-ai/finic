@@ -1,68 +1,73 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as SubframeCore from "@subframe/core";
 import { TextField } from "@/subframe/components/TextField";
-import { Button } from "@/subframe/components/Button";
-import { IconButton } from "@/subframe/components/IconButton";
 import { Table } from "@/subframe/components/Table";
-import { Checkbox } from "@/subframe/components/Checkbox";
 import { Tooltip } from "@/subframe/components/Tooltip";
-import { Badge } from "@/subframe/components/Badge";
-import { Accordion } from "@/subframe/components/Accordion";
-import { DropdownMenu } from "@/subframe/components/DropdownMenu";
-import { DefaultPageLayout } from "@/layouts/DefaultPageLayout";
-import { useUserStateContext } from "@/hooks/useAuth";
-import { CopyToClipboardButton } from "@/subframe/components/CopyToClipboardButton";
-import useFinicApp from "@/hooks/useFinicApp";
+import { IconButton } from "@/subframe/components/IconButton";
+import moment from "moment-timezone";
 import { Execution } from "@/types";
+import useUtils from "@/hooks/useUtils";
 
 interface ExecutionListProps {
   executions: Array<Execution>;
+  selectedRow: number;
+  setSelectedRow: (index: number) => void;
+  fetchExecutions: () => void;
 }
 
-export default function ExecutionList({ executions }: ExecutionListProps) {
+export default function ExecutionList({ executions, selectedRow, setSelectedRow, fetchExecutions }: ExecutionListProps) {
 
-  // useEffect(() => {
-  //   if (bearer) {
-  //     listAgents(bearer).then((data) => {
-  //       if (data) {
-  //         setAgents(data);
-  //       }
-  //     });
-  //   }
-  // }, [bearer]);
+  const { calculateRuntime } = useUtils();
 
-  function getStatusIconName(status: string): SubframeCore.IconName {
+  function getStatusIcon(status: string): React.ReactNode {
+    let iconName: SubframeCore.IconName;
+    let iconColor: string;
+    let tooltipText: string;
     switch (status) {
       case "successful":
-        return "FeatherCheckCheck";
+        iconName = "FeatherCheckCheck"
+        iconColor = "text-success-600"
+        tooltipText = "Successful"
+        break;
       case "failed":
-        return "FeatherX";
+        iconName = "FeatherX"
+        iconColor = "text-error-600"
+        tooltipText = "Failed"
+        break;
       case "running":
-        return "FeatherClock";
+        iconName = "FeatherClock"
+        iconColor = "text-neutral-600"
+        tooltipText = "Running"
+        break;
       default:
-        return "FeatherHelpCircle";
+        iconName = "FeatherHelpCircle"
+        iconColor = "text-error-600"
+        tooltipText = "Invalid status"
     }
-  }
-
-  function calculateRuntime(execution: Execution): string {
-    if (!execution.startTime || !execution.endTime) {
-      return "N/A";
-    }
-
-    try {
-      const start = new Date(execution.startTime);
-      const end = new Date(execution.endTime);
-      const diff = end.getTime() - start.getTime();
-      const hours = Math.floor(diff / 1000 / 60 / 60);
-      const minutes = Math.floor((diff / 1000 / 60) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      return `${hours}h ${minutes}m ${seconds}s`;
-    } catch (error) {
-      return "N/A";
-    }
+    return (
+      <SubframeCore.Tooltip.Provider>
+        <SubframeCore.Tooltip.Root>
+          <SubframeCore.Tooltip.Trigger asChild={true}>
+            <SubframeCore.Icon
+              className={"text-heading-3 font-heading-3 " + iconColor}
+              name={iconName}
+            />
+          </SubframeCore.Tooltip.Trigger>
+          <SubframeCore.Tooltip.Portal>
+            <SubframeCore.Tooltip.Content
+              side="bottom"
+              align="center"
+              sideOffset={4}
+              asChild={true}
+            >
+              <Tooltip>{tooltipText}</Tooltip>
+            </SubframeCore.Tooltip.Content>
+          </SubframeCore.Tooltip.Portal>
+        </SubframeCore.Tooltip.Root>
+      </SubframeCore.Tooltip.Provider>
+    );
   }
 
   return (
@@ -84,16 +89,16 @@ export default function ExecutionList({ executions }: ExecutionListProps) {
             />
           </TextField>
         </div>
-        {/* <div className="flex items-center gap-2 mobile:h-auto mobile:w-auto mobile:flex-none">
+        <div className="flex items-center gap-2 mobile:h-auto mobile:w-auto mobile:flex-none">
           <IconButton
             icon="FeatherRefreshCw"
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+            onClick={() => {fetchExecutions()}}
           />
-          <IconButton
+          {/* <IconButton
             icon="FeatherSettings"
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-          />
-        </div> */}
+          /> */}
+        </div>
       </div>
       {/* <div className="flex w-full flex-wrap items-start gap-4 mobile:flex-col mobile:flex-wrap mobile:gap-4">
         <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
@@ -125,20 +130,19 @@ export default function ExecutionList({ executions }: ExecutionListProps) {
         <Table
           header={
             <Table.HeaderRow>
-              <Table.HeaderCell />
               <Table.HeaderCell>Agent ID</Table.HeaderCell>
               <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell>Run Time</Table.HeaderCell>
+              <Table.HeaderCell>Start Time</Table.HeaderCell>
             </Table.HeaderRow>
           }
         >
-          {executions.map((execution) => 
-            <Table.Row clickable={true}>
-              <Table.Cell>
-                <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  {execution.startTime}
-                </span>
-              </Table.Cell>
+          {executions.map((execution, index) => 
+            <Table.Row 
+              className={`cursor-pointer ${selectedRow == index ? "bg-brand-50" : ""}`} 
+              clickable={true} 
+              onClick={() => setSelectedRow(index)}
+              key={index}
+            >
               <Table.Cell>
                 <div className="flex items-center gap-2">
                   <SubframeCore.Icon
@@ -151,34 +155,11 @@ export default function ExecutionList({ executions }: ExecutionListProps) {
                 </div>
               </Table.Cell>
               <Table.Cell>
-                <SubframeCore.Tooltip.Provider>
-                  <SubframeCore.Tooltip.Root>
-                    <SubframeCore.Tooltip.Trigger asChild={true}>
-                      <SubframeCore.Icon
-                        className="text-heading-3 font-heading-3 text-success-600"
-                        name={getStatusIconName(execution.status)}
-                      />
-                    </SubframeCore.Tooltip.Trigger>
-                    <SubframeCore.Tooltip.Portal>
-                      <SubframeCore.Tooltip.Content
-                        side="bottom"
-                        align="center"
-                        sideOffset={4}
-                        asChild={true}
-                      >
-                        <Tooltip>Successful</Tooltip>
-                      </SubframeCore.Tooltip.Content>
-                    </SubframeCore.Tooltip.Portal>
-                  </SubframeCore.Tooltip.Root>
-                </SubframeCore.Tooltip.Provider>
+                {getStatusIcon(execution.status)}
               </Table.Cell>
               <Table.Cell>
-                <SubframeCore.Icon
-                  className="text-body font-body text-subtext-color"
-                  name="FeatherClock"
-                />
                 <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  {calculateRuntime(execution)}
+                  {moment(execution.startTime).tz("UTC").format("MMM D, h:mm A")}
                 </span>
               </Table.Cell>
             </Table.Row>)}

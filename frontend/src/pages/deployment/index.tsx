@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import moment from "moment-timezone";
 import * as SubframeCore from "@subframe/core";
 import { TextField } from "@/subframe/components/TextField";
 import { Button } from "@/subframe/components/Button";
@@ -77,7 +78,11 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
             <SubframeCore.Tooltip.Trigger asChild={true}>
               <SubframeCore.Icon
                 className="text-heading-3 font-heading-3 text-success-600"
-                name="FeatherCheckCheck"
+                name={agent.status === "deployed"
+                  ? "FeatherCheckCheck"
+                  : agent.status === "deploying"
+                  ? "FeatherClock"
+                  : "FeatherAlertOctagon"}
               />
             </SubframeCore.Tooltip.Trigger>
             <SubframeCore.Tooltip.Portal>
@@ -88,11 +93,11 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
                 asChild={true}
               >
                 <Tooltip>
-                  {agent.status === "success"
-                    ? "Last Run Successful"
-                    : agent.status === "failed"
-                    ? "Last Run Failed"
-                    : "Draft"}
+                  {agent.status === "deployed"
+                    ? "Deployed"
+                    : agent.status === "deploying"
+                    ? "Deploying..."
+                    : "Deploy Failed"}
                 </Tooltip>
               </SubframeCore.Tooltip.Content>
             </SubframeCore.Tooltip.Portal>
@@ -105,7 +110,7 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
           name="FeatherClock"
         />
         <span className="whitespace-nowrap text-body font-body text-neutral-500">
-          1.8s
+          {moment(agent.createdAt).tz("UTC").format("YYYY-MM-DD HH:mm:ss")}
         </span>
       </Table.Cell>
       <Table.Cell>
@@ -147,8 +152,9 @@ export function DeploymentPage() {
   const [newExecution, setNewExecution] = useState<Execution | null>(null);
   const { isLoading, listAgents } = useFinicApp();
   const { bearer } = useUserStateContext();
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  function fetchAgents() {
     if (bearer) {
       listAgents().then((data) => {
         if (data) {
@@ -156,6 +162,10 @@ export function DeploymentPage() {
         }
       });
     }
+  }
+
+  useEffect(() => {
+    fetchAgents();
   }, [bearer]);
 
   return (
@@ -181,7 +191,7 @@ export function DeploymentPage() {
                 icon={null}
                 iconRight={null}
                 loading={false}
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                onClick={() => {navigate(`/monitoring`)}}
               >
                 View Status
               </Button>
@@ -224,11 +234,11 @@ export function DeploymentPage() {
             </Button> */}
           </div>
           <div className="flex items-center gap-2 mobile:h-auto mobile:w-auto mobile:flex-none">
-            {/* <IconButton
-              icon="FeatherRefreshCw"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-            />
             <IconButton
+              icon="FeatherRefreshCw"
+              onClick={() => {fetchAgents()}}
+            />
+            {/* <IconButton
               icon="FeatherSettings"
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
             /> */}
@@ -248,14 +258,14 @@ export function DeploymentPage() {
                 <Table.HeaderCell>Agent ID</Table.HeaderCell>
                 <Table.HeaderCell>Description</Table.HeaderCell>
                 <Table.HeaderCell>Status</Table.HeaderCell>
-                <Table.HeaderCell>Created Date</Table.HeaderCell>
+                <Table.HeaderCell>Date Created</Table.HeaderCell>
                 <Table.HeaderCell>-</Table.HeaderCell>
               </Table.HeaderRow>
             }
           >
             {!isLoading && agents.length > 0
               ? agents
-                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .sort((a, b) => a.id.localeCompare(b.id))
                   .map((agent, index) => (
                     <AgentRow 
                       bearer={bearer} 

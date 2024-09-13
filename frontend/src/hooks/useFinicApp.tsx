@@ -9,9 +9,9 @@ const server_url = import.meta.env.VITE_APP_SERVER_URL;
 interface FinicAppContextType {
   error: Error | null;
   isLoading: boolean;
-  listAgents: () => Promise<Agent[]>;
-  runAgent: (agentId: string, input: Record<string, any>) => Promise<Execution>;
-  listExecutions: () => Promise<Execution[]>;
+  listAgents: () => Promise<Agent[] | undefined>;
+  runAgent: (agentId: string, input: Record<string, any>) => Promise<Execution | undefined>;
+  listExecutions: () => Promise<Execution[] | undefined>;
 }
 
 const FinicAppContext = createContext<FinicAppContextType | undefined>(undefined);
@@ -58,7 +58,7 @@ export const FinicAppContextProvider: React.FC<{ children: React.ReactNode }> = 
         }
       });
       const data = await response.json();
-      return humps.camelizeKeys(data);
+      return humps.camelizeKeys(data) as Agent[];
     } catch (err: any) {
       console.log(err);
       setError(err);
@@ -85,7 +85,7 @@ export const FinicAppContextProvider: React.FC<{ children: React.ReactNode }> = 
       });
       const data = await response.json();
       console.log(data);
-      return humps.camelizeKeys(data);
+      return humps.camelizeKeys(data) as Execution[];
     } catch (err: any) {
       console.log(err);
       setError(err);

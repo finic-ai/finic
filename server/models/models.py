@@ -13,11 +13,10 @@ class AppConfig(BaseModel):
 
 class User(BaseModel):
     id: str
+    created_at: datetime.datetime
     email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    phone_number: Optional[str] = None
-    completed_onboarding: Optional[bool] = None
+    secret_key: str
+    avatar_url: str
 
 
 class AgentStatus(str, Enum):

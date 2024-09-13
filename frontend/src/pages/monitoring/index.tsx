@@ -11,12 +11,12 @@ import ExecutionList from "./ExecutionList";
 import ExecutionDetail from "./ExecutionDetail";
 
 export function MonitoringPage() {
-  const [selectedExecution, setSelectedExecution] = useState<Execution | null>(null);
+  const [selectedRow, setSelectedRow] = useState<number>(0);
   const [executions, setExecutions] = useState<Execution[]>([]);
   const { listExecutions, error, isLoading } = useFinicApp();
   const { bearer } = useUserStateContext();
 
-  useEffect(() => {
+  function fetchExecutions() {
     if (bearer) {
       listExecutions().then((data) => {
         if (data) {
@@ -24,6 +24,10 @@ export function MonitoringPage() {
         }
       });
     }
+  }
+
+  useEffect(() => {
+    fetchExecutions();
   }, [bearer]);
 
   return (
@@ -38,8 +42,13 @@ export function MonitoringPage() {
           </span>
         </div>
         <div className="flex w-full grow shrink-0 basis-0 items-start gap-6">
-          <ExecutionList executions={executions} />
-          <ExecutionDetail selectedExecution={selectedExecution} />
+          <ExecutionList 
+            executions={executions} 
+            selectedRow={selectedRow} 
+            setSelectedRow={setSelectedRow}
+            fetchExecutions={fetchExecutions}
+          />
+          {executions.length > 0 ? <ExecutionDetail selectedExecution={executions[selectedRow]} /> : null}
         </div>
       </div>
       <div className="flex w-full flex-col items-start gap-6 overflow-hidden overflow-auto mobile:overflow-auto mobile:max-w-full" />

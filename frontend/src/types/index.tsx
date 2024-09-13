@@ -29,4 +29,5 @@ export type Execution = {
   startTime: string | null;
   endTime: string | null;
   results: Record<string, any>;
+  attempts: Array<Record<string, any>>;
 };
