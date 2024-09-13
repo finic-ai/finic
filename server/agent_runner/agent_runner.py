@@ -49,7 +49,6 @@ class AgentRunner:
     ) -> Execution:
         client = run_v2.JobsClient(credentials=self.credentials)
         execution_id = str(uuid.uuid4())
-        print("secret_key", secret_key)
         request = run_v2.RunJobRequest(
             name=f"projects/{self.project}/locations/{self.location}/jobs/{Agent.get_cloud_job_id(agent)}",
             overrides={
@@ -97,14 +96,11 @@ class AgentRunner:
         ]
         attempt.logs = []
 
-        print("Adding logs to attempt")
-
         for entry in self.logging_client.list_entries(
             resource_names=[f"projects/{self.project}"],
             filter_=" ".join(filters),
             order_by=logging_v2.ASCENDING,
         ):
-            print(entry)
             severity = LogSeverity.from_cloud_logging_severity(entry.severity)
             if severity is None:
                 continue
@@ -114,8 +110,6 @@ class AgentRunner:
                     message=str(entry.payload),
                 )
             )
-
-        print("attempt.logs", attempt.logs)
 
         # Add the attempt to the execution
         execution.attempts.append(attempt)

@@ -2,6 +2,29 @@ import os
 import sys
 import json
 from .finic import Finic
+import subprocess
+
+
+def zip_files_cli(zip_file):
+    try:
+        # First zip command (for untracked files)
+        command_1 = (
+            f"git ls-files -z --others --exclude-standard | xargs -0 zip -r {zip_file}"
+        )
+        subprocess.run(
+            command_1, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+
+        # Second zip command (for tracked files)
+        command_2 = f"git ls-files -z | xargs -0 zip -ur {zip_file}"
+        subprocess.run(
+            command_2, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+
+        print(f"Zipped files into {zip_file}")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error occurred during zipping: {e}")
 
 
 def create_finic_app(argv=sys.argv):
@@ -57,9 +80,7 @@ def deploy(argv=sys.argv):
 
     # Zip the project into /tmp/project.zip, ignoring all .gitignore patterns
 
-    os.system(
-        f"git ls-files -z --others --exclude-standard | xargs -0 zip -r {zip_file} && git ls-files -z | xargs -0 zip -ur {zip_file}"
-    )
+    zip_files_cli(zip_file)
 
     result = finic.deploy_agent(agent_id, agent_name, num_retries, zip_file)
 
