@@ -59,9 +59,32 @@ class Execution(BaseModel):
     attempts: List["ExecutionAttempt"] = []
 
 
+class LogSeverity(str, Enum):
+    DEFAULT = "DEFAULT"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+
+    @staticmethod
+    def from_cloud_logging_severity(severity: str) -> "LogSeverity":
+        if severity == "DEFAULT" or severity is None:
+            return LogSeverity.DEFAULT
+        elif severity == "WARNING":
+            return LogSeverity.WARNING
+        elif severity in ["ERROR", "CRITICAL", "ALERT", "EMERGENCY"]:
+            return LogSeverity.ERROR
+        else:
+            return None
+
+
+class ExecutionLog(BaseModel):
+    severity: LogSeverity
+    message: str
+
+
 class ExecutionAttempt(BaseModel):
     success: bool
-    logs: List[str]
+    attempt_number: int
+    logs: List[ExecutionLog]
 
 
 class FinicEnvironment(str, Enum):

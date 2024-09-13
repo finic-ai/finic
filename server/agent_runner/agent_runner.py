@@ -9,6 +9,8 @@ from models.models import (
     Execution,
     ExecutionStatus,
     ExecutionAttempt,
+    ExecutionLog,
+    LogSeverity,
 )
 from supabase import create_client, Client
 import os
@@ -27,6 +29,7 @@ import json
 from google.cloud import run_v2
 from google.oauth2 import service_account
 import uuid
+from google.cloud import logging_v2
 
 
 class AgentRunner:
@@ -39,6 +42,7 @@ class AgentRunner:
         )
         self.project = os.getenv("GCLOUD_PROJECT")
         self.location = os.getenv("GCLOUD_LOCATION")
+        self.logging_client = logging_v2.Client(credentials=self.credentials)
 
     async def start_agent(
         self, secret_key: str, agent: Agent, input: Dict
@@ -84,19 +88,54 @@ class AgentRunner:
         attempt: ExecutionAttempt,
         results: Dict,
     ):
+        filters = [
+            f'resource.type ="cloud_run_job"',
+            f'resource.labels.job_name="{Agent.get_cloud_job_id(agent)}"',
+            f'labels."run.googleapis.com/execution_name"="{execution.cloud_provider_id}"',
+            f'labels."run.googleapis.com/task_attempt"="{attempt.attempt_number}"',
+        ]
+        attempt.logs = []
+
+        for entry in self.logging_client.list_entries(
+            resource_names=[f"projects/{self.project}"],
+            filter_=" ".join(filters),
+            order_by=logging_v2.ASCENDING,
+        ):
+            severity = LogSeverity.from_cloud_logging_severity(entry.severity)
+            if severity is None:
+                continue
+            attempt.logs.append(
+                ExecutionLog(
+                    severity=severity,
+                    message=str(entry.payload),
+                )
+            )
+
+        # Add the attempt to the execution
+        execution.attempts.append(attempt)
+
+        # Make sure the list is deduped and ordered by attempt number
+        execution.attempts = list(
+            sorted(
+                list(
+                    {
+                        attempt.attempt_number: attempt
+                        for attempt in execution.attempts
+                    }.values()
+                ),
+                key=lambda x: x.attempt_number,
+            )
+        )
+
         # Update the execution status
         if attempt.success:
             execution.status = ExecutionStatus.successful
             execution.end_time = datetime.datetime.now()
+            execution.results = results
         elif len(execution.attempts) == agent.num_retries:
             execution.status = ExecutionStatus.failed
             execution.end_time = datetime.datetime.now()
         else:
             execution.status = ExecutionStatus.running
-
-        # Add the attempt to the execution
-        execution.attempts.append(attempt.dict())
-
-        execution.results = results
 
         return execution

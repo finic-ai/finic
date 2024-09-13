@@ -103,6 +103,7 @@ class Finic:
         else:
             execution_id = os.getenv("FINIC_EXECUTION_ID")
             agent_id = os.getenv("FINIC_AGENT_ID")
+            attempt_number = os.getenv("CLOUD_RUN_TASK_ATTEMPT")
             requests.post(
                 f"{self.url}/log-execution-attempt",
                 headers={
@@ -116,6 +117,7 @@ class Finic:
                     "attempt": {
                         "success": success,
                         "logs": logs,
+                        "attempt_number": attempt_number,
                     },
                 },
             )
@@ -147,7 +149,11 @@ class Finic:
                 results = func(input_data)
                 self.log_attempt(success=True, logs=[], results=results)
             except Exception as e:
-                self.log_attempt(success=False, logs=[str(e)], results={})
+                self.log_attempt(
+                    success=False,
+                    logs=[{"severity": "error", "message": str(e)}],
+                    results={},
+                )
                 raise e
 
         return wrapper
