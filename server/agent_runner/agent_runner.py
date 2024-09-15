@@ -135,28 +135,9 @@ class AgentRunner:
                 attempt_number=attempt.attempt_number,
             )
 
-            attempt.logs.extend(logs)
-            if len(logs) > 0:
+            if len(logs) == len(attempt.logs) and len(logs) > 0:
                 break
             await asyncio.sleep(5)
-
-        for entry in self.logging_client.list_entries(
-            resource_names=[f"projects/{self.project}"],
-            filter_=" ".join(filters),
-            order_by=logging_v2.ASCENDING,
-        ):
-            print("entry", entry)
-            severity = LogSeverity.from_cloud_logging_severity(entry.severity)
-            if severity is None:
-                print(f"Unknown severity: {entry.severity}")
-                continue
-            attempt.logs.append(
-                ExecutionLog(
-                    severity=severity,
-                    message=str(entry.payload),
-                    timestamp=entry.timestamp,
-                )
-            )
 
         # Add the attempt to the execution
         execution.attempts.append(attempt)
