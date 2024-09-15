@@ -101,6 +101,7 @@ class AgentRunner:
             filter_=" ".join(filters),
             order_by=logging_v2.ASCENDING,
         ):
+            print("entry", entry)
             severity = LogSeverity.from_cloud_logging_severity(entry.severity)
             if severity is None:
                 continue
@@ -133,7 +134,7 @@ class AgentRunner:
             execution.status = ExecutionStatus.successful
             execution.end_time = datetime.datetime.now()
             execution.results = results
-        elif len(execution.attempts) == agent.num_retries:
+        elif len(execution.attempts) == agent.num_retries + 1:
             execution.status = ExecutionStatus.failed
             execution.end_time = datetime.datetime.now()
         else:

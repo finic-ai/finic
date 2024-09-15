@@ -151,7 +151,7 @@ class Finic:
             except Exception as e:
                 self.log_attempt(
                     success=False,
-                    logs=[{"severity": "error", "message": str(e)}],
+                    logs=[{"severity": "ERROR", "message": str(e)}],
                     results={},
                 )
                 raise e
