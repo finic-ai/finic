@@ -53,7 +53,7 @@ function AgentRow({
         navigate(`/agent/${agent.id}`);
       }}
     >
-      <Table.Cell>
+      {/* <Table.Cell>
         <Button
           disabled={false}
           variant="neutral-primary"
@@ -65,7 +65,7 @@ function AgentRow({
         >
           Run
         </Button>
-      </Table.Cell>
+      </Table.Cell> */}
       <Table.Cell>
         <div className="flex items-center gap-2">
           <SubframeCore.Icon
@@ -280,7 +280,6 @@ export function DeploymentPage() {
           <Table
             header={
               <Table.HeaderRow>
-                <Table.HeaderCell />
                 <Table.HeaderCell>Agent ID</Table.HeaderCell>
                 <Table.HeaderCell>Description</Table.HeaderCell>
                 <Table.HeaderCell>Status</Table.HeaderCell>

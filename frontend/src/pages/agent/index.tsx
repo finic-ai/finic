@@ -12,6 +12,7 @@ import { Agent, Execution } from "@/types";
 import ExecutionList from "../monitoring/ExecutionList";
 import ExecutionDetail from "../monitoring/ExecutionDetail";
 import { useParams } from "react-router-dom";
+import { RunAgentModal } from "@/components/Modals";
 
 export function AgentPage() {
   const { id } = useParams();
@@ -20,6 +21,7 @@ export function AgentPage() {
   const [agent, setAgent] = useState<Agent | undefined>(undefined);
   const { listExecutions, getAgent, error, isLoading } = useFinicApp();
   const { bearer } = useUserStateContext();
+  const [runAgentModalOpen, setRunAgentModalOpen] = useState(false);
 
   async function fetchExecutions() {
     if (bearer && id) {
@@ -45,6 +47,14 @@ export function AgentPage() {
 
   return (
     <DefaultPageLayout>
+      <RunAgentModal
+        isOpen={runAgentModalOpen}
+        setIsOpen={setRunAgentModalOpen}
+        setNewExecution={(execution: Execution) => {
+          fetchExecutions();
+        }}
+        agentId={id!}
+      />
       <div className="flex w-full h-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
         <div className="flex w-full flex-col items-start gap-2">
           <div className="flex w-full items-center justify-between">
@@ -57,7 +67,7 @@ export function AgentPage() {
               size="medium"
               iconRight="FeatherPlay"
               loading={false}
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+              onClick={() => setRunAgentModalOpen(true)}
             >
               Run
             </Button>
