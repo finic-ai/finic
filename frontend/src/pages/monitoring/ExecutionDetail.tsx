@@ -150,9 +150,11 @@ export default function ExecutionDetail({
           <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto">
             {selectedExecution?.attempts
               .map((attempt) => {
+                var attemptLogs = "";
                 for (const log of attempt.logs) {
-                  return `[${log.severity}] ${log.message}`;
+                  attemptLogs += `${log.timestamp} [${log.severity}] ${log.message}\n`;
                 }
+                return attemptLogs;
               })
               .join("\n")}
           </span>

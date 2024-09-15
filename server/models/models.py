@@ -45,19 +45,6 @@ class Agent(BaseModel):
         return f"job-{agent.finic_id}"
 
 
-class Execution(BaseModel):
-    id: str
-    finic_agent_id: str
-    user_defined_agent_id: str
-    app_id: str
-    cloud_provider_id: str
-    status: ExecutionStatus
-    start_time: Optional[datetime.datetime] = None
-    end_time: Optional[datetime.datetime] = None
-    results: Dict[str, Any] = {}
-    attempts: List["ExecutionAttempt"] = []
-
-
 class LogSeverity(str, Enum):
     DEFAULT = "DEFAULT"
     WARNING = "WARNING"
@@ -80,11 +67,30 @@ class ExecutionLog(BaseModel):
     message: str
     timestamp: Optional[datetime.datetime] = None
 
+    class Config:
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
+
 
 class ExecutionAttempt(BaseModel):
     success: bool
     attempt_number: int
     logs: List[ExecutionLog] = []
+
+
+class Execution(BaseModel):
+    id: str
+    finic_agent_id: str
+    user_defined_agent_id: str
+    app_id: str
+    cloud_provider_id: str
+    status: ExecutionStatus
+    start_time: Optional[datetime.datetime] = None
+    end_time: Optional[datetime.datetime] = None
+    results: Dict[str, Any] = {}
+    attempts: List[ExecutionAttempt] = []
+
+    class Config:
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class FinicEnvironment(str, Enum):

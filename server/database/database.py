@@ -85,7 +85,7 @@ class Database:
             row = response.data[0]
             return Agent(**row)
         return None
-    
+
     async def get_user(self, config: AppConfig) -> Optional[Agent]:
         response = (
             self.supabase.table("user")
@@ -143,11 +143,15 @@ class Database:
         return None
 
     async def upsert_execution(self, execution: Execution) -> Optional[Execution]:
-        payload = execution.dict()
-        if execution.start_time:
-            payload["start_time"] = execution.start_time.isoformat()
-        if execution.end_time:
-            payload["end_time"] = execution.end_time.isoformat()
+        json_payload = execution.json()
+        payload = json.loads(json_payload)
+        # if execution.start_time:
+        #     payload["start_time"] = execution.start_time.isoformat()
+        # if execution.end_time:
+        #     payload["end_time"] = execution.end_time.isoformat()
+
+        print(payload)
+
         response = self.supabase.table("execution").upsert(payload).execute()
         if len(response.data) > 0:
             row = response.data[0]
