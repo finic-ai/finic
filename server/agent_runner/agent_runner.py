@@ -104,6 +104,7 @@ class AgentRunner:
             print("entry", entry)
             severity = LogSeverity.from_cloud_logging_severity(entry.severity)
             if severity is None:
+                print(f"Unknown severity: {entry.severity}")
                 continue
             attempt.logs.append(
                 ExecutionLog(
