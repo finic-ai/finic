@@ -134,9 +134,10 @@ class AgentRunner:
                 agent=agent,
                 attempt_number=attempt.attempt_number,
             )
-            if len(logs) == 0:
-                break
+
             attempt.logs.extend(logs)
+            if len(logs) > 0:
+                break
             await asyncio.sleep(5)
 
         for entry in self.logging_client.list_entries(
