@@ -78,6 +78,7 @@ class LogSeverity(str, Enum):
 class ExecutionLog(BaseModel):
     severity: LogSeverity
     message: str
+    timestamp: Optional[datetime.datetime] = None
 
 
 class ExecutionAttempt(BaseModel):

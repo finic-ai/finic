@@ -27,22 +27,32 @@ interface AgentRowProps {
   setSelectedAgentId: (agentId: string) => void;
 }
 
-function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId }: AgentRowProps) {
+function AgentRow({
+  bearer,
+  initial_data,
+  openRunAgentModal,
+  setSelectedAgentId,
+}: AgentRowProps) {
   const [agent, setAgent] = useState<Agent>(initial_data);
+  const navigate = useNavigate();
 
   function handleClickRunAgent() {
     openRunAgentModal();
     setSelectedAgentId(agent.id);
   }
 
-  function handleDeleteAgent(agentId: string) {
-  }
+  function handleDeleteAgent(agentId: string) {}
 
-  function handleEditAgent(agentId: string) {
-  }
+  function handleEditAgent(agentId: string) {}
 
   return (
-    <Table.Row key={agent.id}>
+    <Table.Row
+      className="hover:bg-neutral-100 cursor-pointer"
+      key={agent.id}
+      onClick={() => {
+        navigate(`/agent/${agent.id}`);
+      }}
+    >
       <Table.Cell>
         <Button
           disabled={false}
@@ -78,11 +88,13 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
             <SubframeCore.Tooltip.Trigger asChild={true}>
               <SubframeCore.Icon
                 className="text-heading-3 font-heading-3 text-success-600"
-                name={agent.status === "deployed"
-                  ? "FeatherCheckCheck"
-                  : agent.status === "deploying"
-                  ? "FeatherClock"
-                  : "FeatherAlertOctagon"}
+                name={
+                  agent.status === "deployed"
+                    ? "FeatherCheckCheck"
+                    : agent.status === "deploying"
+                    ? "FeatherClock"
+                    : "FeatherAlertOctagon"
+                }
               />
             </SubframeCore.Tooltip.Trigger>
             <SubframeCore.Tooltip.Portal>
@@ -114,32 +126,38 @@ function AgentRow({ bearer, initial_data, openRunAgentModal, setSelectedAgentId 
         </span>
       </Table.Cell>
       <Table.Cell>
-      <SubframeCore.DropdownMenu.Root>
-        <SubframeCore.DropdownMenu.Trigger asChild={true}>
-          <IconButton
-            variant="neutral-secondary"
-            icon="FeatherMoreHorizontal"
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-          />
-        </SubframeCore.DropdownMenu.Trigger>
-        <SubframeCore.DropdownMenu.Portal>
-          <SubframeCore.DropdownMenu.Content
-            side="bottom"
-            align="start"
-            sideOffset={4}
-            asChild={true}
-          >
-            <DropdownMenu>
-              <DropdownMenu.DropdownItem icon="FeatherEdit2" onClick={() => handleEditAgent(agent.id)}>
-                Edit
-              </DropdownMenu.DropdownItem>
-              <DropdownMenu.DropdownItem icon="FeatherTrash" onClick={() => handleDeleteAgent(agent.id)}>
-                Delete
-              </DropdownMenu.DropdownItem>
-            </DropdownMenu>
-          </SubframeCore.DropdownMenu.Content>
-        </SubframeCore.DropdownMenu.Portal>
-      </SubframeCore.DropdownMenu.Root>
+        <SubframeCore.DropdownMenu.Root>
+          <SubframeCore.DropdownMenu.Trigger asChild={true}>
+            <IconButton
+              variant="neutral-secondary"
+              icon="FeatherMoreHorizontal"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+            />
+          </SubframeCore.DropdownMenu.Trigger>
+          <SubframeCore.DropdownMenu.Portal>
+            <SubframeCore.DropdownMenu.Content
+              side="bottom"
+              align="start"
+              sideOffset={4}
+              asChild={true}
+            >
+              <DropdownMenu>
+                <DropdownMenu.DropdownItem
+                  icon="FeatherEdit2"
+                  onClick={() => handleEditAgent(agent.id)}
+                >
+                  Edit
+                </DropdownMenu.DropdownItem>
+                <DropdownMenu.DropdownItem
+                  icon="FeatherTrash"
+                  onClick={() => handleDeleteAgent(agent.id)}
+                >
+                  Delete
+                </DropdownMenu.DropdownItem>
+              </DropdownMenu>
+            </SubframeCore.DropdownMenu.Content>
+          </SubframeCore.DropdownMenu.Portal>
+        </SubframeCore.DropdownMenu.Root>
       </Table.Cell>
     </Table.Row>
   );
@@ -170,42 +188,48 @@ export function DeploymentPage() {
 
   return (
     <DefaultPageLayout>
-      <RunAgentModal 
-        isOpen={runAgentModalOpen} 
-        setIsOpen={setRunAgentModalOpen} 
+      <RunAgentModal
+        isOpen={runAgentModalOpen}
+        setIsOpen={setRunAgentModalOpen}
         setNewExecution={setNewExecution}
         agentId={selectedAgentId}
       />
-      <div className="flex w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
-        {newExecution ? <Alert
-          variant="neutral"
-          icon="FeatherRocket"
-          title="We have liftoff!"
-          description={`Agent ${selectedAgentId} is now running.`}
-          actions={
-            <>
-              <Button
-                disabled={false}
-                variant="neutral-secondary"
-                size="medium"
-                icon={null}
-                iconRight={null}
-                loading={false}
-                onClick={() => {navigate(`/monitoring`)}}
-              >
-                View Status
-              </Button>
-              <IconButton
-                size="medium"
-                icon="FeatherX"
-                onClick={() => {setNewExecution(null)}}
-              />
-            </>
-          }
-        />: null}
+      <div className="flex w-full flex-col items-start gap-6 py-6 px-48 ">
+        {newExecution ? (
+          <Alert
+            variant="neutral"
+            icon="FeatherRocket"
+            title="We have liftoff!"
+            description={`Agent ${selectedAgentId} is now running.`}
+            actions={
+              <>
+                <Button
+                  disabled={false}
+                  variant="neutral-secondary"
+                  size="medium"
+                  icon={null}
+                  iconRight={null}
+                  loading={false}
+                  onClick={() => {
+                    navigate(`/monitoring`);
+                  }}
+                >
+                  View Status
+                </Button>
+                <IconButton
+                  size="medium"
+                  icon="FeatherX"
+                  onClick={() => {
+                    setNewExecution(null);
+                  }}
+                />
+              </>
+            }
+          />
+        ) : null}
         <div className="flex flex-col items-start gap-2">
           <span className="text-heading-1 font-heading-1 text-default-font">
-            Deployment
+            Agents
           </span>
           <span className="text-body font-body text-default-font">
             View, edit, and run your deployed agents.
@@ -236,7 +260,9 @@ export function DeploymentPage() {
           <div className="flex items-center gap-2 mobile:h-auto mobile:w-auto mobile:flex-none">
             <IconButton
               icon="FeatherRefreshCw"
-              onClick={() => {fetchAgents()}}
+              onClick={() => {
+                fetchAgents();
+              }}
             />
             {/* <IconButton
               icon="FeatherSettings"
@@ -259,7 +285,7 @@ export function DeploymentPage() {
                 <Table.HeaderCell>Description</Table.HeaderCell>
                 <Table.HeaderCell>Status</Table.HeaderCell>
                 <Table.HeaderCell>Date Created</Table.HeaderCell>
-                <Table.HeaderCell>-</Table.HeaderCell>
+                <Table.HeaderCell></Table.HeaderCell>
               </Table.HeaderRow>
             }
           >
@@ -267,10 +293,10 @@ export function DeploymentPage() {
               ? agents
                   .sort((a, b) => a.id.localeCompare(b.id))
                   .map((agent, index) => (
-                    <AgentRow 
-                      bearer={bearer} 
-                      initial_data={agent} 
-                      openRunAgentModal={() => setRunAgentModalOpen(true)} 
+                    <AgentRow
+                      bearer={bearer}
+                      initial_data={agent}
+                      openRunAgentModal={() => setRunAgentModalOpen(true)}
                       setSelectedAgentId={setSelectedAgentId}
                       key={index}
                     />

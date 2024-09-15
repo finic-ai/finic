@@ -32,7 +32,7 @@ export function MonitoringPage() {
 
   return (
     <DefaultPageLayout>
-      <div className="flex w-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
+      <div className="flex w-full h-full flex-col items-start gap-6 pt-6 pr-6 pb-6 pl-6">
         <div className="flex flex-col items-start gap-2">
           <span className="text-heading-1 font-heading-1 text-default-font">
             Monitoring
@@ -41,14 +41,16 @@ export function MonitoringPage() {
             View logs and error messages for recent executions.
           </span>
         </div>
-        <div className="flex w-full grow shrink-0 basis-0 items-start gap-6">
-          <ExecutionList 
-            executions={executions} 
-            selectedRow={selectedRow} 
+        <div className="flex w-full h-full  items-start gap-6">
+          <ExecutionList
+            executions={executions}
+            selectedRow={selectedRow}
             setSelectedRow={setSelectedRow}
             fetchExecutions={fetchExecutions}
           />
-          {executions.length > 0 ? <ExecutionDetail selectedExecution={executions[selectedRow]} /> : null}
+          {executions.length > 0 ? (
+            <ExecutionDetail selectedExecution={executions[selectedRow]} />
+          ) : null}
         </div>
       </div>
       <div className="flex w-full flex-col items-start gap-6 overflow-hidden overflow-auto mobile:overflow-auto mobile:max-w-full" />

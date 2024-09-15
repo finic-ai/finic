@@ -14,8 +14,9 @@ interface ExecutionDetailProps {
   selectedExecution: Execution;
 }
 
-export default function ExecutionDetail({ selectedExecution }: ExecutionDetailProps) {
-
+export default function ExecutionDetail({
+  selectedExecution,
+}: ExecutionDetailProps) {
   // useEffect(() => {
   //   if (bearer) {
   //     listAgents(bearer).then((data) => {
@@ -32,34 +33,70 @@ export default function ExecutionDetail({ selectedExecution }: ExecutionDetailPr
     <div className="flex grow shrink-0 basis-0 flex-col items-start gap-6 self-stretch rounded-md px-4 py-4 shadow-md">
       <div className="flex w-full flex-col items-start gap-1">
         <span className="text-heading-2 font-heading-2 text-default-font">
-          {selectedExecution?.userDefinedAgentId}
+          {selectedExecution?.id}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
-          {moment(selectedExecution?.startTime).tz("UTC").format("MMMM D, YYYY h:mm:ss A")}
+          Agent: {selectedExecution?.userDefinedAgentId}
+        </span>
+        <span className="text-body-bold font-body-bold text-default-font">
+          {moment(selectedExecution?.startTime)
+            .tz("UTC")
+            .format("MMMM D, YYYY h:mm:ss A")}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
           Ran for {calculateRuntime(selectedExecution)}
         </span>
       </div>
       <div className="flex w-full flex-col items-start gap-2">
-        <span className="text-heading-3 font-heading-3 text-default-font">
-          Logs
-        </span>
-        <div className="flex w-full flex-col items-end rounded-md bg-neutral-50 px-2 py-2">
+        <div className="flex w-full items-center justify-between">
+          <span className="text-heading-3 font-heading-3 text-default-font">
+            Results
+          </span>
           <CopyToClipboardButton
             clipboardText=""
             tooltipText="Copy to clipboard"
             icon="FeatherClipboard"
             onCopy={() => {}}
           />
+        </div>
+        <div className="flex w-full flex-col items-end rounded-md bg-neutral-50 px-2 py-2">
           <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto">
-            {
-              "\n2023-09-08T12:00:21.456Z [INFO] Capturing screenshot of the search results.\n2023-09-08T12:00:22.789Z [INFO] Screenshot saved to /screenshots/search_results.png.\n\n2023-09-08T12:00:23.012Z [INFO] Starting cleanup process.\n2023-09-08T12:00:24.345Z [INFO] Closing browser instance.\n2023-09-08T12:00:25.678Z [INFO] Browser closed successfully.\n\n2023-09-08T12:00:26.789Z [INFO] Playwright container execution completed.\n2023-09-08T12:00:27.012Z [INFO] Exiting container.\n\n"
-            }
+            {JSON.stringify(selectedExecution?.results, null, 2) ||
+              "No results available for this run."}
           </span>
         </div>
       </div>
       <div className="flex w-full flex-col items-start gap-2">
+        <div className="flex w-full items-center justify-between">
+          <span className="text-heading-3 font-heading-3 text-default-font">
+            Logs
+          </span>
+          <CopyToClipboardButton
+            clipboardText=""
+            tooltipText="Copy to clipboard"
+            icon="FeatherClipboard"
+            onCopy={() => {}}
+          />
+        </div>
+
+        <div className="flex w-full flex-col items-end rounded-md bg-neutral-50 px-2 py-2">
+          <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto">
+            {selectedExecution?.attempts
+              .map((attempt) => {
+                for (const log of attempt.logs) {
+                  return `[${log.severity}] ${log.message}`;
+                }
+              })
+              .join("\n")}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+{
+  /* <div className="flex w-full flex-col items-start gap-2">
         <span className="text-heading-3 font-heading-3 text-default-font">
           Errors
         </span>
@@ -108,9 +145,7 @@ export default function ExecutionDetail({ selectedExecution }: ExecutionDetailPr
             <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-2 px-4 pb-4">
               <div className="flex w-full flex-col items-start gap-4 rounded-md bg-neutral-50 px-2 py-2">
                 <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font">
-                  {
-                    "// Add a bit of code here\n\n// And some more if needed..."
-                  }
+                  {"// Add a bit of code here\n\n// And some more if needed..."}
                 </span>
               </div>
             </div>
@@ -133,15 +168,11 @@ export default function ExecutionDetail({ selectedExecution }: ExecutionDetailPr
             <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-2 px-4 pb-4">
               <div className="flex w-full flex-col items-start gap-4 rounded-md bg-neutral-50 px-2 py-2">
                 <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font">
-                  {
-                    "// Add a bit of code here\n\n// And some more if needed..."
-                  }
+                  {"// Add a bit of code here\n\n// And some more if needed..."}
                 </span>
               </div>
             </div>
           </Accordion>
         </div>
-      </div>
-    </div>
-  );
-};
+      </div> */
+}

@@ -1,7 +1,7 @@
 export enum SecretType {
   PASSWORD = "password",
   API_KEY = "api_key",
-  AUTH_TOKEN = "auth_token"
+  AUTH_TOKEN = "auth_token",
 }
 
 export type FinicSecret = {
@@ -18,13 +18,14 @@ export type Agent = {
   status: string;
   createdAt: string;
   url: string;
+  numRetries: number;
 };
 
 export type Execution = {
   id: string;
   finicAgentId: string;
   userDefinedAgentId: string;
-  cloudProviderId: string
+  cloudProviderId: string;
   status: string;
   startTime: string | null;
   endTime: string | null;

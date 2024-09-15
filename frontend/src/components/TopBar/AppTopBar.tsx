@@ -14,12 +14,16 @@ interface AppTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   path: string;
 }
-export default function AppTopBar({ className, path, ...otherProps }: AppTopBarProps) {
+export default function AppTopBar({
+  className,
+  path,
+  ...otherProps
+}: AppTopBarProps) {
   const { logOut } = useAuth();
   const navigate = useNavigate();
   return (
     <div
-      className={`flex w-full flex-wrap items-center justify-center gap-4 border-b border-solid border-neutral-border bg-default-background ${className}`}
+      className={`flex w-full px-4 flex-wrap items-center justify-center gap-4 border-b border-solid border-neutral-border bg-default-background ${className}`}
     >
       <div className="flex h-12 flex-col items-start justify-center gap-2 px-4">
         <img
@@ -27,11 +31,27 @@ export default function AppTopBar({ className, path, ...otherProps }: AppTopBarP
           src="https://res.cloudinary.com/subframe/image/upload/v1724010987/uploads/132/vdukkkatrcoseixgwmft.png"
         />
       </div>
-      <div className="flex min-w-[320px] grow shrink-0 basis-0 flex-wrap items-center justify-center gap-6">
-        <AppNavButton text="Deployment" selected={["/", "/deployment"].includes(path)} onClick={() => navigate("/deployment")} />
-        <AppNavButton text="Monitoring" selected={path == "/monitoring"} onClick={() => navigate("/monitoring")} />
-        <AppNavButton text="Secrets" selected={path == "/secrets"} onClick={() => navigate("/secrets")} />
-        <AppNavButton text="Settings" selected={path == "/settings"} onClick={() => navigate("/settings")} />
+      <div className="flex min-w-[320px] mx-10 grow shrink-0 basis-0 flex-wrap items-center justify-center gap-6">
+        <AppNavButton
+          text="Agents"
+          selected={["/"].includes(path)}
+          onClick={() => navigate("/")}
+        />
+        <AppNavButton
+          text="Monitoring"
+          selected={path == "/monitoring"}
+          onClick={() => navigate("/monitoring")}
+        />
+        <AppNavButton
+          text="Secrets"
+          selected={path == "/secrets"}
+          onClick={() => navigate("/secrets")}
+        />
+        <AppNavButton
+          text="Settings"
+          selected={path == "/settings"}
+          onClick={() => navigate("/settings")}
+        />
       </div>
       <div className="flex items-center gap-2 px-2">
         <SubframeCore.DropdownMenu.Root>

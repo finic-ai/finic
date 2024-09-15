@@ -108,6 +108,7 @@ class AgentRunner:
                 ExecutionLog(
                     severity=severity,
                     message=str(entry.payload),
+                    timestamp=entry.timestamp,
                 )
             )
 
