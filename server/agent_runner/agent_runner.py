@@ -30,6 +30,8 @@ from google.cloud import run_v2
 from google.oauth2 import service_account
 import uuid
 from google.cloud import logging_v2
+import pytz
+import asyncio
 
 
 class AgentRunner:
@@ -77,8 +79,38 @@ class AgentRunner:
             app_id=agent.app_id,
             cloud_provider_id=cloud_provider_id,
             status=ExecutionStatus.running,
-            start_time=datetime.datetime.now(),
+            start_time=datetime.datetime.now(tz=pytz.timezone("US/Pacific")),
         )
+
+    def _get_logs_for_execution(
+        self, execution: Execution, agent: Agent, attempt_number: int
+    ) -> List[ExecutionLog]:
+        print(execution.cloud_provider_id)
+        print(attempt_number)
+        filters = [
+            f'resource.type ="cloud_run_job"',
+            f'resource.labels.job_name="{Agent.get_cloud_job_id(agent)}"',
+            f'labels."run.googleapis.com/execution_name"="{execution.cloud_provider_id}"',
+            f'labels."run.googleapis.com/task_attempt"="{attempt_number}"',
+        ]
+        logs = []
+        for entry in self.logging_client.list_entries(
+            resource_names=[f"projects/{self.project}"],
+            filter_=" ".join(filters),
+            order_by=logging_v2.ASCENDING,
+        ):
+            severity = LogSeverity.from_cloud_logging_severity(entry.severity)
+            if severity is None:
+                print(f"Unknown severity: {entry.severity}")
+                continue
+            logs.append(
+                ExecutionLog(
+                    severity=severity,
+                    message=str(entry.payload),
+                    timestamp=entry.timestamp,
+                )
+            )
+        return logs
 
     async def update_execution(
         self,
@@ -95,6 +127,17 @@ class AgentRunner:
             f'labels."run.googleapis.com/task_attempt"="{attempt.attempt_number}"',
         ]
         attempt.logs = []
+
+        while True:
+            logs = self._get_logs_for_execution(
+                execution=execution,
+                agent=agent,
+                attempt_number=attempt.attempt_number,
+            )
+            if len(logs) == 0:
+                break
+            attempt.logs.extend(logs)
+            await asyncio.sleep(5)
 
         for entry in self.logging_client.list_entries(
             resource_names=[f"projects/{self.project}"],
@@ -133,11 +176,11 @@ class AgentRunner:
         # Update the execution status
         if attempt.success:
             execution.status = ExecutionStatus.successful
-            execution.end_time = datetime.datetime.now()
+            execution.end_time = datetime.datetime.now(tz=pytz.timezone("US/Pacific"))
             execution.results = results
         elif len(execution.attempts) == agent.num_retries + 1:
             execution.status = ExecutionStatus.failed
-            execution.end_time = datetime.datetime.now()
+            execution.end_time = datetime.datetime.now(tz=pytz.timezone("US/Pacific"))
         else:
             execution.status = ExecutionStatus.running
 
