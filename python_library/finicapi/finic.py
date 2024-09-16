@@ -190,7 +190,7 @@ class Finic:
                 timeout=5,
             )
 
-    def workflow_entrypoint(self, func):
+    def workflow_entrypoint(self, input_model):
 
         if self.environment == FinicEnvironment.LOCAL:
             # Check if input.json file is present
@@ -211,31 +211,39 @@ class Finic:
             except Exception as e:
                 raise Exception("Error in parsing input data: ", e)
 
-        @wraps(func)
-        def wrapper():
-            stdout_logger = StdoutLogger(original_stdout=sys.stdout)
-            try:
-                sys.stdout = stdout_logger
-                results = func(input_data)
-                logs = stdout_logger.get_logs()
-                self.log_attempt(success=True, logs=logs, results=results)
-            except Exception as e:
-                logs = stdout_logger.get_logs()
-                logs.append(
-                    ExecutionLog(
-                        severity=LogSeverity.ERROR,
-                        timestamp=datetime.datetime.now(datetime.timezone.utc),
-                        message=str(e),
-                    )
-                )
-                self.log_attempt(
-                    success=False,
-                    logs=logs,
-                    results={},
-                )
-                raise e
+        try:
+            input_data = input_model(**input_data)
+        except Exception as e:
+            raise Exception("Error in validating input data: ", e)
 
-        return wrapper
+        def decorator(func):
+            @wraps(func)
+            def wrapper():
+                stdout_logger = StdoutLogger(original_stdout=sys.stdout)
+                try:
+                    sys.stdout = stdout_logger
+                    results = func(input_data)
+                    logs = stdout_logger.get_logs()
+                    self.log_attempt(success=True, logs=logs, results=results)
+                except Exception as e:
+                    logs = stdout_logger.get_logs()
+                    logs.append(
+                        ExecutionLog(
+                            severity=LogSeverity.ERROR,
+                            timestamp=datetime.datetime.now(datetime.timezone.utc),
+                            message=str(e),
+                        )
+                    )
+                    self.log_attempt(
+                        success=False,
+                        logs=logs,
+                        results={},
+                    )
+                    raise e
+
+            return wrapper
+
+        return decorator
 
 
 class FinicSecretsManager:
