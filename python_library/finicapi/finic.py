@@ -136,9 +136,18 @@ class Finic:
         else:
             return "Error in deploying agent"
 
-    def start_run(self, agent_id: str, input_data: Dict):
-        # TODO
-        pass
+    def start_run(self, agent_id: str, input: Dict):
+        response = requests.post(
+            f"{self.url}/run-agent",
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
+            json={"agent_id": agent_id, "input": input},
+        )
+
+        response_json = response.json()
+        return response_json
 
     def get_runs(self, agent_id: str):
         # TODO
