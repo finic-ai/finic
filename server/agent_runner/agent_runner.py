@@ -79,7 +79,7 @@ class AgentRunner:
             app_id=agent.app_id,
             cloud_provider_id=cloud_provider_id,
             status=ExecutionStatus.running,
-            start_time=datetime.datetime.now(tz=pytz.timezone("US/Pacific")),
+            start_time=datetime.datetime.now(tz=datetime.timezone.utc),
         )
 
     def _get_logs_for_execution(
@@ -99,6 +99,7 @@ class AgentRunner:
             filter_=" ".join(filters),
             order_by=logging_v2.ASCENDING,
         ):
+
             severity = LogSeverity.from_cloud_logging_severity(entry.severity)
             if severity is None:
                 print(f"Unknown severity: {entry.severity}")
@@ -120,25 +121,6 @@ class AgentRunner:
         results: Dict,
     ):
 
-        filters = [
-            f'resource.type ="cloud_run_job"',
-            f'resource.labels.job_name="{Agent.get_cloud_job_id(agent)}"',
-            f'labels."run.googleapis.com/execution_name"="{execution.cloud_provider_id}"',
-            f'labels."run.googleapis.com/task_attempt"="{attempt.attempt_number}"',
-        ]
-        attempt.logs = []
-
-        while True:
-            logs = self._get_logs_for_execution(
-                execution=execution,
-                agent=agent,
-                attempt_number=attempt.attempt_number,
-            )
-
-            if len(logs) == len(attempt.logs) and len(logs) > 0:
-                break
-            await asyncio.sleep(5)
-
         # Add the attempt to the execution
         execution.attempts.append(attempt)
 
@@ -158,11 +140,11 @@ class AgentRunner:
         # Update the execution status
         if attempt.success:
             execution.status = ExecutionStatus.successful
-            execution.end_time = datetime.datetime.now(tz=pytz.timezone("US/Pacific"))
+            execution.end_time = datetime.datetime.now(tz=datetime.timezone.utc)
             execution.results = results
         elif len(execution.attempts) == agent.num_retries + 1:
             execution.status = ExecutionStatus.failed
-            execution.end_time = datetime.datetime.now(tz=pytz.timezone("US/Pacific"))
+            execution.end_time = datetime.datetime.now(tz=datetime.timezone.utc)
         else:
             execution.status = ExecutionStatus.running
 

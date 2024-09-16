@@ -4,12 +4,68 @@ import json
 import os
 from enum import Enum
 import requests
+import datetime
+import sys
+from pydantic import BaseModel
+from typing import Any
 
 
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
     DEV = "dev"
     PROD = "prod"
+
+
+class LogSeverity(str, Enum):
+    DEFAULT = "DEFAULT"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+
+
+class ExecutionLog(BaseModel):
+    severity: LogSeverity
+    message: str
+    timestamp: Optional[datetime.datetime] = None
+
+    class Config:
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
+
+
+class ExecutionAttempt(BaseModel):
+    success: bool
+    attempt_number: int
+    logs: List[ExecutionLog] = []
+
+
+class LogExecutionAttemptRequest(BaseModel):
+    execution_id: str
+    agent_id: str
+    results: Dict[str, Any]
+    attempt: ExecutionAttempt
+
+
+class StdoutLogger:
+    def __init__(self, original_stdout):
+        self.logs: List[ExecutionLog] = []
+        self.original_stdout = original_stdout
+
+    def write(self, message):
+        if message.strip():  # Avoid logging empty messages
+            log = ExecutionLog(
+                severity=LogSeverity.DEFAULT,
+                timestamp=datetime.datetime.now(datetime.timezone.utc),
+                message=message.strip(),
+            )
+            self.logs.append(log)
+            self.original_stdout.write(
+                f"{log.timestamp} [{log.severity}] {log.message}\n"
+            )
+
+    def flush(self):
+        pass
+
+    def get_logs(self):
+        return self.logs
 
 
 class Finic:
@@ -93,33 +149,36 @@ class Finic:
         pass
 
     def log_attempt(
-        self, success: bool, logs: List[str], results: Optional[Dict] = None
+        self, success: bool, logs: List[ExecutionLog], results: Optional[Dict] = None
     ):
         if self.environment == FinicEnvironment.LOCAL:
             if success:
                 print("Successful execution. Results: ", results)
             else:
-                print("Failed execution. Logs: ", logs)
+                print("Failed execution.")
         else:
             execution_id = os.getenv("FINIC_EXECUTION_ID")
             agent_id = os.getenv("FINIC_AGENT_ID")
             attempt_number = os.getenv("CLOUD_RUN_TASK_ATTEMPT")
+
+            payload = LogExecutionAttemptRequest(
+                execution_id=execution_id,
+                agent_id=agent_id,
+                results=results,
+                attempt=ExecutionAttempt(
+                    success=success,
+                    logs=logs,
+                    attempt_number=attempt_number,
+                ),
+            )
             requests.post(
                 f"{self.url}/log-execution-attempt",
                 headers={
                     "Authorization": f"Bearer {self.api_key}",
                     "Content-Type": "application/json",
                 },
-                json={
-                    "execution_id": execution_id,
-                    "agent_id": agent_id,
-                    "results": results,
-                    "attempt": {
-                        "success": success,
-                        "logs": logs,
-                        "attempt_number": attempt_number,
-                    },
-                },
+                json=json.loads(payload.json()),
+                timeout=5,
             )
 
     def workflow_entrypoint(self, func):
@@ -145,13 +204,24 @@ class Finic:
 
         @wraps(func)
         def wrapper():
+            stdout_logger = StdoutLogger(original_stdout=sys.stdout)
             try:
+                sys.stdout = stdout_logger
                 results = func(input_data)
-                self.log_attempt(success=True, logs=[], results=results)
+                logs = stdout_logger.get_logs()
+                self.log_attempt(success=True, logs=logs, results=results)
             except Exception as e:
+                logs = stdout_logger.get_logs()
+                logs.append(
+                    ExecutionLog(
+                        severity=LogSeverity.ERROR,
+                        timestamp=datetime.datetime.now(datetime.timezone.utc),
+                        message=str(e),
+                    )
+                )
                 self.log_attempt(
                     success=False,
-                    logs=[{"severity": "ERROR", "message": str(e)}],
+                    logs=logs,
                     results={},
                 )
                 raise e

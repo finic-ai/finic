@@ -9,7 +9,7 @@ with open(path.join(this_directory, "README.md")) as f:
 
 setup(
     name="finicapi",
-    version="0.1.22",
+    version="0.1.27",
     description="Finic.ai is a platform for deploying integrations and workflow automations in Python. This is the Python client for Finic",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -18,6 +18,8 @@ setup(
     packages=["finicapi"],
     install_requires=[
         "requests",
+        "datetime",
+        "pydantic",
     ],
     entry_points={
         "console_scripts": [
