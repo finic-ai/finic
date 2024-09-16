@@ -109,11 +109,6 @@ export default function ExecutionDetail({
             .format("MMMM D, YYYY h:mm:ss A")}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
-          {moment(selectedExecution?.endTime)
-            .tz("UTC")
-            .format("MMMM D, YYYY h:mm:ss A")}
-        </span>
-        <span className="text-body-bold font-body-bold text-default-font">
           {selectedExecution?.status != "running" &&
             calculateRuntime(selectedExecution)}
         </span>
