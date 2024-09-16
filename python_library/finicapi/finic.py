@@ -58,7 +58,7 @@ class StdoutLogger:
             )
             self.logs.append(log)
             self.original_stdout.write(
-                f"{log.timestamp} [{log.severity}] {log.message}\n"
+                f"{log.timestamp} [{log.severity.value}] {log.message}\n"
             )
 
     def flush(self):
@@ -190,7 +190,7 @@ class Finic:
                 timeout=5,
             )
 
-    def workflow_entrypoint(self, input_model):
+    def workflow_entrypoint(self, input_model: BaseModel):
 
         if self.environment == FinicEnvironment.LOCAL:
             # Check if input.json file is present
