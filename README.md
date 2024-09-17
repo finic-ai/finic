@@ -12,7 +12,7 @@
 <a href="https://github.com/psychicapi/psychic/issues?q=is%3Aissue+is%3Aclosed" target="_blank">
     <img src="https://img.shields.io/github/issues-closed/psychicapi/psychic?color=blue" alt="Issues">
 </a>
-  <a href="https://finic.ai/docs" target="_blank">
+  <a href="https://docs.finic.io/" target="_blank">
     <img src="https://img.shields.io/badge/documentation-blue">
   </a>
   <a href="https://www.ycombinator.com/companies/finic" target="_blank">
