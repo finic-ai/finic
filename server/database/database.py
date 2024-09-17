@@ -32,21 +32,19 @@ class Database:
         supabase_key = os.environ.get("SUPABASE_KEY")
         self.supabase = create_client(supabase_url, supabase_key)
 
-    async def get_config(self, bearer_token: str) -> Optional[AppConfig]:
+    def get_config(self, bearer_token: str) -> Optional[AppConfig]:
         response = (
             self.supabase.table("user")
             .select("*")
             .filter("secret_key", "eq", bearer_token)
             .execute()
         )
-        print("response", response)
-        print("response.data", response.data)
         if len(response.data) > 0:
             row = response.data[0]
             return AppConfig(user_id=row["id"], app_id=row["app_id"])
         return None
 
-    async def get_secret_key_for_user(self, user_id: str):
+    def get_secret_key_for_user(self, user_id: str):
         response = (
             self.supabase.table("user")
             .select("secret_key")
@@ -57,7 +55,7 @@ class Database:
             return response.data[0]["secret_key"]
         return None
 
-    async def upsert_agent(self, agent: Agent) -> Optional[Agent]:
+    def upsert_agent(self, agent: Agent) -> Optional[Agent]:
         payload = agent.dict()
         # Remove created_at field
         payload.pop("created_at", None)
@@ -73,7 +71,7 @@ class Database:
             return Agent(**row)
         return None
 
-    async def get_agent(self, config: AppConfig, id: str) -> Optional[Agent]:
+    def get_agent(self, config: AppConfig, id: str) -> Optional[Agent]:
         response = (
             self.supabase.table("agent")
             .select("*")
@@ -86,7 +84,7 @@ class Database:
             return Agent(**row)
         return None
 
-    async def get_user(self, config: AppConfig) -> Optional[Agent]:
+    def get_user(self, config: AppConfig) -> Optional[Agent]:
         response = (
             self.supabase.table("user")
             .select("*")
@@ -99,7 +97,7 @@ class Database:
             return User(**row)
         return None
 
-    async def list_agents(self, config: AppConfig) -> List[Agent]:
+    def list_agents(self, config: AppConfig) -> List[Agent]:
         response = (
             self.supabase.table("agent")
             .select("*")
@@ -108,7 +106,7 @@ class Database:
         )
         return [Agent(**row) for row in response.data]
 
-    async def list_executions(
+    def list_executions(
         self,
         config: AppConfig,
         finic_agent_id: str = None,
@@ -126,7 +124,7 @@ class Database:
         response = query.execute()
         return [Execution(**row) for row in response.data]
 
-    async def get_execution(
+    def get_execution(
         self, config: AppConfig, finic_agent_id: str, execution_id: str
     ) -> Optional[Execution]:
         response = (
@@ -142,15 +140,9 @@ class Database:
             return Execution(**row)
         return None
 
-    async def upsert_execution(self, execution: Execution) -> Optional[Execution]:
+    def upsert_execution(self, execution: Execution) -> Optional[Execution]:
         json_payload = execution.json()
         payload = json.loads(json_payload)
-        # if execution.start_time:
-        #     payload["start_time"] = execution.start_time.isoformat()
-        # if execution.end_time:
-        #     payload["end_time"] = execution.end_time.isoformat()
-
-        print(payload)
 
         response = self.supabase.table("execution").upsert(payload).execute()
         if len(response.data) > 0:

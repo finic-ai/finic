@@ -1,66 +1,28 @@
 from database import Database
 from models import AppConfig, Agent
-from fastapi import UploadFile
 import os
 import zipfile
 from google.cloud.devtools import cloudbuild_v1
 from google.oauth2 import service_account
 import json
-from google.cloud import storage
 from datetime import timedelta
 from google.cloud import run_v2
 
 
-class AgentDeployer:
-
+class Deployer:
     def __init__(self):
         service_account_string = os.getenv("GCLOUD_SERVICE_ACCOUNT")
         self.deployments_bucket = os.getenv("DEPLOYMENTS_BUCKET")
         self.project_id = os.getenv("GCLOUD_PROJECT")
-        self.location = os.getenv("GCLOUD_LOCATION")
         credentials = service_account.Credentials.from_service_account_info(
             json.loads(service_account_string)
         )
 
-        self.storage_client = storage.Client(credentials=credentials)
         self.build_client = cloudbuild_v1.CloudBuildClient(credentials=credentials)
         self.jobs_client = run_v2.JobsClient(credentials=credentials)
 
-    def get_agent_upload_link(self, agent: Agent, expiration_minutes: int = 15) -> str:
-
-        bucket = self.storage_client.get_bucket(self.deployments_bucket)
-        blob = bucket.blob(f"{agent.finic_id}.zip")
-        url = blob.generate_signed_url(
-            version="v4",
-            expiration=timedelta(minutes=expiration_minutes),
-            method="PUT",
-        )
-        return url
-
-    def deploy_agent(
-        self,
-        agent: Agent,
-        secret_key: str,
-    ):
-        request = run_v2.RunJobRequest(
-            name=f"projects/{self.project_id}/locations/{self.location}/jobs/finic-deployer",
-            overrides={
-                "container_overrides": [
-                    {
-                        "env": [
-                            {"name": "FINIC_API_KEY", "value": secret_key},
-                            {"name": "FINIC_AGENT_ID", "value": agent.id},
-                        ]
-                    }
-                ]
-            },
-        )
-        operation = self.jobs_client.run_job(request)
-
-        execution_path = operation.metadata.name
-        deployment_id = execution_path.split("/")[-1]
-        return deployment_id
-
+    def deploy_agent(self, agent: Agent):
+        # Check if the job already exists in Cloud Run
         try:
             self.jobs_client.get_job(
                 name=f"projects/{self.project_id}/locations/us-central1/jobs/{Agent.get_cloud_job_id(agent)}"

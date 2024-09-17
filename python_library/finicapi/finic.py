@@ -114,7 +114,7 @@ class Finic:
         # Upload the project zip file to the upload link
         requests.put(upload_link, data=upload_file)
 
-        print("Project files uploaded for build. Deploying agent...")
+        print("Project files uploaded for build.")
 
         response = requests.post(
             f"{self.url}/deploy-agent",
@@ -132,7 +132,7 @@ class Finic:
         response_json = response.json()
 
         if "id" in response_json:
-            return "agent deployed successfully"
+            return "Deploying agent. Check Finic dashboard for status: https://app.finic.io/"
         else:
             return "Error in deploying agent"
 

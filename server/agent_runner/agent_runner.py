@@ -46,9 +46,7 @@ class AgentRunner:
         self.location = os.getenv("GCLOUD_LOCATION")
         self.logging_client = logging_v2.Client(credentials=self.credentials)
 
-    async def start_agent(
-        self, secret_key: str, agent: Agent, input: Dict
-    ) -> Execution:
+    def start_agent(self, secret_key: str, agent: Agent, input: Dict) -> Execution:
         client = run_v2.JobsClient(credentials=self.credentials)
         execution_id = str(uuid.uuid4())
         request = run_v2.RunJobRequest(
@@ -85,8 +83,6 @@ class AgentRunner:
     def _get_logs_for_execution(
         self, execution: Execution, agent: Agent, attempt_number: int
     ) -> List[ExecutionLog]:
-        print(execution.cloud_provider_id)
-        print(attempt_number)
         filters = [
             f'resource.type ="cloud_run_job"',
             f'resource.labels.job_name="{Agent.get_cloud_job_id(agent)}"',
@@ -113,7 +109,7 @@ class AgentRunner:
             )
         return logs
 
-    async def update_execution(
+    def update_execution(
         self,
         agent: Agent,
         execution: Execution,
