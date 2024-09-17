@@ -25,7 +25,11 @@
 
 </p>
 
-[Finic](https://finic.ai/) is a cloud platform designed to simplify the deployment and management of browser-based automation agents, with a focus on fault-tolerant execution. It’s designed for quickly launching bots, scrapers, RPA integrationsm and other jobs that depend on multiple authenticated web services. Finic uses [Playwright](https://github.com/microsoft/playwright-python) to interact with DOM elements, and recommends [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) for HTML parsing.
+[Finic](https://finic.ai/) is a cloud platform designed to simplify the deployment and management of browser-based automation agents, with a focus on fault-tolerant execution. It’s designed for quickly launching bots, scrapers, RPA integrationsm and other jobs that depend on multiple authenticated web services. 
+
+Finic is designed to be **unopionated about the development process**, and simply provide network-level utilities and infrastructure to help you make your agents reliable and scalable.
+
+Currently, [Playwright](https://github.com/microsoft/playwright-python) is supported for interacting with DOM elements and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) is recommended (though not required) for parsing HTML.
 
 
 
