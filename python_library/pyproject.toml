@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "finicapi"
+version = "0.1.30"
+description = "Finic.ai is a platform for deploying agents and workflow automations in Python. This is the Python client for Finic"
+authors = ["Ayan Bandyopadhyay <ayan@finic.ai>", "jasonwcfan <jason@finic.ai>"]
+readme = "README.md"
+packages = [
+    { include = "finicapi" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-dotenv = "^1.0.1"
+pydantic = "^2.9.1"
+requests = "^2.32.3"
+datetime = "^5.5"
+
+[tool.poetry.scripts]
+create-finic-app = "finicapi.cli:create_finic_app"
+finic-deploy = "finicapi.cli:deploy"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
