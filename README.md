@@ -66,7 +66,7 @@ Deploy your agent to Finic Cloud.
 finic-deploy
 ```
 
-View and run your agent from the [Finic dashboard](https://app.finic.ai/agents).
+View and run your agent from the [Finic dashboard](https://app.finic.io/agents).
 
 ## 🚧 Roadmap
 * Automated deployment from GitHub.
