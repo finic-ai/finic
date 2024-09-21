@@ -7,11 +7,11 @@ from models.models import (
     User,
     Agent,
     Execution,
+    FinicSelector,
 )
 from supabase import create_client, Client
 import os
 from storage3.utils import StorageException
-
 from io import StringIO
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -149,3 +149,17 @@ class Database:
             row = response.data[0]
             return Execution(**row)
         return None
+    
+    def get_selectors(self, config: AppConfig, agent_id: str, url: str, selector_ids: Optional[List[str]] = None) -> Optional[List[FinicSelector]]:
+        query = (
+            self.supabase.table("selector")
+            .select("*")
+            .filter("app_id", "eq", config.app_id)
+            .filter("agent_id", "eq", agent_id)
+            .filter("url", "eq", url)
+        )
+        if selector_ids:
+            query = query.filter("id", "in", selector_ids)
+        
+        response = query.execute()
+        return [FinicSelector(**row) for row in response.data]

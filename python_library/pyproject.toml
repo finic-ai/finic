@@ -14,10 +14,13 @@ python-dotenv = "^1.0.1"
 pydantic = "^2.9.1"
 requests = "^2.32.3"
 datetime = "^5.5"
+playwright = "^1.47.0"
 
 [tool.poetry.scripts]
 create-finic-app = "finicapi.cli:create_finic_app"
+finic = "finicapi.cli:main"
 finic-deploy = "finicapi.cli:deploy"
+finic-generate-selectors = "finicapi.cli:generate_selectors"
 
 [build-system]
 requires = ["poetry-core"]

@@ -8,6 +8,8 @@ import datetime
 import sys
 from pydantic import BaseModel
 from typing import Any
+from finicapi.secrets_manager import FinicSecretsManager
+from finicapi.selectors import FinicSelector
 
 
 class FinicEnvironment(str, Enum):
@@ -67,7 +69,6 @@ class StdoutLogger:
     def get_logs(self):
         return self.logs
 
-
 class Finic:
     def __init__(
         self,
@@ -78,7 +79,7 @@ class Finic:
 
         default_env = os.environ.get("FINIC_ENV") or FinicEnvironment.LOCAL
         self.environment = environment if environment else FinicEnvironment(default_env)
-        self.secrets_manager = FinicSecretsManager(api_key, environment=environment)
+        self.secrets_manager = FinicSecretsManager(api_key, environment=self.environment)
         if url:
             self.url = url
         else:
@@ -244,37 +245,16 @@ class Finic:
             return wrapper
 
         return decorator
+    
+    def get_selectors(self, url: str, agent_id: str) -> Dict[str, FinicSelector]:
+        response = requests.post(
+            "https://api.finic.io/get-selectors", 
+            json={
+                "url": url, 
+                "agent_id": agent_id
+            }, 
+            headers={"Authorization": f"Bearer {self.api_key}"}
+        )
+        response_json = response.json()
 
-
-class FinicSecretsManager:
-    def __init__(self, api_key, environment: FinicEnvironment):
-        self.api_key = api_key
-        self.environment = environment
-
-    def save_credentials(self, credentials: Dict, credential_id: str):
-        if self.environment == FinicEnvironment.LOCAL:
-            raise Exception(
-                "Cannot save credentials in local environment. Save them in secrets.json for local testing"
-            )
-        else:
-            # Save secrets in Finic API
-            pass
-
-    def get_credentials(self, credential_id: str):
-        if self.environment == FinicEnvironment.LOCAL:
-            # Check if secrets.json file is present
-            path = os.path.join(os.getcwd(), "secrets.json")
-            if not os.path.exists(path):
-                raise Exception(
-                    "If you are running the workflow locally, please provide secrets.json file in the base directory containing pyproject.toml"
-                )
-
-            try:
-                with open(path, "r") as f:
-                    secrets = json.load(f)
-                    return secrets.get(credential_id, {})
-            except Exception as e:
-                raise Exception("Error in reading secrets.json file: ", e)
-        else:
-            # Fetch secrets from Finic API
-            pass
+        return {selector["id"]: selector for selector in response_json}

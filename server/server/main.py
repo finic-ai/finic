@@ -14,7 +14,7 @@ from fastapi import (
     BackgroundTasks,
 )
 from fastapi.exceptions import RequestValidationError
-
+from bs4 import BeautifulSoup
 from fastapi.responses import JSONResponse
 
 from typing import List, Optional
@@ -28,9 +28,11 @@ from models.api import (
     DeployAgentRequest,
     RunAgentRequest,
     LogExecutionAttemptRequest,
+    GetSelectorsRequest,
+    GenerateSelectorsRequest,
 )
 import uuid
-from models.models import AppConfig, Agent, AgentStatus, Execution
+from models.models import AppConfig, Agent, AgentStatus, Execution, FinicSelector
 from database import Database
 import io
 import datetime
@@ -40,6 +42,10 @@ import sentry_sdk
 from agent_runner import AgentRunner
 import json
 from agent_deployer import AgentDeployer
+from utils import sanitize_html, html_string_to_body_tag
+from baml_client import b as baml
+import tiktoken
+from utils import chunk_tag
 
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 sentry_sdk.init(
@@ -304,6 +310,72 @@ async def list_executions(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/get-selectors")
+async def get_selectors(
+    request: GetSelectorsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        url = request.url
+        selectors = db.get_selectors(url=url, agent_id=request.agent_id, config=config)
+        return {selector.id: selector.selector_string for selector in selectors}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/generate-selectors")
+async def generate_selectors(
+    request: GenerateSelectorsRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        import pdb; pdb.set_trace()
+        url = request.url
+        selectors = db.get_selectors(url=url, agent_id=request.agent_id, config=config, selector_ids=request.selector_ids)
+        body = html_string_to_body_tag(request.page)
+
+        invalid_selectors = []
+        for selector in selectors:
+            if body.select_one(selector.selector_string) is None:
+                invalid_selectors.append(selector)
+        
+        encoder = tiktoken.encoding_for_model("gpt-4o")
+        tokenized_page = encoder.encode(str(body))
+
+        tags = chunk_tag(body, 50000)
+        
+        results = []
+        for tag in tags:
+            results.append(await baml.GenerateSelectors([{invalid_selector.id, invalid_selector.selector_string, invalid_selector.description} for invalid_selector in invalid_selectors], str(tag)))
+        
+        # Combine results and select the highest confidence prediction for each selector
+        combined_results = []
+        for selector in invalid_selectors:
+            best_prediction = max(
+                (result for sublist in results for result in sublist if result.id == selector.id),
+                key=lambda x: x.confidence,
+                default=None
+            )
+            combined_results.append(best_prediction)
+        
+        # Create FinicSelector objects from combined results
+        new_selectors = []
+        for result in combined_results:
+            finic_selector = FinicSelector(
+                id=result.id,
+                value=result.predicted_selector,
+                description=next((s.description for s in invalid_selectors if s.id == result.id), ""),
+                agent_id=request.agent_id,
+                url=url
+            )
+            new_selectors.append(finic_selector)
+        
+        db.upsert_selectors(new_selectors)
+        
+        return {selector.id: selector for selector in new_selectors}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/sentry-debug")
 async def trigger_error():

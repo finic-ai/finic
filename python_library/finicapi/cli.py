@@ -5,7 +5,7 @@ import webbrowser
 from dotenv import load_dotenv
 from .finic import Finic
 import subprocess
-
+import argparse
 def check_api_key():
     # Load existing .env file if it exists
     load_dotenv()
@@ -70,7 +70,6 @@ def create_finic_app(argv=sys.argv):
 
 
 def deploy(argv=sys.argv):
-    import pdb; pdb.set_trace()
     api_key = check_api_key()
 
     # Check if finic_config.json exists
@@ -113,3 +112,31 @@ def deploy(argv=sys.argv):
     result = finic.deploy_agent(agent_id, agent_name, num_retries, zip_file)
 
     print(result)
+
+def main():
+  parser = argparse.ArgumentParser(
+    description="CLI for Finic's python library.."
+  )
+  parser.add_argument(
+    "-d",
+    "deploy",
+    help="Deploy the agent to Finic cloud",
+    required=False,
+  )
+
+  parser.add_argument(
+    "-gs",
+    "--generate-selectors",
+    help="Opens a browser to generate selectors for the given url",
+    required=False,
+  )
+
+  args = parser.parse_args()
+
+  if args.deploy:
+    deploy()
+  elif args.generate_selectors:
+    pass
+
+if __name__ == "__main__":
+  main()

@@ -2,8 +2,10 @@ from pydantic import BaseModel
 from enum import Enum
 import datetime
 import uuid
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 from .models import AppConfig, User, Agent, ExecutionAttempt
+from bs4 import Tag
+from playwright.sync_api import Page
 
 
 class GetAgentRequest(BaseModel):
@@ -36,3 +38,22 @@ class LogExecutionAttemptRequest(BaseModel):
     agent_id: str
     results: Dict[str, Any]
     attempt: ExecutionAttempt
+
+class GetSelectorsRequest(BaseModel):
+    url: str
+    agent_id: str
+
+# class GenerateSelectorsRequest(BaseModel):
+#     page: str
+#     agent_id: str
+#     selector_ids: Optional[List[str]] = None
+
+class GenerateSelectorsRequest(BaseModel):
+    selectors: List[str]
+    url: str
+    html: str
+
+class RegenerateSelectorsRequest(BaseModel):
+    selectors_ids: List[str]
+    url: str
+    html: str

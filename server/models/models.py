@@ -4,6 +4,12 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any, Tuple, Type, Union
 from enum import Enum
 import datetime
+from bs4 import Tag
+import tiktoken
+from baml_client import b as baml
+from baml_client.types import Selector
+from utils import chunk_tag
+
 
 
 class AppConfig(BaseModel):
@@ -97,3 +103,10 @@ class FinicEnvironment(str, Enum):
     LOCAL = "local"
     DEV = "dev"
     PROD = "prod"
+
+class FinicSelector(BaseModel):
+    id: str
+    value: str
+    description: str
+    agent_id: str
+    url: str
