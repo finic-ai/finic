@@ -2,9 +2,12 @@ import os
 import sys
 import json
 import webbrowser
+import asyncio
 from dotenv import load_dotenv
 from .finic import Finic
 import subprocess
+import argparse
+from .selectors import generate_selectors
 
 def check_api_key():
     # Load existing .env file if it exists
@@ -69,8 +72,7 @@ def create_finic_app(argv=sys.argv):
     )
 
 
-def deploy(argv=sys.argv):
-    import pdb; pdb.set_trace()
+def deploy():
     api_key = check_api_key()
 
     # Check if finic_config.json exists
@@ -113,3 +115,45 @@ def deploy(argv=sys.argv):
     result = finic.deploy_agent(agent_id, agent_name, num_retries, zip_file)
 
     print(result)
+
+def main():
+    parser = argparse.ArgumentParser(description="CLI for Finic's python library.")
+    subparsers = parser.add_subparsers(dest='command', required=True)
+
+    # Deploy command
+    deploy_parser = subparsers.add_parser(
+        'deploy', 
+        help='Deploy the agent to Finic cloud'
+    )
+
+    # Generate selectors command
+    generate_parser = subparsers.add_parser(
+        'generate-selectors', 
+        help='Opens a browser to generate selectors for the given url'
+    )
+    # generate_parser.add_argument(
+    #     '--api-key', 
+    #     help='An API key for OpenAI or Anthropic must be provided to generate selectors', 
+    #     required=True
+    # )
+    # generate_parser.add_argument(
+    #     '--url', 
+    #     help='The URL of the page to generate selectors for', 
+    #     required=True
+    # )
+    # generate_parser.add_argument(
+    #     '--llm-provider', 
+    #     help='The LLM provider to use for generating selectors', 
+    #     choices=['openai', 'anthropic'], default='openai'
+    # )
+
+    args = parser.parse_args()
+
+    if args.command == 'deploy':
+        deploy()
+    elif args.command == 'generate-selectors':
+        # generate_selectors(args.llm_provider, args.api_key, args.url)
+        asyncio.run(generate_selectors('openapi', 'test', 'https://github.com/finic-ai/finic/'))
+
+if __name__ == "__main__":
+    main()
