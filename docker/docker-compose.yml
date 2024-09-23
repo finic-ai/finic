@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  chrome:
+    image: zenika/alpine-chrome
+    ports:
+      - "9222:9222"
+    command: >
+      --no-sandbox 
+      --remote-debugging-address=0.0.0.0 
+      --remote-debugging-port=9222 
+      https://www.chromestatus.com/
