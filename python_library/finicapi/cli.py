@@ -1,9 +1,37 @@
 import os
 import sys
 import json
+import webbrowser
+from dotenv import load_dotenv
 from .finic import Finic
 import subprocess
 
+def check_api_key():
+    # Load existing .env file if it exists
+    load_dotenv()
+    
+    # Check if API key exists
+    api_key = os.getenv('FINIC_API_KEY')
+    
+    if not api_key:
+        # Open browser for login
+        print("No Finic API key found. Create a new account? (y/n)")
+        create_account = input()
+        if create_account == "y":
+            print("Please log in to Finic in the opened browser.")
+            print("After logging in, copy the API key from the Settings page and paste it here.")
+            webbrowser.open('https://app.finic.io/settings')
+        
+        print("Enter your API key:")
+        api_key = input()
+        
+        # Save API key to .env file
+        with open('.env', 'a') as env_file:
+            env_file.write(f'\nFINIC_API_KEY={api_key}')
+        
+        print("API key has been saved to .env file.")
+    
+    return api_key
 
 def zip_files_cli(zip_file):
     try:
@@ -42,8 +70,8 @@ def create_finic_app(argv=sys.argv):
 
 
 def deploy(argv=sys.argv):
-    print("Enter your API key:")
-    api_key = input()
+    import pdb; pdb.set_trace()
+    api_key = check_api_key()
 
     # Check if finic_config.json exists
     if not os.path.exists("finic_config.json"):

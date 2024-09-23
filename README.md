@@ -12,14 +12,30 @@
 <a href="https://github.com/psychicapi/psychic/issues?q=is%3Aissue+is%3Aclosed" target="_blank">
     <img src="https://img.shields.io/github/issues-closed/psychicapi/psychic?color=blue" alt="Issues">
 </a>
-  <a href="https://finic.ai/docs" target="_blank">
+  <a href="https://docs.finic.io/" target="_blank">
     <img src="https://img.shields.io/badge/documentation-blue">
-</a>
+  </a>
+  <a href="https://www.ycombinator.com/companies/finic" target="_blank">
+    <img src="https://img.shields.io/badge/Backed%20by%20Y%20Combinator-orange">
+  </a>
+
+  <a href="https://discord.gg/eyZMSxBPsd" target="_blank">
+    <img src="https://img.shields.io/discord/1131844815005429790?logo=discord">
+  </a>
+
 </p>
 
-[Finic](https://finic.ai/) is a cloud platform designed to simplify the deployment and management of browser-based automation agents, with a focus on fault-tolerant execution. It’s designed for quickly launching bots, scrapers, RPA integrationsm and other jobs that depend on multiple authenticated web services.
+[Finic](https://finic.ai/) is a cloud platform designed to simplify the deployment and management of browser-based automation agents, with a focus on fault-tolerant execution. It’s designed for quickly launching bots, scrapers, RPA integrationsm and other jobs that depend on multiple authenticated web services. 
 
-https://github.com/user-attachments/assets/00f1ebd0-868b-4383-9050-ad714e48e890
+Finic is designed to be **unopionated about the development process**, and simply provide network-level utilities and infrastructure to help you make your agents reliable and scalable.
+
+Currently, [Playwright](https://github.com/microsoft/playwright-python) is supported for interacting with DOM elements and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) is recommended (though not required) for parsing HTML.
+
+
+
+https://github.com/user-attachments/assets/19e45af1-5295-45f5-9a65-b4e833a98485
+
+
 
 ## Features:
 * **Cloud Deployment:** Deploy a pre-configured Playwright container to Finic Cloud with a single command. Trigger agents from the Finic dashboard or API.
@@ -50,7 +66,7 @@ Deploy your agent to Finic Cloud.
 finic-deploy
 ```
 
-View and run your agent from the [Finic dashboard](https://app.finic.ai/agents).
+View and run your agent from the [Finic dashboard](https://app.finic.io/agents).
 
 ## 🚧 Roadmap
 * Automated deployment from GitHub.
