@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 from .finic import Finic
 import subprocess
 import argparse
-from .selectors import generate_selectors
-
+from .selectors import generate_selectors, LLMProvider
 def check_api_key():
     # Load existing .env file if it exists
     load_dotenv()
@@ -131,29 +130,28 @@ def main():
         'generate-selectors', 
         help='Opens a browser to generate selectors for the given url'
     )
-    # generate_parser.add_argument(
-    #     '--api-key', 
-    #     help='An API key for OpenAI or Anthropic must be provided to generate selectors', 
-    #     required=True
-    # )
-    # generate_parser.add_argument(
-    #     '--url', 
-    #     help='The URL of the page to generate selectors for', 
-    #     required=True
-    # )
-    # generate_parser.add_argument(
-    #     '--llm-provider', 
-    #     help='The LLM provider to use for generating selectors', 
-    #     choices=['openai', 'anthropic'], default='openai'
-    # )
+    generate_parser.add_argument(
+        '--api-key', 
+        help='An API key for OpenAI or Anthropic must be provided to generate selectors', 
+        required=True
+    )
+    generate_parser.add_argument(
+        '--url', 
+        help='The URL of the page to generate selectors for', 
+        required=True
+    )
+    generate_parser.add_argument(
+        '--llm-provider', 
+        help='The LLM provider to use for generating selectors', 
+        choices=['openai', 'anthropic'], default='openai'
+    )
 
     args = parser.parse_args()
 
     if args.command == 'deploy':
         deploy()
     elif args.command == 'generate-selectors':
-        # generate_selectors(args.llm_provider, args.api_key, args.url)
-        asyncio.run(generate_selectors('openapi', 'test', 'https://github.com/finic-ai/finic/'))
+        asyncio.run(generate_selectors(LLMProvider(args.llm_provider.lower()), args.api_key, args.url))
 
 if __name__ == "__main__":
     main()

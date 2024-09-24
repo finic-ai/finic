@@ -17,6 +17,7 @@ datetime = "^5.5"
 playwright = "^1.47.0"
 openai = "^1.47.0"
 beautifulsoup4 = "^4.12.3"
+baml-py = "^0.56.1"
 
 [tool.poetry.scripts]
 create-finic-app = "finicapi.cli:create_finic_app"
