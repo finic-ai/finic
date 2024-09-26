@@ -30,35 +30,52 @@
 Finic is designed to be **unopionated about the development process**, and simply provide browser and network-level utilities to make sure your automations don't get blocked.
 
 # Quickstart
+
 ```bash
 git clone https://github.com/finic-ai/finic.git
 ```
 
 ## Running Locally
+
 Run the image locally the same as any other Docker container.
 
 ```bash
-docker compose
-docker up
+sudo docker-compose up --build
 ```
 
 Once the container is running, you can connect to it like this.
-```python
-from playwright.sync_api import sync_playwright
 
-playwright = sync_playwright().start()
-browser = playwright.chromium.connect(cdp="ws://localhost:8080/ws")    
-page = browser.new_page()
-await page.goto("https://github.com/finic-ai/finic")
-# ... The rest of your automation code
+```python
+CDP_URL = "ws://localhost:8000/ws"
+
+async def main(pw: Playwright):
+    print("Connecting to Browser...")
+    async with async_playwright() as pw:
+        browser = await pw.chromium.connect_over_cdp(CDP_URL)
+        try:
+            print("Connected! Navigating...")
+            page = await browser.new_page()
+            await page.goto("https://example.com", timeout=2 * 60 * 1000)
+            print("Navigated! Scraping page content...")
+            html = await page.content()
+            print(html)
+        finally:
+            await browser.close()
+
+asyncio.run(main())
 ```
 
+Or run `python testscript.py` to test out the container.
+
 If you want to use a Finic browser with an existing project, simply replace this line:
+
 ```python
 browser = playwright.chromium.launch(headless=False)
 ```
+
 with this one:
 with this:
+
 ```
-browser = playwright.chromium.connect(cdp_url="ws://localhost:8080/ws")
+browser = playwright.chromium.connect_over_cdp("ws://localhost:8080/ws")
 ```
