@@ -172,7 +172,6 @@ async def process_selector_queue(llm_provider: LLMProvider, provider_api_key: st
     
     with open('selectors.json', 'w') as f:
         json.dump(output, f, indent=2)
-    import pdb; pdb.set_trace()
     print(f"\nSelectors have been generated and saved to selectors.json")
 
 async def handle_inspect_node(cdp_session: CDPSession, page: Page, event: Dict[str, Any], current_node: List[NodeInfo]):

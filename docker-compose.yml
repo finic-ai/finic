@@ -3,7 +3,7 @@ version: '3.8'
 services:
   chrome:
     build:
-      context: ../chrome
+      context: ./chrome
       dockerfile: Dockerfile
     container_name: chrome
     ports:
