@@ -1,1 +1,1 @@
-from .finic import Finic, FinicEnvironment, FinicSecretsManager
+from .finic import Finic, FinicEnvironment
