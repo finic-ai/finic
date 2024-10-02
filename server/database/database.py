@@ -6,6 +6,7 @@ from models.models import (
     AppConfig,
     User,
     Session,
+    Browser
 )
 from supabase import create_client, Client
 import os
@@ -70,35 +71,32 @@ class Database:
             return User(**row)
         return None
 
-    def get_browser_state_download_url(self, config: AppConfig, browser_id: str) -> Optional[str]:
-        # Get signed download url from supabase storage under browser_states bucket with path {app_id}/{browser_id}.zip
+    def get_browser(self, config: AppConfig, browser_id: str) -> Optional[str]:
         try:
-            response = self.supabase.storage.from_("browser_state").create_signed_url(
-                path=f"{config.app_id}/{browser_id}.zip", 
-                expires_in=60
+            response = (
+                self.supabase.table("browser")
+                .select("*")
+                .filter("id", "eq", browser_id)
+                .filter("app_id", "eq", config.app_id)
+                .execute()
             )
-            print(f"Download URL: {response}")
-            return response['signedURL']
+            if len(response.data) > 0:
+                return Browser(**response.data[0])
+            return None
         except Exception as e:
             print(e)
             return None
+            
 
-    def get_browser_state_upload_url(self, config: AppConfig, browser_id: str) -> Optional[str]:
-        # Get signed upload url from supabase storage under browser_states bucket with path {app_id}/{browser_id}.zip
-        sync_bucket = self.supabase.storage.from_("browser_state")
-        try:
-            _path = sync_bucket._get_final_path(f"{config.app_id}/{browser_id}.zip")
-            response = sync_bucket._request("POST", f"/object/upload/sign/{_path}", headers={"x-upsert": "true"})
-            data = response.json()
-            full_url: urllib.parse.ParseResult = urllib.parse.urlparse(
-                str(sync_bucket._client.base_url) + data["url"]
-            )
-            signed_url = full_url.geturl()
-            print(f"Upload URL: {signed_url}")
-            return signed_url
-        except Exception as e:
-            print(e)
-            return None
+    def upsert_browser(self, browser: Browser) -> Optional[Browser]:
+        response = (
+            self.supabase.table("browser")
+            .upsert(browser.dict())
+            .execute()
+        )
+        if len(response.data) > 0:
+            return Browser(**response.data[0])
+        return None
 
     def upsert_session(self, session: Session) -> Optional[Session]:
         response = (

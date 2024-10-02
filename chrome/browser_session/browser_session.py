@@ -1,4 +1,4 @@
-from playwright.async_api import async_playwright
+from playwright.async_api import async_playwright, BrowserContext   
 import os
 import websockets
 import asyncio
@@ -24,7 +24,7 @@ class BrowserSession:
         self.port = port
         self.browser_id = browser_id
         self.data_dir = os.path.join(SESSION_PATH, str(port))
-        self.context = None
+        self.context: Optional[BrowserContext] = None
         self.client_websocket: Optional[WebSocket] = None
         self.finic_client = finic_client
         self.browser_websocket: Optional[websockets.client.WebSocketClientProtocol] = (
@@ -75,14 +75,16 @@ class BrowserSession:
             if os.path.exists(self.data_dir):
                 os.system(f"rm -rf {self.data_dir}")
 
-            if self.browser_id:
-                await self.load_browser_state()
-
             self.context = await pw.chromium.launch_persistent_context(
                 user_data_dir=self.data_dir,
                 args=self.browser_args + [f"--remote-debugging-port={self.port}"],
                 headless=False,
             )
+
+            
+            await self.load_browser_state()
+                
+
             info = requests.get(f"http://localhost:{self.port}/json/version").json()
             CDP_WS = info["webSocketDebuggerUrl"]
 
@@ -118,6 +120,9 @@ class BrowserSession:
                         print(f"Client WebSocket disconnected: {e}")
                         # Close the browser WebSocket connection
                         if browser_ws.open:
+                            cookies = await self.context.cookies()
+                            print(cookies)
+                            await self.save_browser_state()
                             await browser_ws.close()
 
                 # Create tasks to forward messages in both directions
@@ -154,52 +159,26 @@ class BrowserSession:
         except Exception as e:
             print(f"Error closing the client WebSocket: {e}")
 
-        if os.path.exists(self.data_dir):
-            if self.browser_id:
-                await self.save_browser_state()
-            os.system(f"rm -rf {self.data_dir}")
+        # if os.path.exists(self.data_dir):
+        #     os.system(f"rm -rf {self.data_dir}")
 
     async def save_browser_state(self):
-        # Get the signed upload URL for browser_id
-        upload_url, encryption_key = self.finic_client.get_browser_state_upload_url(self.browser_id)
-
-        # Zip the browser context directory into bytes buffer
-        zip_buffer = io.BytesIO()
-
-        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
-            for root, _, files in os.walk(self.data_dir):
-                for file in files:
-                    zipf.write(
-                        os.path.join(root, file),
-                        os.path.relpath(os.path.join(root, file), self.data_dir),
-                    )
-
-        encrypted_zip_buffer = await self._encrypt_file(zip_buffer, encryption_key)
-        encrypted_zip_buffer.seek(0)
-
-        self.finic_client.upload_browser_state(upload_url, encrypted_zip_buffer)
+        if not self.browser_id:
+            return
+        cookies = await self.context.cookies()
+        state = {
+            "cookies": cookies
+        }
+        self.finic_client.upsert_browser_state(self.browser_id, state)
 
         
 
     async def load_browser_state(self):
-        # Get the signed download URL for browser_id
-        download_url, encryption_key = self.finic_client.get_browser_state_download_url(self.browser_id)
-
-        if not download_url:
+        if not self.browser_id:
             return
-
-        # Download the encrypted zip file
-        encrypted_zip_buffer = io.BytesIO(requests.get(download_url).content)
-
-        # Decrypt the zip file
-        decrypted_zip_buffer = await self._decrypt_file(
-            encrypted_zip_buffer, encryption_key
-        )
-        decrypted_zip_buffer.seek(0)
-
-        # Unzip the decrypted zip file
-        with zipfile.ZipFile(decrypted_zip_buffer, "r") as zipf:
-            zipf.extractall(self.data_dir)
+        state = self.finic_client.get_browser_state(self.browser_id)
+        if state:
+            await self.context.add_cookies(state["cookies"])
 
     async def _encrypt_file(self, file: io.BytesIO, key: str) -> io.BytesIO:
         # TODO: Encrypt the file using the key

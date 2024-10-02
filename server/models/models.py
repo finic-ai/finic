@@ -23,6 +23,11 @@ class Session(BaseModel):
     app_id: str
     browser_id: Optional[str] = None
 
+class Browser(BaseModel):
+    id: str
+    app_id: str
+    state: Optional[Dict] = None
+
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
     DEV = "dev"

@@ -15,13 +15,13 @@ from fastapi.exceptions import RequestValidationError
 
 from fastapi.responses import JSONResponse
 
-from typing import List, Optional
+from typing import List, Optional, Dict
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
 import uuid
-from models.models import AppConfig, Session
+from models.models import AppConfig, Session, Browser
 from models.api import StartSessionRequest
 from database import Database
 import io
@@ -83,26 +83,32 @@ async def validate_token(
     return app_config
 
 
-@app.get("/browser-state-download-url/{browser_id}")
-async def get_browser_state_download_url(
+@app.get("/browser-state/{browser_id}")
+async def get_browser_state(
     browser_id: str = Path(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
-        download_url = db.get_browser_state_download_url(config, browser_id)
-        return {"download_url": download_url, "encryption_key": None}
+        browser = db.get_browser(config, browser_id)
+        return browser
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/browser-state-upload-url/{browser_id}")
-async def get_browser_state_upload_url(
+@app.post("/browser-state/{browser_id}")
+async def upsert_browser_state(
     browser_id: str = Path(...),
     config: AppConfig = Depends(validate_token),
+    browser_state: Dict = Body(...),
 ):
     try:
-        upload_url =  db.get_browser_state_upload_url(config, browser_id)
-        return {"upload_url": upload_url, "encryption_key": None}
+        browser = Browser(
+            id=browser_id,
+            app_id=config.app_id,
+            state=browser_state
+        )
+        browser = db.upsert_browser(browser)
+        return browser 
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
