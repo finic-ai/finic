@@ -14,10 +14,8 @@ from storage3.utils import StorageException
 
 from io import StringIO
 from bs4 import BeautifulSoup
-import pandas as pd
 import httpx
 import datetime
-from pypdf import PdfWriter, PdfReader
 import tempfile
 import pdb
 from dotenv import load_dotenv
