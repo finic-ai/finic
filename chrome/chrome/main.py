@@ -4,6 +4,7 @@ from fastapi import (
     Request,
     status,
     WebSocket,
+    Query,
 )
 from starlette.websockets import WebSocketState
 from fastapi.exceptions import RequestValidationError
@@ -14,7 +15,7 @@ import logging
 from browser_session import BrowserSession
 from port_manager import PortManager
 from playwright.async_api import async_playwright
-
+from finic_client import FinicClient
 
 app = FastAPI()
 app.add_middleware(
@@ -95,10 +96,18 @@ async def test():
 
 
 @app.websocket("/ws")
-async def websocket_proxy(websocket: WebSocket):
+async def websocket_proxy(
+    websocket: WebSocket, 
+    api_key: str = Query(...), 
+    browser_id: str = Query(...)
+):
     print("WebSocket connection accepted")
     await websocket.accept()
     error = None
+
+    client = FinicClient(api_key=api_key)
+
+    client.start_session(browser_id=browser_id)
 
     # Find an available port
     port = port_manager.get_available_port()
@@ -107,7 +116,9 @@ async def websocket_proxy(websocket: WebSocket):
     port_manager.mark_port_as_used(port)
 
     try:
-        session = BrowserSession(port=port)
+        
+
+        session = BrowserSession(port=port, browser_id=browser_id, finic_client=client)
         await session.connect(websocket=websocket)
 
     except Exception as e:
@@ -125,7 +136,7 @@ async def websocket_proxy(websocket: WebSocket):
 
 def start():
     uvicorn.run(
-        "server.main:app",
+        "chrome.main:app",
         host="0.0.0.0",
         port=8000,
         reload=True,

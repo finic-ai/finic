@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "server"
+name = "chrome"
 version = "0.1.0"
 description = ""
 authors = ["Ayan Bandyopadhyay"]
@@ -13,9 +13,10 @@ fastapi = "^0.115.0"
 uvicorn = "^0.30.6"
 requests = "^2.32.3"
 websockets = "^13.1"
+poetry-dotenv-plugin = "^0.2.0"
 
 [tool.poetry.scripts]
-start = "server:start"
+start = "chrome:start"
 
 
 [build-system]

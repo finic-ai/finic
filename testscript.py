@@ -2,7 +2,13 @@ import asyncio
 from playwright.sync_api import sync_playwright, Playwright
 import requests
 import json
-CDP_URL = "ws://localhost:8000/ws"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
+
 
 TEST_DATA = {
     "url": "https://testpages.herokuapp.com/styled/basic-html-form-test.html",
@@ -25,10 +31,11 @@ def main():
 
     with sync_playwright() as p:
         print("Connecting to Browser...")
-        browser = p.chromium.launch(headless=False, slow_mo=500)
         
-        ### Uncomment this line when you're ready to connect to Finic Browser
-        # browser = p.chromium.connect_over_cdp("ws://localhost:8000/ws")
+        browser = p.chromium.connect_over_cdp(f"ws://localhost:8000/ws?api_key={API_KEY}&browser_id=test_browser")
+
+        ### Uncomment this line if you want to run the script without Finic
+        # browser = p.chromium.launch(headless=False, slow_mo=500)
         
         page = browser.new_page()
 
