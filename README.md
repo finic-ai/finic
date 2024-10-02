@@ -48,7 +48,7 @@ Once the container is running, you can connect to it like this.
 ```python
 CDP_URL = "ws://localhost:8000/ws"
 
-async def main(pw: Playwright):
+async def main():
     print("Connecting to Browser...")
     async with async_playwright() as pw:
         browser = await pw.chromium.connect_over_cdp(CDP_URL)
