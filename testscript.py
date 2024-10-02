@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
-
+LOCAL_URL = f"ws://localhost:8000/ws?api_key={API_KEY}&browser_id=test_browser"
+PROD_URL = f"wss://browser-521298051240.us-central1.run.app/ws?api_key={API_KEY}&browser_id=test_browser"
 
 TEST_DATA = {
     "url": "https://testpages.herokuapp.com/styled/basic-html-form-test.html",
@@ -32,10 +33,7 @@ def main():
     with sync_playwright() as p:
         print("Connecting to Browser...")
         
-        browser = p.chromium.connect_over_cdp(f"ws://localhost:8000/ws?api_key={API_KEY}&browser_id=test_browser")
-
-        ### Uncomment this line if you want to run the script without Finic
-        # browser = p.chromium.launch(headless=False, slow_mo=500)
+        browser = p.chromium.connect_over_cdp(PROD_URL)
         
         page = browser.new_page()
 
