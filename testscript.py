@@ -34,9 +34,9 @@ def main():
         print("Connecting to Browser...")
         
         browser = p.chromium.connect_over_cdp(PROD_URL)
+        browser = browser.contexts[0]
+        page = browser.pages[0]
         
-        page = browser.new_page()
-
         # Navigate to the website and login
         page.goto(url)
         page.wait_for_load_state("networkidle", timeout=10000)
