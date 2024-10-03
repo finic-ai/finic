@@ -121,7 +121,6 @@ class BrowserSession:
                         # Close the browser WebSocket connection
                         if browser_ws.open:
                             cookies = await self.context.cookies()
-                            print(cookies)
                             await self.save_browser_state()
                             await browser_ws.close()
 
