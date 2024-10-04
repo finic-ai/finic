@@ -8,5 +8,5 @@ To run locally, run:
 
 ```
 python3 setup.py sdist bdist_wheel
-pip install /path/to/folder/dist/finicapi-0.1.0.tar.gz
+pip install /path/to/folder/dist/finic-py-0.1.0.tar.gz
 ```
