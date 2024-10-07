@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "finic"
+name = "worker"
 version = "0.1.0"
 description = ""
 authors = ["ayan <ayan@psychic.dev>"]
-packages = [{include = "server"}]
+packages = [{include = "worker"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
@@ -21,7 +21,7 @@ openpyxl = "^3.1.5"
 poetry-dotenv-plugin = "^0.2.0"
 
 [tool.poetry.scripts]
-start = "server:start"
+start = "worker:start"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

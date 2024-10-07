@@ -13,20 +13,17 @@ from typing import Optional
 import websockets.exceptions
 import zipfile
 import io
-from finic_client import FinicClient
 
 SESSION_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "chrome_context"
 )
 
 class BrowserSession:
-    def __init__(self, port: int, browser_id: Optional[str] = None, finic_client: FinicClient = None):
+    def __init__(self, port: int):
         self.port = port
-        self.browser_id = browser_id
         self.data_dir = os.path.join(SESSION_PATH, str(port))
         self.context: Optional[BrowserContext] = None
         self.client_websocket: Optional[WebSocket] = None
-        self.finic_client = finic_client
         self.browser_websocket: Optional[websockets.client.WebSocketClientProtocol] = (
             None
         )
@@ -77,15 +74,18 @@ class BrowserSession:
 
             self.context = await pw.chromium.launch_persistent_context(
                 user_data_dir=self.data_dir,
-                args=self.browser_args + [f"--remote-debugging-port={self.port}"],
+                args=self.browser_args + [ "--remote-allow-origins=*", f"--remote-debugging-port={self.port}"],
                 headless=False,
             )
-
             
-            await self.load_browser_state()
-                
+            pages = requests.get(f"http://localhost:{self.port}/json/list").json()
+            page = pages[0]
+            print("PAGE", page)
+            live_session_url = f"http://localhost:{self.port}{page['devtoolsFrontendUrl']}"
+            live_session_websocket_url = page['webSocketDebuggerUrl']
 
             info = requests.get(f"http://localhost:{self.port}/json/version").json()
+            print("INFO", info)
             CDP_WS = info["webSocketDebuggerUrl"]
 
             async with websockets.connect(CDP_WS) as browser_websocket:
@@ -121,7 +121,6 @@ class BrowserSession:
                         # Close the browser WebSocket connection
                         if browser_ws.open:
                             cookies = await self.context.cookies()
-                            await self.save_browser_state()
                             await browser_ws.close()
 
                 # Create tasks to forward messages in both directions
@@ -158,31 +157,6 @@ class BrowserSession:
         except Exception as e:
             print(f"Error closing the client WebSocket: {e}")
 
-        # if os.path.exists(self.data_dir):
-        #     os.system(f"rm -rf {self.data_dir}")
+        if os.path.exists(self.data_dir):
+            os.system(f"rm -rf {self.data_dir}")
 
-    async def save_browser_state(self):
-        if not self.browser_id:
-            return
-        cookies = await self.context.cookies()
-        state = {
-            "cookies": cookies
-        }
-        self.finic_client.upsert_browser_state(self.browser_id, state)
-
-        
-
-    async def load_browser_state(self):
-        if not self.browser_id:
-            return
-        state = self.finic_client.get_browser_state(self.browser_id)
-        if state:
-            await self.context.add_cookies(state["cookies"])
-
-    async def _encrypt_file(self, file: io.BytesIO, key: str) -> io.BytesIO:
-        # TODO: Encrypt the file using the key
-        return file
-
-    async def _decrypt_file(self, file: io.BytesIO, key: str) -> io.BytesIO:
-        # TODO: Decrypt the file using the key
-        return file
