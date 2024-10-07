@@ -125,6 +125,24 @@ def main():
         help='Deploy the agent to Finic cloud'
     )
 
+    # Connect to remote browser command
+    connect_to_browser_parser = subparsers.add_parser(
+        'connect', 
+        help='Connects to a remote browser'
+    )
+
+    connect_to_browser_parser.add_argument(
+        '--cdp-url', 
+        help='The URL of the browser to connect to',
+        required=True
+    )
+    connect_to_browser_parser.add_argument(
+        '--api-key', 
+        help='A Finic API key',
+        required=True
+    )
+    
+
     # Generate selectors command
     generate_parser = subparsers.add_parser(
         'generate-selectors', 
@@ -132,12 +150,12 @@ def main():
     )
     generate_parser.add_argument(
         '--api-key', 
-        help='An API key for OpenAI or Anthropic must be provided to generate selectors', 
+        help='An API key for OpenAI or Anthropic must be provided to generate selectors',
         required=True
     )
     generate_parser.add_argument(
         '--url', 
-        help='The URL of the page to generate selectors for', 
+        help='The URL of the page to generate selectors for',
         required=True
     )
     generate_parser.add_argument(
@@ -150,7 +168,12 @@ def main():
 
     if args.command == 'deploy':
         deploy()
+    elif args.command == 'connect':
+        pass
+        # finic = Finic(api_key=args.api_key)
+        # finic.launch_browser_sync(cdp_url=args.cdp_url)
     elif args.command == 'generate-selectors':
+        
         asyncio.run(generate_selectors(LLMProvider(args.llm_provider.lower()), args.api_key, args.url))
 
 if __name__ == "__main__":
