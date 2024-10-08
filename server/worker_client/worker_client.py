@@ -9,10 +9,8 @@ import json
 import datetime
 from google.oauth2 import service_account
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-worker_dir = os.path.abspath(os.path.join(current_dir, "..", ".."))
-sys.path.append(worker_dir)
-from worker.run_worker import run_worker
+
+
 
 
 
@@ -50,6 +48,10 @@ class WorkerClient:
             agent_id: str,
             agent_input: Dict[str, Any] = None
         ):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        worker_dir = os.path.abspath(os.path.join(current_dir, "..", ".."))
+        sys.path.append(worker_dir)
+        from worker.run_worker import run_worker
         self.background_tasks.add_task(run_worker, agent_id, self.api_key, {})
 
     def run_worker_remotely(
