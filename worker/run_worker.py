@@ -9,7 +9,7 @@ load_dotenv()
 
 class Worker:
     def __init__(self, agent_id: str, api_key: str):
-        self.url = os.getenv("SERVER_URL")
+        self.url = os.getenv("FINIC_SERVER_URL")
         if not self.url:
             raise Exception("SERVER_URL is not set")
         self.agent_id = agent_id
