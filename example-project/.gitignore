@@ -1,0 +1,7 @@
+**/__pycache__/
+**/.venv/
+**/.env
+**/.DS_Store
+/temp
+input.json
+secrets.json
