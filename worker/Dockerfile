@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 python:3.11
+FROM mcr.microsoft.com/playwright/python:v1.47.0-jammy
+
 ENV POETRY_HOME=/opt/poetry
 ENV POETRY_VENV=/opt/poetry-venv
 ENV POETRY_DATA_DIR=/opt/poetry-data
@@ -9,10 +10,20 @@ ENV POETRY_CACHE_DIR=/opt/.cache
 VOLUME ./.poetry-data-cache /opt/poetry-data
 VOLUME ./.poetry-cache /opt/.cache
 
-RUN python3.11 -m pip install poetry==1.7.1
+RUN python -m pip install poetry==1.7.1
 WORKDIR /workspace
 RUN poetry config virtualenvs.create false
 
-COPY ./run_worker.py ./run_worker.py
+COPY ./pyproject.toml ./pyproject.toml
+COPY ./poetry.lock ./poetry.lock
+# install only deps in dependency list first and lockfile to cache them
+RUN poetry install --no-root --only main
 
-ENTRYPOINT [ "python", "run_worker.py" ]
+COPY . .
+
+
+ENV PYTHONUNBUFFERED=1
+ENV DISPLAY=:99
+
+# CMD Xvfb :99 -screen 0 1024x768x16 & poetry run python run_worker.py
+CMD poetry run python run_worker.py

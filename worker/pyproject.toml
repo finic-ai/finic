@@ -2,27 +2,17 @@
 name = "worker"
 version = "0.1.0"
 description = ""
-authors = ["ayan <ayan@psychic.dev>"]
-packages = [{include = "worker"}]
+authors = ["Ayan Bandyopadhyay"]
+license = "MIT"
+readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
-fastapi = "^0.111.0"
-uvicorn = "^0.20.0"
-python-dotenv = "^0.21.1"
-pydantic = "^2.7.1"
-strenum = "^0.4.15"
-supabase = "^1.0.3"
-pyproject-hooks="1.1.0"
-bs4 = "^0.0.1"
-sentry-sdk = {extras = ["fastapi"], version = "^1.40.0"}
-inflect = "^7.3.0"
-openpyxl = "^3.1.5"
+python = "^3.10"
+playwright = "^1.47.0"
+requests = "^2.32.3"
 poetry-dotenv-plugin = "^0.2.0"
 
-[tool.poetry.scripts]
-start = "worker:start"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

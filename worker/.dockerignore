@@ -8,3 +8,7 @@ examples/
 *.pyc
 .dockerignore
 Dockerfile
+
+project/
+.venv/
+.env

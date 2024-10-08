@@ -10,6 +10,7 @@ from fastapi import (
     status,
     Form,
     Query,
+    BackgroundTasks,
 )
 from fastapi.exceptions import RequestValidationError
 
@@ -21,8 +22,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
 import uuid
-from models.models import AppConfig, Session, Browser
-from models.api import StartSessionRequest
+from models.models import AppConfig, Session, Browser, Agent
+from models.api import RunAgentRequest, AgentUploadRequest
 from database import Database
 import io
 import datetime
@@ -30,6 +31,8 @@ import pdb
 import logging
 import sentry_sdk
 import json
+from worker_client import WorkerClient
+
 
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 if SENTRY_DSN:
@@ -113,9 +116,11 @@ async def upsert_browser_state(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/start-session")
-async def start_session(
-    request: StartSessionRequest = Body(...),
+@app.post("/run-agent/{agent_id}")
+async def run_agent(
+    background_tasks: BackgroundTasks,
+    agent_id: str = Path(...),
+    request: RunAgentRequest = Body(...),
     config: AppConfig = Depends(validate_token),
 ):
     try:
@@ -123,10 +128,53 @@ async def start_session(
         session = Session(
             id=session_id, 
             app_id=config.app_id, 
-            browser_id=request.browser_id
+            browser_id=request.browser_id,
+            agent_id=agent_id
         )
         session = db.upsert_session(session)
+        secret_key = db.get_secret_key_for_user(config.user_id)
+        worker_client = WorkerClient( secret_key, background_tasks )
+        worker_client.run_worker(
+            
+            session_id=session_id,
+            browser_id=request.browser_id,
+            agent_id=agent_id,
+            agent_input=request.agent_input
+        )
         return {"session_id": session_id}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/agent-upload-link/{agent_id}")
+async def get_agent_upload_link(
+    agent_id: str = Path(...),
+    request: AgentUploadRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        agent = Agent(
+            id=agent_id,
+            app_id=config.app_id,
+            name=request.agent_name,
+            num_retries=request.num_retries
+        )
+        db.upsert_agent(agent)
+        upload_url = db.get_agent_upload_link(agent)
+        return {"upload_url": upload_url}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/agent-download-link/{agent_id}")
+async def get_agent_download_link(
+    agent_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        agent = db.get_agent(agent_id, config.app_id)
+        url = db.get_agent_download_link(agent)
+        return {"download_url": url}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

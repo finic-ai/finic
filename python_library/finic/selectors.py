@@ -5,8 +5,8 @@ from typing import List, Dict, Any, Optional
 from bs4 import BeautifulSoup, Tag
 import shutil
 from pydantic import BaseModel
-from baml_client import b as baml
-from baml_client.types import BamlTag, GenerateSelectorsOutput
+from .baml_client import b as baml
+from .baml_client.types import BamlTag, GenerateSelectorsOutput
 from baml_py import ClientRegistry
 import uuid
 import json

@@ -1,4 +1,4 @@
-# Dealwise server
+# Worker
 
 ```
 poetry shell

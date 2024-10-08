@@ -9,10 +9,11 @@ import subprocess
 import argparse
 from .selectors import generate_selectors, LLMProvider
 def check_api_key():
-    # Load existing .env file if it exists
-    load_dotenv()
     
     # Check if API key exists
+    env_path = os.path.join(os.getcwd(), '.env')
+    if os.path.exists(env_path):
+        load_dotenv(env_path)
     api_key = os.getenv('FINIC_API_KEY')
     
     if not api_key:
@@ -113,7 +114,10 @@ def deploy():
 
     result = finic.deploy_agent(agent_id, agent_name, num_retries, zip_file)
 
-    print(result)
+    if result:
+        print(f"Agent with ID {agent_id} deployed successfully")
+    else:
+        print("Agent deployment failed")
 
 def main():
     parser = argparse.ArgumentParser(description="CLI for Finic's python library.")

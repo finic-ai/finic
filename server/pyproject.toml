@@ -19,6 +19,7 @@ sentry-sdk = {extras = ["fastapi"], version = "^1.40.0"}
 inflect = "^7.3.0"
 openpyxl = "^3.1.5"
 poetry-dotenv-plugin = "^0.2.0"
+google-cloud-run = "^0.10.8"
 
 [tool.poetry.scripts]
 start = "server:start"

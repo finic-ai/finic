@@ -82,7 +82,8 @@ class Finic:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        environment: Optional[FinicEnvironment] = None
+        environment: Optional[FinicEnvironment] = None,
+        url: Optional[str] = None
     ):
 
         default_env = os.environ.get("FINIC_ENV") or FinicEnvironment.LOCAL
@@ -91,7 +92,8 @@ class Finic:
             self.api_key = api_key
         else:
             self.api_key = os.getenv("FINIC_API_KEY")
-    
+        self.url = url or "https://api.finic.io"
+
     def save_context(self, context: BrowserContext, path: Optional[str] = None):
         if path:
             self.context_storage_path = path
@@ -157,3 +159,19 @@ class Finic:
                 print(f"Error loading storage state: {e}")
 
         return context
+    
+    def deploy_agent(self, agent_id: str, agent_name: str, num_retries: int, zip_file: str) -> bool:
+        with open(zip_file, 'rb') as f:
+            upload_file = f.read()
+        response = requests.post(
+            f"{self.url}/agent-upload-link/{agent_id}",
+            headers={"Authorization": f"Bearer {self.api_key}"},
+            json={"agent_id": agent_id, "agent_name": agent_name, "num_retries": num_retries}
+        )
+        response.raise_for_status()
+        upload_url = response.json()["upload_url"]
+        response = requests.put(upload_url, data=upload_file)
+        response.raise_for_status()
+        return True
+    
+    
