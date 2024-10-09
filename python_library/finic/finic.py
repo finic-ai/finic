@@ -115,8 +115,10 @@ class Finic:
             context.storage_state(path=path)
             print(f"Browser context saved to: {path}")
         else:
+            
+            browser_id = browser_id or os.getenv("FINIC_BROWSER_ID")
             if not browser_id:
-                browser_id = os.getenv("FINIC_BROWSER_ID")
+                return
             browser_context = context.storage_state()
             response = requests.post(
                 f"{self.url}/browser-state/{browser_id}",
@@ -136,8 +138,9 @@ class Finic:
             else:
                 return None
         else:
+            browser_id = browser_id or os.getenv("FINIC_BROWSER_ID")
             if not browser_id:
-                browser_id = os.getenv("FINIC_BROWSER_ID")
+                return None
             response = requests.get(
                 f"{self.url}/browser-state/{browser_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},

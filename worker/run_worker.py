@@ -74,17 +74,23 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
 
     # Give Xvfb a moment to start up
     # time.sleep(1)
-
+    error = None
     try:
         # Set the DISPLAY environment variable
         os.environ["DISPLAY"] = ":99"
 
         # Run the Poetry command
         subprocess.run(["poetry", "run", "start"])
+    except Exception as e:
+        print(f"Error running agent: {e}")
+        error = e
     finally:
         # Make sure to terminate Xvfb when we're done
         xvfb_process.terminate()
         xvfb_process.wait()
+
+    if error:
+        raise error
 
 if __name__ == "__main__":
     AGENT_ID = os.getenv("FINIC_AGENT_ID")
