@@ -96,6 +96,18 @@ class Database:
         if len(response.data) > 0:
             return Browser(**response.data[0])
         return None
+    
+    def get_session(self, session_id: str, app_id: str) -> Optional[Session]:
+        response = (
+            self.supabase.table("session")
+            .select("*")
+            .filter("id", "eq", session_id)
+            .filter("app_id", "eq", app_id)
+            .execute()
+        )
+        if len(response.data) > 0:
+            return Session(**response.data[0])
+        return None
 
     def upsert_session(self, session: Session) -> Optional[Session]:
         response = (

@@ -23,6 +23,7 @@ class Session(BaseModel):
     app_id: str
     browser_id: Optional[str] = None
     agent_id: Optional[str] = None
+    results: Optional[Dict] = None
 
 class Browser(BaseModel):
     id: str

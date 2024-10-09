@@ -115,6 +115,34 @@ async def upsert_browser_state(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/session-results/{session_id}")
+async def get_session_results(
+    session_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        session = db.get_session(session_id, config.app_id)
+        return session.results
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/session-results/{session_id}")
+async def upsert_session_results(
+    session_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+    session_results: Dict = Body(...),
+):
+    try:
+        session = db.get_session(session_id, config.app_id)
+        session.results = session_results
+        session = db.upsert_session(session)
+        return session
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/run-agent/{agent_id}")
 async def run_agent(
