@@ -132,7 +132,7 @@ async def get_session_results(
 async def upsert_session_results(
     session_id: str = Path(...),
     config: AppConfig = Depends(validate_token),
-    session_results: Dict = Body(...),
+    session_results: List[Dict] = Body(...),
 ):
     try:
         session = db.get_session(session_id, config.app_id)
