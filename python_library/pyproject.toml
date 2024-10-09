@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "finic-py"
-version = "0.1.11"
+version = "0.1.12"
 description = "Finic.ai is a platform for deploying agents and workflow automations in Python. This is the Python client for Finic"
 authors = ["Ayan Bandyopadhyay <ayan@finic.ai>", "jasonwcfan <jason@finic.ai>"]
 readme = "README.md"

@@ -198,16 +198,8 @@ class Finic:
         else:
             
             browser = playwright.chromium.launch(**kwargs)
-            context = browser.new_context()
-            context.on("close", on_browser_disconnected)
-            try:
-                if os.path.exists(self.context_storage_path):
-                    with open(self.context_storage_path, 'r') as f:
-                        storage_state = json.load(f)
-                        cookies = storage_state.get('cookies', [])
-                        context.add_cookies(cookies)
-            except Exception as e:
-                print(f"Error loading storage state: {e}")
+            context = browser.new_context(storage_state=self.get_browser_context())
+            context.on("close", lambda browser_context: self.save_browser_context(browser_context))
 
         return context
     
