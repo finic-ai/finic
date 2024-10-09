@@ -144,7 +144,10 @@ class Finic:
             )
             response.raise_for_status()
             browser = response.json()
-            return browser.get('state')
+            if browser and browser.get('state'):
+                return browser.get('state')
+            else:
+                return None
         
     def save_session_results(self, results: Dict):
         if self.environment == FinicEnvironment.LOCAL:
