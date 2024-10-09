@@ -88,9 +88,8 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
         # Make sure to terminate Xvfb when we're done
         xvfb_process.terminate()
         xvfb_process.wait()
-
-    if error:
-        raise error
+        if error:
+            raise error
 
 if __name__ == "__main__":
     AGENT_ID = os.getenv("FINIC_AGENT_ID")
