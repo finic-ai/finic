@@ -26,3 +26,6 @@ def get_cookies_from_string(cookies_string: str, url: Optional[str] = None, doma
 
 def handle_response(response: Response):
     pass
+
+def generate_selector(element: NodeInfo):
+    pass

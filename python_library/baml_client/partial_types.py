@@ -28,14 +28,28 @@ from . import types
 ###############################################################################
 
 
-class BamlTag(BaseModel):
+class Attribute(BaseModel):
     
     
-    user_assigned_id: Optional[str] = None
-    html: Optional[str] = None
+    name: Optional[str] = None
+    value: Optional[str] = None
 
-class GenerateSelectorsOutput(BaseModel):
+class Element(BaseModel):
     
     
-    selector_string: Optional[str] = None
-    confidence: Optional[float] = None
+    tagName: Optional[str] = None
+    textContent: Optional[str] = None
+    attributes: List["Attribute"]
+
+class PlanningStep(BaseModel):
+    
+    
+    step_number: Optional[int] = None
+    description: Optional[str] = None
+
+class Step(BaseModel):
+    
+    
+    step_index: Optional[int] = None
+    selector: Optional[str] = None
+    instructions: Optional[str] = None

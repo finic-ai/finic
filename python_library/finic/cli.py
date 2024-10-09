@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 from .finic import Finic
 import subprocess
 import argparse
-from .selectors import generate_selectors, LLMProvider
+from .capture import capture
+
+load_dotenv()
+
 def check_api_key():
-    # Load existing .env file if it exists
-    load_dotenv()
     
     # Check if API key exists
     api_key = os.getenv('FINIC_API_KEY')
@@ -119,6 +120,9 @@ def main():
     parser = argparse.ArgumentParser(description="CLI for Finic's python library.")
     subparsers = parser.add_subparsers(dest='command', required=True)
 
+    anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
+    openai_api_key = os.getenv('OPENAI_API_KEY')
+
     # Deploy command
     deploy_parser = subparsers.add_parser(
         'deploy', 
@@ -145,26 +149,33 @@ def main():
 
     # Generate selectors command
     generate_parser = subparsers.add_parser(
-        'generate-selectors', 
-        help='Opens a browser to generate selectors for the given url'
+        'capture', 
+        help='Opens a browser to capture a workflow'
     )
     generate_parser.add_argument(
         '--api-key', 
         help='An API key for OpenAI or Anthropic must be provided to generate selectors',
-        required=True
+        required=(openai_api_key is None and anthropic_api_key is None)
     )
     generate_parser.add_argument(
         '--url', 
-        help='The URL of the page to generate selectors for',
+        help='The URL of the starting page of the workflow',
         required=True
     )
     generate_parser.add_argument(
         '--llm-provider', 
         help='The LLM provider to use for generating selectors', 
-        choices=['openai', 'anthropic'], default='openai'
+        choices=['openai', 'anthropic'], default='anthropic'
     )
 
     args = parser.parse_args()
+
+    if args.api_key:
+        llm_provider_api_key = args.api_key
+    elif anthropic_api_key:
+        llm_provider_api_key = anthropic_api_key
+    elif openai_api_key:
+        llm_provider_api_key = openai_api_key
 
     if args.command == 'deploy':
         deploy()
@@ -172,9 +183,8 @@ def main():
         pass
         # finic = Finic(api_key=args.api_key)
         # finic.launch_browser_sync(cdp_url=args.cdp_url)
-    elif args.command == 'generate-selectors':
-        
-        asyncio.run(generate_selectors(LLMProvider(args.llm_provider.lower()), args.api_key, args.url))
+    elif args.command == 'capture':
+        asyncio.run(capture(args.llm_provider.lower(), llm_provider_api_key, args.url))
 
 if __name__ == "__main__":
     main()

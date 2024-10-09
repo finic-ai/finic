@@ -7,9 +7,9 @@ import requests
 import datetime
 import sys
 from pydantic import BaseModel
-from typing import Any
-from playwright.sync_api import sync_playwright, Browser, BrowserContext
-from playwright.async_api import async_playwright, Browser as AsyncBrowser, BrowserContext as AsyncBrowserContext
+from typing import Any, Union, Literal
+from playwright.sync_api import sync_playwright, Browser, BrowserContext, Page, ElementHandle
+from playwright.async_api import async_playwright, Browser as AsyncBrowser, BrowserContext as AsyncBrowserContext, Page as AsyncPage, ElementHandle as AsyncElementHandle
 
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
@@ -67,12 +67,11 @@ class StdoutLogger:
     def get_logs(self):
         return self.logs
 
-def on_browser_disconnected(browser: Browser):
+def on_browser_disconnected(browser_context: Union[BrowserContext, AsyncBrowserContext]):
     print("Browser disconnected")
-    if len(browser.contexts) > 0:
-        storage_state_path = os.path.join(os.getcwd(), f"storage_state.json")
-        browser.contexts[0].storage_state(path=storage_state_path)
-        print(f"Browser context saved to: {storage_state_path}")
+    storage_state_path = os.path.join(os.getcwd(), f"storage_state.json")
+    browser_context.storage_state(path=storage_state_path)
+    print(f"Browser context saved to: {storage_state_path}")
 
 class Finic:
     api_key: Optional[str] = None
@@ -92,68 +91,152 @@ class Finic:
         else:
             self.api_key = os.getenv("FINIC_API_KEY")
     
-    def save_context(self, context: BrowserContext, path: Optional[str] = None):
+    def save_context(self, context: Union[BrowserContext, AsyncBrowserContext], path: Optional[str] = None):
         if path:
             self.context_storage_path = path
         context.storage_state(path=self.context_storage_path)
-        print(f"Browser context saved to: {self.context_storage_path}")
+        print(f"Browser context saved to: {self.context_storage_path}") 
     
-    def launch_browser_sync(self, cdp_url: Optional[str] = None, **kwargs) -> BrowserContext:
+    def launch_browser_sync(self, browser_type: Optional[Literal["chromium", "firefox", "webkit"]] = "chromium", **kwargs) -> BrowserContext:
         playwright = sync_playwright().start()
-        if cdp_url:
-            try:
-                browser = playwright.chromium.connect_over_cdp(
-                    endpoint_url=cdp_url,
-                    timeout=kwargs.get('timeout'),
-                    slow_mo=kwargs.get('slow_mo'),
-                    headers=kwargs.get('headers')
-                )
-                context = browser.contexts[0]
-            except Exception as e:
-                print(f"Error connecting to remote browser: {e}")
-                raise e
-        else:
-            
-            browser = playwright.chromium.launch(**kwargs)
-            context = browser.new_context()
-            context.on("close", on_browser_disconnected)
-            try:
-                if os.path.exists(self.context_storage_path):
-                    with open(self.context_storage_path, 'r') as f:
-                        storage_state = json.load(f)
-                        cookies = storage_state.get('cookies', [])
-                        context.add_cookies(cookies)
-            except Exception as e:
-                print(f"Error loading storage state: {e}")
+        browser = getattr(playwright, browser_type).launch(**kwargs)
+        context = browser.new_context()
+        context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+            });
+        """)
+        context.on("close", on_browser_disconnected)
+        try:
+            if os.path.exists(self.context_storage_path):
+                with open(self.context_storage_path, 'r') as f:
+                    storage_state = json.load(f)
+                    cookies = storage_state.get('cookies', [])
+                    context.add_cookies(cookies)
+        except Exception as e:
+            print(f"Error loading storage state: {e}")
 
         return context
     
-    async def launch_browser_async(self, cdp_url: Optional[str] = None, **kwargs) -> AsyncBrowserContext:
+    async def launch_browser_async(self, browser_type: Optional[Literal["chromium", "firefox", "webkit"]] = "chromium", **kwargs) -> AsyncBrowserContext:
         playwright = async_playwright().start()
-        if cdp_url:
-            try:
-                browser = playwright.chromium.connect_over_cdp(
-                    endpoint_url=cdp_url,
-                    timeout=kwargs.get('timeout'),
-                    slow_mo=kwargs.get('slow_mo'),
-                    headers=kwargs.get('headers')
-                )
-                context = browser.contexts[0]
-            except Exception as e:
-                print(f"Error connecting to remote browser: {e}")
-                raise e
-        else:
-            browser = await playwright.chromium.launch(**kwargs)
-            browser.on("disconnected", on_browser_disconnected)
-            context = await browser.new_context()
+        browser = await getattr(playwright, browser_type).launch(**kwargs)
+        context = await browser.new_context()
+        context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+            });
+        """)
+        context.on("disconnected", on_browser_disconnected)
         
-            try:
-                if os.path.exists(self.context_storage_path):
-                    with open(self.context_storage_path, 'r') as f:
-                        storage_state = json.load(f)
-                        cookies = storage_state.get('cookies', [])
-                        context.add_cookies(cookies)
-            except Exception as e:
-                print(f"Error loading storage state: {e}")
+        try:
+            if os.path.exists(self.context_storage_path):
+                with open(self.context_storage_path, 'r') as f:
+                    storage_state = json.load(f)
+                    cookies = storage_state.get('cookies', [])
+                    context.add_cookies(cookies)
+        except Exception as e:
+            print(f"Error loading storage state: {e}")
 
         return context
+    
+    @classmethod
+    def screenshot(self, page: Union[Page, AsyncPage], selector: str, path: str) -> None:
+        # Create a new div for screenshot
+        page.evaluate("""() => {
+            const outerContainer = document.createElement('div');
+            outerContainer.id = 'screenshotOuterContainer';
+            outerContainer.style.position = 'fixed';
+            outerContainer.style.zIndex = '2147483647'; // Maximum z-index value
+            outerContainer.style.top = '0';
+            outerContainer.style.left = '0';
+            outerContainer.style.width = '100%';
+            outerContainer.style.height = '100%';
+            outerContainer.style.backgroundColor = 'white';
+            outerContainer.style.display = 'flex';
+            outerContainer.style.justifyContent = 'center';
+            outerContainer.style.alignItems = 'center';
+
+            const innerContainer = document.createElement('div');
+            innerContainer.id = 'screenshotInnerContainer';
+            innerContainer.style.display = 'inline-block';
+
+            outerContainer.appendChild(innerContainer);
+            document.body.appendChild(outerContainer);
+        }""")
+
+        # Move the ad into the screenshot container
+        cloned_element = page.evaluate_handle("""(selector) => {
+            const innerContainer = document.getElementById('screenshotInnerContainer');
+            const adElement = document.evaluate(selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            
+            if (innerContainer && adElement) {
+                const clone = adElement.cloneNode(true);
+                const styles = window.getComputedStyle(adElement);
+                
+                clone.style.cssText = Array.from(styles).reduce((str, property) => {
+                    return `${str}${property}:${styles.getPropertyValue(property)};`;
+                }, '');
+                
+                // Reset positioning styles
+                clone.style.position = 'static';
+                clone.style.margin = '0';
+                clone.style.width = 'auto';
+                clone.style.height = 'auto';
+                
+                innerContainer.appendChild(clone);
+                return clone;
+            }
+            return null;
+        }""", selector)
+
+        page.wait_for_selector(selector)  # Wait for the element to be added
+        cloned_element.screenshot(path=path)
+
+        # Remove the screenshot container div
+        page.evaluate("""() => {
+            const outerContainer = document.getElementById('screenshotOuterContainer');
+            outerContainer.remove();
+        }""")
+
+    @classmethod
+    def entrypoint(cls, func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            config = {}
+            if os.path.exists('finic_config.json'):
+                with open('finic_config.json', 'r') as config_file:
+                    config = json.load(config_file)
+            inputs = config.get("args", {})
+
+            result = func(*args, **kwargs, **inputs)
+
+            with open('output.json', 'w') as output_file:
+                json.dump(result, output_file)
+
+            return result
+        return wrapper
+
+    @classmethod
+    def procedure(cls, func):
+        @wraps(func)
+        def wrapper(page, *args, **kwargs):
+            if not isinstance(page, Page):
+                raise TypeError("The first argument must be a Page object")
+            result = func(page, *args, **kwargs)
+            if not isinstance(result, Page):
+                raise TypeError("The function must return a Page object")
+            return result
+        return wrapper
+
+    @classmethod
+    def max_scroll(self, element: Union[Page, ElementHandle], timeout: int = 2000):
+        last_height = element.evaluate('document.body.scrollHeight')
+        while True:
+            element.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+            element.wait_for_timeout(timeout)
+            new_height = element.evaluate('document.body.scrollHeight')
+            if new_height == last_height:
+                break
+            last_height = new_height
+        return new_height

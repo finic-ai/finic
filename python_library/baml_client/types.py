@@ -19,14 +19,40 @@ from pydantic import BaseModel, ConfigDict
 from typing import Dict, List, Optional, Union
 
 
-class BamlTag(BaseModel):
+class SelectorStyle(str, Enum):
     
-    
-    user_assigned_id: str
-    html: str
+    ID_BASED = "ID_BASED"
+    CLASS_BASED = "CLASS_BASED"
+    PATH_BASED = "PATH_BASED"
+    INNER_TEXT_BASED = "INNER_TEXT_BASED"
+    LABEL_BASED = "LABEL_BASED"
+    SIBLING_BASED = "SIBLING_BASED"
+    HREF_BASED = "HREF_BASED"
+    STYLE_BASED = "STYLE_BASED"
+    OTHER_ATTRIBUTE_BASED = "OTHER_ATTRIBUTE_BASED"
 
-class GenerateSelectorsOutput(BaseModel):
+class Attribute(BaseModel):
     
     
-    selector_string: str
-    confidence: float
+    name: str
+    value: str
+
+class Element(BaseModel):
+    
+    
+    tagName: str
+    textContent: Optional[str] = None
+    attributes: List["Attribute"]
+
+class PlanningStep(BaseModel):
+    
+    
+    step_number: int
+    description: str
+
+class Step(BaseModel):
+    
+    
+    step_index: int
+    selector: str
+    instructions: str

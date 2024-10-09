@@ -19,9 +19,9 @@ from baml_py.type_builder import FieldType, TypeBuilder as _TypeBuilder, ClassPr
 class TypeBuilder(_TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["BamlTag","GenerateSelectorsOutput",]
+          ["Attribute","Element","PlanningStep","Step",]
         ), enums=set(
-          []
+          ["SelectorStyle",]
         ))
 
 

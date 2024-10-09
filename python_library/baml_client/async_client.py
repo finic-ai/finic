@@ -59,11 +59,11 @@ class BamlAsyncClient:
 
 
     
-    async def GenerateSelectorsAnthropic(
+    async def ChangePlan(
         self,
-        tag: types.BamlTag,html_context: str,mode: str,
+        screenshot: baml_py.Image,changes: str,old_plan: List[types.PlanningStep],
         baml_options: BamlCallOptions = {},
-    ) -> types.GenerateSelectorsOutput:
+    ) -> List[types.PlanningStep]:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb
@@ -72,22 +72,22 @@ class BamlAsyncClient:
       __cr__ = baml_options.get("client_registry", None)
 
       raw = await self.__runtime.call_function(
-        "GenerateSelectorsAnthropic",
+        "ChangePlan",
         {
-          "tag": tag,"html_context": html_context,"mode": mode,
+          "screenshot": screenshot,"changes": changes,"old_plan": old_plan,
         },
         self.__ctx_manager.get(),
         tb,
         __cr__,
       )
-      mdl = create_model("GenerateSelectorsAnthropicReturnType", inner=(types.GenerateSelectorsOutput, ...))
+      mdl = create_model("ChangePlanReturnType", inner=(List[types.PlanningStep], ...))
       return coerce(mdl, raw.parsed())
     
-    async def GenerateSelectorsOpenAI(
+    async def CreatePlan(
         self,
-        tag: types.BamlTag,html_context: str,mode: str,
+        screenshot: baml_py.Image,task_instructions: str,old_plan: List[types.PlanningStep],
         baml_options: BamlCallOptions = {},
-    ) -> types.GenerateSelectorsOutput:
+    ) -> List[types.PlanningStep]:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb
@@ -96,15 +96,111 @@ class BamlAsyncClient:
       __cr__ = baml_options.get("client_registry", None)
 
       raw = await self.__runtime.call_function(
-        "GenerateSelectorsOpenAI",
+        "CreatePlan",
         {
-          "tag": tag,"html_context": html_context,"mode": mode,
+          "screenshot": screenshot,"task_instructions": task_instructions,"old_plan": old_plan,
         },
         self.__ctx_manager.get(),
         tb,
         __cr__,
       )
-      mdl = create_model("GenerateSelectorsOpenAIReturnType", inner=(types.GenerateSelectorsOutput, ...))
+      mdl = create_model("CreatePlanReturnType", inner=(List[types.PlanningStep], ...))
+      return coerce(mdl, raw.parsed())
+    
+    async def DetermineSelectorStyle(
+        self,
+        instructions: str,target: types.Element,next_sibling: Optional[types.Element],previous_sibling: Optional[types.Element],ancestors: str,
+        baml_options: BamlCallOptions = {},
+    ) -> List[types.SelectorStyle]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = await self.__runtime.call_function(
+        "DetermineSelectorStyle",
+        {
+          "instructions": instructions,"target": target,"next_sibling": next_sibling,"previous_sibling": previous_sibling,"ancestors": ancestors,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+      mdl = create_model("DetermineSelectorStyleReturnType", inner=(List[types.SelectorStyle], ...))
+      return coerce(mdl, raw.parsed())
+    
+    async def ElementsPerStep(
+        self,
+        plan: str,current_step: types.PlanningStep,
+        baml_options: BamlCallOptions = {},
+    ) -> List[str]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = await self.__runtime.call_function(
+        "ElementsPerStep",
+        {
+          "plan": plan,"current_step": current_step,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+      mdl = create_model("ElementsPerStepReturnType", inner=(List[str], ...))
+      return coerce(mdl, raw.parsed())
+    
+    async def GeneratePlaywrightCode(
+        self,
+        procedure_name: str,procedure_steps: List[types.Step],
+        baml_options: BamlCallOptions = {},
+    ) -> str:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = await self.__runtime.call_function(
+        "GeneratePlaywrightCode",
+        {
+          "procedure_name": procedure_name,"procedure_steps": procedure_steps,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+      mdl = create_model("GeneratePlaywrightCodeReturnType", inner=(str, ...))
+      return coerce(mdl, raw.parsed())
+    
+    async def GenerateXPathSelector(
+        self,
+        instructions: str,target: types.Element,ancestors: str,next_sibling: Optional[types.Element],previous_sibling: Optional[types.Element],selector_styles: List[types.SelectorStyle],
+        baml_options: BamlCallOptions = {},
+    ) -> List[str]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = await self.__runtime.call_function(
+        "GenerateXPathSelector",
+        {
+          "instructions": instructions,"target": target,"ancestors": ancestors,"next_sibling": next_sibling,"previous_sibling": previous_sibling,"selector_styles": selector_styles,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+      mdl = create_model("GenerateXPathSelectorReturnType", inner=(List[str], ...))
       return coerce(mdl, raw.parsed())
     
 
@@ -118,11 +214,11 @@ class BamlStreamClient:
       self.__ctx_manager = ctx_manager
 
     
-    def GenerateSelectorsAnthropic(
+    def ChangePlan(
         self,
-        tag: types.BamlTag,html_context: str,mode: str,
+        screenshot: baml_py.Image,changes: str,old_plan: List[types.PlanningStep],
         baml_options: BamlCallOptions = {},
-    ) -> baml_py.BamlStream[partial_types.GenerateSelectorsOutput, types.GenerateSelectorsOutput]:
+    ) -> baml_py.BamlStream[List[partial_types.PlanningStep], List[types.PlanningStep]]:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb
@@ -131,11 +227,11 @@ class BamlStreamClient:
       __cr__ = baml_options.get("client_registry", None)
 
       raw = self.__runtime.stream_function(
-        "GenerateSelectorsAnthropic",
+        "ChangePlan",
         {
-          "tag": tag,
-          "html_context": html_context,
-          "mode": mode,
+          "screenshot": screenshot,
+          "changes": changes,
+          "old_plan": old_plan,
         },
         None,
         self.__ctx_manager.get(),
@@ -143,21 +239,21 @@ class BamlStreamClient:
         __cr__,
       )
 
-      mdl = create_model("GenerateSelectorsAnthropicReturnType", inner=(types.GenerateSelectorsOutput, ...))
-      partial_mdl = create_model("GenerateSelectorsAnthropicPartialReturnType", inner=(partial_types.GenerateSelectorsOutput, ...))
+      mdl = create_model("ChangePlanReturnType", inner=(List[types.PlanningStep], ...))
+      partial_mdl = create_model("ChangePlanPartialReturnType", inner=(List[partial_types.PlanningStep], ...))
 
-      return baml_py.BamlStream[partial_types.GenerateSelectorsOutput, types.GenerateSelectorsOutput](
+      return baml_py.BamlStream[List[partial_types.PlanningStep], List[types.PlanningStep]](
         raw,
         lambda x: coerce(partial_mdl, x),
         lambda x: coerce(mdl, x),
         self.__ctx_manager.get(),
       )
     
-    def GenerateSelectorsOpenAI(
+    def CreatePlan(
         self,
-        tag: types.BamlTag,html_context: str,mode: str,
+        screenshot: baml_py.Image,task_instructions: str,old_plan: List[types.PlanningStep],
         baml_options: BamlCallOptions = {},
-    ) -> baml_py.BamlStream[partial_types.GenerateSelectorsOutput, types.GenerateSelectorsOutput]:
+    ) -> baml_py.BamlStream[List[partial_types.PlanningStep], List[types.PlanningStep]]:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb
@@ -166,11 +262,11 @@ class BamlStreamClient:
       __cr__ = baml_options.get("client_registry", None)
 
       raw = self.__runtime.stream_function(
-        "GenerateSelectorsOpenAI",
+        "CreatePlan",
         {
-          "tag": tag,
-          "html_context": html_context,
-          "mode": mode,
+          "screenshot": screenshot,
+          "task_instructions": task_instructions,
+          "old_plan": old_plan,
         },
         None,
         self.__ctx_manager.get(),
@@ -178,10 +274,153 @@ class BamlStreamClient:
         __cr__,
       )
 
-      mdl = create_model("GenerateSelectorsOpenAIReturnType", inner=(types.GenerateSelectorsOutput, ...))
-      partial_mdl = create_model("GenerateSelectorsOpenAIPartialReturnType", inner=(partial_types.GenerateSelectorsOutput, ...))
+      mdl = create_model("CreatePlanReturnType", inner=(List[types.PlanningStep], ...))
+      partial_mdl = create_model("CreatePlanPartialReturnType", inner=(List[partial_types.PlanningStep], ...))
 
-      return baml_py.BamlStream[partial_types.GenerateSelectorsOutput, types.GenerateSelectorsOutput](
+      return baml_py.BamlStream[List[partial_types.PlanningStep], List[types.PlanningStep]](
+        raw,
+        lambda x: coerce(partial_mdl, x),
+        lambda x: coerce(mdl, x),
+        self.__ctx_manager.get(),
+      )
+    
+    def DetermineSelectorStyle(
+        self,
+        instructions: str,target: types.Element,next_sibling: Optional[types.Element],previous_sibling: Optional[types.Element],ancestors: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlStream[List[Optional[types.SelectorStyle]], List[types.SelectorStyle]]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = self.__runtime.stream_function(
+        "DetermineSelectorStyle",
+        {
+          "instructions": instructions,
+          "target": target,
+          "next_sibling": next_sibling,
+          "previous_sibling": previous_sibling,
+          "ancestors": ancestors,
+        },
+        None,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      mdl = create_model("DetermineSelectorStyleReturnType", inner=(List[types.SelectorStyle], ...))
+      partial_mdl = create_model("DetermineSelectorStylePartialReturnType", inner=(List[Optional[types.SelectorStyle]], ...))
+
+      return baml_py.BamlStream[List[Optional[types.SelectorStyle]], List[types.SelectorStyle]](
+        raw,
+        lambda x: coerce(partial_mdl, x),
+        lambda x: coerce(mdl, x),
+        self.__ctx_manager.get(),
+      )
+    
+    def ElementsPerStep(
+        self,
+        plan: str,current_step: types.PlanningStep,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlStream[List[Optional[str]], List[str]]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = self.__runtime.stream_function(
+        "ElementsPerStep",
+        {
+          "plan": plan,
+          "current_step": current_step,
+        },
+        None,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      mdl = create_model("ElementsPerStepReturnType", inner=(List[str], ...))
+      partial_mdl = create_model("ElementsPerStepPartialReturnType", inner=(List[Optional[str]], ...))
+
+      return baml_py.BamlStream[List[Optional[str]], List[str]](
+        raw,
+        lambda x: coerce(partial_mdl, x),
+        lambda x: coerce(mdl, x),
+        self.__ctx_manager.get(),
+      )
+    
+    def GeneratePlaywrightCode(
+        self,
+        procedure_name: str,procedure_steps: List[types.Step],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlStream[Optional[str], str]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = self.__runtime.stream_function(
+        "GeneratePlaywrightCode",
+        {
+          "procedure_name": procedure_name,
+          "procedure_steps": procedure_steps,
+        },
+        None,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      mdl = create_model("GeneratePlaywrightCodeReturnType", inner=(str, ...))
+      partial_mdl = create_model("GeneratePlaywrightCodePartialReturnType", inner=(Optional[str], ...))
+
+      return baml_py.BamlStream[Optional[str], str](
+        raw,
+        lambda x: coerce(partial_mdl, x),
+        lambda x: coerce(mdl, x),
+        self.__ctx_manager.get(),
+      )
+    
+    def GenerateXPathSelector(
+        self,
+        instructions: str,target: types.Element,ancestors: str,next_sibling: Optional[types.Element],previous_sibling: Optional[types.Element],selector_styles: List[types.SelectorStyle],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlStream[List[Optional[str]], List[str]]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = self.__runtime.stream_function(
+        "GenerateXPathSelector",
+        {
+          "instructions": instructions,
+          "target": target,
+          "ancestors": ancestors,
+          "next_sibling": next_sibling,
+          "previous_sibling": previous_sibling,
+          "selector_styles": selector_styles,
+        },
+        None,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      mdl = create_model("GenerateXPathSelectorReturnType", inner=(List[str], ...))
+      partial_mdl = create_model("GenerateXPathSelectorPartialReturnType", inner=(List[Optional[str]], ...))
+
+      return baml_py.BamlStream[List[Optional[str]], List[str]](
         raw,
         lambda x: coerce(partial_mdl, x),
         lambda x: coerce(mdl, x),
