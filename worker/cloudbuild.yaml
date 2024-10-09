@@ -1,0 +1,15 @@
+steps:
+  # Print out the files in the current directory
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['config', 'list']
+
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY_NAME}/${_IMAGE_NAME}', 'worker']
+
+  # Step 2: Push the Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY_NAME}/${_IMAGE_NAME}']
+
+images:
+  - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY_NAME}/${_IMAGE_NAME}'

@@ -33,7 +33,7 @@ def main():
     with sync_playwright() as p:
         print("Connecting to Browser...")
         
-        browser = p.chromium.connect_over_cdp(PROD_URL)
+        browser = p.chromium.connect_over_cdp(LOCAL_URL, slow_mo=500)
         browser = browser.contexts[0]
         page = browser.pages[0]
         

@@ -20,3 +20,11 @@ tell application "Terminal"
     do script "cd '$SCRIPT_DIR/server' && poetry run start" in front window
 end tell
 EOF
+
+# Open another terminal tab and run 'poetry run start' in the /server directory
+osascript <<EOF
+tell application "Terminal"
+    tell application "System Events" to keystroke "t" using {command down}
+    do script "cd '$SCRIPT_DIR/worker' && poetry run start" in front window
+end tell
+EOF

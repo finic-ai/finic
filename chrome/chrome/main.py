@@ -15,7 +15,6 @@ import logging
 from browser_session import BrowserSession
 from port_manager import PortManager
 from playwright.async_api import async_playwright
-from finic_client import FinicClient
 
 app = FastAPI()
 app.add_middleware(
@@ -98,16 +97,10 @@ async def test():
 @app.websocket("/ws")
 async def websocket_proxy(
     websocket: WebSocket, 
-    api_key: str = Query(...), 
-    browser_id: str = Query(...)
 ):
     print("WebSocket connection accepted")
     await websocket.accept()
     error = None
-
-    client = FinicClient(api_key=api_key)
-
-    client.start_session(browser_id=browser_id)
 
     # Find an available port
     port = port_manager.get_available_port()
@@ -118,7 +111,7 @@ async def websocket_proxy(
     try:
         
 
-        session = BrowserSession(port=port, browser_id=browser_id, finic_client=client)
+        session = BrowserSession(port=port)
         await session.connect(websocket=websocket)
 
     except Exception as e:

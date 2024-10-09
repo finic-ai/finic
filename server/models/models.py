@@ -22,6 +22,7 @@ class Session(BaseModel):
     id: str
     app_id: str
     browser_id: Optional[str] = None
+    agent_id: Optional[str] = None
 
 class Browser(BaseModel):
     id: str
@@ -30,5 +31,11 @@ class Browser(BaseModel):
 
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
-    DEV = "dev"
-    PROD = "prod"
+    DEV = "development"
+    PROD = "production"
+
+class Agent(BaseModel):
+    id: str
+    app_id: str
+    name: str
+    num_retries: int
