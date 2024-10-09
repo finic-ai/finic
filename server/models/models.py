@@ -31,8 +31,8 @@ class Browser(BaseModel):
 
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
-    DEV = "dev"
-    PROD = "prod"
+    DEV = "development"
+    PROD = "production"
 
 class Agent(BaseModel):
     id: str

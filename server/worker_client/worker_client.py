@@ -8,7 +8,7 @@ from google.cloud import run_v2
 import json
 import datetime
 from google.oauth2 import service_account
-
+from models.models import FinicEnvironment
 
 
 
@@ -17,7 +17,7 @@ from google.oauth2 import service_account
 class WorkerClient:
     def __init__(self, api_key: str, background_tasks: BackgroundTasks):
         self.url = os.getenv("WORKER_URL")
-        self.environment = os.getenv("ENVIRONMENT")
+        self.environment = FinicEnvironment(os.getenv("ENVIRONMENT"))
         self.api_key = api_key
         self.background_tasks = background_tasks
         self.project = os.getenv("GCLOUD_PROJECT")
@@ -35,7 +35,7 @@ class WorkerClient:
             agent_id: str, 
             agent_input: Dict[str, Any] = None
         ):
-        if self.environment == "production":
+        if self.environment == FinicEnvironment.PROD:
              self.run_worker_remotely(session_id, browser_id, agent_id, agent_input)
         else:   
             self.run_worker_locally(session_id, browser_id, agent_id, agent_input)  
@@ -72,6 +72,8 @@ class WorkerClient:
                             {"name": "FINIC_API_KEY", "value": self.api_key},
                             {"name": "FINIC_AGENT_ID", "value": agent_id},
                             {"name": "FINIC_SESSION_ID", "value": session_id},
+                            {"name": "FINIC_ENVIRONMENT", "value": self.environment.value},
+                            {"name": "FINIC_BROWSER_ID", "value": browser_id}
                         ]
                     }
                 ]

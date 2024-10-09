@@ -10,10 +10,12 @@ from pydantic import BaseModel
 from typing import Any
 from playwright.sync_api import sync_playwright, Browser, BrowserContext
 from playwright.async_api import async_playwright, Browser as AsyncBrowser, BrowserContext as AsyncBrowserContext
+from dotenv import load_dotenv
 
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
-    PROD = "prod"
+    PROD = "production"
+    DEV = "development"
 
 
 class LogSeverity(str, Enum):
@@ -86,7 +88,7 @@ class Finic:
         url: Optional[str] = None
     ):
 
-        default_env = os.environ.get("FINIC_ENV") or FinicEnvironment.LOCAL
+        default_env = os.environ.get("FINIC_ENVIRONMENT") or FinicEnvironment.LOCAL
         self.environment = environment if environment else FinicEnvironment(default_env)
         if api_key:
             self.api_key = api_key
@@ -94,11 +96,90 @@ class Finic:
             self.api_key = os.getenv("FINIC_API_KEY")
         self.url = url or "https://api.finic.io"
 
-    def save_context(self, context: BrowserContext, path: Optional[str] = None):
-        if path:
-            self.context_storage_path = path
-        context.storage_state(path=self.context_storage_path)
-        print(f"Browser context saved to: {self.context_storage_path}")
+    def get_agent_input(self) -> Optional[Dict[str, Any]]:
+        if self.environment == FinicEnvironment.LOCAL:
+            path = os.path.join(os.getcwd(), "finic_input.json")
+            if os.path.exists(path):
+                with open(path, 'r') as f:
+                    return json.load(f)
+            else:
+                raise Exception("No finic_input.json file found in the current directory")
+        else:
+            load_dotenv()
+            if os.getenv("FINIC_INPUT"):
+                return json.loads(os.getenv("FINIC_INPUT"))
+        return None
+    
+    def save_browser_context(self, context: BrowserContext, browser_id: Optional[str] = None):
+        if self.environment == FinicEnvironment.LOCAL:
+            path = os.path.join(os.getcwd(), f"browser_state.json")
+            context.storage_state(path=path)
+            print(f"Browser context saved to: {path}")
+        else:
+            if not browser_id:
+                browser_id = os.getenv("FINIC_BROWSER_ID")
+            browser_context = context.storage_state()
+            response = requests.post(
+                f"{self.url}/browser-state/{browser_id}",
+                headers={"Authorization": f"Bearer {self.api_key}"},
+                json=browser_context
+            )
+            response.raise_for_status()
+            browser = response.json()
+            print(f"Browser context saved for browser: {browser['id']}")
+
+    def get_browser_context(self, browser_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        if self.environment == FinicEnvironment.LOCAL:
+            path = os.path.join(os.getcwd(), f"browser_state.json")
+            if os.path.exists(path):
+                with open(path, 'r') as f:
+                    return json.load(f)
+            else:
+                return None
+        else:
+            if not browser_id:
+                browser_id = os.getenv("FINIC_BROWSER_ID")
+            response = requests.get(
+                f"{self.url}/browser-state/{browser_id}",
+                headers={"Authorization": f"Bearer {self.api_key}"},
+            )
+            response.raise_for_status()
+            browser = response.json()
+            return browser.get('state')
+        
+    def save_session_results(self, results: Dict):
+        if self.environment == FinicEnvironment.LOCAL:
+            path = os.path.join(os.getcwd(), f"results.json")
+            with open(path, 'w') as f:
+                json.dump(results, f, ensure_ascii=False, indent=4, default=lambda o: o.dict())
+            print(f"Session results saved to: {path}")
+        else:
+            session_id = os.getenv("FINIC_SESSION_ID")
+            response = requests.post(
+                f"{self.url}/session-results/{session_id}",
+                headers={"Authorization": f"Bearer {self.api_key}"},
+                json=results
+            )
+            response.raise_for_status()
+            print(f"Session results saved for session: {session_id}")
+
+    def get_session_results(self, session_id: Optional[str] = None) -> Optional[Dict]:
+        if self.environment == FinicEnvironment.LOCAL:
+            path = os.path.join(os.getcwd(), f"results.json")
+            if os.path.exists(path):    
+                with open(path, 'r') as f:
+                    return json.load(f)
+            else:
+                return None
+        else:
+            if not session_id:
+                session_id = os.getenv("FINIC_SESSION_ID")
+            response = requests.get(
+                f"{self.url}/session-results/{session_id}",
+                headers={"Authorization": f"Bearer {self.api_key}"},
+            )
+            response.raise_for_status()
+            return response.json()
     
     def launch_browser_sync(self, cdp_url: Optional[str] = None, **kwargs) -> BrowserContext:
         playwright = sync_playwright().start()
