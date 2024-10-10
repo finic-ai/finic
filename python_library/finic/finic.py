@@ -181,9 +181,13 @@ class Finic:
     
     def launch_browser_sync(self, **kwargs) -> Tuple[Page, BrowserContext]:
         video_dir = os.path.join(os.getcwd(), "session_recording")
-        # Delete all files in the video directory
-        for file in os.listdir(video_dir):
-            os.remove(os.path.join(video_dir, file))
+        # If it doesn't exist, create it
+        if not os.path.exists(video_dir):
+            os.makedirs(video_dir)
+        else:
+            # Delete all files in the video directory
+            for file in os.listdir(video_dir):
+                os.remove(os.path.join(video_dir, file))
         playwright = sync_playwright().start()
         browser = playwright.chromium.launch(**kwargs)
         saved_context = self.get_browser_context()
@@ -196,9 +200,12 @@ class Finic:
 
         
         initial_page = context.new_page()
-        recording_path = os.getenv("FINIC_SESSION_RECORDING_PATH")
-        if recording_path:
-            initial_page.video.save_as(path=recording_path)
+        recording_path_file = os.getenv("FINIC_SESSION_RECORDING_PATH")
+        if recording_path_file:
+            # Save the video path to the file
+            with open(recording_path_file, "w") as f:
+                path = initial_page.video.path()
+                f.write(str(path))
 
         def disable_video(page: Page):
             page.on("close", lambda p: p.video.delete())

@@ -90,8 +90,8 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
     # Start Xvfb in the background
     xvfb_process = subprocess.Popen(["Xvfb", ":99", "-screen", "0", "1024x768x16"])
 
-    session_recording_path = os.path.join(os.getcwd(), "session_recording.webm")
-    os.environ["FINIC_SESSION_RECORDING_PATH"] = session_recording_path
+    session_recording_path_file = os.path.join(os.getcwd(), "session_recording_path.txt")
+    os.environ["FINIC_SESSION_RECORDING_PATH"] = session_recording_path_file
 
     # Give Xvfb a moment to start up
     # time.sleep(1)
@@ -112,11 +112,17 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
         # Make sure to terminate Xvfb when we're done
         xvfb_process.terminate()
         xvfb_process.wait()
-        if os.path.exists(session_recording_path):
-            upload_url = worker.get_session_recording_upload_url()
-            with open(session_recording_path, "rb") as f:
-                file_bytes = f.read()
-                worker.upload_session_recording(upload_url, file_bytes)
+        if os.path.exists(session_recording_path_file):
+            with open(session_recording_path_file, "r") as f:
+                session_recording_path = f.read()
+            
+                if os.path.exists(session_recording_path):  
+                    with open(session_recording_path, "rb") as f:
+                        file_bytes = f.read()
+                    upload_url = worker.get_session_recording_upload_url()
+                    worker.upload_session_recording(upload_url, file_bytes)
+                else:
+                    print("Session recording path does not exist")
 
 
 if __name__ == "__main__":
