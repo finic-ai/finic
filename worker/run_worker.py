@@ -100,7 +100,7 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
         os.environ["DISPLAY"] = ":99"
 
         # Run the Poetry command
-        subprocess.run(["poetry", "run", "start"], check=True, capture_output=True, text=True)
+        subprocess.run(["poetry", "run", "start"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running agent: {e}")
         print(f"Command output:\n{e.output}")
