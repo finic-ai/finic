@@ -1,4 +1,5 @@
 from typing import Dict
+from enum import Enum
 import requests
 import os
 from dotenv import load_dotenv
@@ -6,6 +7,11 @@ import subprocess
 import shutil
 import time
 load_dotenv()
+
+class SessionStatus(str, Enum):
+    SUCCESS = "success"
+    FAILED = "failed"
+    RUNNING = "running"
 
 class Worker:
     def __init__(self, agent_id: str, api_key: str):
@@ -63,6 +69,14 @@ class Worker:
                 zip_ref.extractall(project_path)
         except Exception as e:
             raise Exception(f"Failed to unzip agent code: {e}")
+        
+    def update_session_status(self, status: SessionStatus):
+        endpoint = f"{self.url}/session/{self.session_id}"
+        response = requests.post(endpoint, headers={"Authorization": f"Bearer {self.api_key}"}, json={"status": status})
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise Exception(f"Failed to update session status: {response.status_code} {response.text}")
     
 
 def run_worker(agent_id: str, api_key: str, request: Dict):
@@ -104,14 +118,18 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
     except subprocess.CalledProcessError as e:
         print(f"Error running agent: {e}")
         print(f"Command output:\n{e.output}")
+        worker.update_session_status(SessionStatus.FAILED)
         raise  # Re-raise the exception to ensure the error is propagated
     except Exception as e:
         print(f"Unexpected error: {e}")
+        worker.update_session_status(SessionStatus.FAILED)
         raise
     finally:
         # Make sure to terminate Xvfb when we're done
         xvfb_process.terminate()
         xvfb_process.wait()
+        # Update the session status to success
+        worker.update_session_status(SessionStatus.SUCCESS)
         if os.path.exists(session_recording_path_file):
             with open(session_recording_path_file, "r") as f:
                 session_recording_path = f.read()
