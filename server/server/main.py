@@ -116,6 +116,17 @@ async def upsert_browser_state(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
     
+@app.get("/session/{session_id}")
+async def get_session(
+    session_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        session = db.get_session(session_id, config.app_id)
+        return session
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
 @app.get("/session-results/{session_id}")
 async def get_session_results(
     session_id: str = Path(...),
@@ -206,6 +217,21 @@ async def get_agent_download_link(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/session-recording-upload-link/{session_id}")
+async def get_session_recording_upload_link(
+    session_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        session = db.get_session(session_id, config.app_id)
+        upload_url = db.get_session_recording_upload_link(session)
+        return {"upload_url": upload_url} 
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e)) 
+    
+
 
 @app.get("/sentry-debug")
 async def trigger_error():

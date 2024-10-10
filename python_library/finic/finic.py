@@ -11,6 +11,7 @@ from typing import Any, Union, Literal
 from playwright.sync_api import sync_playwright, Browser, BrowserContext, Page, ElementHandle
 from playwright.async_api import async_playwright, Browser as AsyncBrowser, BrowserContext as AsyncBrowserContext, Page as AsyncPage, ElementHandle as AsyncElementHandle
 from dotenv import load_dotenv
+from typing import Tuple
 
 class FinicEnvironment(str, Enum):
     LOCAL = "local"
@@ -96,17 +97,9 @@ class Finic:
         self.url = url or "https://api.finic.io"
 
     def get_agent_input(self) -> Optional[Dict[str, Any]]:
-        if self.environment == FinicEnvironment.LOCAL:
-            path = os.path.join(os.getcwd(), "finic_input.json")
-            if os.path.exists(path):
-                with open(path, 'r') as f:
-                    return json.load(f)
-            else:
-                raise Exception("No finic_input.json file found in the current directory")
-        else:
-            load_dotenv()
-            if os.getenv("FINIC_INPUT"):
-                return json.loads(os.getenv("FINIC_INPUT"))
+        load_dotenv()
+        if os.getenv("FINIC_INPUT"):
+            return json.loads(os.getenv("FINIC_INPUT"))
         return None
     
     def save_browser_context(self, context: BrowserContext, browser_id: Optional[str] = None):
@@ -186,26 +179,33 @@ class Finic:
             response.raise_for_status()
             return response.json()
     
-    def launch_browser_sync(self, browser_type: Optional[Literal["chromium", "firefox", "webkit"]] = "chromium", **kwargs) -> BrowserContext:
+    def launch_browser_sync(self, **kwargs) -> Tuple[Page, BrowserContext]:
+        video_dir = os.path.join(os.getcwd(), "session_recording")
+        # Delete all files in the video directory
+        for file in os.listdir(video_dir):
+            os.remove(os.path.join(video_dir, file))
         playwright = sync_playwright().start()
-        browser = getattr(playwright, browser_type).launch(**kwargs)
-        context = browser.new_context()
+        browser = playwright.chromium.launch(**kwargs)
+        saved_context = self.get_browser_context()
+        context = browser.new_context(storage_state=saved_context, record_video_dir=video_dir)
         context.add_init_script("""
             Object.defineProperty(navigator, 'webdriver', {
                 get: () => undefined
             });
         """)
-        context.on("close", on_browser_disconnected)
-        try:
-            if os.path.exists(self.context_storage_path):
-                with open(self.context_storage_path, 'r') as f:
-                    storage_state = json.load(f)
-                    cookies = storage_state.get('cookies', [])
-                    context.add_cookies(cookies)
-        except Exception as e:
-            print(f"Error loading storage state: {e}")
 
-        return context
+        
+        initial_page = context.new_page()
+        recording_path = os.getenv("FINIC_SESSION_RECORDING_PATH")
+        if recording_path:
+            initial_page.video.save_as(path=recording_path)
+
+        def disable_video(page: Page):
+            page.on("close", lambda p: p.video.delete())
+
+        context.on("page", disable_video)
+
+        return initial_page, context
     
     async def launch_browser_async(self, browser_type: Optional[Literal["chromium", "firefox", "webkit"]] = "chromium", **kwargs) -> AsyncBrowserContext:
         playwright = async_playwright().start()
@@ -226,6 +226,8 @@ class Finic:
                     context.add_cookies(cookies)
         except Exception as e:
             print(f"Error loading storage state: {e}")
+
+        
 
         return context
     

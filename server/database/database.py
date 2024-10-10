@@ -118,7 +118,48 @@ class Database:
         if len(response.data) > 0:
             return Session(**response.data[0])
         return None
-
+    
+    def get_session_recording_upload_link(self, session: Session) -> Optional[str]:
+        response = (
+            self.supabase.storage.get_bucket("session_recordings")
+            .create_signed_upload_url(f"{session.app_id}/{session.id}.zip", expires_in=60)
+        )
+        if response:
+            return response["signed_url"]
+        return None
+    
+    def get_session_recording_download_link(self, session: Session) -> Optional[str]:
+        response = (
+            self.supabase.storage.get_bucket("session_files")
+            .create_signed_url(f"{session.app_id}/{session.id}.zip", expires_in=60)
+        )
+        if response:
+            return response["signedURL"]
+        return None
+    
+    def get_session_file_upload_link(self, session: Session, file_name: str) -> Optional[str]:
+        response = (
+            self.supabase.storage.get_bucket("session_files")
+            .create_signed_upload_url(f"{session.app_id}/{session.id}/{file_name}", expires_in=60)
+        )
+        if response:
+            return response["signed_url"]
+        return None
+    
+    def get_session_file_download_links(self, session: Session) -> List[str]:
+        # Get a download url for each file in the session
+        response = (
+            self.supabase.storage.get_bucket("session_files")
+            .list(f"{session.app_id}/{session.id}")
+        )
+        signed_urls = []
+        for file in response:
+            signed_urls.append(
+                self.supabase.storage.get_bucket("session_files")
+                .create_signed_url(f"{session.app_id}/{session.id}/{file['name']}", expires_in=60)
+            )
+        return signed_urls
+    
     def get_agent_upload_link(self, agent: Agent) -> Optional[str]:
         # Signed upload link
 
