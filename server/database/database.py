@@ -122,7 +122,7 @@ class Database:
     def get_session_recording_upload_link(self, session: Session) -> Optional[str]:
         response = (
             self.supabase.storage.get_bucket("session_recordings")
-            .create_signed_upload_url(f"{session.app_id}/{session.id}.zip", expires_in=60)
+            .create_signed_upload_url(f"{session.app_id}/{session.id}.webm")
         )
         if response:
             return response["signed_url"]
@@ -130,8 +130,8 @@ class Database:
     
     def get_session_recording_download_link(self, session: Session) -> Optional[str]:
         response = (
-            self.supabase.storage.get_bucket("session_files")
-            .create_signed_url(f"{session.app_id}/{session.id}.zip", expires_in=60)
+            self.supabase.storage.get_bucket("session_recordings")
+            .create_signed_url(f"{session.app_id}/{session.id}.webm", expires_in=60)
         )
         if response:
             return response["signedURL"]
