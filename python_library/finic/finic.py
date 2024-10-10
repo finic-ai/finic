@@ -145,7 +145,7 @@ class Finic:
             else:
                 return None
         
-    def save_session_results(self, results: Dict):
+    def save_session_results(self, results: List[Dict]):
         if self.environment == FinicEnvironment.LOCAL:
             path = os.path.join(os.getcwd(), f"results.json")
             with open(path, 'w') as f:
@@ -154,14 +154,14 @@ class Finic:
         else:
             session_id = os.getenv("FINIC_SESSION_ID")
             response = requests.post(
-                f"{self.url}/session-results/{session_id}",
+                f"{self.url}/session/{session_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
-                json=results
+                json={"results": results}
             )
             response.raise_for_status()
             print(f"Session results saved for session: {session_id}")
 
-    def get_session_results(self, session_id: Optional[str] = None) -> Optional[Dict]:
+    def get_session_results(self, session_id: Optional[str] = None) -> Optional[List[Dict]]:
         if self.environment == FinicEnvironment.LOCAL:
             path = os.path.join(os.getcwd(), f"results.json")
             if os.path.exists(path):    
@@ -173,11 +173,11 @@ class Finic:
             if not session_id:
                 session_id = os.getenv("FINIC_SESSION_ID")
             response = requests.get(
-                f"{self.url}/session-results/{session_id}",
+                f"{self.url}/session/{session_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
             )
             response.raise_for_status()
-            return response.json()
+            return response.json().get("results")
     
     def launch_browser_sync(self, **kwargs) -> Tuple[Page, BrowserContext]:
         video_dir = os.path.join(os.getcwd(), "session_recording")

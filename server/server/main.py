@@ -22,8 +22,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
 import uuid
-from models.models import AppConfig, Session, Browser, Agent
-from models.api import RunAgentRequest, AgentUploadRequest
+from models.models import AppConfig, Session, Browser, Agent, SessionStatus
+from models.api import RunAgentRequest, AgentUploadRequest, UpdateSessionRequest
 from database import Database
 import io
 import datetime
@@ -127,33 +127,26 @@ async def get_session(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-@app.get("/session-results/{session_id}")
-async def get_session_results(
-    session_id: str = Path(...),
-    config: AppConfig = Depends(validate_token),
-):
-    try:
-        session = db.get_session(session_id, config.app_id)
-        return session.results
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/session-results/{session_id}")
-async def upsert_session_results(
+@app.post("/session/{session_id}")
+async def update_session(
     session_id: str = Path(...),
     config: AppConfig = Depends(validate_token),
-    session_results: List[Dict] = Body(...),
+    request: UpdateSessionRequest = Body(...),
 ):
     try:
         session = db.get_session(session_id, config.app_id)
-        session.results = session_results
+        if request.status:
+            session.status = request.status
+        if request.results:
+            session.results = request.results
+        if request.error:
+            session.error = request.error
         session = db.upsert_session(session)
         return session
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/run-agent/{agent_id}")
 async def run_agent(
@@ -168,13 +161,13 @@ async def run_agent(
             id=session_id, 
             app_id=config.app_id, 
             browser_id=request.browser_id,
-            agent_id=agent_id
+            agent_id=agent_id,
+            status=SessionStatus.RUNNING
         )
         session = db.upsert_session(session)
         secret_key = db.get_secret_key_for_user(config.user_id)
         worker_client = WorkerClient( secret_key, background_tasks )
         worker_client.run_worker(
-            
             session_id=session_id,
             browser_id=request.browser_id,
             agent_id=agent_id,
@@ -229,7 +222,7 @@ async def get_session_recording_upload_link(
         return {"upload_url": upload_url} 
     except Exception as e:
         print(e)
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
     
 
 
