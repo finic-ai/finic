@@ -6,6 +6,11 @@ from enum import Enum
 import datetime
 
 
+class SessionStatus(str, Enum):
+    SUCCESS = "success"
+    FAILED = "failed"   
+    RUNNING = "running"
+
 class AppConfig(BaseModel):
     user_id: str
     app_id: str
@@ -21,8 +26,11 @@ class User(BaseModel):
 class Session(BaseModel):
     id: str
     app_id: str
+    agent_id: str
+    status: SessionStatus
     browser_id: Optional[str] = None
-    agent_id: Optional[str] = None
+    results: Optional[List[Dict]] = None
+    error: Optional[Dict] = None
 
 class Browser(BaseModel):
     id: str
