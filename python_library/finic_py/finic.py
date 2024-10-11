@@ -99,7 +99,7 @@ class Finic:
         environment: Optional[FinicEnvironment] = None,
         finic_url: Optional[str] = None,
         context_storage_path: Optional[str] = "browser_state.json",
-        selector_source: Literal["file", "cloud"] = "file",
+        selector_source: Literal["file", "cloud"] = None,
         selector_file_path: Optional[str] = "selectors.yaml"
     ):
 
