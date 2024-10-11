@@ -52,7 +52,6 @@ class AuthException(Exception):
 class SelectorException(Exception):
     pass
 
-
 class StdoutLogger:
     def __init__(self, original_stdout):
         self.logs: List[ExecutionLog] = []
@@ -88,9 +87,9 @@ class SelectorService:
 
 class Finic:
     api_key: Optional[str] = None
-    environment: Optional[FinicEnvironment] = None
+    env: Optional[FinicEnvironment] = None
+    context_storage_path: Optional[str] = None
     finic_url: Optional[str] = None
-    context_storage_path: Optional[str] = "browser_state.json"
     selectors: Optional[SelectorService] = None
 
     def __init__(
@@ -177,7 +176,7 @@ class Finic:
         else:
             session_id = os.getenv("FINIC_SESSION_ID")
             response = requests.post(
-                f"{self.finic_url}/session-results/{session_id}",
+                f"{self.finic_url}/session/{session_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
                 json=results
             )
@@ -196,7 +195,7 @@ class Finic:
             if not session_id:
                 session_id = os.getenv("FINIC_SESSION_ID")
             response = requests.get(
-                f"{self.finic_url}/session-results/{session_id}",
+                f"{self.finic_url}/session/{session_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
             )
             response.raise_for_status()
