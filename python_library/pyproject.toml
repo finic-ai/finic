@@ -5,7 +5,7 @@ description = "Finic.ai is a platform for deploying agents and workflow automati
 authors = ["Ayan Bandyopadhyay <ayan@finic.ai>", "jasonwcfan <jason@finic.ai>"]
 readme = "README.md"
 packages = [
-    { include = "finic" },
+    { include = "finic_py" },
 ]
 
 [tool.poetry.dependencies]
@@ -21,7 +21,7 @@ pyyaml = "^6.0.2"
 
 [tool.poetry.scripts]
 create-finic-app = "finic_py.cli:create_finic_app"
-finic = "finic.cli:main"
+finic = "finic_py.cli:main"
 
 [build-system]
 requires = ["poetry-core"]
