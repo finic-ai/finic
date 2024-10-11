@@ -1,1 +1,0 @@
-// Learn more about clients at https://docs.boundaryml.com/docs/snippets/clients/overview
