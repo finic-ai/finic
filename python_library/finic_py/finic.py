@@ -1,6 +1,7 @@
 from typing import Dict, Optional, List
 from functools import wraps
 import json
+import yaml
 import os
 from enum import Enum
 import requests
@@ -46,6 +47,11 @@ class LogExecutionAttemptRequest(BaseModel):
     results: Dict[str, Any]
     attempt: ExecutionAttempt
 
+class AuthException(Exception):
+    pass
+
+class SelectorException(Exception):
+    pass
 
 class StdoutLogger:
     def __init__(self, original_stdout):
@@ -70,31 +76,46 @@ class StdoutLogger:
     def get_logs(self):
         return self.logs
 
-def on_browser_disconnected(browser_context: Union[BrowserContext, AsyncBrowserContext]):
-    print("Browser disconnected")
-    storage_state_path = os.path.join(os.getcwd(), f"storage_state.json")
-    browser_context.storage_state(path=storage_state_path)
-    print(f"Browser context saved to: {storage_state_path}")
+class SelectorService:
+    def __init__(self, selectors: Dict[str, str]):
+        self.selectors = selectors
+
+    def get(self, key: str) -> str:
+        return self.selectors.get(key)
+    
+    def set(self, key: str, value: str):
+        self.selectors[key] = value
 
 class Finic:
     api_key: Optional[str] = None
     env: Optional[FinicEnvironment] = None
-    context_storage_path: Optional[str] = "storage_state.json"
+    context_storage_path: Optional[str] = None
+    finic_url: Optional[str] = None
+    selectors: Optional[SelectorService] = None
 
     def __init__(
         self,
         api_key: Optional[str] = None,
         environment: Optional[FinicEnvironment] = None,
-        url: Optional[str] = None
+        finic_url: Optional[str] = None,
+        context_storage_path: Optional[str] = "browser_state.json",
+        selector_source: Literal["file", "cloud"] = None,
+        selector_file_path: Optional[str] = "selectors.yaml"
     ):
 
         default_env = os.environ.get("FINIC_ENVIRONMENT") or FinicEnvironment.LOCAL
         self.environment = environment if environment else FinicEnvironment(default_env)
+        self.context_storage_path = context_storage_path
+        if selector_source == "file":
+            with open(selector_file_path, 'r') as file:
+                self.selectors = SelectorService(yaml.safe_load(file))
+        elif selector_source == "cloud":
+            raise NotImplementedError("Cloud selector source not implemented")
         if api_key:
             self.api_key = api_key
         else:
             self.api_key = os.getenv("FINIC_API_KEY")
-        self.url = url or "https://api.finic.io"
+        self.finic_url = finic_url or "https://api.finic.io"
 
     def get_agent_input(self) -> Optional[Dict[str, Any]]:
         load_dotenv()
@@ -104,7 +125,7 @@ class Finic:
     
     def save_browser_context(self, context: BrowserContext, browser_id: Optional[str] = None):
         if self.environment == FinicEnvironment.LOCAL:
-            path = os.path.join(os.getcwd(), f"browser_state.json")
+            path = os.path.join(os.getcwd(), self.context_storage_path)
             context.storage_state(path=path)
             print(f"Browser context saved to: {path}")
         else:
@@ -114,7 +135,7 @@ class Finic:
                 return
             browser_context = context.storage_state()
             response = requests.post(
-                f"{self.url}/browser-state/{browser_id}",
+                f"{self.finic_url}/browser-state/{browser_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
                 json=browser_context
             )
@@ -124,7 +145,7 @@ class Finic:
 
     def get_browser_context(self, browser_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
         if self.environment == FinicEnvironment.LOCAL:
-            path = os.path.join(os.getcwd(), f"browser_state.json")
+            path = os.path.join(os.getcwd(), self.context_storage_path)
             if os.path.exists(path):
                 with open(path, 'r') as f:
                     return json.load(f)
@@ -135,7 +156,7 @@ class Finic:
             if not browser_id:
                 return None
             response = requests.get(
-                f"{self.url}/browser-state/{browser_id}",
+                f"{self.finic_url}/browser-state/{browser_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
             )
             response.raise_for_status()
@@ -154,7 +175,7 @@ class Finic:
         else:
             session_id = os.getenv("FINIC_SESSION_ID")
             response = requests.post(
-                f"{self.url}/session/{session_id}",
+                f"{self.finic_url}/session/{session_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
                 json={"results": results}
             )
@@ -173,7 +194,7 @@ class Finic:
             if not session_id:
                 session_id = os.getenv("FINIC_SESSION_ID")
             response = requests.get(
-                f"{self.url}/session/{session_id}",
+                f"{self.finic_url}/session/{session_id}",
                 headers={"Authorization": f"Bearer {self.api_key}"},
             )
             response.raise_for_status()
@@ -223,7 +244,6 @@ class Finic:
                 get: () => undefined
             });
         """)
-        context.on("disconnected", on_browser_disconnected)
         
         try:
             if os.path.exists(self.context_storage_path):
@@ -233,8 +253,6 @@ class Finic:
                     context.add_cookies(cookies)
         except Exception as e:
             print(f"Error loading storage state: {e}")
-
-        
 
         return context
     
@@ -343,7 +361,7 @@ class Finic:
         with open(zip_file, 'rb') as f:
             upload_file = f.read()
         response = requests.post(
-            f"{self.url}/agent-upload-link/{agent_id}",
+            f"{self.finic_url}/agent-upload-link/{agent_id}",
             headers={"Authorization": f"Bearer {self.api_key}"},
             json={"agent_id": agent_id, "agent_name": agent_name, "num_retries": num_retries}
         )

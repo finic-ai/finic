@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "finic-py"
-version = "0.1.18"
+version = "0.1.21"
 description = "Finic.ai is a platform for deploying agents and workflow automations in Python. This is the Python client for Finic"
 authors = ["Ayan Bandyopadhyay <ayan@finic.ai>", "jasonwcfan <jason@finic.ai>"]
 readme = "README.md"
 packages = [
-    { include = "finic" },
+    { include = "finic_py" },
 ]
 
 [tool.poetry.dependencies]
@@ -17,11 +17,11 @@ datetime = "^5.5"
 playwright = "^1.47.0"
 openai = "^1.47.0"
 beautifulsoup4 = "^4.12.3"
-baml-py = "^0.58.0"
+pyyaml = "^6.0.2"
 
 [tool.poetry.scripts]
-create-finic-app = "finic.cli:create_finic_app"
-finic = "finic.cli:main"
+create-finic-app = "finic_py.cli:create_finic_app"
+finic = "finic_py.cli:main"
 
 [build-system]
 requires = ["poetry-core"]
