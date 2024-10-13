@@ -8,11 +8,13 @@ from pydantic import BaseModel, field_validator
 import uuid
 import json
 import base64
-from typing import Literal
+from typing import Literal, Tuple
 import requests
 import platform
 import os
 import sys
+import itertools
+
 class NodeDetails(BaseModel):
     selector: Optional[str] = None
     nodeId: int
@@ -35,8 +37,95 @@ class NodeDetails(BaseModel):
                 return v
         raise ValueError('attributes must be a list of strings or dictionaries')
 
-def generate_selector(node: NodeDetails):
-    pass
+def test_selector(selector: str, page: Page) -> int:
+    elements = page.query_selector_all(selector)
+    return len(elements)
+
+def generate_selector(node: NodeDetails, page: Page, cdp_session: CDPSession, dom_snapshot: List[Dict[str, Any]]) -> str:
+    xpath_root = f"//{node.localName}"
+    
+    node_tree = dom_snapshot["documents"][0]["nodes"]
+    selected_node_index = node_tree["backendNodeId"].index(node.backendNodeId)
+    parent_index = node_tree["parentIndex"][selected_node_index]
+
+    valid_xpaths = []
+    
+    def generate_by_attribute(node: NodeDetails, max_attributes: int = 8) -> List[str]:
+        xpaths_to_test = []
+        if node.attributes:
+            # Create a list of xpaths using combinations of attributes
+            for i in range(1, min(max_attributes, len(node.attributes) + 1)):
+                for combo in itertools.combinations(node.attributes, i):
+                    attr_conditions = []
+                    for attr in combo:
+                        attr_conditions.append(f"@{attr['name']}='{attr['value']}'")
+                    xpath = f"{xpath_root}[{' and '.join(attr_conditions)}]"
+                    xpaths_to_test.append(xpath)
+        
+        return xpaths_to_test
+    
+    def generate_by_classnames(node: NodeDetails, max_classnames: int = 8) -> List[str]:
+        xpaths_to_test = []
+        if node.attributes:
+            class_attributes = [attr for attr in node.attributes if attr["name"] == "class"]
+            if class_attributes:
+                classnames = class_attributes[0]["value"].split()
+                xpaths_to_test = []
+                for i in range(1, min(max_classnames, len(classnames) + 1)):
+                    for combo in itertools.combinations(classnames, i):
+                        class_condition = " and ".join([f"contains(@class, '{c}')" for c in combo])
+                        xpaths_to_test.append(f"{xpath_root}[{class_condition}]")
+        return xpaths_to_test
+    
+    def generate_by_text_content(node: NodeDetails) -> List[str]:
+        xpaths_to_test = []
+        if node.textContent:
+            xpaths_to_test.append(f'{xpath_root}[normalize-space(string())="{node.textContent}"]')
+        return xpaths_to_test
+    
+    async def generate_by_sibling(node: NodeDetails) -> List[str]:
+        xpaths_to_test = []
+        if node.textContent:
+            xpaths_to_test.append(f'{xpath_root}/following-sibling::*[normalize-space(string())="{node.textContent}"]')
+        return xpaths_to_test
+
+    async def generate_by_path(node: NodeDetails) -> List[str]:
+        # Recursively go up the tree until a unique identifier is found, or until we find the <body> tag
+        xpaths_to_test = []
+        node_index = node_tree["backendNodeId"].index(node.backendNodeId)
+        parent_node_backend_id = node_tree["parentIndex"][node_index]
+        parent_node_details = await cdp_session.send("DOM.describeNode", {"backendNodeId": parent_node_backend_id})
+        parent_node = NodeDetails(**parent_node_details["node"])
+        
+        outer_html = await cdp_session.send("DOM.getOuterHTML", {"backendNodeId": parent_node_backend_id})
+        parent_node.outerHTML = outer_html["outerHTML"]
+        parent_node.textContent = BeautifulSoup(parent_node.outerHTML, 'html.parser').get_text(separator=' ', strip=True)
+
+        return xpaths_to_test
+
+    try:
+        xpaths_to_test = (generate_by_attribute(node))
+        for xpath in xpaths_to_test:
+            if test_selector(xpath, page) == 1:
+                valid_xpaths.append(xpath)
+        
+        xpaths_to_test = (generate_by_classnames(node))
+        for xpath in xpaths_to_test:
+            if test_selector(xpath, page) == 1:
+                valid_xpaths.append(xpath)
+
+        xpaths_to_test = (generate_by_text_content(node))
+        for xpath in xpaths_to_test:
+            if test_selector(xpath, page) == 1:
+                valid_xpaths.append(xpath)
+
+        xpaths_to_test = (generate_by_path(node))
+        for xpath in xpaths_to_test:
+            if test_selector(xpath, page) == 1:
+                valid_xpaths.append(xpath)
+
+    except Exception as e:
+        print(e)
 
 async def enable_inspection(cdp_session: CDPSession):
     await cdp_session.send('Overlay.setInspectMode', {'mode': 'searchForNode', 'highlightConfig': {'showInfo': True, 'showExtensionLines': True, 'contentColor': {'r': 255, 'g': 81, 'b': 6, 'a': 0.2}}})
@@ -160,23 +249,30 @@ async def handle_inspect_node(cdp_session: CDPSession, selected_node: List[NodeD
     })
     result = NodeDetails(**node_details["node"])
     result.outerHTML = outer_html["outerHTML"]
-    result.textContent = BeautifulSoup(outer_html["outerHTML"], 'html.parser').get_text(strip=True)
+    result.textContent = BeautifulSoup(outer_html["outerHTML"], 'html.parser').get_text(separator=' ', strip=True)
 
     selected_node[0] = result
     print_welcome_message()
     print_element_to_terminal(result)
     print("Describe the action to be taken on this element: ", end="", flush=True)
 
-def create_task_file(task_name: str):
-    # Create the finic_tasks directory if it doesn't exist
-    
+def create_artifacts(task_name: str) -> Tuple[str, str]:
     # Check if the finic_tasks directory exists in the current directory
     current_directory = os.getcwd()
     finic_tasks_path = os.path.join(current_directory, 'finic_tasks')
     finic_config_path = os.path.join(current_directory, 'finic_config.yaml')
     
     if os.path.exists(finic_tasks_path) and os.path.exists(finic_config_path):
-        task_file_path = os.path.join(finic_tasks_path, f"{task_name}.py")
+        task_folder_path = os.path.join(finic_tasks_path, task_name)
+        os.makedirs(task_folder_path, exist_ok=True)
+
+        task_file_path = os.path.join(task_folder_path, f'{task_name}.py')
+        selectors_path = os.path.join(task_folder_path, 'selectors.yaml')
+        
+        if not os.path.exists(selectors_path):
+            with open(selectors_path, 'w') as f:
+                f.write("")
+
         if not os.path.exists(task_file_path):
             with open(task_file_path, 'w') as f:
                 f.write(f"""from finic import Finic
@@ -184,6 +280,8 @@ from playwright.sync_api import Page
 
 def main(page: Page, finic: Finic):
 """)
+
+        return task_file_path, selectors_path
     else:
         print("This is not a Finic project. Run `finic init` to initialize Finic.")
         sys.exit(0)
@@ -193,7 +291,7 @@ async def copilot(url: str, finic_api_key: str):
     task_name = input("\n\nGive your task a unique name (e.g. 'automate_tax_website'): ")
     # Replace spaces and dashes with underscores in task_name
     task_name = task_name.replace(' ', '_').replace('-', '_')
-    task_file_path = create_task_file(task_name)
+    task_file_path, selectors_path = create_artifacts(task_name)
     print(f"Created task file: {task_file_path}")
 
     inspection_mode = True
