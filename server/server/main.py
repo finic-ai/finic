@@ -123,6 +123,8 @@ async def get_session(
 ):
     try:
         session = db.get_session(session_id, config.app_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
         return session
     except Exception as e:
         print(e)
@@ -136,6 +138,8 @@ async def update_session(
 ):
     try:
         session = db.get_session(session_id, config.app_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
         if request.status:
             session.status = request.status
         if request.results:
