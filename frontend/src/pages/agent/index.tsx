@@ -59,7 +59,7 @@ export function AgentPage() {
         <div className="flex w-full flex-col items-start gap-2">
           <div className="flex w-full items-center justify-between">
             <span className="text-heading-1 font-heading-1 text-default-font">
-              {agent?.description}
+              {agent?.name}
             </span>
             <Button
               disabled={false}
@@ -75,7 +75,7 @@ export function AgentPage() {
           <span className="text-heading-3 font-heading-3 text-default-font">
             {agent?.id}
           </span>
-          <Badge>Max retries: 3</Badge>
+          {/* <Badge>Max retries: 3</Badge> */}
         </div>
         <div className="flex w-full grow h-full basis-0 items-start gap-6">
           <ExecutionList

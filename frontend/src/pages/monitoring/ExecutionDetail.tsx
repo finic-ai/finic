@@ -11,6 +11,9 @@ import { Execution } from "@/types";
 import useUtils from "@/hooks/useUtils";
 import * as SubframeCore from "@subframe/core";
 import { Tooltip } from "@/subframe/components/Tooltip";
+import { Button } from "@/subframe/components/Button";
+import { SessionRecordingModal } from "@/components/Modals";
+
 
 interface ExecutionDetailProps {
   selectedExecution: Execution;
@@ -19,15 +22,7 @@ interface ExecutionDetailProps {
 export default function ExecutionDetail({
   selectedExecution,
 }: ExecutionDetailProps) {
-  // useEffect(() => {
-  //   if (bearer) {
-  //     listAgents(bearer).then((data) => {
-  //       if (data) {
-  //         setAgents(data);
-  //       }
-  //     });
-  //   }
-  // }, [bearer]);
+  const [sessionRecordingModalOpen, setSessionRecordingModalOpen] = useState(false);
 
   const { calculateRuntime } = useUtils();
 
@@ -36,10 +31,10 @@ export default function ExecutionDetail({
     let iconColor: string;
     let tooltipText: string;
     switch (status) {
-      case "successful":
+      case "success":
         iconName = "FeatherCheckCheck";
         iconColor = "text-success-600";
-        tooltipText = "Successful";
+        tooltipText = "Success";
         break;
       case "failed":
         iconName = "FeatherX";
@@ -101,7 +96,7 @@ export default function ExecutionDetail({
           {getStatusIcon(selectedExecution?.status)}
         </div>
         <span className="text-body-bold font-body-bold text-default-font">
-          Agent: {selectedExecution?.userDefinedAgentId}
+          Agent: {selectedExecution?.agentId}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
           {moment(selectedExecution?.startTime)
@@ -112,7 +107,23 @@ export default function ExecutionDetail({
           {selectedExecution?.status != "running" &&
             calculateRuntime(selectedExecution)}
         </span>
+        <Button
+          disabled={false}
+          variant="brand-secondary"
+          size="medium"
+          // iconRight="FeatherPlay"
+          loading={false}
+          onClick={() => setSessionRecordingModalOpen(true)}
+        >
+          View Session Recording
+      </Button>
       </div>
+      <SessionRecordingModal
+        isOpen={sessionRecordingModalOpen}
+        setIsOpen={setSessionRecordingModalOpen}
+        sessionId={selectedExecution?.id}
+      />
+
       {/* align it to the top */}
 
       <div className="flex w-full flex-col items-start gap-2">
@@ -148,8 +159,7 @@ export default function ExecutionDetail({
 
         <div className="flex w-full flex-col items-end rounded-md bg-neutral-50 px-2 py-2">
           <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto">
-            {selectedExecution?.attempts
-              .map((attempt) => {
+            {selectedExecution?.attempts?.map((attempt) => {
                 var attemptLogs = "";
                 for (const log of attempt.logs) {
                   attemptLogs += `${log.timestamp} [${log.severity}] ${log.message}\n`;

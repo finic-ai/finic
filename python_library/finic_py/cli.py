@@ -112,7 +112,7 @@ def deploy():
             return
         num_retries = config["num_retries"]
 
-    finic = Finic(api_key=api_key, url=server_url)
+    finic = Finic(api_key=api_key, finic_url=server_url)
 
     temp_dir = os.path.join(os.getcwd(), "temp")
     zip_file = os.path.join(temp_dir, "project.zip")

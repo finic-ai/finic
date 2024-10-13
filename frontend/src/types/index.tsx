@@ -13,6 +13,7 @@ export type FinicSecret = {
 
 export type Agent = {
   id: string;
+  name: string;
   finicId: string;
   description: string;
   status: string;
@@ -23,6 +24,7 @@ export type Agent = {
 
 export type Execution = {
   id: string;
+  agentId: string;
   finicAgentId: string;
   userDefinedAgentId: string;
   cloudProviderId: string;
