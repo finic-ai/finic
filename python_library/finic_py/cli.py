@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 from .finic import Finic
 import subprocess
 import argparse
-from .capture import capture
+from .copilot import copilot
 
 load_dotenv()
 
-def check_api_key():
+def get_api_key() -> str:
     
     # Check if API key exists
     env_path = os.path.join(os.getcwd(), '.env')
@@ -61,22 +61,31 @@ def zip_files_cli(zip_file):
         print(f"Error occurred during zipping: {e}")
 
 
-def create_finic_app(argv=sys.argv):
-    if len(argv) < 2:
-        print("Please specify the project directory:\n create-finic-app <project-name>")
+def finic_init():
+    current_directory = os.getcwd()
+    new_directory_path = os.path.join(current_directory, "finic_tasks")
+    
+    # Check if the directory already exists
+    if os.path.exists(new_directory_path):
+        print("Error: The directory 'finic_tasks' already exists.")
         return
-    directory_name = argv[1]
+    
+    # Create the new directory
+    os.makedirs(new_directory_path)
+    
+    # Change to the new directory
+    os.chdir(new_directory_path)
 
     os.system(
-        f"git clone https://github.com/finic-ai/create-finic-app {directory_name}"
+        f"git clone --depth 1 https://github.com/finic-ai/finic-tasks-boilerplate . && rm -rf .git"
     )
     print(
-        f"Finic app created successfully. cd into /{directory_name} and run `poetry install` to install dependencies"
+        f"The /finic_tasks directory has been created.\ncd into it and run `poetry install` to install dependencies, then `finic copilot` to create your first task."
     )
 
 
 def deploy():
-    api_key = check_api_key()
+    api_key = get_api_key()
 
     # Check if finic_config.json exists
     if not os.path.exists("finic_config.json"):
@@ -126,9 +135,6 @@ def main():
     parser = argparse.ArgumentParser(description="CLI for Finic's python library.")
     subparsers = parser.add_subparsers(dest='command', required=True)
 
-    anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
-    openai_api_key = os.getenv('OPENAI_API_KEY')
-
     # Deploy command
     deploy_parser = subparsers.add_parser(
         'deploy', 
@@ -151,46 +157,35 @@ def main():
         help='A Finic API key',
         required=True
     )
+
+    # Initialize Finic directory command
+    init_parser = subparsers.add_parser(
+        'init', 
+        help='Initialize a Finic directory'
+    )
     
 
     # Generate selectors command
     generate_parser = subparsers.add_parser(
-        'capture', 
-        help='Opens a browser to capture a workflow'
-    )
-    generate_parser.add_argument(
-        '--api-key', 
-        help='An API key for OpenAI or Anthropic must be provided to generate selectors',
-        required=(openai_api_key is None and anthropic_api_key is None)
+        'copilot', 
+        help='Start the Finic copilot'
     )
     generate_parser.add_argument(
         '--url', 
         help='The URL of the starting page of the workflow',
         required=True
     )
-    generate_parser.add_argument(
-        '--llm-provider', 
-        help='The LLM provider to use for generating selectors', 
-        choices=['openai', 'anthropic'], default='anthropic'
-    )
 
     args = parser.parse_args()
 
-    if args.api_key:
-        llm_provider_api_key = args.api_key
-    elif anthropic_api_key:
-        llm_provider_api_key = anthropic_api_key
-    elif openai_api_key:
-        llm_provider_api_key = openai_api_key
+    finic_api_key = get_api_key()
 
     if args.command == 'deploy':
         deploy()
-    elif args.command == 'connect':
-        pass
-        # finic = Finic(api_key=args.api_key)
-        # finic.launch_browser_sync(cdp_url=args.cdp_url)
-    elif args.command == 'capture':
-        asyncio.run(capture(args.llm_provider.lower(), llm_provider_api_key, args.url))
+    elif args.command == 'init':
+        finic_init()
+    elif args.command == 'copilot':
+        asyncio.run(copilot(args.url, finic_api_key))
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "finic-py"
 version = "0.1.25"
-description = "Finic.ai is a platform for deploying agents and workflow automations in Python. This is the Python client for Finic"
+description = "Finic.ai is a platform for building and deploying browser automations. This is the Python client for Finic"
 authors = ["Ayan Bandyopadhyay <ayan@finic.ai>", "jasonwcfan <jason@finic.ai>"]
 readme = "README.md"
 packages = [
@@ -20,7 +20,6 @@ beautifulsoup4 = "^4.12.3"
 pyyaml = "^6.0.2"
 
 [tool.poetry.scripts]
-create-finic-app = "finic_py.cli:create_finic_app"
 finic = "finic_py.cli:main"
 
 [build-system]
