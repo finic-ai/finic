@@ -14,14 +14,14 @@ import platform
 import os
 import sys
 import itertools
+import time
 
 class NodeDetails(BaseModel):
     selector: Optional[str] = None
-    nodeId: int
+    nodeId: Optional[int] = None
     backendNodeId: int
     nodeType: int
     nodeName: str
-    localName: str
     nodeValue: str
     childNodeCount: Optional[int] = 0
     attributes: List[Dict[str, str]] = []
@@ -36,93 +36,151 @@ class NodeDetails(BaseModel):
             elif all(isinstance(item, dict) for item in v):
                 return v
         raise ValueError('attributes must be a list of strings or dictionaries')
+    
+    @classmethod
+    async def from_backend_node_id(cls, backend_node_id: int, cdp_session: CDPSession) -> "NodeDetails":
+        outer_html = await cdp_session.send("DOM.getOuterHTML", {"backendNodeId": backend_node_id})
+        outer_html = outer_html["outerHTML"]
+        node_details = await cdp_session.send("DOM.describeNode", {"backendNodeId": backend_node_id})
+        text_content = BeautifulSoup(outer_html, 'html.parser').get_text(separator='', strip=False)
+        text_content = text_content.replace('\t', ' ').replace('\n', ' ')
 
-def test_selector(selector: str, page: Page) -> int:
-    elements = page.query_selector_all(selector)
+        filtered_fields = {k: v for k, v in node_details["node"].items() if k in cls.model_fields}
+
+        return cls(**filtered_fields, outerHTML=outer_html, textContent=text_content)
+
+async def test_selector(selector: str, page: Page) -> int:
+    elements = await page.query_selector_all(selector)
     return len(elements)
 
-def generate_selector(node: NodeDetails, page: Page, cdp_session: CDPSession, dom_snapshot: List[Dict[str, Any]]) -> str:
-    xpath_root = f"//{node.localName}"
+async def generate_selectors(
+        node: NodeDetails, 
+        page: Page, 
+        cdp_session: CDPSession, 
+        dom_snapshot: List[Dict[str, Any]], 
+        max_results: int = 50,
+        skip_siblings: bool = False, 
+        max_ancestor_level: int = 50
+    ) -> List[str]:
+    xpath_root = f"//{node.nodeName.lower()}"
     
     node_tree = dom_snapshot["documents"][0]["nodes"]
-    selected_node_index = node_tree["backendNodeId"].index(node.backendNodeId)
-    parent_index = node_tree["parentIndex"][selected_node_index]
 
     valid_xpaths = []
     
-    def generate_by_attribute(node: NodeDetails, max_attributes: int = 8) -> List[str]:
+    def generate_by_attribute(node: NodeDetails, max_attributes: int = 4) -> List[str]:
         xpaths_to_test = []
         if node.attributes:
+            filtered_attributes = [attr for attr in node.attributes if attr["name"] not in ["class"]]
             # Create a list of xpaths using combinations of attributes
-            for i in range(1, min(max_attributes, len(node.attributes) + 1)):
-                for combo in itertools.combinations(node.attributes, i):
+            for i in range(1, min(max_attributes, len(filtered_attributes) + 1)):
+                for combo in itertools.combinations(filtered_attributes, i):
                     attr_conditions = []
                     for attr in combo:
-                        attr_conditions.append(f"@{attr['name']}='{attr['value']}'")
+                        attr_conditions.append(f'@{attr['name']}="{attr['value']}"')
                     xpath = f"{xpath_root}[{' and '.join(attr_conditions)}]"
                     xpaths_to_test.append(xpath)
         
         return xpaths_to_test
     
-    def generate_by_classnames(node: NodeDetails, max_classnames: int = 8) -> List[str]:
+    def generate_by_classnames(node: NodeDetails, max_classnames: int = 2) -> List[str]:
         xpaths_to_test = []
         if node.attributes:
             class_attributes = [attr for attr in node.attributes if attr["name"] == "class"]
             if class_attributes:
                 classnames = class_attributes[0]["value"].split()
                 xpaths_to_test = []
-                for i in range(1, min(max_classnames, len(classnames) + 1)):
+                for i in range(1, min(max_classnames + 1, len(classnames) + 1)):
                     for combo in itertools.combinations(classnames, i):
-                        class_condition = " and ".join([f"contains(@class, '{c}')" for c in combo])
+                        class_condition = " and ".join([f'contains(@class, "{c}")' for c in combo])
                         xpaths_to_test.append(f"{xpath_root}[{class_condition}]")
         return xpaths_to_test
     
     def generate_by_text_content(node: NodeDetails) -> List[str]:
         xpaths_to_test = []
         if node.textContent:
-            xpaths_to_test.append(f'{xpath_root}[normalize-space(string())="{node.textContent}"]')
+            # XPath doesn't have escape characters for whatever reason so we need to handle this manually.
+            escaped_text = node.textContent
+            if "'" in escaped_text and '"' in escaped_text:
+                # Both single and double quotes present, use concat() function
+                parts = escaped_text.split("'")
+                escaped_text = "concat('" + "', \"'\", '".join(parts) + "')"
+            elif "'" in escaped_text:
+                # Only single quotes, use double quotes to wrap
+                escaped_text = f'"{escaped_text}"'
+            else:
+                # No single quotes (or only double quotes), use single quotes to wrap
+                escaped_text = f"'{escaped_text}'"
+            xpaths_to_test.append(f'{xpath_root}[normalize-space(string())={escaped_text}]')
         return xpaths_to_test
     
     async def generate_by_sibling(node: NodeDetails) -> List[str]:
         xpaths_to_test = []
-        if node.textContent:
-            xpaths_to_test.append(f'{xpath_root}/following-sibling::*[normalize-space(string())="{node.textContent}"]')
+        node_index = node_tree["backendNodeId"].index(node.backendNodeId)
+        parent_index = node_tree["parentIndex"][node_index]
+        sibling_indices = [i for i, x in enumerate(node_tree["parentIndex"]) if x == parent_index]
+        for sib_i in sibling_indices:
+            if sib_i == node_index:
+                continue
+            sibling_node = await NodeDetails.from_backend_node_id(node_tree['backendNodeId'][sib_i], cdp_session)
+            sibling_selectors = await generate_selectors(sibling_node, page, cdp_session, dom_snapshot, skip_siblings=True, max_ancestor_level=0)
+            if len(sibling_selectors) > 0:
+                node_position = sibling_indices.index(node_index) - sibling_indices.index(sib_i)
+                if node_position > 0:
+                    xpaths_to_test.append(f"{sibling_selectors[0]}/following-sibling::{node.nodeName.lower()}[{node_position}]")
+                else:
+                    xpaths_to_test.append(f"{sibling_selectors[0]}/preceding-sibling::{node.nodeName.lower()}[{abs(node_position)}]")
+                break
+        
         return xpaths_to_test
 
-    async def generate_by_path(node: NodeDetails) -> List[str]:
-        # Recursively go up the tree until a unique identifier is found, or until we find the <body> tag
+    async def generate_by_ancestor(node: NodeDetails, remaining_ancestor_level: int) -> List[str]:
+        # Recursively go up the tree until an ancestor with a unique identifier is found, or until the BODY element is reached.
         xpaths_to_test = []
-        node_index = node_tree["backendNodeId"].index(node.backendNodeId)
-        parent_node_backend_id = node_tree["parentIndex"][node_index]
-        parent_node_details = await cdp_session.send("DOM.describeNode", {"backendNodeId": parent_node_backend_id})
-        parent_node = NodeDetails(**parent_node_details["node"])
+        if node.nodeName == "BODY" or remaining_ancestor_level == 0:
+            return [xpath_root]
         
-        outer_html = await cdp_session.send("DOM.getOuterHTML", {"backendNodeId": parent_node_backend_id})
-        parent_node.outerHTML = outer_html["outerHTML"]
-        parent_node.textContent = BeautifulSoup(parent_node.outerHTML, 'html.parser').get_text(separator=' ', strip=True)
-
+        node_index = node_tree["backendNodeId"].index(node.backendNodeId)
+        parent_index = node_tree["parentIndex"][node_index]
+        parent_node_backend_id = node_tree["backendNodeId"][parent_index]
+        parent_node = await NodeDetails.from_backend_node_id(parent_node_backend_id, cdp_session)
+        parent_selectors = await generate_selectors(parent_node, page, cdp_session, dom_snapshot, max_results=1, max_ancestor_level=remaining_ancestor_level - 1)
+        if len(parent_selectors) > 0:
+            sibling_indices = [i for i, x in enumerate(node_tree["parentIndex"]) if x == parent_index]
+            node_position = sibling_indices.index(node_index) + 1
+            if node_position > 0:
+                xpaths_to_test.append(f"{parent_selectors[0]}/{node.nodeName.lower()}[{node_position}]")
         return xpaths_to_test
 
     try:
-        xpaths_to_test = (generate_by_attribute(node))
+        xpaths_to_test = generate_by_attribute(node)
         for xpath in xpaths_to_test:
-            if test_selector(xpath, page) == 1:
+            if await test_selector(xpath, page) == 1 and len(valid_xpaths) < max_results:
+                valid_xpaths.append(xpath)
+
+        xpaths_to_test = generate_by_classnames(node)
+        for xpath in xpaths_to_test:
+            if await test_selector(xpath, page) == 1 and len(valid_xpaths) < max_results:
+                valid_xpaths.append(xpath)
+
+        xpaths_to_test = generate_by_text_content(node)
+        for xpath in xpaths_to_test:
+            if await test_selector(xpath, page) == 1 and len(valid_xpaths) < max_results:
                 valid_xpaths.append(xpath)
         
-        xpaths_to_test = (generate_by_classnames(node))
-        for xpath in xpaths_to_test:
-            if test_selector(xpath, page) == 1:
-                valid_xpaths.append(xpath)
+        if not skip_siblings and len(valid_xpaths) < max_results:
+            xpaths_to_test = await generate_by_sibling(node)
+            for xpath in xpaths_to_test:
+                if await test_selector(xpath, page) == 1:
+                    valid_xpaths.append(xpath)
 
-        xpaths_to_test = (generate_by_text_content(node))
-        for xpath in xpaths_to_test:
-            if test_selector(xpath, page) == 1:
-                valid_xpaths.append(xpath)
-
-        xpaths_to_test = (generate_by_path(node))
-        for xpath in xpaths_to_test:
-            if test_selector(xpath, page) == 1:
-                valid_xpaths.append(xpath)
+        if max_ancestor_level != 0 and len(valid_xpaths) < max_results:
+            xpaths_to_test = await generate_by_ancestor(node, max_ancestor_level)
+            for xpath in xpaths_to_test:
+                if await test_selector(xpath, page) == 1:
+                    valid_xpaths.append(xpath)
+        
+        return valid_xpaths
 
     except Exception as e:
         print(e)
@@ -147,13 +205,23 @@ def print_welcome_message():
     print("\033[1m\033[38;2;255;165;0mGenerate code to automate any website using AI.\033[0m\n")
     print("Type 'help' for a list of commands. View full instructions here: https://docs.finic.ai/capture-mode")
 
-async def handle_process_node(finic_api_key: str, task_name: str, intent: str, selected_node: List[NodeDetails], cdp_session: CDPSession, page: Page) -> None:
+async def handle_process_node(
+        finic_api_key: str, 
+        task_name: str, 
+        task_file_path: str,
+        intent: str, 
+        selected_node: List[NodeDetails], 
+        cdp_session: CDPSession, 
+        page: Page, 
+        dom_snapshot: List[Dict[str, Any]]
+    ) -> None:
     # Generate a selector for the selected node
-    selector = generate_selector(selected_node[0])
+    selectors = await generate_selectors(selected_node[0], page, cdp_session, dom_snapshot)
+    import pdb; pdb.set_trace()
+    return
     selected_node[0].selector = selector
     generated_code = None
 
-    task_file_path = f"finic_tasks/{task_name}.py"
     with open(task_file_path, 'r') as f:
         existing_code = f.read()
 
@@ -177,8 +245,6 @@ async def handle_process_node(finic_api_key: str, task_name: str, intent: str, s
     # Write the generated code to the appropriate file
     with open(task_file_path, 'w') as f:
         f.write(existing_code + generated_code)
-
-    
     
 
 def print_element_to_terminal(element: NodeDetails):
@@ -192,7 +258,7 @@ def print_element_to_terminal(element: NodeDetails):
     print("\033[1m\033[94m┌─" + "─" * (box_width - 2) + "┐\033[0m")
     print(f"\033[1m\033[94m│\033[0m {'Currently selected element':^{box_width-2}}\033[1m\033[94m│\033[0m")
     print("\033[1m\033[94m├─" + "─" * (box_width - 2) + "┤\033[0m")
-    print(f"\033[1m\033[94m│\033[0m \033[1m\033[92mTag:\033[0m {element.localName:<{box_width-7}}\033[1m\033[94m│\033[0m")
+    print(f"\033[1m\033[94m│\033[0m \033[1m\033[92mTag:\033[0m {element.nodeName:<{box_width-7}}\033[1m\033[94m│\033[0m")
     print(f"\033[1m\033[94m│\033[0m \033[1m\033[92mID:\033[0m {element.backendNodeId:<{box_width-6}}\033[1m\033[94m│\033[0m")
     print(f"\033[1m\033[94m│\033[0m \033[1m\033[92mAttributes:\033[0m{' ':{box_width-14}}\033[1m\033[94m│\033[0m")
     
@@ -235,7 +301,6 @@ async def handle_inspect_node(cdp_session: CDPSession, selected_node: List[NodeD
         await cdp_session.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})
         node_details = await cdp_session.send("DOM.describeNode", {"backendNodeId": backend_node_id})
         node_id = node_details["node"]["nodeId"]
-    outer_html = await cdp_session.send("DOM.getOuterHTML", {"nodeId": node_id})
 
     await cdp_session.send("DOM.setInspectedNode", {"nodeId": node_id})
     await cdp_session.send("DOM.highlightNode", {
@@ -247,13 +312,11 @@ async def handle_inspect_node(cdp_session: CDPSession, selected_node: List[NodeD
         },
         "nodeId": node_id
     })
-    result = NodeDetails(**node_details["node"])
-    result.outerHTML = outer_html["outerHTML"]
-    result.textContent = BeautifulSoup(outer_html["outerHTML"], 'html.parser').get_text(separator=' ', strip=True)
+    node = await NodeDetails.from_backend_node_id(backend_node_id, cdp_session)
 
-    selected_node[0] = result
+    selected_node[0] = node
     print_welcome_message()
-    print_element_to_terminal(result)
+    print_element_to_terminal(node)
     print("Describe the action to be taken on this element: ", end="", flush=True)
 
 def create_artifacts(task_name: str) -> Tuple[str, str]:
@@ -317,18 +380,23 @@ async def copilot(url: str, finic_api_key: str):
     })
 
     async def handle_key_event(event):
-        nonlocal inspection_mode
         modifier = 5  # Represents Ctrl+Shift
+        nonlocal inspection_mode
+        # import pdb; pdb.set_trace()
         # Toggle inspect mode
         if event.get('type') == 'keyDown' and event.get('code') == 'KeyF' and event.get('modifiers') == modifier:
             if inspection_mode:
                 await disable_inspection(cdp_session)
                 inspection_mode = False
-                print("Switched to interaction mode. Use CMD/CTRL+SHIFT+F to re-enable selection mode.")
+                print("Switched to interaction mode. Use CTRL+SHIFT+F to re-enable selection mode.")
+                time.sleep(3)
+                print("\033[A\033[K", end="")
             else:
                 await enable_inspection(cdp_session)
                 inspection_mode = True
-                print("Switched to selection mode. Use CMD/CTRL+SHIFT+F to re-enable interaction mode.")
+                print("Switched to selection mode. Use CTRL+SHIFT+F to re-enable interaction mode.")
+                time.sleep(3)
+                print("\033[A\033[K", end="")
         
         # Cycle through element layers
         elif len(selected_node) > 0 and inspection_mode:
@@ -388,10 +456,16 @@ async def copilot(url: str, finic_api_key: str):
             print("  • \033[1m'quit'|'q'\033[0m    - Quit the program")
             print("\n\033[1m\033[38;2;255;165;0mEnter command:\033[0m ", end="", flush=True)
         else:
-            if len(selected_node) > 0:
-                pass
-                # result = await handle_process_node(finic_api_key, task_name, user_input, selected_node, cdp_session, page)
-            else:
+            if selected_node[0] is None:
                 print("Invalid input. Please select an element in the browser first or enter a command.")
+                time.sleep(3)
+                print("\033[A\033[K", end="")
+            elif len(user_input) == 0:
+                print("Invalid input")
+                time.sleep(3)
+                print("\033[A\033[K", end="")
+            else:
+                pass
+                # await handle_process_node(finic_api_key, task_name, task_file_path, user_input, selected_node, cdp_session, page, dom_snapshot)
     
     browser.close()
