@@ -10,6 +10,18 @@ import SettingsPage from "@/pages/settings";
 import LoginPage from "@/pages/auth/LoginPage";
 import AgentPage from "@/pages/agent";
 import { FinicAppContextProvider } from "@/hooks/useFinicApp";
+import posthog from 'posthog-js'
+
+if (import.meta.env.VITE_POSTHOG_KEY) {
+  posthog.init(import.meta.env.VITE_POSTHOG_KEY,
+    {
+        api_host: 'https://us.i.posthog.com',
+        person_profiles: 'always'
+    }
+  )
+} else {
+  console.warn("No PostHog key found")
+}
 
 function App() {
   const { session, setSession } = useAuth();

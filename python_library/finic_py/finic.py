@@ -90,6 +90,8 @@ class SelectorService:
 
 CONTEXT_STORAGE_PATH = "browser_state.json"
 
+load_dotenv(override=True)
+
 class Finic:
     api_key: Optional[str] = None
     env: Optional[FinicEnvironment] = None
@@ -127,7 +129,6 @@ class Finic:
             else:
                 return None
         else:
-            load_dotenv()
             if os.getenv("FINIC_INPUT"):
                 return json.loads(os.getenv("FINIC_INPUT"))
             return None
