@@ -51,18 +51,14 @@ export default function SessionRecordingModal({
             }}
           />
         </div>
-        {isLoading ? (
-          <div className="flex items-center justify-center">
-            <Loader />
-          </div>
-        ) : (
-          <ReactPlayer
-            url={url}
-            width="100%"
-            height="100%"
-            controls={true}
-          />
-        )}
+
+        <ReactPlayer
+          url={url}
+          width="100%"
+          height="100%"
+          controls={true}
+        />
+
         {error && (
           <Alert
             variant="error"
