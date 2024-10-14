@@ -22,6 +22,7 @@ interface FinicAppContextType {
     input: Record<string, any>
   ) => Promise<Execution | undefined>;
   listExecutions: (agentId?: string) => Promise<Execution[] | undefined>;
+  getSessionRecordingUrl: (sessionId: string) => Promise<string | undefined>;
 }
 
 const FinicAppContext = createContext<FinicAppContextType | undefined>(
@@ -131,6 +132,37 @@ export const FinicAppContextProvider: React.FC<{
     [bearer]
   );
 
+  const getSessionRecordingUrl = useCallback(
+    async (sessionId: string) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch(`${server_url}/session-recording-download-link/${sessionId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${bearer}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch session recording URL");
+        }
+        const data = await response.json();
+        if (data.download_url) {
+          return data.download_url as string;
+        }
+        console.log("data", data);
+        return undefined;
+      } catch (err: any) {
+        console.log("error", err);
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [bearer]
+  );
+
   return (
     <FinicAppContext.Provider
       value={{
@@ -140,6 +172,7 @@ export const FinicAppContextProvider: React.FC<{
         runAgent,
         listExecutions,
         getAgent,
+        getSessionRecordingUrl,
       }}
     >
       {children}
