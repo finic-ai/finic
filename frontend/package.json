@@ -35,7 +35,7 @@
     "humps": "^2.0.1",
     "moment-timezone": "^0.5.45",
     "postcss": "^8.4.26",
-    "posthog-js": "^1.133.0",
+    "posthog-js": "^1.167.1",
     "react": "^18.2.0",
     "react-calendly": "^4.3.0",
     "react-datepicker": "^6.9.0",

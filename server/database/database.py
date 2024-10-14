@@ -212,3 +212,24 @@ class Database:
         if len(response.data) > 0:
             return Agent(**response.data[0])
         return None
+    
+    def list_agents(self, app_id: str) -> List[Agent]:
+        print("app_id", app_id)
+        response = (
+            self.supabase.table("agent")
+            .select("*")
+            .filter("app_id", "eq", app_id)
+            .execute()
+        )
+        return [Agent(**row) for row in response.data]
+    
+    def list_sessions(self, agent_id: str, app_id: str) -> List[Session]:
+        response = (
+            self.supabase.table("session")
+            .select("*")
+            .filter("agent_id", "eq", agent_id)
+            .filter("app_id", "eq", app_id)
+            .execute()
+        )
+        
+        return [Session(**row) for row in response.data]

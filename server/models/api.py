@@ -7,7 +7,7 @@ from .models import AppConfig, User, SessionStatus
 
 class RunAgentRequest(BaseModel):
     browser_id: Optional[str] = None
-    agent_input: Optional[Dict[str, Any]] = None
+    agent_input: Dict[str, Any]
 
 class AgentUploadRequest(BaseModel):
     agent_name: str

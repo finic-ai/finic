@@ -30,10 +30,10 @@ export default function ExecutionList({
     let iconColor: string;
     let tooltipText: string;
     switch (status) {
-      case "successful":
+      case "success":
         iconName = "FeatherCheckCheck";
         iconColor = "text-success-600";
-        tooltipText = "Successful";
+        tooltipText = "Success";
         break;
       case "failed":
         iconName = "FeatherX";

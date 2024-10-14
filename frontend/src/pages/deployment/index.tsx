@@ -73,16 +73,16 @@ function AgentRow({
             name="FeatherTerminalSquare"
           />
           <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-            {agent.id}
+            {agent.name}
           </span>
         </div>
       </Table.Cell>
       <Table.Cell>
         <span className="whitespace-nowrap text-body font-body text-neutral-500">
-          {agent.description}
+          {agent.id}
         </span>
       </Table.Cell>
-      <Table.Cell>
+      {/* <Table.Cell>
         <SubframeCore.Tooltip.Provider>
           <SubframeCore.Tooltip.Root>
             <SubframeCore.Tooltip.Trigger asChild={true}>
@@ -115,7 +115,7 @@ function AgentRow({
             </SubframeCore.Tooltip.Portal>
           </SubframeCore.Tooltip.Root>
         </SubframeCore.Tooltip.Provider>
-      </Table.Cell>
+      </Table.Cell> */}
       <Table.Cell>
         <SubframeCore.Icon
           className="text-body font-body text-subtext-color"
@@ -280,9 +280,9 @@ export function DeploymentPage() {
           <Table
             header={
               <Table.HeaderRow>
-                <Table.HeaderCell>Agent ID</Table.HeaderCell>
-                <Table.HeaderCell>Description</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
+                <Table.HeaderCell>Name</Table.HeaderCell>
+                <Table.HeaderCell>ID</Table.HeaderCell>
+                {/* <Table.HeaderCell>Status</Table.HeaderCell> */}
                 <Table.HeaderCell>Date Created</Table.HeaderCell>
                 <Table.HeaderCell></Table.HeaderCell>
               </Table.HeaderRow>

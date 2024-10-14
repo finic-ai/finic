@@ -40,16 +40,13 @@ export const FinicAppContextProvider: React.FC<{
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch(`${server_url}/run-agent`, {
+        const response = await fetch(`${server_url}/run-agent/${agentId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${bearer}`,
           },
-          body: JSON.stringify({
-            agent_id: agentId,
-            input: input,
-          }),
+          body: JSON.stringify(input),
         });
         const data = await response.json();
         return humps.camelizeKeys(data) as Execution;
@@ -89,13 +86,7 @@ export const FinicAppContextProvider: React.FC<{
       try {
         setIsLoading(true);
         setError(null);
-        var url = `${server_url}/get-agent`;
-        if (agentId) {
-          const params = new URLSearchParams({ agent_id: agentId });
-          url = `${server_url}/get-agent?${params.toString()}`;
-        }
-
-        const response = await fetch(url, {
+        const response = await fetch(`${server_url}/agent/${agentId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -119,12 +110,8 @@ export const FinicAppContextProvider: React.FC<{
       try {
         setIsLoading(true);
         setError(null);
-        var url = `${server_url}/list-executions`;
-        if (agentId) {
-          const params = new URLSearchParams({ agent_id: agentId });
-          url = `${server_url}/list-executions?${params.toString()}`;
-        }
-        const response = await fetch(url, {
+        
+        const response = await fetch(`${server_url}/agent/${agentId}/list-sessions`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

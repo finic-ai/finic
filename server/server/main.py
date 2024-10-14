@@ -123,6 +123,8 @@ async def get_session(
 ):
     try:
         session = db.get_session(session_id, config.app_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
         return session
     except Exception as e:
         print(e)
@@ -136,6 +138,8 @@ async def update_session(
 ):
     try:
         session = db.get_session(session_id, config.app_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
         if request.status:
             session.status = request.status
         if request.results:
@@ -224,7 +228,44 @@ async def get_session_recording_upload_link(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
     
-
+@app.get("/agent/{agent_id}")
+async def get_agent(
+    agent_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        agent = db.get_agent(agent_id, config.app_id)
+        if not agent:
+            raise HTTPException(status_code=404, detail="Agent not found")
+        return agent
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/agent/{agent_id}/list-sessions")
+async def list_agent_sessions(
+    agent_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        sessions = db.list_sessions(agent_id, config.app_id)
+        return sessions
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/list-agents")
+async def list_agents(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        agents = db.list_agents(config.app_id)
+        print(agents)
+        return agents
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 @app.get("/sentry-debug")
 async def trigger_error():

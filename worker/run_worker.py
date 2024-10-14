@@ -109,27 +109,29 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
 
     # Give Xvfb a moment to start up
     # time.sleep(1)
+    status = SessionStatus.RUNNING
     try:
         # Set the DISPLAY environment variable
         os.environ["DISPLAY"] = ":99"
 
         # Run the Poetry command
         subprocess.run(["poetry", "run", "start"], check=True)
+        status = SessionStatus.SUCCESS
     except subprocess.CalledProcessError as e:
         print(f"Error running agent: {e}")
         print(f"Command output:\n{e.output}")
-        worker.update_session_status(SessionStatus.FAILED)
+        status = SessionStatus.FAILED
         raise  # Re-raise the exception to ensure the error is propagated
     except Exception as e:
         print(f"Unexpected error: {e}")
-        worker.update_session_status(SessionStatus.FAILED)
+        status = SessionStatus.FAILED
         raise
     finally:
         # Make sure to terminate Xvfb when we're done
         xvfb_process.terminate()
         xvfb_process.wait()
         # Update the session status to success
-        worker.update_session_status(SessionStatus.SUCCESS)
+        worker.update_session_status(status)
         if os.path.exists(session_recording_path_file):
             with open(session_recording_path_file, "r") as f:
                 session_recording_path = f.read()

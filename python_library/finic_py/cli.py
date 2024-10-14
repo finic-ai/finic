@@ -9,14 +9,11 @@ import subprocess
 import argparse
 from .copilot import copilot
 
-load_dotenv()
+load_dotenv(override=True)
 
 def get_api_key() -> str:
     
-    # Check if API key exists
-    env_path = os.path.join(os.getcwd(), '.env')
-    if os.path.exists(env_path):
-        load_dotenv(env_path)
+    # Check if API key exists   
     api_key = os.getenv('FINIC_API_KEY')
     
     if not api_key:
@@ -112,7 +109,7 @@ def deploy():
             return
         num_retries = config["num_retries"]
 
-    finic = Finic(api_key=api_key, url=server_url)
+    finic = Finic(api_key=api_key, finic_url=server_url)
 
     temp_dir = os.path.join(os.getcwd(), "temp")
     zip_file = os.path.join(temp_dir, "project.zip")
