@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { v4 as uuidv4 } from "uuid";
 import { createClient } from "@supabase/supabase-js";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import posthog from 'posthog-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
@@ -44,6 +45,12 @@ export function useAuth() {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setSession(session);
+      if (import.meta.env.VITE_POSTHOG_KEY && session && session.user && session.user.email) {
+        // Identify by email
+        posthog.identify(session.user.email)
+      } else {
+        console.warn("No PostHog key found")
+      }
     });
 
     return () => subscription.unsubscribe();
