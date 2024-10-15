@@ -184,6 +184,8 @@ async def run_agent(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
     
+
+    
 @app.post("/agent-upload-link/{agent_id}")
 async def get_agent_upload_link(
     agent_id: str = Path(...),
@@ -239,6 +241,19 @@ async def get_session_recording_upload_link(
         element = DOMNodeDetails(**request.element)
         result = await generate_code(request.intent, element, request.existing_code, provider="anthropic", provider_api_key=anthropic_api_key)
         return result
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/session-recording-download-link/{session_id}")
+async def get_session_recording_download_link(
+    session_id: str = Path(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        session = db.get_session(session_id, config.app_id)
+        download_url = db.get_session_recording_download_link(session)
+        return {"download_url": download_url}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
