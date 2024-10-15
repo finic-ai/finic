@@ -47,3 +47,15 @@ class Agent(BaseModel):
     app_id: str
     name: str
     num_retries: int
+
+class DOMNodeDetails(BaseModel):
+    selector: Optional[str] = None
+    nodeId: int
+    backendNodeId: int
+    nodeType: int
+    nodeName: str
+    nodeValue: str
+    childNodeCount: Optional[int] = 0
+    attributes: List[Dict[str, str]] = []
+    textContent: Optional[str] = None
+    outerHTML: Optional[str] = None

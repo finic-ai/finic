@@ -17,3 +17,8 @@ class UpdateSessionRequest(BaseModel):
     status: Optional[SessionStatus] = None
     results: Optional[List[Dict]] = None
     error: Optional[Dict] = None
+
+class CopilotRequest(BaseModel):
+    intent: str
+    element: Dict[str, Any]
+    existing_code: str

@@ -22,9 +22,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import requests
 import uuid
-from models.models import AppConfig, Session, Browser, Agent, SessionStatus
-from models.api import RunAgentRequest, AgentUploadRequest, UpdateSessionRequest
+from models.models import AppConfig, Session, Browser, Agent, SessionStatus, DOMNodeDetails
+from models.api import RunAgentRequest, AgentUploadRequest, UpdateSessionRequest, CopilotRequest
 from database import Database
+from copilot import generate_code
 import io
 import datetime
 import pdb
@@ -33,6 +34,7 @@ import sentry_sdk
 import json
 from worker_client import WorkerClient
 
+anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
 
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
 if SENTRY_DSN:
@@ -224,6 +226,19 @@ async def get_session_recording_upload_link(
         session = db.get_session(session_id, config.app_id)
         upload_url = db.get_session_recording_upload_link(session)
         return {"upload_url": upload_url} 
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/copilot")
+async def get_session_recording_upload_link(
+    request: CopilotRequest = Body(...),
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        element = DOMNodeDetails(**request.element)
+        result = await generate_code(request.intent, element, request.existing_code, provider="anthropic", provider_api_key=anthropic_api_key)
+        return result
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))

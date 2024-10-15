@@ -209,6 +209,7 @@ async def handle_process_node(
         finic_api_key: str, 
         task_name: str, 
         task_file_path: str,
+        selector_file_path: str,
         intent: str, 
         selected_node: List[NodeDetails], 
         cdp_session: CDPSession, 
@@ -216,10 +217,8 @@ async def handle_process_node(
         dom_snapshot: List[Dict[str, Any]]
     ) -> None:
     # Generate a selector for the selected node
-    selectors = await generate_selectors(selected_node[0], page, cdp_session, dom_snapshot)
-    import pdb; pdb.set_trace()
-    return
-    selected_node[0].selector = selector
+    valid_selectors = await generate_selectors(selected_node[0], page, cdp_session, dom_snapshot)
+    selected_node[0].selector = valid_selectors[0]
     generated_code = None
 
     with open(task_file_path, 'r') as f:
@@ -232,12 +231,13 @@ async def handle_process_node(
         }
         body = {
             "intent": intent,
-            "element": selected_node[0],
+            "element": selected_node[0].dict(),
             "existing_code": existing_code
         }
-        response = requests.post("https://api.finic.ai/copilot", headers=headers, json=body)
+        response = requests.get("http://0.0.0.0:8080/copilot", headers=headers, json=body)
         response.raise_for_status()  # Raise an exception for bad status codes
         generated_code = response.json()["code"]
+        element_identifier = response.json()["elementIdentifier"]
         # You can process the copilot_data here as needed
     except requests.RequestException as e:
         print(f"Error making request to Finic AI Copilot API: {e}")
@@ -245,6 +245,12 @@ async def handle_process_node(
     # Write the generated code to the appropriate file
     with open(task_file_path, 'w') as f:
         f.write(existing_code + generated_code)
+    
+    with open(selector_file_path, 'a') as f:
+        f.write(f"\n{element_identifier}: {selected_node[0].selector}")
+    
+    print(f"\nCode generated and written to {task_file_path}")
+    print(f"Selector written to {selector_file_path}")
     
 
 def print_element_to_terminal(element: NodeDetails):
@@ -431,11 +437,11 @@ async def copilot(url: str, finic_api_key: str):
             }
         });
     """)
-    print("\nSelect an element in the browser. Enter 'mode' to toggle between selection and interaction mode, or 'quit' to exit: ", end="", flush=True)
     
     dom_snapshot = await cdp_session.send("DOMSnapshot.captureSnapshot", {"computedStyles": []})
 
     while True:
+        print("\nSelect an element in the browser. Enter 'mode' to toggle between selection and interaction mode, or 'quit' to exit: ", end="", flush=True)
         user_input = await asyncio.get_event_loop().run_in_executor(None, input)
         if user_input.lower() in ['quit', 'q']:
             browser.close()
@@ -449,12 +455,6 @@ async def copilot(url: str, finic_api_key: str):
                 await cdp_session.send('Overlay.setInspectMode', {'mode': 'searchForNode', 'highlightConfig': {'showInfo': True, 'showExtensionLines': True, 'contentColor': {'r': 255, 'g': 81, 'b': 6, 'a': 0.2}}})
                 inspection_mode = True
                 print("Switched to selection mode.")
-        elif user_input.lower() in ['help', 'h']:
-            print("Click on eleements in the browser. Confirm your selection in the box above. Use 'a|add' to queue an element for generation. Use 'g|generate' to generate selectors for queued elements. Use 'l|list' to view queued elements.")
-            print("\n\033[1mCommands:\033[0m")
-            print("  • \033[1m'm'|'mode'\033[0m    - Change between interaction and selection mode")
-            print("  • \033[1m'quit'|'q'\033[0m    - Quit the program")
-            print("\n\033[1m\033[38;2;255;165;0mEnter command:\033[0m ", end="", flush=True)
         else:
             if selected_node[0] is None:
                 print("Invalid input. Please select an element in the browser first or enter a command.")
@@ -465,7 +465,6 @@ async def copilot(url: str, finic_api_key: str):
                 time.sleep(3)
                 print("\033[A\033[K", end="")
             else:
-                pass
-                # await handle_process_node(finic_api_key, task_name, task_file_path, user_input, selected_node, cdp_session, page, dom_snapshot)
+                await handle_process_node(finic_api_key, task_name, task_file_path, selectors_path, user_input, selected_node, cdp_session, page, dom_snapshot)
     
     browser.close()
