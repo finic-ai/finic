@@ -15,6 +15,7 @@ import os
 import sys
 import itertools
 import time
+from finic_py.finic import Finic
 
 class NodeDetails(BaseModel):
     selector: Optional[str] = None
@@ -77,7 +78,9 @@ async def generate_selectors(
                 for combo in itertools.combinations(filtered_attributes, i):
                     attr_conditions = []
                     for attr in combo:
-                        attr_conditions.append(f'@{attr['name']}="{attr['value']}"')
+                        name = attr["name"]
+                        value = attr["value"]
+                        attr_conditions.append(f'@{name}="{value}"')
                     xpath = f"{xpath_root}[{' and '.join(attr_conditions)}]"
                     xpaths_to_test.append(xpath)
         
@@ -210,6 +213,7 @@ async def handle_process_node(
         task_name: str, 
         task_file_path: str,
         selector_file_path: str,
+        inputs_path: str,
         intent: str, 
         selected_node: List[NodeDetails], 
         cdp_session: CDPSession, 
@@ -248,6 +252,9 @@ async def handle_process_node(
     
     with open(selector_file_path, 'a') as f:
         f.write(f"\n{element_identifier}: {selected_node[0].selector}")
+    
+    with open(inputs_path, 'a') as f:
+        f.write(f"\n{element_identifier}: ")
     
     print(f"\nCode generated and written to {task_file_path}")
     print(f"Selector written to {selector_file_path}")
@@ -325,7 +332,7 @@ async def handle_inspect_node(cdp_session: CDPSession, selected_node: List[NodeD
     print_element_to_terminal(node)
     print("Describe the action to be taken on this element: ", end="", flush=True)
 
-def create_artifacts(task_name: str) -> Tuple[str, str]:
+def create_artifacts(task_name: str) -> Tuple[str, str, str]:
     # Check if the finic_tasks directory exists in the current directory
     current_directory = os.getcwd()
     finic_tasks_path = os.path.join(current_directory, 'finic_tasks')
@@ -337,9 +344,14 @@ def create_artifacts(task_name: str) -> Tuple[str, str]:
 
         task_file_path = os.path.join(task_folder_path, f'{task_name}.py')
         selectors_path = os.path.join(task_folder_path, 'selectors.yaml')
+        inputs_path = os.path.join(task_folder_path, 'inputs.yaml')
         
         if not os.path.exists(selectors_path):
             with open(selectors_path, 'w') as f:
+                f.write("")
+
+        if not os.path.exists(inputs_path):
+            with open(inputs_path, 'w') as f:
                 f.write("")
 
         if not os.path.exists(task_file_path):
@@ -350,7 +362,7 @@ from playwright.sync_api import Page
 def main(page: Page, finic: Finic):
 """)
 
-        return task_file_path, selectors_path
+        return task_file_path, selectors_path, inputs_path
     else:
         print("This is not a Finic project. Run `finic init` to initialize Finic.")
         sys.exit(0)
@@ -360,20 +372,19 @@ async def copilot(url: str, finic_api_key: str):
     task_name = input("\n\nGive your task a unique name (e.g. 'automate_tax_website'): ")
     # Replace spaces and dashes with underscores in task_name
     task_name = task_name.replace(' ', '_').replace('-', '_')
-    task_file_path, selectors_path = create_artifacts(task_name)
+    task_file_path, selectors_path, inputs_path = create_artifacts(task_name)
     print(f"Created task file: {task_file_path}")
 
     inspection_mode = True
     selected_node: List[NodeDetails] = [None]
     dom_snapshot = None
 
-    playwright = await async_playwright().start()
+    finic = Finic()
     
-    browser = await playwright.chromium.launch(headless=False, devtools=True)
-    page = await browser.new_page()
+    page, context = await finic.launch_browser_async(headless=False, devtools=True)
 
     ### SET UP CDP AND EVENT LISTENERS ###
-    cdp_session = await page.context.new_cdp_session(page)
+    cdp_session = await context.new_cdp_session(page)
     await cdp_session.send('DOM.enable')
     await cdp_session.send('Overlay.enable')
     await cdp_session.send('Runtime.enable')
@@ -424,6 +435,7 @@ async def copilot(url: str, finic_api_key: str):
     # Navigate to a website
     await page.goto(url)
     await page.wait_for_load_state("load")
+    import pdb; pdb.set_trace()
 
     await page.evaluate("""
         window.addEventListener('keydown', (event) => {
@@ -444,8 +456,10 @@ async def copilot(url: str, finic_api_key: str):
         print("\nSelect an element in the browser. Enter 'mode' to toggle between selection and interaction mode, or 'quit' to exit: ", end="", flush=True)
         user_input = await asyncio.get_event_loop().run_in_executor(None, input)
         if user_input.lower() in ['quit', 'q']:
-            browser.close()
+            context.close()
             break
+        elif user_input.lower() in ['save-browser', 's']:
+            finic.save_browser_context(context)
         elif user_input.lower() in ['mode', 'm']:
             if inspection_mode:
                 await cdp_session.send('Overlay.setInspectMode', {'mode': 'none', 'highlightConfig': {}})
@@ -465,6 +479,6 @@ async def copilot(url: str, finic_api_key: str):
                 time.sleep(3)
                 print("\033[A\033[K", end="")
             else:
-                await handle_process_node(finic_api_key, task_name, task_file_path, selectors_path, user_input, selected_node, cdp_session, page, dom_snapshot)
+                await handle_process_node(finic_api_key, task_name, task_file_path, selectors_path, inputs_path, user_input, selected_node, cdp_session, page, dom_snapshot)
     
-    browser.close()
+    context.close()
