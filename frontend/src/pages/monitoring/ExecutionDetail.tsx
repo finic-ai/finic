@@ -99,7 +99,7 @@ export default function ExecutionDetail({
           Agent: {selectedExecution?.agentId}
         </span>
         <span className="text-body-bold font-body-bold text-default-font">
-          {moment(selectedExecution?.startTime)
+          {moment(selectedExecution?.createdAt)
             .tz("UTC")
             .format("MMMM D, YYYY h:mm:ss A")}
         </span>

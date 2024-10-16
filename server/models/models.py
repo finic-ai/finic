@@ -31,6 +31,7 @@ class Session(BaseModel):
     browser_id: Optional[str] = None
     results: Optional[List[Dict]] = None
     error: Optional[Dict] = None
+    created_at: datetime.datetime
 
 class Browser(BaseModel):
     id: str

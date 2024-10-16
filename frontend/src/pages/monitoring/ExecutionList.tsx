@@ -109,7 +109,12 @@ export default function ExecutionList({
             </Table.HeaderRow>
           }
         >
-          {executions.map((execution, index) => (
+          {executions.sort((a, b) => {
+            if (a.createdAt && b.createdAt) {
+              return moment(b.createdAt).diff(moment(a.createdAt));
+            }
+            return 0;
+          }).map((execution, index) => (
             <Table.Row
               className={`cursor-pointer ${
                 selectedRow == index ? "bg-brand-50" : ""
@@ -137,7 +142,7 @@ export default function ExecutionList({
               <Table.Cell>{getStatusIcon(execution.status)}</Table.Cell>
               <Table.Cell>
                 <span className="whitespace-nowrap text-body font-body text-neutral-500">
-                  {moment(execution.startTime)
+                  {moment(execution.createdAt)
                     .tz("UTC")
                     .format("MMM D, h:mm A")}
                 </span>

@@ -168,7 +168,8 @@ async def run_agent(
             app_id=config.app_id, 
             browser_id=request.browser_id,
             agent_id=agent_id,
-            status=SessionStatus.RUNNING
+            status=SessionStatus.RUNNING,
+            created_at=datetime.datetime.now()
         )
         session = db.upsert_session(session)
         secret_key = db.get_secret_key_for_user(config.user_id)

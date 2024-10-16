@@ -30,6 +30,7 @@ export type Execution = {
   cloudProviderId: string;
   status: string;
   startTime: string | null;
+  createdAt: string | null;
   endTime: string | null;
   results: Record<string, any>;
   attempts: Array<Record<string, any>>;
