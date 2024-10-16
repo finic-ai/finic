@@ -297,6 +297,17 @@ async def list_agents(
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
     
+@app.get("/trace-upload-link")
+async def get_trace_upload_link(
+    config: AppConfig = Depends(validate_token),
+):
+    try:
+        upload_url = db.get_trace_upload_link(app_id=config.app_id)
+        return {"upload_url": upload_url}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 @app.get("/sentry-debug")
 async def trigger_error():

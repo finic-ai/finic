@@ -21,7 +21,7 @@ import tempfile
 import pdb
 from dotenv import load_dotenv
 import urllib.parse
-
+import uuid
 
 def get_file_size(file: io.BytesIO) -> int:
     return file.getbuffer().nbytes
@@ -222,6 +222,16 @@ class Database:
             .execute()
         )
         return [Agent(**row) for row in response.data]
+    
+    def get_trace_upload_link(self, app_id: str) -> Optional[str]:
+        trace_id = str(uuid.uuid4())
+        response = (
+            self.supabase.storage.get_bucket("traces")
+            .create_signed_upload_url(f"{app_id}/{trace_id}.zip", expires_in=60)
+        )
+        if response:
+            return response["signed_url"]
+        return None
     
     def list_sessions(self, agent_id: str, app_id: str) -> List[Session]:
         response = (
