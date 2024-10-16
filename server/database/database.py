@@ -112,7 +112,7 @@ class Database:
     def upsert_session(self, session: Session) -> Optional[Session]:
         response = (
             self.supabase.table("session")
-            .upsert(session.dict())
+            .upsert(session.model_dump(mode="json"))
             .execute()
         )
         if len(response.data) > 0:

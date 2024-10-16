@@ -33,6 +33,10 @@ class Session(BaseModel):
     error: Optional[Dict] = None
     created_at: datetime.datetime
 
+    # created at should serialize to isoformat when converting to json  
+
+    # model_config = ConfigDict(json_encoders={datetime.datetime: lambda v: v.isoformat()})
+
 class Browser(BaseModel):
     id: str
     app_id: str

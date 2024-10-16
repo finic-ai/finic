@@ -1,2 +1,4 @@
 build/
 dist/
+**/trace.zip
+**/codegen_trace.zip

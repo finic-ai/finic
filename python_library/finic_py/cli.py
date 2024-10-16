@@ -8,6 +8,7 @@ from .finic import Finic
 import subprocess
 import argparse
 from .copilot import copilot
+from playwright.sync_api import sync_playwright
 
 load_dotenv(override=True)
 
@@ -128,6 +129,17 @@ def deploy():
     else:
         print("Agent deployment failed")
 
+def record(url, api_key):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+        context = browser.new_context()
+        context.tracing.start(screenshots=True, snapshots=True, sources=True)
+        page = browser.new_page()
+        page.goto(url)
+        # Listen for when the context is closed and save the trace
+        context.on("close", lambda: context.tracing.stop(path="trace.zip"))
+
+
 def main():
     parser = argparse.ArgumentParser(description="CLI for Finic's python library.")
     subparsers = parser.add_subparsers(dest='command', required=True)
@@ -136,6 +148,21 @@ def main():
     deploy_parser = subparsers.add_parser(
         'deploy', 
         help='Deploy the agent to Finic cloud'
+    )
+
+    record_parser = subparsers.add_parser(
+        'record', 
+        help='Record a new workflow'
+    )
+    record_parser.add_argument(
+        '--url', 
+        help='The URL of the starting page of the workflow',
+        required=True
+    )
+    record_parser.add_argument(
+        '--api-key', 
+        help='A Finic API key',
+        required=True
     )
 
     # Connect to remote browser command
@@ -174,6 +201,10 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.command == 'record':
+        record(args.url, args.api_key)
+        return
 
     finic_api_key = get_api_key()
 
