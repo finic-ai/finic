@@ -140,7 +140,7 @@ class Database:
     def get_session_file_upload_link(self, session: Session, file_name: str) -> Optional[str]:
         response = (
             self.supabase.storage.get_bucket("session_files")
-            .create_signed_upload_url(f"{session.app_id}/{session.id}/{file_name}", expires_in=60)
+            .create_signed_upload_url(f"{session.app_id}/{session.id}/{file_name}")
         )
         if response:
             return response["signed_url"]
@@ -227,7 +227,7 @@ class Database:
         trace_id = str(uuid.uuid4())
         response = (
             self.supabase.storage.get_bucket("traces")
-            .create_signed_upload_url(f"{app_id}/{trace_id}.zip", expires_in=60)
+            .create_signed_upload_url(f"{app_id}/{trace_id}.zip")
         )
         if response:
             return response["signed_url"]
