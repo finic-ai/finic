@@ -130,15 +130,17 @@ def deploy():
         print("Agent deployment failed")
 
 def record(url, api_key):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        context = browser.new_context()
-        context.tracing.start(screenshots=True, snapshots=True, sources=True)
-        page = browser.new_page()
-        page.goto(url)
-        # Listen for when the context is closed and save the trace
-        context.on("close", lambda: context.tracing.stop(path="trace.zip"))
+    current_dir = os.path.dirname(os.path.abspath(__file__))    
+    subprocess.run(["playwright", "codegen", url, "--save-trace=" + current_dir + "/codegen_trace.zip"])
 
+    print("Uploading trace...")
+
+    finic = Finic(api_key=api_key)
+    finic.upload_trace(current_dir + "/codegen_trace.zip")
+
+    # Delete the trace file
+    os.remove(current_dir + "/codegen_trace.zip")
+    print("Trace uploaded successfully")
 
 def main():
     parser = argparse.ArgumentParser(description="CLI for Finic's python library.")

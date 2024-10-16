@@ -395,4 +395,16 @@ class Finic:
         response.raise_for_status()
         return True
     
+    def upload_trace(self, trace_file: str) -> bool:
+        with open(trace_file, 'rb') as f:
+            upload_file = f.read()
+        response = requests.get(
+            f"{self.finic_url}/trace-upload-link",
+            headers={"Authorization": f"Bearer {self.api_key}"},
+        )
+        response.raise_for_status()
+        upload_url = response.json()["upload_url"]
+        response = requests.put(upload_url, data=upload_file)
+        response.raise_for_status()
+        return True
     

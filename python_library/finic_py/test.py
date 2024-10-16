@@ -20,3 +20,4 @@ record("https://www.facebook.com/ads/library/?active_status=active&ad_type=all&c
 
 
 # playwright codegen "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&media_type=all&search_type=page&view_all_page_id=108521893501" --save-trace=codegen_trace.zip
+
