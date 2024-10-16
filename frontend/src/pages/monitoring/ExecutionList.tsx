@@ -109,12 +109,7 @@ export default function ExecutionList({
             </Table.HeaderRow>
           }
         >
-          {executions.sort((a, b) => {
-            if (a.createdAt && b.createdAt) {
-              return moment(b.createdAt).diff(moment(a.createdAt));
-            }
-            return 0;
-          }).map((execution, index) => (
+          {executions.map((execution, index) => (
             <Table.Row
               className={`cursor-pointer ${
                 selectedRow == index ? "bg-brand-50" : ""

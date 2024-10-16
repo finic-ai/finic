@@ -9,6 +9,7 @@ import humps from "humps";
 import { type Node, type Edge, type NodeTypes } from "@xyflow/react";
 import { useAuth, useUserStateContext } from "@/hooks/useAuth";
 import { Agent, Execution } from "@/types";
+import moment from 'moment';
 
 const server_url = import.meta.env.VITE_APP_SERVER_URL;
 
@@ -121,7 +122,13 @@ export const FinicAppContextProvider: React.FC<{
         });
         const data = await response.json();
         console.log(data);
-        return humps.camelizeKeys(data) as Execution[];
+        var executions = humps.camelizeKeys(data) as Execution[];
+        return executions.sort((a, b) => {
+          if (a.createdAt && b.createdAt) {
+            return moment(b.createdAt).diff(moment(a.createdAt));
+          }
+          return 0;
+        })
       } catch (err: any) {
         console.log(err);
         setError(err);
