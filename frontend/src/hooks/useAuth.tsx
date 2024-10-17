@@ -29,6 +29,7 @@ interface UserStateContextProps {
 interface UserStateProviderProps {
   children: ReactNode | undefined;
   session: any; // Use a more specific type if you know the structure of your session object
+  setSession: any;
 }
 
 const UserStateContext = createContext<UserStateContextProps>(undefined!);
@@ -44,6 +45,7 @@ export function useAuth() {
     const {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      console.log("Auth state changed", _event, session)
       setSession(session);
       if (import.meta.env.VITE_POSTHOG_KEY && session && session.user && session.user.email) {
         // Identify by email
@@ -78,6 +80,7 @@ export function useAuth() {
 export function UserStateProvider({
   children,
   session,
+  setSession,
 }: UserStateProviderProps) {
   const [bearer, setBearer] = useState(null);
   const [email, setEmail] = useState(null);
@@ -86,6 +89,7 @@ export function UserStateProvider({
   const [userId, setUserId] = useState("");
   const loggedIn = session !== null;
   const [authStateLoading, setAuthStateLoading] = useState(true);
+  
 
   const fetchData = async () => {
     // TODO #1: Replace with your JWT template name
@@ -133,6 +137,8 @@ export function UserStateProvider({
     } catch (error) {
       console.log(error);
       setAuthStateLoading(false);
+      // clear the session
+      setSession(null);
     }
   };
 

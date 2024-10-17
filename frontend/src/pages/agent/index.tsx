@@ -89,7 +89,6 @@ export function AgentPage() {
           ) : null}
         </div>
       </div>
-      <div className="flex w-full flex-col items-start gap-6 overflow-hidden overflow-auto mobile:overflow-auto mobile:max-w-full" />
     </DefaultPageLayout>
   );
 }

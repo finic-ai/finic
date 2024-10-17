@@ -50,7 +50,7 @@ function App() {
 
   return (
     <Router>
-      <UserStateProvider session={session}>
+      <UserStateProvider session={session} setSession={setSession}>
         {session ? renderAppRoutes() : renderLoginRoutes()}
       </UserStateProvider>
     </Router>

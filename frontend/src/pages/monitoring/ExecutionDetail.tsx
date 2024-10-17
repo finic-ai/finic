@@ -138,11 +138,13 @@ export default function ExecutionDetail({
             onCopy={() => {}}
           />
         </div>
-        <div className="flex w-full min-w-0 flex-col items-end rounded-md bg-neutral-50 px-2 py-2 overflow-x-auto 	">
-          <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto break-words	min-w-0">
-            testd sfdsf sdf sfsdf sdfds sdfdsfsdfdsfsd fsf ds fds sdf sdf dsf ds fsdfds fds fd fsd fs fds fsd fsdf sdf sd fsd fsd fsdf sdf ds ds dfsd sdfdsfs sdf dsfds ds dsf sdf sdf s ksdhf h h u hi hk  j kj kj bk bkb k bh bk bkj b jkb kjb kj bk kj kjjk nkjkjhkhkjnkjbkjbkjbkbkhbkhbkbkbkjbkjnnkjnkbkjbkhbnbkbjkjbnjkn,mn,jn,m,n,n,jn,nmsdfdsfsdfdsfdsfdsfdsfdsfdsfdsfsdfdsfsdfsdfdsfdsfsdfsdfsdfdsfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfsdfsdfds
-            {/* {getResults(selectedExecution)} */} 
-          </span>
+        <div className="flex w-full flex-col items-start gap-2 overflow-hidden rounded-md bg-neutral-50 relative">
+          <div className="flex w-full flex-col items-start px-4 py-4 overflow-x-auto max-w-full">
+            <span className="text-monospace-body font-monospace-body text-default-font whitespace-pre">
+              testd sfdsf sdf sfsdf sdfds sdfdsfsdfdsfsd fsf ds fds sdf sdf dsf ds fsdfds fds fd fsd fs fds fsd fsdf sdf sd fsd fsd fsdf sdf ds ds dfsd sdfdsfs sdf dsfds ds dsf sdf sdf s ksdhf h h u hi hk  j kj kj bk bkb k bh bk bkj b jkb kjb kj bk kj kjjk nkjkjhkhkjnkjbkjbkjbkbkhbkhbkbkbkjbkjnnkjnkbkjbkhbnbkbjkjbnjkn,mn,jn,m,n,n,jn,nmsdfdsfsdfdsfdsfdsfdsfdsfdsfdsfsdfdsfsdfsdfdsfdsfsdfsdfsdfdsfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfsdfsdfds
+              {/* {getResults(selectedExecution)} */} 
+            </span>
+          </div>
         </div>
       </div>
       <div className="flex w-full flex-col items-start gap-2">

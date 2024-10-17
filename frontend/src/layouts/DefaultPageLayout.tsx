@@ -20,7 +20,7 @@ export function DefaultPageLayout({ children }: DefaultPageLayoutRootProps) {
   const location = useLocation();
   const currentPath = location.pathname;
   return (
-    <div className="flex h-screen w-full items-center bg-default-background">
+    <div className="flex h-screen w-full min-w-0 items-center bg-default-background">
       <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch">
         <AppTopBar className="flex-none" path={currentPath}/>
         {children ? (
