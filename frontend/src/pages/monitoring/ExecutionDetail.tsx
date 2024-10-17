@@ -87,7 +87,7 @@ export default function ExecutionDetail({
   }
 
   return (
-    <div className="flex grow shrink-0 basis-0 flex-col items-start gap-6 self-stretch rounded-md px-4 py-4 shadow-md">
+    <div className="flex grow min-w-0 shrink-0 basis-0 flex-col items-start gap-6 self-stretch rounded-md px-4 py-4 shadow-md">
       <div className="flex w-full flex-col items-start gap-1">
         <div className="flex w-full items-center space-x-2">
           <span className="text-heading-2 font-heading-2 text-default-font">
@@ -138,9 +138,10 @@ export default function ExecutionDetail({
             onCopy={() => {}}
           />
         </div>
-        <div className="flex w-full flex-col items-end rounded-md bg-neutral-50 px-2 py-2">
-          <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto">
-            {getResults(selectedExecution)}
+        <div className="flex w-full min-w-0 flex-col items-end rounded-md bg-neutral-50 px-2 py-2 overflow-x-auto 	">
+          <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto break-words	min-w-0">
+            testd sfdsf sdf sfsdf sdfds sdfdsfsdfdsfsd fsf ds fds sdf sdf dsf ds fsdfds fds fd fsd fs fds fsd fsdf sdf sd fsd fsd fsdf sdf ds ds dfsd sdfdsfs sdf dsfds ds dsf sdf sdf s ksdhf h h u hi hk  j kj kj bk bkb k bh bk bkj b jkb kjb kj bk kj kjjk nkjkjhkhkjnkjbkjbkjbkbkhbkhbkbkbkjbkjnnkjnkbkjbkhbnbkbjkjbnjkn,mn,jn,m,n,n,jn,nmsdfdsfsdfdsfdsfdsfdsfdsfdsfdsfsdfdsfsdfsdfdsfdsfsdfsdfsdfdsfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfsdfsdfds
+            {/* {getResults(selectedExecution)} */} 
           </span>
         </div>
       </div>

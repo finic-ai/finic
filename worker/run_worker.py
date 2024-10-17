@@ -77,6 +77,43 @@ class Worker:
             return response.json()
         else:
             raise Exception(f"Failed to update session status: {response.status_code} {response.text}")
+        
+    def send_logs(self, logs):
+        try:
+            # response = requests.post(
+            #     "https://your-endpoint-url.com/logs",  # Replace with your actual endpoint
+            #     json={"logs": logs}
+            # )
+            # response.raise_for_status()
+            # print(f"Logs sent successfully: {response.status_code}")
+            print(f"Logs: {logs}")
+        except requests.RequestException as e:
+            print(f"Failed to send logs: {e}")
+        
+    def collect_and_record_logs(self, proc: subprocess.Popen):
+        all_logs = []
+        while True:
+            # Read logs line by line (non-blocking)
+            stdout_line = proc.stdout.readline()
+            stderr_line = proc.stderr.readline()
+            
+            if stdout_line:
+                all_logs.append(stdout_line)
+            if stderr_line:
+                all_logs.append(stderr_line)
+
+            # Send logs every 5 seconds if there are any
+            if all_logs:
+                self.send_logs(all_logs)
+                all_logs.clear()
+
+            # Check if the process is complete
+            if proc.poll() is not None and not stdout_line and not stderr_line:
+                break
+
+            # Sleep for 5 seconds before sending next batch
+            time.sleep(5)
+
     
 
 def run_worker(agent_id: str, api_key: str, request: Dict):
@@ -97,9 +134,7 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
 
     
 
-    # Run the agent code by running poetry install and then poetry run start
-    os.chdir(project_path)
-    subprocess.run(["poetry", "install"])
+    
 
     # Start Xvfb in the background
     xvfb_process = subprocess.Popen(["Xvfb", ":99", "-screen", "0", "1024x768x16"])
@@ -111,6 +146,18 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
     # time.sleep(1)
     status = SessionStatus.RUNNING
     try:
+        # Run the agent code by running poetry install and then poetry run start
+        os.chdir(project_path)
+        proc = subprocess.Popen(
+            ["poetry", "install"], 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
+            text=True,
+            bufsize=1,
+            universal_newlines=True
+        )
+        collect_and_record_logs(proc)
+        proc.wait()
         # Set the DISPLAY environment variable
         os.environ["DISPLAY"] = ":99"
 
