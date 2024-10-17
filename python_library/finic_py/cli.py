@@ -132,15 +132,20 @@ def deploy():
 def record(url, api_key):
     current_dir = os.path.dirname(os.path.abspath(__file__))    
     subprocess.run(["playwright", "codegen", url, "--save-trace=" + current_dir + "/codegen_trace.zip"])
-
+    
+    print(f"Recording saved to {current_dir}/codegen_trace.zip")
     print("Uploading trace...")
 
-    finic = Finic(api_key=api_key)
-    finic.upload_trace(current_dir + "/codegen_trace.zip")
+    try:
+        finic = Finic(api_key=api_key)
+        finic.upload_trace(current_dir + "/codegen_trace.zip")
 
-    # Delete the trace file
-    os.remove(current_dir + "/codegen_trace.zip")
-    print("Trace uploaded successfully")
+        # Delete the trace file
+        os.remove(current_dir + "/codegen_trace.zip")
+        print("Trace uploaded successfully")
+    except Exception as e:
+        print(f"Error uploading trace: {e}")
+        
 
 def main():
     parser = argparse.ArgumentParser(description="CLI for Finic's python library.")
