@@ -32,6 +32,7 @@ class Session(BaseModel):
     results: Optional[List[Dict]] = None
     error: Optional[Dict] = None
     created_at: datetime.datetime
+    logs: Optional[List[Dict]] = None
 
     # created at should serialize to isoformat when converting to json  
 

@@ -148,16 +148,10 @@ def run_worker(agent_id: str, api_key: str, request: Dict):
     try:
         # Run the agent code by running poetry install and then poetry run start
         os.chdir(project_path)
-        proc = subprocess.Popen(
+        subprocess.run(
             ["poetry", "install"], 
-            stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE, 
-            text=True,
-            bufsize=1,
-            universal_newlines=True
+            check=True
         )
-        collect_and_record_logs(proc)
-        proc.wait()
         # Set the DISPLAY environment variable
         os.environ["DISPLAY"] = ":99"
 

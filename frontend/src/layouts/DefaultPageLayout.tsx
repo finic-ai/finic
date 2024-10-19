@@ -21,7 +21,7 @@ export function DefaultPageLayout({ children }: DefaultPageLayoutRootProps) {
   const currentPath = location.pathname;
   return (
     <div className="flex h-screen w-full min-w-0 items-center bg-default-background">
-      <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch">
+      <div className="flex grow shrink-0 basis-0 flex-col items-start self-stretch min-w-0">
         <AppTopBar className="flex-none" path={currentPath}/>
         {children ? (
           <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-4 overflow-y-auto">

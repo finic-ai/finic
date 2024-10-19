@@ -145,3 +145,5 @@ app_config.py
 local_dir
 
 project
+
+session_recording_path.txt
