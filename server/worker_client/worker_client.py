@@ -1,7 +1,7 @@
 import subprocess
 import requests
 import os
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import sys
 from fastapi import BackgroundTasks
 from google.cloud import run_v2
@@ -34,12 +34,13 @@ class WorkerClient:
             browser_id: str, 
             agent_id: str, 
             agent_input: Dict[str, Any] = None
-        ):
+        ) -> Optional[str]:
+        cloud_execution_id = None
         if self.environment == FinicEnvironment.PROD:
-             self.run_worker_remotely(session_id, browser_id, agent_id, agent_input)
+            cloud_execution_id = self.run_worker_remotely(session_id, browser_id, agent_id, agent_input)
         else:   
             self.run_worker_locally(session_id, browser_id, agent_id, agent_input)  
-        return
+        return cloud_execution_id
     
     def run_worker_locally(
             self,

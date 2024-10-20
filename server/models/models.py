@@ -33,6 +33,7 @@ class Session(BaseModel):
     error: Optional[Dict] = None
     created_at: datetime.datetime
     logs: Optional[List[Dict]] = None
+    cloud_execution_id: Optional[str] = None
 
     # created at should serialize to isoformat when converting to json  
 

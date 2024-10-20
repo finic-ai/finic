@@ -148,6 +148,8 @@ async def update_session(
             session.results = request.results
         if request.error:
             session.error = request.error
+        if request.logs:
+            session.logs += request.logs
         session = db.upsert_session(session)
         return session
     except Exception as e:
@@ -163,23 +165,25 @@ async def run_agent(
 ):
     try:
         session_id = str(uuid.uuid4())
+        
+        secret_key = db.get_secret_key_for_user(config.user_id)
+        worker_client = WorkerClient( secret_key, background_tasks )
+        cloud_execution_id = worker_client.run_worker(
+            session_id=session_id,
+            browser_id=request.browser_id,
+            agent_id=agent_id,
+            agent_input=request.agent_input,
+        )
         session = Session(
             id=session_id, 
             app_id=config.app_id, 
             browser_id=request.browser_id,
             agent_id=agent_id,
             status=SessionStatus.RUNNING,
-            created_at=datetime.datetime.now()
+            created_at=datetime.datetime.now(),
+            cloud_execution_id=cloud_execution_id
         )
         session = db.upsert_session(session)
-        secret_key = db.get_secret_key_for_user(config.user_id)
-        worker_client = WorkerClient( secret_key, background_tasks )
-        worker_client.run_worker(
-            session_id=session_id,
-            browser_id=request.browser_id,
-            agent_id=agent_id,
-            agent_input=request.agent_input
-        )
         return {"session_id": session_id}
     except Exception as e:
         print(e)
