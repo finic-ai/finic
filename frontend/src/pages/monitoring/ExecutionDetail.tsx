@@ -15,6 +15,7 @@ import { Button } from "@/subframe/components/Button";
 import { SessionRecordingModal } from "@/components/Modals";
 
 
+
 interface ExecutionDetailProps {
   selectedExecution: Execution;
 }
@@ -162,14 +163,13 @@ export default function ExecutionDetail({
 
         <div className="flex w-full flex-col items-end rounded-md bg-neutral-50 px-2 py-2">
           <span className="w-full whitespace-pre-wrap text-monospace-body font-monospace-body text-default-font overflow-y-auto">
-            {selectedExecution?.attempts?.map((attempt) => {
-                var attemptLogs = "";
-                for (const log of attempt.logs) {
-                  attemptLogs += `${log.timestamp} [${log.severity}] ${log.message}\n`;
-                }
-                return attemptLogs;
+            {/* Order by timestamp, convert timestamp to datetime first */}
+            {selectedExecution?.logs?.sort((a, b) => (new Date(a.timestamp)).getTime() - (new Date(b.timestamp)).getTime()).map((log) => {
+
+                return `${log.timestamp} [${log.severity}] ${log.message}\n`;
+
               })
-              .join("\n")}
+              .join("")}
           </span>
         </div>
       </div>

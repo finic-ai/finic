@@ -33,5 +33,5 @@ export type Execution = {
   createdAt: string | null;
   endTime: string | null;
   results: Record<string, any>;
-  attempts: Array<Record<string, any>>;
+  logs: Array<Record<string, any>>;
 };
